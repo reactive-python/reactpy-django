@@ -1,0 +1,4 @@
+django<4.0.0
+daphne<4.0.0
+channels<4.0.0
+idom<1.0.0
