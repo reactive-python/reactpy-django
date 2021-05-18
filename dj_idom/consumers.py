@@ -10,7 +10,6 @@ class CommandConsumer(AsyncJsonWebsocketConsumer):
         """When the browser attempts to connect to the server."""
         # Accept the connection
         await self.accept()
-        pass
 
     # RECEIVING COMMANDS
     async def receive_json(self, content, **kwargs):
