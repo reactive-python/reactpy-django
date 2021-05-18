@@ -1,4 +1,4 @@
-django<4.0.0
-daphne<4.0.0
-channels<4.0.0
-idom<1.0.0
+django<4.0.0 # Django Library
+daphne<4.0.0 # Production ASGI webserver
+channels<4.0.0 # Django websocket features
+idom<1.0.0 # Python React
