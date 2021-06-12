@@ -1,5 +1,5 @@
 """
-ASGI config for tests project.
+ASGI config for test_app project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -14,7 +14,7 @@ from django.core.asgi import get_asgi_application
 
 from .views import HelloWorld
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
 
 # Fetch ASGI application before importing dependencies that require ORM models.
 http_asgi_app = get_asgi_application()

@@ -15,6 +15,20 @@ POSARGS_PATTERN = re.compile(r"^(\w+)\[(.+)\]$")
 
 
 @nox.session(reuse_venv=True)
+def manage(session: Session) -> None:
+    session.install("-r", "requirements.txt")
+    session.install("idom[stable]")
+    session.install("-e", ".")
+    session.chdir("tests")
+
+    build_js_on_commands = ["runserver"]
+    if set(session.posargs).intersection(build_js_on_commands):
+        session.run("python", "manage.py", "build_js")
+
+    session.run("python", "manage.py", *session.posargs)
+
+
+@nox.session(reuse_venv=True)
 def format(session: Session) -> None:
     install_requirements_file(session, "check-style")
     session.run("black", ".")
@@ -35,6 +49,7 @@ def test_suite(session: Session) -> None:
     session.env["IDOM_DEBUG_MODE"] = "1"
     install_requirements_file(session, "test-env")
     session.install(".[all]")
+    session.chdir("tests")
     session.run("figure-it-out")
 
 

@@ -4,6 +4,7 @@ from typing import Any
 
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
+from idom.core.layout import Layout
 from idom.core.dispatcher import dispatch_single_view
 from idom.core.component import ComponentConstructor
 
@@ -18,17 +19,23 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
         super().__init__(*args, **kwargs)
 
     async def connect(self) -> None:
+        await super().connect()
         self._idom_recv_queue = recv_queue = asyncio.Queue()
-        self._idom_dispatcher_future = dispatch_single_view(
-            self._idom_component_constructor,
-            self.send_json,
-            recv_queue.get,
+        self._idom_dispatcher_future = asyncio.ensure_future(
+            dispatch_single_view(
+                Layout(self._idom_component_constructor()),
+                self.send_json,
+                recv_queue.get,
+            )
         )
 
     async def close(self, *args: Any, **kwargs: Any) -> None:
-        self._idom_dispatcher_future.cancel()
+        if self._idom_dispatcher_future.done():
+            await self._idom_dispatcher_future
+        else:
+            self._idom_dispatcher_future.cancel()
         await asyncio.wait([self._idom_dispatcher_future])
-        super().close(*args, **kwargs)
+        await super().close(*args, **kwargs)
 
     async def receive_json(self, content: Any, **kwargs: Any) -> None:
         await self._idom_recv_queue.put(content)
