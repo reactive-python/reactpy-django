@@ -1,0 +1,2 @@
+channels<4.0.0 # Django websocket features
+idom<1.0.0 # Python React
