@@ -39,8 +39,8 @@ def format(session: Session) -> None:
 def test(session: Session) -> None:
     """Run the complete test suite"""
     session.install("--upgrade", "pip", "setuptools", "wheel")
-    test_suite(session)
-    test_style(session)
+    session.notify("test_suite")
+    session.notify("test_style")
 
 
 @nox.session
