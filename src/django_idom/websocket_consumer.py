@@ -3,10 +3,9 @@ import asyncio
 from typing import Any
 
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-
-from idom.core.layout import Layout
-from idom.core.dispatcher import dispatch_single_view
 from idom.core.component import ComponentConstructor
+from idom.core.dispatcher import dispatch_single_view
+from idom.core.layout import Layout
 
 
 class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):

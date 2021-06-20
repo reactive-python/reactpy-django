@@ -1,6 +1,6 @@
 import idom
-from django.template import loader
 from django.http import HttpResponse
+from django.template import loader
 
 
 def base_template(request):
