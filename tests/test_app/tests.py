@@ -1,3 +1,5 @@
+import os
+
 from channels.testing import ChannelsLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -27,7 +29,9 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
 
 
 def make_driver(page_load_timeout, implicit_wait_timeout):
-    driver = webdriver.Chrome()
+    options = webdriver.ChromeOptions()
+    options.headless = bool(int(os.environ.get("SELENIUM_HEADLESS", 0)))
+    driver = webdriver.Chrome(options=options)
     driver.set_page_load_timeout(page_load_timeout)
     driver.implicitly_wait(implicit_wait_timeout)
     return driver

@@ -39,7 +39,7 @@ def format(session: Session) -> None:
 def test(session: Session) -> None:
     """Run the complete test suite"""
     session.install("--upgrade", "pip", "setuptools", "wheel")
-    session.notify("test_suite")
+    session.notify("test_suite", posargs=session.posargs)
     session.notify("test_style")
 
 
@@ -51,6 +51,7 @@ def test_suite(session: Session) -> None:
 
     session.chdir(HERE / "tests")
     session.env["IDOM_DEBUG_MODE"] = "1"
+    session.env["SELENIUM_HEADLESS"] = str(int("--headless" in session.posargs))
     session.run("python", "manage.py", "build_js")
     session.run("python", "manage.py", "test")
 
