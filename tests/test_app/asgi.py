@@ -12,7 +12,8 @@ import os
 from django.conf.urls import url
 from django.core.asgi import get_asgi_application
 
-from .views import HelloWorld
+from .views import Root
+
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
 
@@ -23,11 +24,12 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 
 from django_idom import IdomAsyncWebSocketConsumer
 
+
 application = ProtocolTypeRouter(
     {
         "http": http_asgi_app,
         "websocket": URLRouter(
-            [url("", IdomAsyncWebSocketConsumer.as_asgi(component=HelloWorld))]
+            [url("", IdomAsyncWebSocketConsumer.as_asgi(component=Root))]
         ),
     }
 )

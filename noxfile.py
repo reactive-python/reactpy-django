@@ -46,11 +46,13 @@ def test(session: Session) -> None:
 @nox.session
 def test_suite(session: Session) -> None:
     """Run the Python-based test suite"""
-    session.env["IDOM_DEBUG_MODE"] = "1"
     install_requirements_file(session, "test-env")
     session.install(".[all]")
-    session.chdir("tests")
-    session.run("figure-it-out")
+
+    session.chdir(HERE / "tests")
+    session.env["IDOM_DEBUG_MODE"] = "1"
+    session.run("python", "manage.py", "build_js")
+    session.run("python", "manage.py", "test")
 
 
 @nox.session

@@ -1,6 +1,8 @@
 import subprocess
 from pathlib import Path
+
 from django.core.management.base import BaseCommand
+
 
 HERE = Path(__file__).parent
 JS_DIR = HERE.parent.parent.parent / "js"
