@@ -12,9 +12,9 @@ import os
 from django.conf.urls import url
 from django.core.asgi import get_asgi_application
 
-from .views import Root
-
 from django_idom import IdomAsyncWebSocketConsumer  # noqa: E402
+
+from .views import Root
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
@@ -23,7 +23,6 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
 http_asgi_app = get_asgi_application()
 
 from channels.routing import ProtocolTypeRouter, URLRouter  # noqa: E402
-
 
 
 application = ProtocolTypeRouter(
