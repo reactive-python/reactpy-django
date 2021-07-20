@@ -30,5 +30,6 @@ jobs:
         run: pip install -r requirements/test-run.txt
       - name: Run Tests
         run: |
-          npm install -g npm@v7.13.0
+          npm install -g npm@latest
+          npm --version
           nox -s test

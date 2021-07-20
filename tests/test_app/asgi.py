@@ -14,15 +14,16 @@ from django.core.asgi import get_asgi_application
 
 from .views import Root
 
+from django_idom import IdomAsyncWebSocketConsumer  # noqa: E402
+
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
 
 # Fetch ASGI application before importing dependencies that require ORM models.
 http_asgi_app = get_asgi_application()
 
-from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.routing import ProtocolTypeRouter, URLRouter  # noqa: E402
 
-from django_idom import IdomAsyncWebSocketConsumer
 
 
 application = ProtocolTypeRouter(
