@@ -39,18 +39,21 @@ def format(session: Session) -> None:
 def test(session: Session) -> None:
     """Run the complete test suite"""
     session.install("--upgrade", "pip", "setuptools", "wheel")
-    session.notify("test_suite")
+    session.notify("test_suite", posargs=session.posargs)
     session.notify("test_style")
 
 
 @nox.session
 def test_suite(session: Session) -> None:
     """Run the Python-based test suite"""
-    session.env["IDOM_DEBUG_MODE"] = "1"
     install_requirements_file(session, "test-env")
     session.install(".[all]")
-    session.chdir("tests")
-    session.run("figure-it-out")
+
+    session.chdir(HERE / "tests")
+    session.env["IDOM_DEBUG_MODE"] = "1"
+    session.env["SELENIUM_HEADLESS"] = str(int("--headless" in session.posargs))
+    session.run("python", "manage.py", "build_js")
+    session.run("python", "manage.py", "test")
 
 
 @nox.session

@@ -14,7 +14,7 @@ from django.core.asgi import get_asgi_application
 
 from django_idom import IdomAsyncWebSocketConsumer  # noqa: E402
 
-from .views import HelloWorld
+from .views import Root
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
@@ -29,7 +29,7 @@ application = ProtocolTypeRouter(
     {
         "http": http_asgi_app,
         "websocket": URLRouter(
-            [url("", IdomAsyncWebSocketConsumer.as_asgi(component=HelloWorld))]
+            [url("", IdomAsyncWebSocketConsumer.as_asgi(component=Root))]
         ),
     }
 )
