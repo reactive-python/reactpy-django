@@ -1,0 +1,4 @@
+-r requirements/pkg-deps.txt
+-r requirements/check-style.txt
+-r requirements/test-env.txt
+-r requirements/test-run.txt

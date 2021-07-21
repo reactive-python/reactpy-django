@@ -1,0 +1,35 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  test-python-versions:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: nanasess/setup-chromedriver@master
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: "14"
+      - name: Use Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Python Dependencies
+        run: pip install -r requirements/test-run.txt
+      - name: Run Tests
+        run: |
+          npm install -g npm@latest
+          npm --version
+          nox -s test -- --headless

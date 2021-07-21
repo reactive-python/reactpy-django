@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://idom-docs.herokuapp.com/
+    about: Refer to the documentation before starting a discussion
+  - name: Community Support
+    url: https://github.com/idom-team/idom/discussions
+    about: Report issues, request features, and ask questions
