@@ -12,7 +12,7 @@ if (LOCATION.protocol == "https:") {
 let WS_ENDPOINT_URL = WS_PROTOCOL + LOCATION.host + "/";
 
 
-export function mountViewToElement(idomWebsocketUrl, viewId) {
-  const fullWebsocketUrl = WS_ENDPOINT_URL + idomWebsocketUrl
-  mountLayoutWithWebSocket(document.getElementById(viewId), fullWebsocketUrl);
+export function mountViewToElement(mountPoint, idomWebsocketUrl, viewId, queryParams) {
+  const fullWebsocketUrl = WS_ENDPOINT_URL + idomWebsocketUrl + viewId + "/";
+  mountLayoutWithWebSocket(mountPoint, fullWebsocketUrl);
 }

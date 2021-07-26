@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from django import template
 
 from django_idom.app_settings import IDOM_WEBSOCKET_URL
@@ -8,10 +10,15 @@ register = template.Library()
 
 # Template tag that renders the IDOM scripts
 @register.inclusion_tag("idom/head_content.html")
-def idom_scripts():
+def idom_head():
     pass
 
 
 @register.inclusion_tag("idom/view.html")
-def idom_view(view_id):
-    return {"idom_websocket_url": IDOM_WEBSOCKET_URL, "view_id": view_id}
+def idom_view(view_id, view_params=""):
+    return {
+        "idom_websocket_url": IDOM_WEBSOCKET_URL,
+        "idom_mount_uuid": uuid4().hex,
+        "idom_view_id": view_id,
+        "idom_view_params": view_params,
+    }

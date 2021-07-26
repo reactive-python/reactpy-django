@@ -1,5 +1,12 @@
-<div id="{{ idom_view_id }}"></div>
+{% load static %}
+<div id="{{ idom_mount_uuid }}"></div>
 <script type="module" crossorigin="anonymous">
-  import { mountToElement } from "{% static 'js/idom.js' %}";
-  mountViewToElement("{{ idom_websocket_url }}", "{{ idom_view_id }}");
+  import { mountViewToElement } from "{% static 'js/idom.js' %}";
+  const mountPoint = document.getElementById("{{ idom_mount_uuid }}");
+  mountViewToElement(
+    mountPoint,
+    "{{ idom_websocket_url }}",
+    "{{ idom_view_id }}",
+    "{{ idom_view_params }}"
+  );
 </script>

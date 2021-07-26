@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %} {% load idom %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -15,7 +15,7 @@
 
   <body>
     <h1>IDOM Test Page</h1>
-    <div id="mount"></div>
-    <script src="{% static 'build.js' %}" crossorigin="anonymous"></script>
+    <div>{% idom_view "test_app.HelloWorld" %}</div>
+    <div>{% idom_view "test_app.Button" %}</div>
   </body>
 </html>

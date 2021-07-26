@@ -1,0 +1,3 @@
+include src/django_idom/static/js/idom.js
+include src/django_idom/templates/head_content.html
+include src/django_idom/templates/view.html

@@ -2,15 +2,33 @@
 import asyncio
 import logging
 from typing import Any
+from urllib.parse import parse_qsl
 
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from django.urls import path
 from idom.core.dispatcher import dispatch_single_view
 from idom.core.layout import Layout, LayoutEvent
 
-from .view_loader import ALL_VIEWS
+from .app_components import get_component, has_component
+from .app_settings import IDOM_WEBSOCKET_URL
 
 
 logger = logging.getLogger(__name__)
+
+
+def django_idom_websocket_consumer_url(*args, **kwargs):
+    """Return a URL resolver for :class:`IdomAsyncWebSocketConsumer`
+
+    While this is relatively uncommon in most Django apps, because the URL of the
+    websocket must be defined by the setting ``IDOM_WEBSOCKET_URL``. There's no need
+    to allow users to configure the URL themselves
+    """
+    return path(
+        IDOM_WEBSOCKET_URL + "<view_id>/",
+        IdomAsyncWebSocketConsumer.as_asgi(),
+        *args,
+        **kwargs,
+    )
 
 
 class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
@@ -34,23 +52,21 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
         await self._idom_recv_queue.put(LayoutEvent(**content))
 
     async def _run_dispatch_loop(self):
-        # get the URL parameters and grab the view ID
-        view_id = ...
-        # get component ags from the URL params too
-        component_args = ...
+        view_id = self.scope["url_route"]["kwargs"]["view_id"]
 
-        if view_id not in ALL_VIEWS:
-            logger.warning(f"Uknown IDOM view ID {view_id}")
+        if not has_component(view_id):
+            logger.warning(f"Uknown IDOM view ID {view_id!r}")
             return
 
-        component_constructor = ALL_VIEWS[view_id]
+        component_constructor = get_component(view_id)
+        component_kwargs = dict(parse_qsl(self.scope["query_string"]))
 
         try:
-            component_instance = component_constructor(*component_args)
+            component_instance = component_constructor(**component_kwargs)
         except Exception:
             logger.exception(
                 f"Failed to construct component {component_constructor} "
-                f"with parameters {component_args}"
+                f"with parameters {component_kwargs}"
             )
             return
 
