@@ -12,5 +12,5 @@ def idom_scripts():
 
 # Template tag that renders an empty idom root object
 @register.inclusion_tag("idom/root.html")
-def idom_root(html_id):
+def idom_view(html_id):
     return {"html_id": html_id}
