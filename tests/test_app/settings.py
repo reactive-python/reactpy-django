@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "channels",  # Websocket library
+    "django_idom",  # Django compatible IDOM client
     "test_app",  # This test application
 ]
 MIDDLEWARE = [

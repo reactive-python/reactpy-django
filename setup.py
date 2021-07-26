@@ -1,8 +1,25 @@
-import os
+from __future__ import print_function
+
+import pipes
+import shutil
+import subprocess
 import sys
+import traceback
+from distutils import log
+from distutils.command.build import build  # type: ignore
+from distutils.command.sdist import sdist  # type: ignore
 from pathlib import Path
 
 from setuptools import find_packages, setup
+from setuptools.command.develop import develop
+
+
+if sys.platform == "win32":
+    from subprocess import list2cmdline
+else:
+
+    def list2cmdline(cmd_list):
+        return " ".join(map(pipes.quote, cmd_list))
 
 
 # the name of the project
@@ -31,6 +48,7 @@ package = {
     "license": "MIT",
     "platforms": "Linux, Mac OS X, Windows",
     "keywords": ["interactive", "widgets", "DOM", "React"],
+    "include_package_data": True,
     "zip_safe": False,
     "classifiers": [
         "Framework :: Django",
@@ -52,14 +70,14 @@ package = {
 # Library Version
 # -----------------------------------------------------------------------------
 
-with open(os.path.join(package_dir, "__init__.py")) as f:
-    for line in f.read().split("\n"):
-        if line.startswith("__version__ = "):
-            package["version"] = eval(line.split("=", 1)[1])
-            break
-    else:
-        print("No version found in %s/__init__.py" % package_dir)
-        sys.exit(1)
+
+for line in (package_dir / "__init__.py").read_text().split("\n"):
+    if line.startswith("__version__ = "):
+        package["version"] = eval(line.split("=", 1)[1])
+        break
+else:
+    print("No version found in %s/__init__.py" % package_dir)
+    sys.exit(1)
 
 
 # -----------------------------------------------------------------------------
@@ -85,6 +103,42 @@ with (root_dir / "README.md").open() as f:
 
 package["long_description"] = long_description
 package["long_description_content_type"] = "text/markdown"
+
+
+# ----------------------------------------------------------------------------
+# Build Javascript
+# ----------------------------------------------------------------------------
+
+
+def build_javascript_first(cls):
+    class Command(cls):
+        def run(self):
+            log.info("Installing Javascript...")
+            try:
+                js_dir = str(src_dir / "js")
+                npm = shutil.which("npm")  # this is required on windows
+                if npm is None:
+                    raise RuntimeError("NPM is not installed.")
+                for args in (f"{npm} install", f"{npm} run build"):
+                    args_list = args.split()
+                    log.info(f"> {list2cmdline(args_list)}")
+                    subprocess.run(args_list, cwd=js_dir, check=True)
+            except Exception:
+                log.error("Failed to install Javascript")
+                log.error(traceback.format_exc())
+                raise
+            else:
+                log.info("Successfully installed Javascript")
+            super().run()
+
+    return Command
+
+
+package["cmdclass"] = {
+    "sdist": build_javascript_first(sdist),
+    "build": build_javascript_first(build),
+    "develop": build_javascript_first(develop),
+}
 
 
 # -----------------------------------------------------------------------------
