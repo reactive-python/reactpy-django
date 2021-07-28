@@ -2,6 +2,7 @@ from pathlib import Path
 
 from django.conf import settings
 
+
 APP_DIR = Path(__file__).parent
 
 TEMPLATE_FILE_PATHS = {
