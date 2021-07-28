@@ -19,3 +19,18 @@ def Button():
             f"Current count is: {count}",
         ),
     )
+
+
+@idom.component
+def ParametrizedComponent(x, y):
+    total = x + y
+    return idom.html.h1({"id": "parametrized-component", "data-value": total}, total)
+
+
+victory = idom.web.module_from_template("react", "victory", fallback="...")
+VictoryBar = idom.web.export(victory, "VictoryBar")
+
+
+@idom.component
+def SimpleBarChart():
+    return VictoryBar()

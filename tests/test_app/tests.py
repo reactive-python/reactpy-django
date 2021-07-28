@@ -2,6 +2,8 @@ import os
 
 from channels.testing import ChannelsLiveServerTestCase
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 
 
@@ -13,8 +15,11 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
     def tearDown(self) -> None:
         self.driver.quit()
 
+    def wait(self, timeout=5):
+        return WebDriverWait(self.driver, timeout)
+
     def wait_until(self, condition, timeout=5):
-        WebDriverWait(self.driver, timeout).until(lambda driver: condition())
+        return self.wait(timeout).until(lambda driver: condition())
 
     def test_hello_world(self):
         self.driver.find_element_by_id("hello-world")
@@ -26,6 +31,17 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
         for i in range(5):
             self.wait_until(lambda: count.get_attribute("data-count") == str(i))
             button.click()
+
+    def test_parametrized_component(self):
+        element = self.driver.find_element_by_id("parametrized-component")
+        self.assertEqual(element.get_attribute("data-value"), "579")
+
+    def test_component_from_web_module(self):
+        self.wait(10).until(
+            expected_conditions.visibility_of_element_located(
+                (By.CLASS_NAME, "VictoryContainer")
+            )
+        )
 
 
 def make_driver(page_load_timeout, implicit_wait_timeout):

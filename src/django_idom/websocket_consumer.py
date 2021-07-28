@@ -1,34 +1,18 @@
 """Anything used to construct a websocket endpoint"""
 import asyncio
+import json
 import logging
 from typing import Any
 from urllib.parse import parse_qsl
 
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from django.urls import path
 from idom.core.dispatcher import dispatch_single_view
 from idom.core.layout import Layout, LayoutEvent
 
 from .app_components import get_component, has_component
-from .app_settings import IDOM_WEBSOCKET_URL
 
 
 logger = logging.getLogger(__name__)
-
-
-def django_idom_websocket_consumer_url(*args, **kwargs):
-    """Return a URL resolver for :class:`IdomAsyncWebSocketConsumer`
-
-    While this is relatively uncommon in most Django apps, because the URL of the
-    websocket must be defined by the setting ``IDOM_WEBSOCKET_URL``. There's no need
-    to allow users to configure the URL themselves
-    """
-    return path(
-        IDOM_WEBSOCKET_URL + "<view_id>/",
-        IdomAsyncWebSocketConsumer.as_asgi(),
-        *args,
-        **kwargs,
-    )
 
 
 class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
@@ -59,7 +43,9 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
             return
 
         component_constructor = get_component(view_id)
-        component_kwargs = dict(parse_qsl(self.scope["query_string"]))
+
+        query_dict = dict(parse_qsl(self.scope["query_string"].decode()))
+        component_kwargs = json.loads(query_dict.get("kwargs", "{}"))
 
         try:
             component_instance = component_constructor(**component_kwargs)
