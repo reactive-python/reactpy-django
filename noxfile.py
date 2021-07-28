@@ -51,8 +51,16 @@ def test_suite(session: Session) -> None:
 
     session.chdir(HERE / "tests")
     session.env["IDOM_DEBUG_MODE"] = "1"
-    session.env["SELENIUM_HEADLESS"] = str(int("--headless" in session.posargs))
-    session.run("python", "manage.py", "test")
+
+    posargs = session.posargs[:]
+    if "--headless" in posargs:
+        posargs.remove("--headless")
+        session.env["SELENIUM_HEADLESS"] = "1"
+
+    if "--no-debug-mode" not in posargs:
+        posargs.append("--debug-mode")
+
+    session.run("python", "manage.py", "test", *posargs)
 
 
 @nox.session
