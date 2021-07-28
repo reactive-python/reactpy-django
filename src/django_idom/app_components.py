@@ -27,24 +27,26 @@ for app_mod_name in settings.INSTALLED_APPS:
         logger.debug(f"Skipping {idom_mod_name!r} - does not exist")
         continue
 
-    if not hasattr(idom_mod, "__all__"):
+    if not hasattr(idom_mod, "components"):
         logger.warning(
             f"'django_idom' expected module {idom_mod_name!r} to have an "
-            "'__all__' attribute that lists its publically available components."
+            "'components' attribute that lists its publically available components."
         )
         continue
 
-    for component_name in idom_mod.__all__:
-        try:
-            component_constructor = getattr(idom_mod, component_name)
-        except AttributeError:
+    for component_constructor in idom_mod.components:
+        if not callable(component_constructor):
             logger.warning(
-                f"Module {idom_mod_name!r} has no attribute {component_name!r}"
+                f"{component_constructor} is not a callable component constructor"
             )
             continue
 
-        if not callable(component_constructor):
-            logger.warning(f"'{idom_mod_name}.{component_name}' is not a component")
+        try:
+            component_name = getattr(component_constructor, "__name__")
+        except AttributeError:
+            logger.warning(
+                f"Component constructor {component_constructor} has not attribute '__name__'"
+            )
             continue
 
         _LOADED_COMPONENTS[f"{app_mod_name}.{component_name}"] = component_constructor
