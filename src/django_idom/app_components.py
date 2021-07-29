@@ -5,6 +5,8 @@ from typing import Dict
 from django.conf import settings
 from idom.core.proto import ComponentConstructor
 
+from .app_settings import IDOM_IGNORED_DJANGO_APPS
+
 
 logger = logging.getLogger(__name__)
 _LOADED_COMPONENTS: Dict[str, ComponentConstructor] = {}
@@ -19,6 +21,10 @@ def has_component(name: str) -> bool:
 
 
 for app_mod_name in settings.INSTALLED_APPS:
+    if app_mod_name in IDOM_IGNORED_DJANGO_APPS:
+        logger.debug(f"{idom_mod_name!r} skipped by IDOM_IGNORED_DJANGO_APPS")
+        continue
+
     idom_mod_name = f"{app_mod_name}.idom"
 
     try:
@@ -36,17 +42,23 @@ for app_mod_name in settings.INSTALLED_APPS:
 
     for component_constructor in idom_mod.components:
         if not callable(component_constructor):
-            logger.warning(
+            raise ValueError(
                 f"{component_constructor} is not a callable component constructor"
             )
-            continue
 
         try:
             component_name = getattr(component_constructor, "__name__")
         except AttributeError:
-            logger.warning(
+            raise ValueError(
                 f"Component constructor {component_constructor} has not attribute '__name__'"
             )
-            continue
+
+        full_component_name = f"{app_mod_name}.{component_name}"
+
+        if full_component_name in _LOADED_COMPONENTS:
+            raise ValueError(
+                f"Component constructor named {component_name!r} has already been "
+                f"declared by the app {app_mod_name!r}"
+            )
 
         _LOADED_COMPONENTS[f"{app_mod_name}.{component_name}"] = component_constructor
