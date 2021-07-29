@@ -9,6 +9,7 @@ from django_idom.app_settings import (
     IDOM_WEBSOCKET_URL,
     TEMPLATE_FILE_PATHS,
 )
+
 from ..app_components import has_component
 
 

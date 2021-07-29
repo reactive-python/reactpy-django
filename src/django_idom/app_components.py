@@ -5,7 +5,7 @@ from typing import Dict
 from django.conf import settings
 from idom.core.proto import ComponentConstructor
 
-from .app_settings import IDOM_IGNORED_DJANGO_APPS
+from .app_settings import IDOM_IGNORE_INSTALLED_APPS
 
 
 logger = logging.getLogger(__name__)
@@ -21,8 +21,8 @@ def has_component(name: str) -> bool:
 
 
 for app_mod_name in settings.INSTALLED_APPS:
-    if app_mod_name in IDOM_IGNORED_DJANGO_APPS:
-        logger.debug(f"{idom_mod_name!r} skipped by IDOM_IGNORED_DJANGO_APPS")
+    if app_mod_name in IDOM_IGNORE_INSTALLED_APPS:
+        logger.debug(f"{app_mod_name!r} skipped by IDOM_IGNORE_INSTALLED_APPS")
         continue
 
     idom_mod_name = f"{app_mod_name}.idom"
