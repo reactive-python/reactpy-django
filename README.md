@@ -10,9 +10,10 @@
   <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-purple.svg">
 </a>
 
-`django-idom` allows you to integrate [IDOM](https://github.com/idom-team/idom), a
-package for building highly interactive user interfaces in pure Python inspired by
-[ReactJS](https://reactjs.org/), into Django applications.
+`django-idom` allows you to integrate [IDOM](https://github.com/idom-team/idom) into
+Django applications. IDOM being a package for building responsive user interfaces in
+pure Python which is inspired by [ReactJS](https://reactjs.org/). For more information
+on IDOM refer to [its documentation](https://idom-docs.herokuapp.com).
 
 **You can try IDOM now in a Jupyter Notebook:**
 <a
@@ -24,8 +25,6 @@ package for building highly interactive user interfaces in pure Python inspired 
     height="21px"
     src="https://mybinder.org/badge_logo.svg"/>
 </a>
-
-For more information on IDOM refer to [its documentation](https://idom-docs.herokuapp.com).
 
 
 # Install Django IDOM
@@ -129,8 +128,15 @@ INSTALLED_APPS = [
 ## `templates/your-template.html`
 
 In your templates, you may inject a view of an IDOM component into your templated HTML
-by using the `idom_view` Jinja tag. You can even pass parameters to your component from
-the template via keyword arguments:
+by using the `idom_view` Jinja tag. This tag which requires the name of a component to
+render (of the form `app_name.ComponentName`) and keyword arguments you'd like to pass
+it from the template.
+
+```python
+idom_view app_name.ComponentName param_1="something" param_2="something-else"
+```
+
+In context this will look a bit like the following...
 
 ```html
 <!-- don't forget your load statements -->
@@ -146,7 +152,8 @@ the template via keyword arguments:
 </html>
 ```
 
-Your view for this template can be defined just like any other
+Your view for this template can be defined just
+[like any other](https://docs.djangoproject.com/en/3.2/intro/tutorial03/#write-views-that-actually-do-something).
 
 ## `urls.py`
 
@@ -156,7 +163,7 @@ To your list of URLs you'll need to include IDOM's static web modules path using
 ```python
 from django.urls import path
 from django_idom import django_idom_web_modules_path
-from .views import your_template
+from .views import your_template  # define this view like any other HTML template
 
 
 urlpatterns = [
@@ -173,6 +180,6 @@ You may configure additional options in your `settings.py` file
 # the base URL for all IDOM-releated resources
 IDOM_BASE_URL: str = "_idom/"
 
-# ignore these apps during component collection
-IDOM_IGNORED_DJANGO_APPS: set[str] = {"some_app", "some_other_app"}
+# ignore these INSTALLED_APPS during component collection
+IDOM_IGNORE_INSTALLED_APPS: set[str] = {"some_app", "some_other_app"}
 ```
