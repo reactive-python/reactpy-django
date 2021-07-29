@@ -15,7 +15,8 @@ POSARGS_PATTERN = re.compile(r"^(\w+)\[(.+)\]$")
 
 
 @nox.session(reuse_venv=True)
-def manage(session: Session) -> None:
+def test_app(session: Session) -> None:
+    """Run a manage.py command for tests/test_app"""
     session.install("-r", "requirements.txt")
     session.install("idom[stable]")
     session.install("-e", ".")
@@ -30,6 +31,7 @@ def manage(session: Session) -> None:
 
 @nox.session(reuse_venv=True)
 def format(session: Session) -> None:
+    """Run automatic code formatters"""
     install_requirements_file(session, "check-style")
     session.run("black", ".")
     session.run("isort", ".")
