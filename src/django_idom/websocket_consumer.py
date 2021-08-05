@@ -12,7 +12,7 @@ from idom.core.layout import Layout, LayoutEvent
 from .app_components import get_component, has_component
 
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
@@ -39,7 +39,7 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
         view_id = self.scope["url_route"]["kwargs"]["view_id"]
 
         if not has_component(view_id):
-            logger.warning(f"Uknown IDOM view ID {view_id!r}")
+            _logger.warning(f"Uknown IDOM view ID {view_id!r}")
             return
 
         component_constructor = get_component(view_id)
@@ -50,7 +50,7 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
         try:
             component_instance = component_constructor(**component_kwargs)
         except Exception:
-            logger.exception(
+            _logger.exception(
                 f"Failed to construct component {component_constructor} "
                 f"with parameters {component_kwargs}"
             )

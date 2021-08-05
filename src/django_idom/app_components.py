@@ -8,7 +8,7 @@ from idom.core.proto import ComponentConstructor
 from .app_settings import IDOM_IGNORE_INSTALLED_APPS
 
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 _LOADED_COMPONENTS: Dict[str, ComponentConstructor] = {}
 
 
@@ -22,7 +22,7 @@ def has_component(name: str) -> bool:
 
 for app_mod_name in settings.INSTALLED_APPS:
     if app_mod_name in IDOM_IGNORE_INSTALLED_APPS:
-        logger.debug(f"{app_mod_name!r} skipped by IDOM_IGNORE_INSTALLED_APPS")
+        _logger.debug(f"{app_mod_name!r} skipped by IDOM_IGNORE_INSTALLED_APPS")
         continue
 
     idom_mod_name = f"{app_mod_name}.idom"
@@ -30,11 +30,11 @@ for app_mod_name in settings.INSTALLED_APPS:
     try:
         idom_mod = import_module(idom_mod_name)
     except ImportError:
-        logger.debug(f"Skipping {idom_mod_name!r} - does not exist")
+        _logger.debug(f"Skipping {idom_mod_name!r} - does not exist")
         continue
 
     if not hasattr(idom_mod, "components"):
-        logger.warning(
+        _logger.warning(
             f"'django_idom' expected module {idom_mod_name!r} to have an "
             "'components' attribute that lists its publically available components."
         )
