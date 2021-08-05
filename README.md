@@ -53,7 +53,7 @@ your_app/
 To start, we'll need to use [`channels`](https://channels.readthedocs.io/en/stable/) to
 create a `ProtocolTypeRouter` that will become the top of our ASGI application stack.
 Under the `"websocket"` protocol, we'll then add a path for IDOM's websocket consumer
-using `django_idom_websocket_consumer_path`. If you wish to change the route where this
+using `idom_websocket_path`. If you wish to change the route where this
 websocket is served from see the [settings](#configuration-options).
 
 ```python
@@ -62,7 +62,7 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-from django_idom import django_idom_websocket_consumer_path
+from django_idom import idom_websocket_path
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
 
@@ -76,7 +76,7 @@ application = ProtocolTypeRouter(
         "http": http_asgi_app,
         "websocket": URLRouter(
           # add a path for IDOM's websocket
-          [django_idom_websocket_consumer_path()]
+          [idom_websocket_path()]
         ),
     }
 )
@@ -158,17 +158,17 @@ Your view for this template can be defined just
 ## `urls.py`
 
 To your list of URLs you'll need to include IDOM's static web modules path using
-`django_idom_web_modules_path`:
+`idom_web_modules_path`:
 
 ```python
 from django.urls import path
-from django_idom import django_idom_web_modules_path
+from django_idom import idom_web_modules_path
 from .views import your_template  # define this view like any other HTML template
 
 
 urlpatterns = [
     path("", your_template),
-    django_idom_web_modules_path(),
+    idom_web_modules_path(),
 ]
 ```
 
