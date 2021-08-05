@@ -128,9 +128,9 @@ INSTALLED_APPS = [
 ## `templates/your-template.html`
 
 In your templates, you may inject a view of an IDOM component into your templated HTML
-by using the `idom_view` Jinja tag. This tag which requires the name of a component to
-render (of the form `app_name.ComponentName`) and keyword arguments you'd like to pass
-it from the template.
+by using the `idom_view` template tag. This tag which requires the name of a component
+to render (of the form `app_name.ComponentName`) and keyword arguments you'd like to
+pass it from the template.
 
 ```python
 idom_view app_name.ComponentName param_1="something" param_2="something-else"
