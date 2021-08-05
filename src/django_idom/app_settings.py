@@ -3,13 +3,6 @@ from pathlib import Path
 from django.conf import settings
 
 
-APP_DIR = Path(__file__).parent
-
-TEMPLATE_FILE_PATHS = {
-    file.stem: str(file.absolute())
-    for file in (APP_DIR / "templates" / "idom").iterdir()
-}
-
 IDOM_IGNORE_INSTALLED_APPS = set(getattr(settings, "IDOM_IGNORE_INSTALLED_APPS", []))
 
 IDOM_BASE_URL = getattr(settings, "IDOM_BASE_URL", "_idom/")

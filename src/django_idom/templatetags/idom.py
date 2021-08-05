@@ -4,11 +4,7 @@ from uuid import uuid4
 
 from django import template
 
-from django_idom.app_settings import (
-    IDOM_WEB_MODULES_URL,
-    IDOM_WEBSOCKET_URL,
-    TEMPLATE_FILE_PATHS,
-)
+from django_idom.app_settings import IDOM_WEB_MODULES_URL, IDOM_WEBSOCKET_URL
 
 from ..app_components import has_component
 
@@ -16,13 +12,7 @@ from ..app_components import has_component
 register = template.Library()
 
 
-# Template tag that renders the IDOM scripts
-@register.inclusion_tag(TEMPLATE_FILE_PATHS["head_content"])
-def idom_head():
-    pass
-
-
-@register.inclusion_tag(TEMPLATE_FILE_PATHS["view"])
+@register.inclusion_tag("idom/view.html")
 def idom_view(_component_id_, **kwargs):
     if not has_component(_component_id_):
         raise ValueError(f"No component {_component_id_!r} exists")
