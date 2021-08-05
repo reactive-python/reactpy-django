@@ -39,13 +39,17 @@ To integrate IDOM into your application you'll need to modify or add the followi
 
 ```
 your_app/
+├── __init__.py
 ├── asgi.py
-├── components.py
-├── idom.py
 ├── settings.py
-├── templates/
-│   ├── your-template.html
-└── urls.py
+├── urls.py
+└── sub_app/
+    ├── __init__.py
+    ├── components.py
+    ├── idom.py
+    ├── templates/
+    │   └── your-template.html
+    └── urls.py
 ```
 
 ## `asgi.py`
@@ -54,7 +58,7 @@ To start, we'll need to use [`channels`](https://channels.readthedocs.io/en/stab
 create a `ProtocolTypeRouter` that will become the top of our ASGI application stack.
 Under the `"websocket"` protocol, we'll then add a path for IDOM's websocket consumer
 using `idom_websocket_path`. If you wish to change the route where this
-websocket is served from see the [settings](#configuration-options).
+websocket is served from see the available [settings](#settings.py).
 
 ```python
 
@@ -82,7 +86,44 @@ application = ProtocolTypeRouter(
 )
 ```
 
-## `components.py`
+## `settings.py`
+
+In your settings you'll need to add `django_idom` to the
+[`INSTALLED_APPS`](https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-INSTALLED_APPS)
+list:
+
+```python
+INSTALLED_APPS = [
+  ...,
+  "django_idom",
+]
+```
+
+You may configure additional options as well:
+
+```python
+# the base URL for all IDOM-releated resources
+IDOM_BASE_URL: str = "_idom/"
+
+# ignore these INSTALLED_APPS during component collection
+IDOM_IGNORE_INSTALLED_APPS: list[str] = ["some_app", "some_other_app"]
+```
+
+## `urls.py`
+
+You'll need to include IDOM's static web modules path using `idom_web_modules_path`.
+Similarly to the `idom_websocket_path()`, these resources will be used globally.
+
+```python
+from django_idom import idom_web_modules_path
+
+urlpatterns = [
+    idom_web_modules_path(),
+    ...
+]
+```
+
+## `sub_app/components.py`
 
 This is where, by a convention similar to that of
 [`views.py`](https://docs.djangoproject.com/en/3.2/topics/http/views/), you'll define
@@ -97,35 +138,36 @@ def Hello(name):  # component names are camelcase by convention
     return idom.html.h1(f"Hello {name}!")
 ```
 
-## `idom.py`
+## `sub_app/idom.py`
 
 This file is automatically discovered by `django-idom` when scanning the list of
 [`INSTALLED_APPS`](https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-INSTALLED_APPS).
 All apps that export components will contain this module.
 
 Inside this module must be a `components` list that is imported from
-[`components.py`](#components.py):
+[`components.py`](#sub_appcomponents.py):
 
 ```python
 from .components import Hello
 
-components = [Hello]
-```
-
-## `settings.py`
-
-In your settings you'll need to add `django_idom` to the
-[`INSTALLED_APPS`](https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-INSTALLED_APPS)
-list:
-
-```python
-INSTALLED_APPS = [
-  ...,
-  "django_idom",
+components = [
+    Hello,
+    ...
 ]
 ```
 
-## `templates/your-template.html`
+You may alternately reference the components with strings for the purpose of renaming:
+
+```python
+from .components import Hello as SomeOtherName
+
+components = [
+    "SomeOtherName",
+    ...
+]
+```
+
+## `sub_app/templates/your-template.html`
 
 In your templates, you may inject a view of an IDOM component into your templated HTML
 by using the `idom_view` template tag. This tag which requires the name of a component
@@ -147,7 +189,7 @@ In context this will look a bit like the following...
 <html>
   <body>
     ...
-    {% idom_view "test_app.Hello" name="World" %}
+    {% idom_view "your_app.sub_app.Hello" name="World" %}
   </body>
 </html>
 ```
@@ -155,33 +197,32 @@ In context this will look a bit like the following...
 Your view for this template can be defined just
 [like any other](https://docs.djangoproject.com/en/3.2/intro/tutorial03/#write-views-that-actually-do-something).
 
-## `urls.py`
+## `sub_app/views.py`
 
-To your list of URLs you'll need to include IDOM's static web modules path using
-`idom_web_modules_path`:
+```python
+from django.http import HttpResponse
+from django.template import loader
+
+
+def your_template(request):
+    context = {}
+    return HttpResponse(
+      loader.get_template("your-template.html").render(context, request)
+    )
+```
+
+## `sub_app/urls.py`
+
+Include your replate in the list of urlpatterns
 
 ```python
 from django.urls import path
-from django_idom import idom_web_modules_path
 from .views import your_template  # define this view like any other HTML template
-
 
 urlpatterns = [
     path("", your_template),
-    idom_web_modules_path(),
+    ...
 ]
-```
-
-# Configuration Options
-
-You may configure additional options in your `settings.py` file
-
-```python
-# the base URL for all IDOM-releated resources
-IDOM_BASE_URL: str = "_idom/"
-
-# ignore these INSTALLED_APPS during component collection
-IDOM_IGNORE_INSTALLED_APPS: set[str] = {"some_app", "some_other_app"}
 ```
 
 # Developer Guide

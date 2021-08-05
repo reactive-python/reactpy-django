@@ -40,17 +40,23 @@ for app_mod_name in settings.INSTALLED_APPS:
         )
         continue
 
-    for component_constructor in idom_mod.components:
+    for component_value in idom_mod.components:
+        if isinstance(component_value, str):
+            component_name = component_value
+            component_constructor = getattr(idom_mod, component_name)
+        else:
+            component_constructor = component_value
+
+            try:
+                component_name = getattr(component_constructor, "__name__")
+            except AttributeError:
+                raise ValueError(
+                    f"Component constructor {component_constructor} has no attribute '__name__'"
+                )
+
         if not callable(component_constructor):
             raise ValueError(
                 f"{component_constructor} is not a callable component constructor"
-            )
-
-        try:
-            component_name = getattr(component_constructor, "__name__")
-        except AttributeError:
-            raise ValueError(
-                f"Component constructor {component_constructor} has not attribute '__name__'"
             )
 
         full_component_name = f"{app_mod_name}.{component_name}"
