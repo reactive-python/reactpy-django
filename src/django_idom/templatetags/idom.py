@@ -4,9 +4,11 @@ from uuid import uuid4
 
 from django import template
 
-from django_idom.app_settings import IDOM_WEB_MODULES_URL, IDOM_WEBSOCKET_URL
-
-from ..app_components import has_component
+from django_idom.config import (
+    IDOM_REGISTERED_COMPONENTS,
+    IDOM_WEB_MODULES_URL,
+    IDOM_WEBSOCKET_URL,
+)
 
 
 register = template.Library()
@@ -14,7 +16,8 @@ register = template.Library()
 
 @register.inclusion_tag("idom/view.html")
 def idom_view(_component_id_, **kwargs):
-    if not has_component(_component_id_):
+    if _component_id_ not in IDOM_REGISTERED_COMPONENTS:
+        print(list(IDOM_REGISTERED_COMPONENTS))
         raise ValueError(f"No component {_component_id_!r} exists")
 
     json_kwargs = json.dumps(kwargs, separators=(",", ":"))

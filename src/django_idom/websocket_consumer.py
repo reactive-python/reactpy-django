@@ -9,7 +9,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from idom.core.dispatcher import dispatch_single_view
 from idom.core.layout import Layout, LayoutEvent
 
-from .app_components import get_component, has_component
+from .config import IDOM_REGISTERED_COMPONENTS
 
 
 _logger = logging.getLogger(__name__)
@@ -38,11 +38,11 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
     async def _run_dispatch_loop(self):
         view_id = self.scope["url_route"]["kwargs"]["view_id"]
 
-        if not has_component(view_id):
+        try:
+            component_constructor = IDOM_REGISTERED_COMPONENTS[view_id]
+        except KeyError:
             _logger.warning(f"Uknown IDOM view ID {view_id!r}")
             return
-
-        component_constructor = get_component(view_id)
 
         query_dict = dict(parse_qsl(self.scope["query_string"].decode()))
         component_kwargs = json.loads(query_dict.get("kwargs", "{}"))

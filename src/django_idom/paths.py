@@ -1,7 +1,7 @@
 from django.urls import path
 
 from . import views
-from .app_settings import IDOM_WEB_MODULES_URL, IDOM_WEBSOCKET_URL
+from .config import IDOM_WEB_MODULES_URL, IDOM_WEBSOCKET_URL
 from .websocket_consumer import IdomAsyncWebSocketConsumer
 
 
