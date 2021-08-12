@@ -43,7 +43,7 @@ your_app/
 ├── asgi.py
 ├── settings.py
 ├── urls.py
-└── sub_app/
+└── example_app/
     ├── __init__.py
     ├── idom.py
     ├── templates/
@@ -120,7 +120,7 @@ urlpatterns = [
 ]
 ```
 
-## `sub_app/components.py`
+## `example_app/components.py`
 
 This is where, by a convention similar to that of
 [`views.py`](https://docs.djangoproject.com/en/3.2/topics/http/views/), you'll define
@@ -136,7 +136,7 @@ def Hello(name):  # component names are camelcase by convention
     return Header(f"Hello {name}!")
 ```
 
-## `sub_app/templates/your-template.html`
+## `example_app/templates/your-template.html`
 
 In your templates, you may inject a view of an IDOM component into your templated HTML
 by using the `idom_view` template tag. This tag which requires the name of a component
@@ -149,7 +149,7 @@ idom_view module_name.ComponentName param_1="something" param_2="something-else"
 
 In context this will look a bit like the following...
 
-```html
+```jinja
 <!-- don't forget your load statements -->
 {% load static %}
 {% load idom %}
@@ -158,15 +158,15 @@ In context this will look a bit like the following...
 <html>
   <body>
     ...
-    {% idom_view "your_app.sub_app.components.Hello" name="World" %}
+    {% idom_view "your_app.example_app.components.Hello" name="World" %}
   </body>
 </html>
 ```
 
-Your view for this template can be defined just
-[like any other](https://docs.djangoproject.com/en/3.2/intro/tutorial03/#write-views-that-actually-do-something).
+## `example_app/views.py`
 
-## `sub_app/views.py`
+You can then serve `your-template.html` from a view just
+[like any other](https://docs.djangoproject.com/en/3.2/intro/tutorial03/#write-views-that-actually-do-something).
 
 ```python
 from django.http import HttpResponse
@@ -180,7 +180,7 @@ def your_template(request):
     )
 ```
 
-## `sub_app/urls.py`
+## `example_app/urls.py`
 
 Include your replate in the list of urlpatterns
 
