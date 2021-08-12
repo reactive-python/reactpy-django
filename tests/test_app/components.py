@@ -1,14 +1,12 @@
 import idom
 
-from django_idom import register_component
 
-
-@register_component
+@idom.component
 def HelloWorld():
     return idom.html.h1({"id": "hello-world"}, "Hello World!")
 
 
-@register_component
+@idom.component
 def Button():
     count, set_count = idom.hooks.use_state(0)
     return idom.html.div(
@@ -23,16 +21,16 @@ def Button():
     )
 
 
-@register_component
+@idom.component
 def ParametrizedComponent(x, y):
     total = x + y
     return idom.html.h1({"id": "parametrized-component", "data-value": total}, total)
 
 
-victory = idom.web.module_from_template("react", "victory-line", fallback="...")
+victory = idom.web.module_from_template("react", "victory-bar", fallback="...")
 VictoryBar = idom.web.export(victory, "VictoryBar")
 
 
-@register_component
+@idom.component
 def SimpleBarChart():
     return VictoryBar()

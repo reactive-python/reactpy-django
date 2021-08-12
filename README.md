@@ -45,7 +45,6 @@ your_app/
 ├── urls.py
 └── sub_app/
     ├── __init__.py
-    ├── components.py
     ├── idom.py
     ├── templates/
     │   └── your-template.html
@@ -58,7 +57,7 @@ To start, we'll need to use [`channels`](https://channels.readthedocs.io/en/stab
 create a `ProtocolTypeRouter` that will become the top of our ASGI application stack.
 Under the `"websocket"` protocol, we'll then add a path for IDOM's websocket consumer
 using `idom_websocket_path`. If you wish to change the route where this
-websocket is served from see the available [settings](#settings.py).
+websocket is served from, see the available [settings](#settings.py).
 
 ```python
 
@@ -104,15 +103,13 @@ You may configure additional options as well:
 ```python
 # the base URL for all IDOM-releated resources
 IDOM_BASE_URL: str = "_idom/"
-
-# ignore these INSTALLED_APPS during component collection
-IDOM_IGNORE_INSTALLED_APPS: list[str] = ["some_app", "some_other_app"]
 ```
 
 ## `urls.py`
 
 You'll need to include IDOM's static web modules path using `idom_web_modules_path`.
-Similarly to the `idom_websocket_path()`, these resources will be used globally.
+Similarly to the `idom_websocket_path()`. If you wish to change the route where this
+websocket is served from, see the available [settings](#settings.py).
 
 ```python
 from django_idom import idom_web_modules_path
@@ -128,54 +125,26 @@ urlpatterns = [
 This is where, by a convention similar to that of
 [`views.py`](https://docs.djangoproject.com/en/3.2/topics/http/views/), you'll define
 your [IDOM](https://github.com/idom-team/idom) components. Ultimately though, you should
-feel free to organize your component modules you wish.
+feel free to organize your component modules you wish. The components created here will
+ultimately be referenced by name in `your-template.html`. `your-template.html`.
 
 ```python
 import idom
 
 @idom.component
 def Hello(name):  # component names are camelcase by convention
-    return idom.html.h1(f"Hello {name}!")
-```
-
-## `sub_app/idom.py`
-
-This file is automatically discovered by `django-idom` when scanning the list of
-[`INSTALLED_APPS`](https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-INSTALLED_APPS).
-All apps that export components will contain this module.
-
-Inside this module must be a `components` list that is imported from
-[`components.py`](#sub_appcomponents.py):
-
-```python
-from .components import Hello
-
-components = [
-    Hello,
-    ...
-]
-```
-
-You may alternately reference the components with strings for the purpose of renaming:
-
-```python
-from .components import Hello as SomeOtherName
-
-components = [
-    "SomeOtherName",
-    ...
-]
+    return Header(f"Hello {name}!")
 ```
 
 ## `sub_app/templates/your-template.html`
 
 In your templates, you may inject a view of an IDOM component into your templated HTML
 by using the `idom_view` template tag. This tag which requires the name of a component
-to render (of the form `app_name.ComponentName`) and keyword arguments you'd like to
+to render (of the form `module_name.ComponentName`) and keyword arguments you'd like to
 pass it from the template.
 
 ```python
-idom_view app_name.ComponentName param_1="something" param_2="something-else"
+idom_view module_name.ComponentName param_1="something" param_2="something-else"
 ```
 
 In context this will look a bit like the following...
@@ -189,7 +158,7 @@ In context this will look a bit like the following...
 <html>
   <body>
     ...
-    {% idom_view "your_app.sub_app.Hello" name="World" %}
+    {% idom_view "your_app.sub_app.components.Hello" name="World" %}
   </body>
 </html>
 ```

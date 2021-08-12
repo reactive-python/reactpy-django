@@ -1,4 +1,6 @@
 import json
+import sys
+from importlib import import_module
 from urllib.parse import urlencode
 from uuid import uuid4
 
@@ -16,9 +18,7 @@ register = template.Library()
 
 @register.inclusion_tag("idom/view.html")
 def idom_view(_component_id_, **kwargs):
-    if _component_id_ not in IDOM_REGISTERED_COMPONENTS:
-        print(list(IDOM_REGISTERED_COMPONENTS))
-        raise ValueError(f"No component {_component_id_!r} exists")
+    _register_component(_component_id_)
 
     json_kwargs = json.dumps(kwargs, separators=(",", ":"))
 
@@ -29,3 +29,26 @@ def idom_view(_component_id_, **kwargs):
         "idom_view_id": _component_id_,
         "idom_view_params": urlencode({"kwargs": json_kwargs}),
     }
+
+
+def _register_component(full_component_name: str) -> None:
+    module_name, component_name = full_component_name.rsplit(".", 1)
+
+    if module_name in sys.modules:
+        module = sys.modules[module_name]
+    else:
+        try:
+            module = import_module(module_name)
+        except ImportError as error:
+            raise RuntimeError(
+                f"Failed to import {module_name!r} while loading {component_name!r}"
+            ) from error
+
+    try:
+        component = getattr(module, component_name)
+    except AttributeError as error:
+        raise RuntimeError(
+            f"Module {module_name!r} has no component named {component_name!r}"
+        ) from error
+
+    IDOM_REGISTERED_COMPONENTS[full_component_name] = component
