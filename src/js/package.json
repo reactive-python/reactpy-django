@@ -1,6 +1,6 @@
 {
-  "name": "tests",
-  "version": "1.0.0",
+  "name": "django-idom-client",
+  "version": "0.0.1",
   "description": "test app for idom_django websocket server",
   "main": "src/index.js",
   "files": [
@@ -10,14 +10,14 @@
     "build": "rollup --config",
     "format": "prettier --ignore-path .gitignore --write ."
   },
-  "dependencies": {
-    "idom-client-react": "^0.8.2"
-  },
   "devDependencies": {
     "prettier": "^2.2.1",
     "rollup": "^2.35.1",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0"
+  },
+  "dependencies": {
+    "idom-client-react": "^0.8.5"
   }
 }

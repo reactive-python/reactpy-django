@@ -9,12 +9,9 @@ https://docs.djangoproject.com/en/3.2/howto/deployment/asgi/
 
 import os
 
-from django.conf.urls import url
 from django.core.asgi import get_asgi_application
 
-from django_idom import IdomAsyncWebSocketConsumer  # noqa: E402
-
-from .views import Root
+from django_idom import IDOM_WEBSOCKET_PATH
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
@@ -28,8 +25,6 @@ from channels.routing import ProtocolTypeRouter, URLRouter  # noqa: E402
 application = ProtocolTypeRouter(
     {
         "http": http_asgi_app,
-        "websocket": URLRouter(
-            [url("", IdomAsyncWebSocketConsumer.as_asgi(component=Root))]
-        ),
+        "websocket": URLRouter([IDOM_WEBSOCKET_PATH]),
     }
 )

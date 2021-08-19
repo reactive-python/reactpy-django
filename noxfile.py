@@ -16,20 +16,17 @@ POSARGS_PATTERN = re.compile(r"^(\w+)\[(.+)\]$")
 
 @nox.session(reuse_venv=True)
 def manage(session: Session) -> None:
-    session.install("-r", "requirements.txt")
+    """Run a manage.py command for tests/test_app"""
+    session.install("-r", "requirements/test-env.txt")
     session.install("idom[stable]")
     session.install("-e", ".")
     session.chdir("tests")
-
-    build_js_on_commands = ["runserver"]
-    if set(session.posargs).intersection(build_js_on_commands):
-        session.run("python", "manage.py", "build_js")
-
     session.run("python", "manage.py", *session.posargs)
 
 
 @nox.session(reuse_venv=True)
 def format(session: Session) -> None:
+    """Run automatic code formatters"""
     install_requirements_file(session, "check-style")
     session.run("black", ".")
     session.run("isort", ".")
@@ -51,9 +48,16 @@ def test_suite(session: Session) -> None:
 
     session.chdir(HERE / "tests")
     session.env["IDOM_DEBUG_MODE"] = "1"
-    session.env["SELENIUM_HEADLESS"] = str(int("--headless" in session.posargs))
-    session.run("python", "manage.py", "build_js")
-    session.run("python", "manage.py", "test")
+
+    posargs = session.posargs[:]
+    if "--headless" in posargs:
+        posargs.remove("--headless")
+        session.env["SELENIUM_HEADLESS"] = "1"
+
+    if "--no-debug-mode" not in posargs:
+        posargs.append("--debug-mode")
+
+    session.run("python", "manage.py", "test", *posargs)
 
 
 @nox.session

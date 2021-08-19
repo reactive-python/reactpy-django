@@ -1,3 +1,6 @@
+# Django IDOM Build Artifacts
+src/django_idom/static/js
+
 # Django #
 logs
 *.log
