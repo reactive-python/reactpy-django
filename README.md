@@ -103,6 +103,18 @@ You may configure additional options as well:
 ```python
 # the base URL for all IDOM-releated resources
 IDOM_BASE_URL: str = "_idom/"
+
+# Set cache size limit for loading JS files for IDOM.
+# Only applies when not using Django's caching framework (see below).
+IDOM_WEB_MODULE_LRU_CACHE_SIZE: int | None = None
+
+# Configure a cache for loading JS files
+CACHES = {
+  # Configure a cache for loading JS files for IDOM
+  "idom_web_modules": {"BACKEND": ...},
+  # If the above cache is not configured, then we'll use the "default" instead
+  "default": {"BACKEND": ...},
+}
 ```
 
 ## `urls.py`

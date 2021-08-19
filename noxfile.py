@@ -15,17 +15,12 @@ POSARGS_PATTERN = re.compile(r"^(\w+)\[(.+)\]$")
 
 
 @nox.session(reuse_venv=True)
-def test_app(session: Session) -> None:
+def manage(session: Session) -> None:
     """Run a manage.py command for tests/test_app"""
-    session.install("-r", "requirements.txt")
+    session.install("-r", "requirements/test-env.txt")
     session.install("idom[stable]")
     session.install("-e", ".")
     session.chdir("tests")
-
-    build_js_on_commands = ["runserver"]
-    if set(session.posargs).intersection(build_js_on_commands):
-        session.run("python", "manage.py", "build_js")
-
     session.run("python", "manage.py", *session.posargs)
 
 
