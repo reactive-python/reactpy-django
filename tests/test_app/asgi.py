@@ -11,7 +11,7 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-from django_idom import idom_websocket_path
+from django_idom import IDOM_WEBSOCKET_PATH
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
@@ -25,6 +25,6 @@ from channels.routing import ProtocolTypeRouter, URLRouter  # noqa: E402
 application = ProtocolTypeRouter(
     {
         "http": http_asgi_app,
-        "websocket": URLRouter([idom_websocket_path()]),
+        "websocket": URLRouter([IDOM_WEBSOCKET_PATH]),
     }
 )

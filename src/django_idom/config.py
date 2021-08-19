@@ -1,8 +1,8 @@
 from typing import Dict
 
 from django.conf import settings
-from idom.core.proto import ComponentConstructor
 from django.core.cache import DEFAULT_CACHE_ALIAS
+from idom.core.proto import ComponentConstructor
 
 
 IDOM_REGISTERED_COMPONENTS: Dict[str, ComponentConstructor] = {}

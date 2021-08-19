@@ -19,12 +19,9 @@ Including another URLconf
 """
 from django.urls import path
 
-from django_idom import idom_web_modules_path
+from django_idom import IDOM_WEB_MODULES_PATH
 
 from .views import base_template
 
 
-urlpatterns = [
-    path("", base_template),
-    idom_web_modules_path(),
-]
+urlpatterns = [path("", base_template), IDOM_WEB_MODULES_PATH]
