@@ -34,10 +34,10 @@ pip install django-idom
 
 # Django Integration
 
-To integrate IDOM into your application you'll need to modify or add the following files to `your_app`:
+To integrate IDOM into your application you'll need to modify or add the following files to `your_project`:
 
 ```
-your_app/
+your_project/
 ├── __init__.py
 ├── asgi.py
 ├── settings.py
@@ -171,7 +171,7 @@ In context this will look a bit like the following...
 <html>
   <body>
     ...
-    {% idom_component "your_app.example_app.components.Hello" greeting_recipient="World" %}
+    {% idom_component "your_project.example_app.components.Hello" greeting_recipient="World" %}
   </body>
 </html>
 ```
