@@ -194,7 +194,7 @@ def your_view(request):
 
 ## `example_app/urls.py`
 
-Include your replate in the list of urlpatterns
+Include your template in the list of urlpatterns
 
 ```python
 from django.urls import path
