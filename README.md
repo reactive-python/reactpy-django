@@ -185,7 +185,7 @@ from django.http import HttpResponse
 from django.template import loader
 
 
-def your_template(request):
+def your_view(request):
     context = {}
     return HttpResponse(
       loader.get_template("your-template.html").render(context, request)
@@ -198,10 +198,10 @@ Include your replate in the list of urlpatterns
 
 ```python
 from django.urls import path
-from .views import your_template  # define this view like any other HTML template
+from .views import your_view  # define this view like any other HTML template
 
 urlpatterns = [
-    path("", your_template),
+    path("", your_view),
     ...
 ]
 ```
