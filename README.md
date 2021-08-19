@@ -151,12 +151,12 @@ def Hello(greeting_recipient):  # component names are camelcase by convention
 ## `example_app/templates/your-template.html`
 
 In your templates, you may inject a view of an IDOM component into your templated HTML
-by using the `idom_view` template tag. This tag which requires the name of a component
+by using the `idom_component` template tag. This tag which requires the name of a component
 to render (of the form `module_name.ComponentName`) and keyword arguments you'd like to
 pass it from the template.
 
 ```python
-idom_view module_name.ComponentName param_1="something" param_2="something-else"
+idom_component module_name.ComponentName param_1="something" param_2="something-else"
 ```
 
 In context this will look a bit like the following...
@@ -170,7 +170,7 @@ In context this will look a bit like the following...
 <html>
   <body>
     ...
-    {% idom_view "your_app.example_app.components.Hello" greeting_recipient="World" %}
+    {% idom_component "your_app.example_app.components.Hello" greeting_recipient="World" %}
   </body>
 </html>
 ```
