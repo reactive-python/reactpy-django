@@ -53,11 +53,13 @@ your_app/
 
 ## `asgi.py`
 
-To start, we'll need to use [`channels`](https://channels.readthedocs.io/en/stable/) to
-create a `ProtocolTypeRouter` that will become the top of our ASGI application stack.
-Under the `"websocket"` protocol, we'll then add a path for IDOM's websocket consumer
-using `IDOM_WEB_MODULES_PATH`. If you wish to change the route where this
-websocket is served from, see the available [settings](#settings.py).
+Follow the [`channels`](https://channels.readthedocs.io/en/stable/)
+[installation guide](https://channels.readthedocs.io/en/stable/installation.html) in
+order to create ASGI websockets within Django. Then, we will add a path for IDOM's
+websocket consumer using `IDOM_WEBSOCKET_PATH`.
+
+_Note: If you wish to change the route where this websocket is served from, see the
+available [settings](#settings.py)._
 
 ```python
 
