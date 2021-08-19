@@ -194,11 +194,11 @@ def your_view(request):
 
 ## `example_app/urls.py`
 
-Include your template in the list of urlpatterns
+Include your view in the list of urlpatterns
 
 ```python
 from django.urls import path
-from .views import your_view  # define this view like any other HTML template
+from .views import your_view  # define this view like any other HTML template view
 
 urlpatterns = [
     path("", your_view),
