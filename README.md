@@ -11,9 +11,8 @@
 </a>
 
 `django-idom` allows you to integrate [IDOM](https://github.com/idom-team/idom) into
-Django applications. IDOM being a package for building responsive user interfaces in
-pure Python which is inspired by [ReactJS](https://reactjs.org/). For more information
-on IDOM refer to [its documentation](https://idom-docs.herokuapp.com).
+Django applications. IDOM is a pure Python library inspired by
+[ReactJS](https://reactjs.org/) for creating responsive web interfaces.
 
 **You can try IDOM now in a Jupyter Notebook:**
 <a
