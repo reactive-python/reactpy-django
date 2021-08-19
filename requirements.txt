@@ -2,3 +2,4 @@
 -r requirements/check-style.txt
 -r requirements/test-env.txt
 -r requirements/test-run.txt
+-r requirements/dev-env.txt

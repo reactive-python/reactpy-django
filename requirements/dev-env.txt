@@ -1,0 +1,3 @@
+twine
+wheel
+-r ./test-run.txt
