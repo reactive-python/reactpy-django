@@ -17,10 +17,7 @@
     <h1>IDOM Test Page</h1>
     <div>{% idom_component "test_app.components.HelloWorld" %}</div>
     <div>{% idom_component "test_app.components.Button" %}</div>
-    <div>
-      {% idom_component "test_app.components.ParametrizedComponent" x=123 y=456
-      %}
-    </div>
+    <div>{% idom_component "test_app.components.ParametrizedComponent" x=123 y=456 %}</div>
     <div>{% idom_component "test_app.components.SimpleBarChart" %}</div>
   </body>
 </html>
