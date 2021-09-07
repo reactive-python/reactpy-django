@@ -20,7 +20,7 @@ register = template.Library()
 def idom_component(_component_id_, **kwargs):
     _register_component(_component_id_)
 
-    class_ = kwargs.pop("class","")
+    class_ = kwargs.pop("class", "")
     json_kwargs = json.dumps(kwargs, separators=(",", ":"))
 
     return {
@@ -29,7 +29,7 @@ def idom_component(_component_id_, **kwargs):
         "idom_web_modules_url": IDOM_WEB_MODULES_URL,
         "idom_mount_uuid": uuid4().hex,
         "idom_component_id": _component_id_,
-        "idom_component_params": urlencode({"kwargs": json_kwargs})
+        "idom_component_params": urlencode({"kwargs": json_kwargs}),
     }
 
 
