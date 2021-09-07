@@ -16,7 +16,7 @@ from django_idom.config import (
 register = template.Library()
 
 
-@register.inclusion_tag("idom/view.html")
+@register.inclusion_tag("idom/component.html")
 def idom_component(_component_id_, **kwargs):
     _register_component(_component_id_)
 
