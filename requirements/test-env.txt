@@ -1,6 +1,3 @@
 django
 selenium
-
-# required due issue with channels:
-# https://github.com/django/channels/issues/1639#issuecomment-817994671
-twisted<21
+twisted
