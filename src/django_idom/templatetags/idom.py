@@ -16,13 +16,15 @@ from django_idom.config import (
 register = template.Library()
 
 
-@register.inclusion_tag("idom/view.html")
+@register.inclusion_tag("idom/component.html")
 def idom_component(_component_id_, **kwargs):
     _register_component(_component_id_)
 
+    class_ = kwargs.pop("class", "")
     json_kwargs = json.dumps(kwargs, separators=(",", ":"))
 
     return {
+        "class": class_,
         "idom_websocket_url": IDOM_WEBSOCKET_URL,
         "idom_web_modules_url": IDOM_WEB_MODULES_URL,
         "idom_mount_uuid": uuid4().hex,
