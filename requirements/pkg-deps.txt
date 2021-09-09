@@ -1,2 +1,2 @@
 channels<4.0.0 # Django websocket features
-idom==0.32.0 # Python React
+idom==0.31.0 # Python React
