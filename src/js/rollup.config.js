@@ -4,6 +4,7 @@ import replace from "rollup-plugin-replace";
 
 const { PRODUCTION } = process.env;
 
+// TODO: Look at this and see why it's borked
 export default {
   input: "src/index.js",
   output: {
