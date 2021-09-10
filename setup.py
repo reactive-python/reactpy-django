@@ -120,7 +120,7 @@ def build_javascript_first(cls):
                 if npm is None:
                     raise RuntimeError("NPM is not installed.")
 
-                # Required on when using NPM >3
+                # Required when using NPM >3
                 log.info(f"> Installing rollup, react, and react-dom")
                 subprocess.run(f"{npm} install rollup".split(), cwd=js_dir, check=True)
                 subprocess.run(f"{npm} install react".split(), cwd=js_dir, check=True)
