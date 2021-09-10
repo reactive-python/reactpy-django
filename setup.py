@@ -124,7 +124,9 @@ def build_javascript_first(cls):
                 log.info(f"> Installing rollup, react, and react-dom")
                 subprocess.run(f"{npm} install rollup".split(), cwd=js_dir, check=True)
                 subprocess.run(f"{npm} install react".split(), cwd=js_dir, check=True)
-                subprocess.run(f"{npm} install react-dom".split(), cwd=js_dir, check=True)
+                subprocess.run(
+                    f"{npm} install react-dom".split(), cwd=js_dir, check=True
+                )
 
                 for args in (f"{npm} install", f"{npm} run build"):
                     args_list = args.split()
