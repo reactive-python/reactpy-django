@@ -119,7 +119,6 @@ def build_javascript_first(cls):
                 npm = shutil.which("npm")  # this is required on windows
                 if npm is None:
                     raise RuntimeError("NPM is not installed.")
-
                 for args in (f"{npm} install", f"{npm} run build"):
                     args_list = args.split()
                     log.info(f"> {list2cmdline(args_list)}")
