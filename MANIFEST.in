@@ -1,2 +1,2 @@
-recursive-include src/django_idom/static/ *
-recursive-include src/django_idom/templates/ *.html
+recursive-include src/django_idom/static *
+recursive-include src/django_idom/templates *.html
