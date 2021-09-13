@@ -15,10 +15,10 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
     def tearDown(self) -> None:
         self.driver.quit()
 
-    def wait(self, timeout=5):
+    def wait(self, timeout=10):
         return WebDriverWait(self.driver, timeout)
 
-    def wait_until(self, condition, timeout=5):
+    def wait_until(self, condition, timeout=10):
         return self.wait(timeout).until(lambda driver: condition())
 
     def test_hello_world(self):
@@ -37,7 +37,7 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
         self.assertEqual(element.get_attribute("data-value"), "579")
 
     def test_component_from_web_module(self):
-        self.wait(10).until(
+        self.wait(20).until(
             expected_conditions.visibility_of_element_located(
                 (By.CLASS_NAME, "VictoryContainer")
             )
