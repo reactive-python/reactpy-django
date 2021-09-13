@@ -68,7 +68,7 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-from django_idom import IDOM_WEB_MODULES_PATH
+from django_idom import IDOM_WEBSOCKET_PATH
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
 
@@ -82,7 +82,7 @@ application = ProtocolTypeRouter(
         "http": http_asgi_app,
         "websocket": URLRouter(
           # add a path for IDOM's websocket
-          [IDOM_WEB_MODULES_PATH]
+          [IDOM_WEBSOCKET_PATH]
         ),
     }
 )
