@@ -34,7 +34,7 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
             except Exception:
                 _logger.exception("IDOM websocket authentication has failed!")
         elif user is None:
-            _logger.warning(f"IDOM websocket is missing AuthMiddlewareStack!")
+            _logger.warning("IDOM websocket is missing AuthMiddlewareStack!")
 
         self._idom_dispatcher_future = asyncio.ensure_future(self._run_dispatch_loop())
 
