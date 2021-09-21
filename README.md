@@ -147,8 +147,8 @@ ultimately be referenced by name in `your-template.html`. `your-template.html`.
 import idom
 
 @idom.component
-def Hello(greeting_recipient):  # component names are camelcase by convention
-    return Header(f"Hello {greeting_recipient}!")
+def Hello(websocket, greeting_recipient):  # component names are camelcase by convention
+    return idom.html.header(f"Hello {greeting_recipient}!")
 ```
 
 ## `example_app/templates/your-template.html`
@@ -165,8 +165,6 @@ idom_component module_name.ComponentName param_1="something" param_2="something-
 In context this will look a bit like the following...
 
 ```jinja
-<!-- don't forget your load statements -->
-{% load static %}
 {% load idom %}
 
 <!DOCTYPE html>

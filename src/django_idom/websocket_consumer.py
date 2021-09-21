@@ -48,7 +48,7 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
         component_kwargs = json.loads(query_dict.get("kwargs", "{}"))
 
         try:
-            component_instance = component_constructor(**component_kwargs)
+            component_instance = component_constructor(self, **component_kwargs)
         except Exception:
             _logger.exception(
                 f"Failed to construct component {component_constructor} "
