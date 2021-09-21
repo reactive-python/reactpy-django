@@ -17,6 +17,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.contrib import admin
 from django.urls import path
 
 from django_idom import IDOM_WEB_MODULES_PATH
@@ -24,4 +25,8 @@ from django_idom import IDOM_WEB_MODULES_PATH
 from .views import base_template
 
 
-urlpatterns = [path("", base_template), IDOM_WEB_MODULES_PATH]
+urlpatterns = [
+    path("", base_template),
+    IDOM_WEB_MODULES_PATH,
+    path("admin/", admin.site.urls),
+]
