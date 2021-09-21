@@ -75,14 +75,17 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
 # Fetch ASGI application before importing dependencies that require ORM models.
 http_asgi_app = get_asgi_application()
 
+from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 
 application = ProtocolTypeRouter(
     {
         "http": http_asgi_app,
-        "websocket": URLRouter(
-          # add a path for IDOM's websocket
-          [IDOM_WEBSOCKET_PATH]
+        "websocket": AuthMiddlewareStack(
+            URLRouter(
+                # add a path for IDOM's websocket
+                [IDOM_WEBSOCKET_PATH]
+            )
         ),
     }
 )

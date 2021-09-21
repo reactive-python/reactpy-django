@@ -5,6 +5,8 @@ import logging
 from typing import Any
 from urllib.parse import parse_qsl
 
+from channels.auth import login
+from channels.db import database_sync_to_async as convert_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from idom.core.dispatcher import dispatch_single_view
 from idom.core.layout import Layout, LayoutEvent
@@ -23,6 +25,17 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self) -> None:
         await super().connect()
+
+        user = self.scope.get("user")
+        if user and user.is_authenticated:
+            try:
+                await login(self.scope, user)
+                await convert_to_async(self.scope["session"].save)()
+            except Exception:
+                _logger.exception("IDOM websocket authentication has failed!")
+        elif user == None:
+            _logger.warning(f"IDOM websocket is missing AuthMiddlewareStack!")
+
         self._idom_dispatcher_future = asyncio.ensure_future(self._run_dispatch_loop())
 
     async def disconnect(self, code: int) -> None:
