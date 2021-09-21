@@ -19,7 +19,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
 # Fetch ASGI application before importing dependencies that require ORM models.
 http_asgi_app = get_asgi_application()
 
-from channels.auth import AuthMiddlewareStack
+from channels.auth import AuthMiddlewareStack  # noqa: E402
 from channels.routing import ProtocolTypeRouter, URLRouter  # noqa: E402
 
 
