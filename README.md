@@ -20,13 +20,12 @@ interfaces in pure Python.
 <a
   target="_blank"
   href="https://mybinder.org/v2/gh/idom-team/idom-jupyter/main?filepath=notebooks%2Fintroduction.ipynb">
-  <img
+<img
     alt="Binder"
     valign="bottom"
     height="21px"
     src="https://mybinder.org/badge_logo.svg"/>
 </a>
-
 
 # Install Django IDOM
 
@@ -215,10 +214,10 @@ urlpatterns = [
 If you plan to make code changes to this repository, you'll need to install the
 following dependencies first:
 
-- [NPM](https://docs.npmjs.com/try-the-latest-stable-version-of-npm) for
-  installing and managing Javascript
-- [ChromeDriver](https://chromedriver.chromium.org/downloads) for testing with
-  [Selenium](https://www.seleniumhq.org/)
+-   [NPM](https://docs.npmjs.com/try-the-latest-stable-version-of-npm) for
+    installing and managing Javascript
+-   [ChromeDriver](https://chromedriver.chromium.org/downloads) for testing with
+    [Selenium](https://www.seleniumhq.org/)
 
 Once done, you should clone this repository:
 
@@ -229,9 +228,9 @@ cd django-idom
 
 Then, by running the command below you can:
 
-- Install an editable version of the Python code
+-   Install an editable version of the Python code
 
-- Download, build, and install Javascript dependencies
+-   Download, build, and install Javascript dependencies
 
 ```bash
 pip install -e . -r requirements.txt
