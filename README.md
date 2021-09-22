@@ -80,11 +80,8 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 application = ProtocolTypeRouter(
     {
         "http": http_asgi_app,
-        "websocket": AuthMiddlewareStack(
-            URLRouter(
-                # add a path for IDOM's websocket
-                [IDOM_WEBSOCKET_PATH]
-            )
+        "websocket": SessionMiddlewareStack(
+            AuthMiddlewareStack(URLRouter([IDOM_WEBSOCKET_PATH]))
         ),
     }
 )
