@@ -35,7 +35,7 @@ def idom_component(_component_id_, **kwargs):
     }
 
 
-@functools.cache
+@functools.lru_cache
 def _register_component(full_component_name: str) -> None:
     module_name, component_name = full_component_name.rsplit(".", 1)
 
