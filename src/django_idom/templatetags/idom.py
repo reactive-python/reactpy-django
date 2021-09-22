@@ -1,4 +1,3 @@
-import functools
 import json
 from importlib import import_module
 from urllib.parse import urlencode
@@ -35,8 +34,10 @@ def idom_component(_component_id_, **kwargs):
     }
 
 
-@functools.lru_cache(maxsize=None)
 def _register_component(full_component_name: str) -> None:
+    if full_component_name in IDOM_REGISTERED_COMPONENTS:
+        return
+
     module_name, component_name = full_component_name.rsplit(".", 1)
 
     try:
