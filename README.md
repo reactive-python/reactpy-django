@@ -46,7 +46,7 @@ your_project/
 ├── urls.py
 └── example_app/
     ├── __init__.py
-    ├── idom.py
+    ├── components.py
     ├── templates/
     │   └── your-template.html
     └── urls.py
