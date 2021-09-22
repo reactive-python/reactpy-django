@@ -2,7 +2,8 @@
 import asyncio
 import json
 import logging
-from typing import Any
+from dataclasses import dataclass
+from typing import Any, Callable
 from urllib.parse import parse_qsl
 
 from channels.auth import login
@@ -15,6 +16,12 @@ from .config import IDOM_REGISTERED_COMPONENTS
 
 
 _logger = logging.getLogger(__name__)
+
+
+@dataclass
+class WebSocketConnection:
+    scope: dict
+    disconnect: Callable
 
 
 class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
@@ -35,6 +42,9 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
                 _logger.exception("IDOM websocket authentication has failed!")
         elif user is None:
             _logger.warning("IDOM websocket is missing AuthMiddlewareStack!")
+
+        # Limit developer control this websocket
+        self.socket = WebSocketConnection(self.scope, self.disconnect)
 
         self._idom_dispatcher_future = asyncio.ensure_future(self._run_dispatch_loop())
 
@@ -61,7 +71,7 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
         component_kwargs = json.loads(query_dict.get("kwargs", "{}"))
 
         try:
-            component_instance = component_constructor(self, **component_kwargs)
+            component_instance = component_constructor(self.socket, **component_kwargs)
         except Exception:
             _logger.exception(
                 f"Failed to construct component {component_constructor} "
