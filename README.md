@@ -113,6 +113,9 @@ IDOM_BASE_URL: str = "_idom/"
 # Only applies when not using Django's caching framework (see below).
 IDOM_WEB_MODULE_LRU_CACHE_SIZE: int | None = None
 
+# Enable or disable websocket reconnection attempts (Default: True)
+IDOM_WS_RECONNECT: bool = True
+
 # Configure a cache for loading JS files
 CACHES = {
   # Configure a cache for loading JS files for IDOM
