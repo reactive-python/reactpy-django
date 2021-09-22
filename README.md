@@ -59,7 +59,7 @@ order to create ASGI websockets within Django. Then, we will add a path for IDOM
 websocket consumer using `IDOM_WEBSOCKET_PATH`.
 
 _Note: If you wish to change the route where this websocket is served from, see the
-available [settings](#settings.py)._
+available [settings](#settingspy)._
 
 ```python
 
