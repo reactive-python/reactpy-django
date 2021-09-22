@@ -184,15 +184,11 @@ You can then serve `your-template.html` from a view just
 [like any other](https://docs.djangoproject.com/en/3.2/intro/tutorial03/#write-views-that-actually-do-something).
 
 ```python
-from django.http import HttpResponse
-from django.template import loader
-
+from django.shortcuts import render
 
 def your_view(request):
     context = {}
-    return HttpResponse(
-      loader.get_template("your-template.html").render(context, request)
-    )
+    return render(request, "your-template.html", context)
 ```
 
 ## `example_app/urls.py`
