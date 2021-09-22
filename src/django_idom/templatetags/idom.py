@@ -1,5 +1,5 @@
+import functools
 import json
-import sys
 from importlib import import_module
 from urllib.parse import urlencode
 from uuid import uuid4
@@ -35,6 +35,7 @@ def idom_component(_component_id_, **kwargs):
     }
 
 
+@functools.cache
 def _register_component(full_component_name: str) -> None:
     module_name, component_name = full_component_name.rsplit(".", 1)
 
