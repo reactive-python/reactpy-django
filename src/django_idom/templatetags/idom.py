@@ -36,9 +36,6 @@ def idom_component(_component_id_, **kwargs):
 def _register_component(full_component_name: str) -> None:
     module_name, component_name = full_component_name.rsplit(".", 1)
 
-    if module_name in sys.modules:
-        module = sys.modules[module_name]
-    else:
         try:
             module = import_module(module_name)
         except ImportError as error:
