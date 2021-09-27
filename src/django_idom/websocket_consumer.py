@@ -22,6 +22,7 @@ _logger = logging.getLogger(__name__)
 class WebSocketConnection:
     scope: dict
     close: Callable[[Optional[int]], Coroutine[Any, Any, None]]
+    view_id: str
 
 
 class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
@@ -32,6 +33,8 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self) -> None:
         await super().connect()
+
+        self.view_id = self.scope["url_route"]["kwargs"]["view_id"]
 
         user = self.scope.get("user")
         if user and user.is_authenticated:
@@ -44,7 +47,7 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
             _logger.warning("IDOM websocket is missing AuthMiddlewareStack!")
 
         # Limit developer control this websocket
-        self.socket = WebSocketConnection(self.scope, self.close)
+        self.socket = WebSocketConnection(self.scope, self.close, self.view_id)
 
         self._idom_dispatcher_future = asyncio.ensure_future(self._run_dispatch_loop())
 
@@ -59,12 +62,11 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
         await self._idom_recv_queue.put(LayoutEvent(**content))
 
     async def _run_dispatch_loop(self):
-        view_id = self.scope["url_route"]["kwargs"]["view_id"]
 
         try:
-            component_constructor = IDOM_REGISTERED_COMPONENTS[view_id]
+            component_constructor = IDOM_REGISTERED_COMPONENTS[self.view_id]
         except KeyError:
-            _logger.warning(f"Unknown IDOM view ID {view_id!r}")
+            _logger.warning(f"Unknown IDOM view ID {self.view_id!r}")
             return
 
         query_dict = dict(parse_qsl(self.scope["query_string"].decode()))
