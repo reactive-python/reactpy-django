@@ -110,8 +110,8 @@ IDOM_BASE_URL: str = "_idom/"
 # Only applies when not using Django's caching framework (see below).
 IDOM_WEB_MODULE_LRU_CACHE_SIZE: int | None = None
 
-# Enable or disable websocket reconnection attempts (Default: True)
-IDOM_WS_RECONNECT: bool = True
+# Max amount of time for client to attempt to reconnect. 0 disables reconnection.
+IDOM_WS_RECONNECT_TIMEOUT: int = 604800
 
 # Configure a cache for loading JS files
 CACHES = {
@@ -210,10 +210,10 @@ urlpatterns = [
 If you plan to make code changes to this repository, you'll need to install the
 following dependencies first:
 
--   [NPM](https://docs.npmjs.com/try-the-latest-stable-version-of-npm) for
-    installing and managing Javascript
--   [ChromeDriver](https://chromedriver.chromium.org/downloads) for testing with
-    [Selenium](https://www.seleniumhq.org/)
+- [NPM](https://docs.npmjs.com/try-the-latest-stable-version-of-npm) for
+  installing and managing Javascript
+- [ChromeDriver](https://chromedriver.chromium.org/downloads) for testing with
+  [Selenium](https://www.seleniumhq.org/)
 
 Once done, you should clone this repository:
 
@@ -224,9 +224,9 @@ cd django-idom
 
 Then, by running the command below you can:
 
--   Install an editable version of the Python code
+- Install an editable version of the Python code
 
--   Download, build, and install Javascript dependencies
+- Download, build, and install Javascript dependencies
 
 ```bash
 pip install -e . -r requirements.txt
