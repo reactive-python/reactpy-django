@@ -3,7 +3,7 @@ import asyncio
 import json
 import logging
 from dataclasses import dataclass
-from typing import Any, Callable, Coroutine, Optional
+from typing import Any, Awaitable, Callable, Optional
 from urllib.parse import parse_qsl
 
 from channels.auth import login
@@ -21,7 +21,7 @@ _logger = logging.getLogger(__name__)
 @dataclass
 class WebsocketConnection:
     scope: dict
-    close: Callable[[Optional[int]], Coroutine[Any, Any, None]]
+    close: Callable[[Optional[int]], Awaitable[None]]
     view_id: str
 
 
