@@ -3,7 +3,7 @@ import asyncio
 import json
 import logging
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any, Callable, Coroutine, Optional
 from urllib.parse import parse_qsl
 
 from channels.auth import login
@@ -21,7 +21,7 @@ _logger = logging.getLogger(__name__)
 @dataclass
 class WebSocketConnection:
     scope: dict
-    disconnect: Callable
+    close: Callable[[Optional[int]], Coroutine[Any, Any, None]]
 
 
 class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
@@ -44,7 +44,7 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
             _logger.warning("IDOM websocket is missing AuthMiddlewareStack!")
 
         # Limit developer control this websocket
-        self.socket = WebSocketConnection(self.scope, self.disconnect)
+        self.socket = WebSocketConnection(self.scope, self.close)
 
         self._idom_dispatcher_future = asyncio.ensure_future(self._run_dispatch_loop())
 
