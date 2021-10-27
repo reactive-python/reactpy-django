@@ -2,6 +2,7 @@
 import asyncio
 import json
 import logging
+from threading import Thread
 from typing import Any
 from urllib.parse import parse_qsl
 
@@ -23,13 +24,17 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self) -> None:
         await super().connect()
-        self._idom_dispatcher_future = asyncio.ensure_future(self._run_dispatch_loop())
+        self._idom_dispatcher_future = Thread(
+            target=asyncio.run,
+            args=(self._run_dispatch_loop(),),
+        )
+        self._idom_dispatcher_future.start()
 
     async def disconnect(self, code: int) -> None:
-        if self._idom_dispatcher_future.done():
-            await self._idom_dispatcher_future
-        else:
-            self._idom_dispatcher_future.cancel()
+        # if self._idom_dispatcher_future.done():
+        #     await self._idom_dispatcher_future
+        # else:
+        #     self._idom_dispatcher_future.cancel()
         await super().disconnect(code)
 
     async def receive_json(self, content: Any, **kwargs: Any) -> None:
@@ -63,6 +68,7 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
                 self.send_json,
                 recv_queue.get,
             )
+            print("complete")
         except Exception:
             await self.close()
             raise
