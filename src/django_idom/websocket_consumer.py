@@ -6,6 +6,7 @@ from threading import Thread
 from typing import Any
 from urllib.parse import parse_qsl
 
+import janus
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from idom.core.dispatcher import dispatch_single_view
 from idom.core.layout import Layout, LayoutEvent
@@ -24,11 +25,12 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self) -> None:
         await super().connect()
-        self._idom_dispatcher_future = Thread(
+        self._idom_dispatcher_thread = Thread(
             target=asyncio.run,
             args=(self._run_dispatch_loop(),),
         )
-        self._idom_dispatcher_future.start()
+        self._idom_dispatcher_thread.daemon = True
+        self._idom_dispatcher_thread.start()
 
     async def disconnect(self, code: int) -> None:
         # if self._idom_dispatcher_future.done():
@@ -61,14 +63,14 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
             )
             return
 
-        self._idom_recv_queue = recv_queue = asyncio.Queue()
+        # Thread-safe queue
+        self._idom_recv_queue = janus.Queue().async_q
         try:
             await dispatch_single_view(
                 Layout(component_instance),
                 self.send_json,
-                recv_queue.get,
+                self._idom_recv_queue.get,
             )
-            print("complete")
         except Exception:
             await self.close()
             raise
