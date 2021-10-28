@@ -28,8 +28,8 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
         self._idom_dispatcher_thread = Thread(
             target=asyncio.run,
             args=(self._run_dispatch_loop(),),
+            daemon=True,
         )
-        self._idom_dispatcher_thread.daemon = True
         self._idom_dispatcher_thread.start()
 
     async def disconnect(self, code: int) -> None:
