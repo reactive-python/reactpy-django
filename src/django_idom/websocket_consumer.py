@@ -33,11 +33,8 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
         self._idom_dispatcher_thread.start()
 
     async def disconnect(self, code: int) -> None:
-        # if self._idom_dispatcher_future.done():
-        #     await self._idom_dispatcher_future
-        # else:
-        #     self._idom_dispatcher_future.cancel()
         await super().disconnect(code)
+        self._idom_dispatcher_thread.join(timeout=0.05)
 
     async def receive_json(self, content: Any, **kwargs: Any) -> None:
         await self._idom_recv_queue.put(LayoutEvent(**content))
