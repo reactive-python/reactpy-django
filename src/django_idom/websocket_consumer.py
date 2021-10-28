@@ -34,7 +34,7 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
 
     async def disconnect(self, code: int) -> None:
         await super().disconnect(code)
-        self._idom_dispatcher_thread.join(timeout=0.05)
+        self._idom_dispatcher_thread.join(timeout=0)
 
     async def receive_json(self, content: Any, **kwargs: Any) -> None:
         await self._idom_recv_queue.put(LayoutEvent(**content))
