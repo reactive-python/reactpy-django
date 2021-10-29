@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+
 from .utils import TemplateLoader
 
 
