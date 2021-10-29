@@ -3,9 +3,7 @@ from fnmatch import fnmatch
 from importlib import import_module
 
 from django.template import engines
-from django.template.loader import (  # noqa Leave this in to preload template locations
-    get_template,
-)
+from django.template.loader import get_template
 from django.utils.encoding import smart_str
 
 
