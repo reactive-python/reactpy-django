@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 import sys
@@ -8,6 +9,9 @@ from django.template import engines
 from django.utils.encoding import smart_str
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
+
+
+_logger = logging.getLogger(__name__)
 
 
 def _register_component(full_component_name: str) -> None:
@@ -38,12 +42,12 @@ class ComponentPreloader:
         """Registers all IDOM components found within Django templates."""
         # Get all template folder paths
         paths = self._get_paths()
-
         # Get all HTML template files
         templates = self._get_templates(paths)
-
+        # Get all components
+        components = self._get_components(templates)
         # Register all components
-        self._register_components(templates)
+        self._register_components(components)
 
     def _get_loaders(self):
         """Obtains currently configured template loaders."""
@@ -91,7 +95,7 @@ class ComponentPreloader:
 
         return templates
 
-    def _register_components(self, templates):
+    def _get_components(self, templates):
         """Parses templates for IDOM components and then registers them."""
         component_regex = re.compile(
             r"{% *idom_component ((\"[^\"']*\")|('[^\"']*')).*%}"
@@ -111,9 +115,13 @@ class ComponentPreloader:
             except Exception:
                 pass
 
+        return components
+
+    def _register_components(self, components):
         # Register IDOM all found IDOM components
         for component in components:
             try:
                 _register_component(component)
+                _logger.info("IDOM has registered component %s", component)
             except Exception:
-                pass
+                _logger.warning("IDOM failed to register component %s", component)
