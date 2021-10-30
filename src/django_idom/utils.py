@@ -70,7 +70,7 @@ class ComponentPreloader:
     def _register_components(self, templates):
         """Parses templates for IDOM components and then registers them."""
         component_regex = re.compile(
-            r"\{% idom_component ((\"[^\"']*\")|('[^\"']*')) ((\S)*( )*)%\}"
+            r"\{% *idom_component ((\"[^\"']*\")|('[^\"']*')).*%\}"
         )
         components = set()
 
