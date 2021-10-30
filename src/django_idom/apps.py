@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
-from .utils import ComponentPreloader
+from django_idom.utils import ComponentPreloader
 
 
 class HomeConfig(AppConfig):
