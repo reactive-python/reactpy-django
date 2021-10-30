@@ -1,12 +1,36 @@
 import os
 import re
+import sys
 from fnmatch import fnmatch
 from importlib import import_module
 
 from django.template import engines
 from django.utils.encoding import smart_str
 
-from django_idom.templatetags.idom import _register_component
+from django_idom.config import IDOM_REGISTERED_COMPONENTS
+
+
+def _register_component(full_component_name: str) -> None:
+    module_name, component_name = full_component_name.rsplit(".", 1)
+
+    if module_name in sys.modules:
+        module = sys.modules[module_name]
+    else:
+        try:
+            module = import_module(module_name)
+        except ImportError as error:
+            raise RuntimeError(
+                f"Failed to import {module_name!r} while loading {component_name!r}"
+            ) from error
+
+    try:
+        component = getattr(module, component_name)
+    except AttributeError as error:
+        raise RuntimeError(
+            f"Module {module_name!r} has no component named {component_name!r}"
+        ) from error
+
+    IDOM_REGISTERED_COMPONENTS[full_component_name] = component
 
 
 class ComponentPreloader:
