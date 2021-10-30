@@ -11,7 +11,7 @@ from django_idom.templatetags.idom import _register_component
 
 class ComponentPreloader:
     def register_all(self):
-        """Registers all IDOM Components within Django templates."""
+        """Registers all IDOM components found within Django templates."""
         # Get all template folder paths
         paths = self._get_paths()
 
