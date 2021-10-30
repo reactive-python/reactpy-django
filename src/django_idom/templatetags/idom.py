@@ -1,4 +1,5 @@
 import json
+import sys
 from importlib import import_module
 from urllib.parse import urlencode
 from uuid import uuid4
@@ -35,17 +36,17 @@ def idom_component(_component_id_, **kwargs):
 
 
 def _register_component(full_component_name: str) -> None:
-    if full_component_name in IDOM_REGISTERED_COMPONENTS:
-        return
-
     module_name, component_name = full_component_name.rsplit(".", 1)
 
-    try:
-        module = import_module(module_name)
-    except ImportError as error:
-        raise RuntimeError(
-            f"Failed to import {module_name!r} while loading {component_name!r}"
-        ) from error
+    if module_name in sys.modules:
+        module = sys.modules[module_name]
+    else:
+        try:
+            module = import_module(module_name)
+        except ImportError as error:
+            raise RuntimeError(
+                f"Failed to import {module_name!r} while loading {component_name!r}"
+            ) from error
 
     try:
         component = getattr(module, component_name)
