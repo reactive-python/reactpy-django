@@ -1,7 +1,6 @@
 import logging
 import os
 import re
-import sys
 from fnmatch import fnmatch
 from importlib import import_module
 
@@ -17,15 +16,12 @@ _logger = logging.getLogger(__name__)
 def _register_component(full_component_name: str) -> None:
     module_name, component_name = full_component_name.rsplit(".", 1)
 
-    if module_name in sys.modules:
-        module = sys.modules[module_name]
-    else:
-        try:
-            module = import_module(module_name)
-        except ImportError as error:
-            raise RuntimeError(
-                f"Failed to import {module_name!r} while loading {component_name!r}"
-            ) from error
+    try:
+        module = import_module(module_name)
+    except ImportError as error:
+        raise RuntimeError(
+            f"Failed to import {module_name!r} while loading {component_name!r}"
+        ) from error
 
     try:
         component = getattr(module, component_name)
