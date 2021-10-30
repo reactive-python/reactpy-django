@@ -101,8 +101,6 @@ class ComponentPreloader:
             r"{% *idom_component ((\"[^\"']*\")|('[^\"']*')).*%}"
         )
         components = set()
-
-        # Find IDOM components in the template
         for template in templates:
             try:
                 with open(template, "r", encoding="utf-8") as template_file:
@@ -118,7 +116,7 @@ class ComponentPreloader:
         return components
 
     def _register_components(self, components):
-        # Register IDOM all found IDOM components
+        """Registers all IDOM components in an iterable."""
         for component in components:
             try:
                 _register_component(component)
