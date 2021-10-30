@@ -25,8 +25,6 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self) -> None:
         await super().connect()
-        # Thread-safe queue
-        self._recv_queue = janus.Queue().async_q
 
         # Run render as thread
         self._disconnected = threading.Event()
@@ -65,6 +63,9 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
                 f"with parameters {component_kwargs}"
             )
             return
+
+        # Thread-safe queue
+        self._recv_queue = janus.Queue().async_q
 
         try:
             await dispatch_single_view(
