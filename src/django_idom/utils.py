@@ -1,23 +1,25 @@
 import os
+import re
 from fnmatch import fnmatch
 from importlib import import_module
 
 from django.template import engines
-from django.template.loader import get_template
 from django.utils.encoding import smart_str
 
+from django_idom.templatetags.idom import _register_component
 
-class TemplateLoader:
-    def render_all(self):
-        """Renders all available HTML templates known to Django."""
+
+class ComponentPreloader:
+    def register_all(self):
+        """Registers all IDOM Components within Django templates."""
         # Get all template folder paths
         paths = self._get_paths()
 
         # Get all HTML template files
         templates = self._get_templates(paths)
 
-        # Render all templates
-        self._render_templates(templates)
+        # Register all components
+        self._register_components(templates)
 
     def _get_loaders(self):
         """Obtains currently configured template loaders."""
@@ -57,7 +59,7 @@ class TemplateLoader:
         for path in paths:
             for root, dirs, files in os.walk(path, followlinks=False):
                 templates.update(
-                    os.path.relpath(os.path.join(root, name), path)
+                    os.path.join(root, name)
                     for name in files
                     if not name.startswith(".")
                     and any(fnmatch(name, "*%s" % glob) for glob in extensions)
@@ -65,10 +67,29 @@ class TemplateLoader:
 
         return templates
 
-    def _render_templates(self, templates):
-        """Renders all templates. Templates with invalid syntax are ignored."""
+    def _register_components(self, templates):
+        """Parses templates for IDOM components and then registers them."""
+        component_regex = re.compile(
+            r"\{% idom_component ((\"[^\"']*\")|('[^\"']*')) ((\S)*( )*)%\}"
+        )
+        components = set()
+
+        # Find IDOM components in the template
         for template in templates:
             try:
-                get_template(template).render({"csrf_token": "123"})
+                with open(template, "r", encoding="utf-8") as template_file:
+                    match = component_regex.findall(template_file.read())
+                    if not match:
+                        continue
+                    components.update(
+                        [group[0].replace('"', "").replace("'", "") for group in match]
+                    )
+            except Exception:
+                pass
+
+        # Register IDOM all found IDOM components
+        for component in components:
+            try:
+                _register_component(component)
             except Exception:
                 pass
