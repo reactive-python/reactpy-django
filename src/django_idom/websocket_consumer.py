@@ -74,7 +74,8 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
                 self._recv_queue.get,
             )
         except Exception:
-            await self.close()
             self._disconnected.wait()
             if not self._disconnected.is_set():
+                await self.close()
                 raise
+            await self.close()
