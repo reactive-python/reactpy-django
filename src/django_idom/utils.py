@@ -14,7 +14,7 @@ _logger = logging.getLogger(__name__)
 
 
 def _register_component(full_component_name: str) -> None:
-    if IDOM_REGISTERED_COMPONENTS.get(full_component_name):
+    if full_component_name in IDOM_REGISTERED_COMPONENTS:
         return
 
     module_name, component_name = full_component_name.rsplit(".", 1)
