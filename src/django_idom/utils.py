@@ -3,6 +3,7 @@ import os
 import re
 from fnmatch import fnmatch
 from importlib import import_module
+from typing import Set
 
 from django.template import engines
 from django.utils.encoding import smart_str
@@ -64,7 +65,7 @@ class ComponentPreloader:
                 loaders.append(loader)
         return loaders
 
-    def _get_paths(self):
+    def _get_paths(self) -> Set:
         """Obtains a set of all template directories."""
         paths = set()
         for loader in self._get_loaders():
@@ -79,7 +80,7 @@ class ComponentPreloader:
 
         return paths
 
-    def _get_templates(self, paths):
+    def _get_templates(self, paths: Set) -> Set:
         """Obtains a set of all HTML template paths."""
         extensions = [".html"]
         templates = set()
@@ -94,7 +95,7 @@ class ComponentPreloader:
 
         return templates
 
-    def _get_components(self, templates):
+    def _get_components(self, templates: Set) -> Set:
         """Obtains a set of all IDOM components by parsing HTML templates."""
         component_regex = re.compile(
             r"{% *idom_component ((\"[^\"']*\")|('[^\"']*')).*%}"
@@ -114,7 +115,7 @@ class ComponentPreloader:
 
         return components
 
-    def _register_components(self, components):
+    def _register_components(self, components: Set) -> None:
         """Registers all IDOM components in an iterable."""
         for component in components:
             try:
