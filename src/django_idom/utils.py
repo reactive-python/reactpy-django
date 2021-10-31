@@ -95,7 +95,7 @@ class ComponentPreloader:
         return templates
 
     def _get_components(self, templates):
-        """Parses templates for IDOM components and then registers them."""
+        """Obtains a set of all IDOM components by parsing HTML templates."""
         component_regex = re.compile(
             r"{% *idom_component ((\"[^\"']*\")|('[^\"']*')).*%}"
         )
