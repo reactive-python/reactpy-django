@@ -29,9 +29,6 @@ class WebsocketConnection:
 class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
     """Communicates with the browser to perform actions on-demand."""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
     async def connect(self) -> None:
         await super().connect()
 
