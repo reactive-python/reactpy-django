@@ -11,6 +11,7 @@ from django.utils.encoding import smart_str
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
 
 
+COMPONENT_REGEX_PATTERN = r"{% *idom_component ((\"[^\"']*\")|('[^\"']*')).*?%}"
 _logger = logging.getLogger(__name__)
 
 
@@ -97,9 +98,7 @@ class ComponentPreloader:
 
     def _get_components(self, templates: Set) -> Set:
         """Obtains a set of all IDOM components by parsing HTML templates."""
-        component_regex = re.compile(
-            r"{% *idom_component ((\"[^\"']*\")|('[^\"']*')).*%}"
-        )
+        component_regex = re.compile(COMPONENT_REGEX_PATTERN)
         components = set()
         for template in templates:
             try:
