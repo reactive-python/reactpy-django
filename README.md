@@ -110,8 +110,9 @@ IDOM_BASE_URL: str = "_idom/"
 # Only applies when not using Django's caching framework (see below).
 IDOM_WEB_MODULE_LRU_CACHE_SIZE: int | None = None
 
-# Max amount of time for client to attempt to reconnect. 0 disables reconnection.
-IDOM_WS_RECONNECT_TIMEOUT: int = 604800
+# Maximum seconds between two reconnection attempts that would cause the client give up.
+# 0 will disable reconnection.
+IDOM_WS_MAX_RECONNECT_DELAY: int = 604800
 
 # Configure a cache for loading JS files
 CACHES = {
