@@ -58,9 +58,9 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         view_id = self.scope["url_route"]["kwargs"]["view_id"]
 
         try:
-            component_constructor = IDOM_REGISTERED_COMPONENTS[self.view_id]
+            component_constructor = IDOM_REGISTERED_COMPONENTS[view_id]
         except KeyError:
-            _logger.warning(f"Unknown IDOM view ID {self.view_id!r}")
+            _logger.warning(f"Unknown IDOM view ID {view_id!r}")
             return
 
         query_dict = dict(parse_qsl(self.scope["query_string"].decode()))
