@@ -3,7 +3,7 @@ from django.apps import AppConfig
 from django_idom.utils import ComponentPreloader
 
 
-class HomeConfig(AppConfig):
+class DjangoIdomConfig(AppConfig):
     name = "django_idom"
 
     def ready(self):
