@@ -35,8 +35,6 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self) -> None:
         await super().connect()
 
-        self.view_id = self.scope["url_route"]["kwargs"]["view_id"]
-
         user = self.scope.get("user")
         if user and user.is_authenticated:
             try:
@@ -46,11 +44,6 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 _logger.exception("IDOM websocket authentication has failed!")
         elif user is None:
             _logger.warning("IDOM websocket is missing AuthMiddlewareStack!")
-
-        # Limit developer control this websocket
-        self.socket = WebsocketConnection(
-            self.scope, self.close, self.disconnect, self.view_id
-        )
 
         self._idom_dispatcher_future = asyncio.ensure_future(self._run_dispatch_loop())
 
@@ -65,6 +58,7 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         await self._idom_recv_queue.put(LayoutEvent(**content))
 
     async def _run_dispatch_loop(self):
+        view_id = self.scope["url_route"]["kwargs"]["view_id"]
 
         try:
             component_constructor = IDOM_REGISTERED_COMPONENTS[self.view_id]
@@ -75,8 +69,11 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         query_dict = dict(parse_qsl(self.scope["query_string"].decode()))
         component_kwargs = json.loads(query_dict.get("kwargs", "{}"))
 
+        # Provide developer access to parts of this websocket
+        socket = WebsocketConnection(self.scope, self.close, self.disconnect, view_id)
+
         try:
-            component_instance = component_constructor(self.socket, **component_kwargs)
+            component_instance = component_constructor(socket, **component_kwargs)
         except Exception:
             _logger.exception(
                 f"Failed to construct component {component_constructor} "
