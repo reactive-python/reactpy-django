@@ -2,12 +2,12 @@ import idom
 
 
 @idom.component
-def HelloWorld():
+def HelloWorld(websocket):
     return idom.html.h1({"id": "hello-world"}, "Hello World!")
 
 
 @idom.component
-def Button():
+def Button(websocket):
     count, set_count = idom.hooks.use_state(0)
     return idom.html.div(
         idom.html.button(
@@ -22,7 +22,7 @@ def Button():
 
 
 @idom.component
-def ParametrizedComponent(x, y):
+def ParametrizedComponent(websocket, x, y):
     total = x + y
     return idom.html.h1({"id": "parametrized-component", "data-value": total}, total)
 
@@ -32,5 +32,5 @@ VictoryBar = idom.web.export(victory, "VictoryBar")
 
 
 @idom.component
-def SimpleBarChart():
+def SimpleBarChart(websocket):
     return VictoryBar()

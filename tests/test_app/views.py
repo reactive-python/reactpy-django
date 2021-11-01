@@ -1,7 +1,6 @@
-from django.http import HttpResponse
-from django.template import loader
+from django.shortcuts import render
 
 
 def base_template(request):
     context = {}
-    return HttpResponse(loader.get_template("base.html").render(context, request))
+    return render(request, "base.html", context)
