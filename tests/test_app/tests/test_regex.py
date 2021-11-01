@@ -5,23 +5,25 @@ from django_idom.utils import COMPONENT_REGEX
 
 class RegexTests(TestCase):
     def test_component_regex(self):
-        self.assertRegex(r'{%idom_component "my.component"%}', COMPONENT_REGEX)
-        self.assertRegex(r"{%idom_component 'my.component'%}", COMPONENT_REGEX)
-        self.assertRegex(r'{% idom_component "my.component" %}', COMPONENT_REGEX)
-        self.assertRegex(r"{% idom_component 'my.component' %}", COMPONENT_REGEX)
-        self.assertRegex(
+        for component in {
+            r'{%idom_component "my.component"%}',
+            r"{%idom_component 'my.component'%}",
+            r'{% idom_component "my.component" %}',
+            r"{% idom_component 'my.component' %}",
             r'{% idom_component "my.component" class="my_thing" %}',
-            COMPONENT_REGEX,
-        )
-        self.assertRegex(
             r'{% idom_component "my.component" class="my_thing" attr="attribute" %}',
-            COMPONENT_REGEX,
-        )
-        self.assertNotRegex(r'{% not_a_real_thing "my.component" %}', COMPONENT_REGEX)
-        self.assertNotRegex(r"{% idom_component my.component %}", COMPONENT_REGEX)
-        self.assertNotRegex(r"""{% idom_component 'my.component" %}""", COMPONENT_REGEX)
-        self.assertNotRegex(r'{ idom_component "my.component" }', COMPONENT_REGEX)
-        self.assertNotRegex(r'{{ idom_component "my.component" }}', COMPONENT_REGEX)
-        self.assertNotRegex(r"idom_component", COMPONENT_REGEX)
-        self.assertNotRegex(r"{%%}", COMPONENT_REGEX)
-        self.assertNotRegex(r"", COMPONENT_REGEX)
+        }:
+            self.assertRegex(component, COMPONENT_REGEX)
+
+        for fake_component in {
+            r'{% not_a_real_thing "my.component" %}',
+            r"{% idom_component my.component %}",
+            r"""{% idom_component 'my.component" %}""",
+            r'{ idom_component "my.component" }',
+            r'{{ idom_component "my.component" }}',
+            r"idom_component",
+            r"{%%}",
+            r" ",
+            r"",
+        }:
+            self.assertNotRegex(fake_component, COMPONENT_REGEX)
