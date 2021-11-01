@@ -5,7 +5,7 @@
     <img alt="Tests" src="https://github.com/idom-team/django-idom/workflows/Test/badge.svg?event=push" />
   </a>
   <a href="https://pypi.python.org/pypi/django-idom">
-    <img alt="Version Info" src="https://img.shields.io/pypi/v/idom.svg"/>
+    <img alt="Version Info" src="https://img.shields.io/pypi/v/django-idom.svg"/>
   </a>
   <a href="https://github.com/idom-team/django-idom/blob/main/LICENSE">
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-purple.svg">
@@ -20,13 +20,12 @@ interfaces in pure Python.
 <a
   target="_blank"
   href="https://mybinder.org/v2/gh/idom-team/idom-jupyter/main?filepath=notebooks%2Fintroduction.ipynb">
-  <img
+<img
     alt="Binder"
     valign="bottom"
     height="21px"
     src="https://mybinder.org/badge_logo.svg"/>
 </a>
-
 
 # Install Django IDOM
 
@@ -46,7 +45,7 @@ your_project/
 ├── urls.py
 └── example_app/
     ├── __init__.py
-    ├── idom.py
+    ├── components.py
     ├── templates/
     │   └── your-template.html
     └── urls.py
@@ -60,7 +59,7 @@ order to create ASGI websockets within Django. Then, we will add a path for IDOM
 websocket consumer using `IDOM_WEBSOCKET_PATH`.
 
 _Note: If you wish to change the route where this websocket is served from, see the
-available [settings](#settings.py)._
+available [settings](#settingspy)._
 
 ```python
 
@@ -75,14 +74,14 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
 # Fetch ASGI application before importing dependencies that require ORM models.
 http_asgi_app = get_asgi_application()
 
+from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 
 application = ProtocolTypeRouter(
     {
         "http": http_asgi_app,
-        "websocket": URLRouter(
-          # add a path for IDOM's websocket
-          [IDOM_WEBSOCKET_PATH]
+        "websocket": SessionMiddlewareStack(
+            AuthMiddlewareStack(URLRouter([IDOM_WEBSOCKET_PATH]))
         ),
     }
 )
@@ -110,6 +109,10 @@ IDOM_BASE_URL: str = "_idom/"
 # Set cache size limit for loading JS files for IDOM.
 # Only applies when not using Django's caching framework (see below).
 IDOM_WEB_MODULE_LRU_CACHE_SIZE: int | None = None
+
+# Maximum seconds between two reconnection attempts that would cause the client give up.
+# 0 will disable reconnection.
+IDOM_WS_MAX_RECONNECT_DELAY: int = 604800
 
 # Configure a cache for loading JS files
 CACHES = {
@@ -147,8 +150,8 @@ ultimately be referenced by name in `your-template.html`. `your-template.html`.
 import idom
 
 @idom.component
-def Hello(greeting_recipient):  # component names are camelcase by convention
-    return Header(f"Hello {greeting_recipient}!")
+def Hello(websocket, greeting_recipient):  # component names are camelcase by convention
+    return idom.html.header(f"Hello {greeting_recipient}!")
 ```
 
 ## `example_app/templates/your-template.html`
@@ -165,8 +168,6 @@ idom_component module_name.ComponentName param_1="something" param_2="something-
 In context this will look a bit like the following...
 
 ```jinja
-<!-- don't forget your load statements -->
-{% load static %}
 {% load idom %}
 
 <!DOCTYPE html>
@@ -184,15 +185,11 @@ You can then serve `your-template.html` from a view just
 [like any other](https://docs.djangoproject.com/en/3.2/intro/tutorial03/#write-views-that-actually-do-something).
 
 ```python
-from django.http import HttpResponse
-from django.template import loader
-
+from django.shortcuts import render
 
 def your_view(request):
     context = {}
-    return HttpResponse(
-      loader.get_template("your-template.html").render(context, request)
-    )
+    return render(request, "your-template.html", context)
 ```
 
 ## `example_app/urls.py`
