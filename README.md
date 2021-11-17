@@ -179,6 +179,8 @@ In context this will look a bit like the following...
 </html>
 ```
 
+Keyworded parameters that can also be passed in include `class="example"` and `loader="example.html"`
+
 ## `example_app/views.py`
 
 You can then serve `your-template.html` from a view just
