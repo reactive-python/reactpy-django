@@ -20,12 +20,12 @@ def idom_component(_component_id_, **kwargs):
     _register_component(_component_id_)
 
     class_ = kwargs.pop("class", "")
-    loader = kwargs.pop("loader", "")
+    initial_html = kwargs.pop("initial_html", "")
     json_kwargs = json.dumps(kwargs, separators=(",", ":"))
 
     return {
         "class": class_,
-        "loader": loader,
+        "initial_html": initial_html,
         "idom_websocket_url": IDOM_WEBSOCKET_URL,
         "idom_web_modules_url": IDOM_WEB_MODULES_URL,
         "idom_ws_max_reconnect_delay": IDOM_WS_MAX_RECONNECT_DELAY,

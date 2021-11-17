@@ -179,7 +179,7 @@ In context this will look a bit like the following...
 </html>
 ```
 
-Keyworded parameters that can also be passed in include `class="example"` and `loader="example.html"`
+Keyworded parameters that can also be passed in include `class="example"` and `initial_html="example.html"`
 
 ## `example_app/views.py`
 
