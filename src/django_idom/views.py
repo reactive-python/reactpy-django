@@ -27,7 +27,6 @@ if IDOM_WEB_MODULE_CACHE is None:
         file_path = IDOM_WED_MODULES_DIR.current.joinpath(*file.split("/"))
         return HttpResponse(file_path.read_text(), content_type="text/javascript")
 
-
 else:
     _web_module_cache = caches[IDOM_WEB_MODULE_CACHE]
 
