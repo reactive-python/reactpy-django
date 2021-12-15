@@ -6,7 +6,9 @@ from .websocket_consumer import IdomAsyncWebsocketConsumer
 
 
 IDOM_WEBSOCKET_PATH = path(
-    IDOM_WEBSOCKET_URL + "<view_id>/", IdomAsyncWebsocketConsumer.as_asgi()
+    IDOM_WEBSOCKET_URL + "<view_id>/",
+    IdomAsyncWebsocketConsumer.as_asgi(),
+    name="idom_websocket",
 )
 """A URL resolver for :class:`IdomAsyncWebsocketConsumer`
 
@@ -17,7 +19,9 @@ to allow users to configure the URL themselves.
 
 
 IDOM_WEB_MODULES_PATH = path(
-    IDOM_WEB_MODULES_URL + "<path:file>", views.web_modules_file
+    IDOM_WEB_MODULES_URL + "<path:file>",
+    views.web_modules_file,
+    name="idom_web_modules",
 )
 """A URL resolver for static web modules required by IDOM
 
