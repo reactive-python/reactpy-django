@@ -3,6 +3,7 @@ import asyncio
 import json
 import logging
 from dataclasses import dataclass
+from threading import Thread
 from typing import Any, Awaitable, Callable, Optional
 from urllib.parse import parse_qsl
 
@@ -16,6 +17,11 @@ from .config import IDOM_REGISTERED_COMPONENTS
 
 
 _logger = logging.getLogger(__name__)
+
+
+def start_background_loop(loop: asyncio.AbstractEventLoop) -> None:
+    asyncio.set_event_loop(loop)
+    loop.run_forever()
 
 
 @dataclass
@@ -42,16 +48,25 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         elif user is None:
             _logger.warning("IDOM websocket is missing AuthMiddlewareStack!")
 
-        self._dispatcher_future = asyncio.ensure_future(self._run_dispatch_loop())
+        self._recv_queue_loop = asyncio.new_event_loop()
+        t = Thread(
+            target=start_background_loop, args=[self._recv_queue_loop], daemon=True
+        )
+        t.start()
+        asyncio.run_coroutine_threadsafe(
+            self._run_dispatch_loop(), self._recv_queue_loop
+        )
 
     async def disconnect(self, code: int) -> None:
-        if self._dispatcher_future.done():
-            await self._dispatcher_future
-        else:
-            self._dispatcher_future.cancel()
+        self._recv_queue_loop.stop()
         await super().disconnect(code)
 
     async def receive_json(self, content: Any, **kwargs: Any) -> None:
+        asyncio.run_coroutine_threadsafe(
+            self._recv_queue_put(content, **kwargs), self._recv_queue_loop
+        )
+
+    async def _recv_queue_put(self, content: Any, **kwargs: Any):
         await self._recv_queue.put(LayoutEvent(**content))
 
     async def _run_dispatch_loop(self):
@@ -78,12 +93,12 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             )
             return
 
-        self._recv_queue = recv_queue = asyncio.Queue()
+        self._recv_queue = asyncio.Queue()
         try:
             await dispatch_single_view(
                 Layout(component_instance),
                 self.send_json,
-                recv_queue.get,
+                self._recv_queue.get,
             )
         except Exception:
             await self.close()
