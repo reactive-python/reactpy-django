@@ -17,11 +17,16 @@ from .config import IDOM_REGISTERED_COMPONENTS
 _logger = logging.getLogger(__name__)
 
 
-class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
-    """Communicates with the browser to perform actions on-demand."""
+@dataclass
+class WebsocketConnection:
+    scope: dict
+    close: Callable[[Optional[int]], Awaitable[None]]
+    disconnect: Callable[[int], Awaitable[None]]
+    view_id: str
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
+
+class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
+    """Communicates with the browser to perform actions on-demand."""
 
     async def connect(self) -> None:
         await super().connect()
@@ -49,14 +54,17 @@ class IdomAsyncWebSocketConsumer(AsyncJsonWebsocketConsumer):
         try:
             component_constructor = IDOM_REGISTERED_COMPONENTS[view_id]
         except KeyError:
-            _logger.warning(f"Uknown IDOM view ID {view_id!r}")
+            _logger.warning(f"Unknown IDOM view ID {view_id!r}")
             return
 
         query_dict = dict(parse_qsl(self.scope["query_string"].decode()))
         component_kwargs = json.loads(query_dict.get("kwargs", "{}"))
 
+        # Provide developer access to parts of this websocket
+        socket = WebsocketConnection(self.scope, self.close, self.disconnect, view_id)
+
         try:
-            component_instance = component_constructor(**component_kwargs)
+            component_instance = component_constructor(socket, **component_kwargs)
         except Exception:
             _logger.exception(
                 f"Failed to construct component {component_constructor} "

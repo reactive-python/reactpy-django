@@ -14,18 +14,24 @@ export function mountViewToElement(
   mountPoint,
   idomWebsocketUrl,
   idomWebModulesUrl,
+  maxReconnectTimeout,
   viewId,
   queryParams
 ) {
   const fullWebsocketUrl =
     WS_ENDPOINT_URL + idomWebsocketUrl + viewId + "/?" + queryParams;
 
-  const fullWebModulesUrl = LOCATION.origin + "/" + idomWebModulesUrl
+  const fullWebModulesUrl = LOCATION.origin + "/" + idomWebModulesUrl;
   const loadImportSource = (source, sourceType) => {
     return import(
       sourceType == "NAME" ? `${fullWebModulesUrl}${source}` : source
     );
   };
 
-  mountLayoutWithWebSocket(mountPoint, fullWebsocketUrl, loadImportSource);
+  mountLayoutWithWebSocket(
+    mountPoint,
+    fullWebsocketUrl,
+    loadImportSource,
+    maxReconnectTimeout
+  );
 }
