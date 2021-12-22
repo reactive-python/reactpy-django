@@ -2,11 +2,12 @@
 import asyncio
 import json
 import logging
-import threading
-from typing import Any
+from dataclasses import dataclass
+from typing import Any, Awaitable, Callable, Optional
 from urllib.parse import parse_qsl
 
-import janus
+from channels.auth import login
+from channels.db import database_sync_to_async as convert_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from idom.core.dispatcher import dispatch_single_view
 from idom.core.layout import Layout, LayoutEvent
@@ -31,22 +32,27 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self) -> None:
         await super().connect()
 
-        # Run render as thread
-        self._disconnected = threading.Event()
-        self._dispatcher_thread = threading.Thread(
-            target=asyncio.run,
-            args=(self._run_dispatch_loop(),),
-            daemon=True,
-        )
-        self._dispatcher_thread.start()
+        user = self.scope.get("user")
+        if user and user.is_authenticated:
+            try:
+                await login(self.scope, user)
+                await convert_to_async(self.scope["session"].save)()
+            except Exception:
+                _logger.exception("IDOM websocket authentication has failed!")
+        elif user is None:
+            _logger.warning("IDOM websocket is missing AuthMiddlewareStack!")
+
+        self._idom_dispatcher_future = asyncio.ensure_future(self._run_dispatch_loop())
 
     async def disconnect(self, code: int) -> None:
-        self._disconnected.set()
-        await self._recv_queue.put(None)
-        self._dispatcher_thread.join(timeout=0)
+        if self._idom_dispatcher_future.done():
+            await self._idom_dispatcher_future
+        else:
+            self._idom_dispatcher_future.cancel()
+        await super().disconnect(code)
 
     async def receive_json(self, content: Any, **kwargs: Any) -> None:
-        await self._recv_queue.put(LayoutEvent(**content))
+        await self._idom_recv_queue.put(LayoutEvent(**content))
 
     async def _run_dispatch_loop(self):
         view_id = self.scope["url_route"]["kwargs"]["view_id"]
@@ -72,18 +78,13 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             )
             return
 
-        # Thread-safe queue
-        self._recv_queue = janus.Queue().async_q
-
+        self._idom_recv_queue = recv_queue = asyncio.Queue()
         try:
             await dispatch_single_view(
                 Layout(component_instance),
                 self.send_json,
-                self._recv_queue.get,
+                recv_queue.get,
             )
         except Exception:
-            self._disconnected.wait()
-            if not self._disconnected.is_set():
-                await self.close()
-                raise
             await self.close()
+            raise
