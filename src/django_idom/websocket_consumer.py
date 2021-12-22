@@ -42,17 +42,17 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         elif user is None:
             _logger.warning("IDOM websocket is missing AuthMiddlewareStack!")
 
-        self._idom_dispatcher_future = asyncio.ensure_future(self._run_dispatch_loop())
+        self._dispatcher_future = asyncio.ensure_future(self._run_dispatch_loop())
 
     async def disconnect(self, code: int) -> None:
-        if self._idom_dispatcher_future.done():
-            await self._idom_dispatcher_future
+        if self._dispatcher_future.done():
+            await self._dispatcher_future
         else:
-            self._idom_dispatcher_future.cancel()
+            self._dispatcher_future.cancel()
         await super().disconnect(code)
 
     async def receive_json(self, content: Any, **kwargs: Any) -> None:
-        await self._idom_recv_queue.put(LayoutEvent(**content))
+        await self._recv_queue.put(LayoutEvent(**content))
 
     async def _run_dispatch_loop(self):
         view_id = self.scope["url_route"]["kwargs"]["view_id"]
@@ -78,7 +78,7 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             )
             return
 
-        self._idom_recv_queue = recv_queue = asyncio.Queue()
+        self._recv_queue = recv_queue = asyncio.Queue()
         try:
             await dispatch_single_view(
                 Layout(component_instance),
