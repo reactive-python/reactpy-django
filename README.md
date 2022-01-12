@@ -36,11 +36,13 @@ feel free to organize your component modules you wish. Any components created wi
 by Python dotted path in `your-template.html`.
 
 ```python
-import idom
+from idom import component, html
+from django_idom import IdomWebsocket
 
-@idom.component
-def Hello(websocket, greeting_recipient):  # Names are CamelCase by ReactJS convention
-    return idom.html.header(f"Hello {greeting_recipient}!")
+
+@component
+def Hello(websocket: IdomWebsocket, greeting_recipient):  # Names are CamelCase by ReactJS convention
+    return html.header(f"Hello {greeting_recipient}!")
 ```
 
 ## `example_app/templates/your-template.html`
