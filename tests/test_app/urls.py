@@ -18,15 +18,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-
-from django_idom import IDOM_WEB_MODULES_PATH
+from django.urls import include, path
 
 from .views import base_template
 
 
 urlpatterns = [
     path("", base_template),
-    IDOM_WEB_MODULES_PATH,
+    path("idom/", include("django_idom.http.urls")),
     path("admin/", admin.site.urls),
 ]

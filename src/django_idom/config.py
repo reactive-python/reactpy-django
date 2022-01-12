@@ -7,11 +7,10 @@ from idom.core.proto import ComponentConstructor
 
 IDOM_REGISTERED_COMPONENTS: Dict[str, ComponentConstructor] = {}
 
-IDOM_BASE_URL = getattr(settings, "IDOM_BASE_URL", "_idom/")
-IDOM_WEBSOCKET_URL = IDOM_BASE_URL + "websocket/"
-IDOM_WEB_MODULES_URL = IDOM_BASE_URL + "web_module/"
+IDOM_WEBSOCKET_URL = getattr(settings, "IDOM_WEBSOCKET_URL", "idom/")
 IDOM_WS_MAX_RECONNECT_DELAY = getattr(settings, "IDOM_WS_MAX_RECONNECT_DELAY", 604800)
 
+# Determine if using Django caching or LRU cache
 _CACHES = getattr(settings, "CACHES", {})
 if _CACHES:
     if "idom_web_modules" in getattr(settings, "CACHES", {}):
@@ -22,7 +21,7 @@ else:
     IDOM_WEB_MODULE_CACHE = None
 
 
-# the LRU cache size for the route serving IDOM_WEB_MODULES_DIR files
+# LRU cache size, if not using Django caching
 IDOM_WEB_MODULE_LRU_CACHE_SIZE = getattr(
     settings, "IDOM_WEB_MODULE_LRU_CACHE_SIZE", None
 )

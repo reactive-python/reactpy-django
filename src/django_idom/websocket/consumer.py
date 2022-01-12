@@ -12,7 +12,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from idom.core.dispatcher import dispatch_single_view
 from idom.core.layout import Layout, LayoutEvent
 
-from .config import IDOM_REGISTERED_COMPONENTS
+from ..config import IDOM_REGISTERED_COMPONENTS
 
 
 _logger = logging.getLogger(__name__)

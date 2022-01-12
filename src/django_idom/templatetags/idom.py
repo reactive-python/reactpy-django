@@ -3,15 +3,13 @@ from urllib.parse import urlencode
 from uuid import uuid4
 
 from django import template
+from django.urls import reverse
 
-from django_idom.config import (
-    IDOM_WEB_MODULES_URL,
-    IDOM_WEBSOCKET_URL,
-    IDOM_WS_MAX_RECONNECT_DELAY,
-)
+from django_idom.config import IDOM_WEBSOCKET_URL, IDOM_WS_MAX_RECONNECT_DELAY
 from django_idom.utils import _register_component
 
 
+IDOM_WEB_MODULES_URL = reverse("idom:web_modules", args=["x"])[:-1][1:]
 register = template.Library()
 
 
