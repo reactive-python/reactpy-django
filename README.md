@@ -112,7 +112,6 @@ IDOM_WS_MAX_RECONNECT_DELAY: int = 604800
 
 # Configure a cache for loading JS files
 CACHES = {
-  # Configure a cache for loading JS files for IDOM
   # If "idom" cache is not configured, then we'll use the "default" instead
   "idom": {"BACKEND": ...},
 }
