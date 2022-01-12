@@ -15,9 +15,11 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
     path = IDOM_WED_MODULES_DIR.current.joinpath(*file.split("/")).absolute()
     last_modified_time = os.stat(path).st_mtime
     cache_key = f"django_idom:{path}"
-    response = idom_cache.get(cache_key, version=last_modified_time)
+    response = await idom_cache.aget(cache_key, version=last_modified_time)
     if response is None:
         response = HttpResponse(path.read_text(), content_type="text/javascript")
-        idom_cache.delete(cache_key)
-        idom_cache.set(cache_key, response, timeout=None, version=last_modified_time)
+        await idom_cache.adelete(cache_key)
+        await idom_cache.aset(
+            cache_key, response, timeout=None, version=last_modified_time
+        )
     return response
