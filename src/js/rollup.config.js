@@ -7,7 +7,7 @@ const { PRODUCTION } = process.env;
 export default {
   input: "src/index.js",
   output: {
-    file: "../django_idom/static/js/django-idom-client.js",
+    file: "../django_idom/static/django_idom/client.js",
     format: "esm",
   },
   plugins: [
