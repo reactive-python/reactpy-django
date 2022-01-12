@@ -27,65 +27,53 @@ interfaces in pure Python.
     src="https://mybinder.org/badge_logo.svg"/>
 </a>
 
-# Install Django IDOM
+# Quick Example
+
+## `example_app/components.py`
+
+This is where you'll define your [IDOM](https://github.com/idom-team/idom) components. Ultimately though, you should
+feel free to organize your component modules you wish. Any components created will ultimately be referenced
+by Python dotted path in `your-template.html`.
+
+```python
+import idom
+
+@idom.component
+def Hello(websocket, greeting_recipient):  # Names are CamelCase by ReactJS convention
+    return idom.html.header(f"Hello {greeting_recipient}!")
+```
+
+## `example_app/templates/your-template.html`
+
+In your templates, you may add IDOM components into your HTML by using the `idom_component`
+template tag. This tag requires the dotted path to the component function. Additonally, you can
+pass in keyworded arguments into your component function.
+
+In context this will look a bit like the following...
+
+```jinja
+{% load idom %}
+
+<!DOCTYPE html>
+<html>
+  <body>
+    ...
+    {% idom_component "my_django_project.example_app.components.Hello" greeting_recipient="World" %}
+  </body>
+</html>
+```
+
+# Installation
+
+Install `django-idom` via pip.
 
 ```bash
 pip install django-idom
 ```
 
-# Django Integration
+---
 
-To integrate IDOM into your application you'll need to modify or add the following files to `your_project`:
-
-```
-your_project/
-├── __init__.py
-├── asgi.py
-├── settings.py
-├── urls.py
-└── example_app/
-    ├── __init__.py
-    ├── components.py
-    ├── templates/
-    │   └── your-template.html
-    └── urls.py
-```
-
-## `asgi.py`
-
-Follow the [`channels`](https://channels.readthedocs.io/en/stable/)
-[installation guide](https://channels.readthedocs.io/en/stable/installation.html) in
-order to create ASGI websockets within Django. Then, we will add a path for IDOM's
-websocket consumer using `IDOM_WEBSOCKET_PATH`.
-
-_Note: If you wish to change the route where this websocket is served from, see the
-available [settings](#settingspy)._
-
-```python
-
-import os
-
-from django.core.asgi import get_asgi_application
-
-from django_idom import IDOM_WEBSOCKET_PATH
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
-
-# Fetch ASGI application before importing dependencies that require ORM models.
-http_asgi_app = get_asgi_application()
-
-from channels.auth import AuthMiddlewareStack
-from channels.routing import ProtocolTypeRouter, URLRouter
-
-application = ProtocolTypeRouter(
-    {
-        "http": http_asgi_app,
-        "websocket": SessionMiddlewareStack(
-            AuthMiddlewareStack(URLRouter([IDOM_WEBSOCKET_PATH]))
-        ),
-    }
-)
-```
+You'll also need to modify a few files in your Django project...
 
 ## `settings.py`
 
@@ -100,20 +88,9 @@ INSTALLED_APPS = [
 ]
 ```
 
-You may configure additional options as well:
+You may configure additional options as well...
 
 ```python
-# the base URL for all IDOM-releated resources
-IDOM_BASE_URL: str = "_idom/"
-
-# Set cache size limit for loading JS files for IDOM.
-# Only applies when not using Django's caching framework (see below).
-IDOM_WEB_MODULE_LRU_CACHE_SIZE: int | None = None
-
-# Maximum seconds between two reconnection attempts that would cause the client give up.
-# 0 will disable reconnection.
-IDOM_WS_MAX_RECONNECT_DELAY: int = 604800
-
 # Configure a cache for loading JS files
 CACHES = {
   # Configure a cache for loading JS files for IDOM
@@ -121,89 +98,60 @@ CACHES = {
   # If the above cache is not configured, then we'll use the "default" instead
   "default": {"BACKEND": ...},
 }
+
+# If your project has no caching configured, django-idom will use an in-memory
+# LRU cache for caching JavaScript.
+IDOM_WEB_MODULE_LRU_CACHE_SIZE: int | None = None
+
+# Maximum seconds between two reconnection attempts that would cause the client give up.
+# 0 will disable reconnection.
+IDOM_WS_MAX_RECONNECT_DELAY: int = 604800
+
+# The URL for IDOM to serve its Websockets
+IDOM_WEBSOCKET_URL: str = "idom/"
 ```
 
 ## `urls.py`
 
-You'll need to include IDOM's static web modules path using `IDOM_WEB_MODULES_PATH`.
-Similarly to the `IDOM_WEBSOCKET_PATH`. If you wish to change the route where this
-websocket is served from, see the available [settings](#settings.py).
+Add Django-IDOM http URLs to your `urlpatterns`.
 
 ```python
-from django_idom import IDOM_WEB_MODULES_PATH
-
 urlpatterns = [
-    IDOM_WEB_MODULES_PATH,
+    path("idom/", include("django_idom.http.urls")),
     ...
 ]
 ```
 
-## `example_app/components.py`
+## `asgi.py`
 
-This is where, by a convention similar to that of
-[`views.py`](https://docs.djangoproject.com/en/3.2/topics/http/views/), you'll define
-your [IDOM](https://github.com/idom-team/idom) components. Ultimately though, you should
-feel free to organize your component modules you wish. The components created here will
-ultimately be referenced by name in `your-template.html`. `your-template.html`.
+If you do not have an `asgi.py`, first follow the [`channels` installation guide](https://channels.readthedocs.io/en/stable/installation.html) in
+order to create websockets within Django.
 
-```python
-import idom
+We will add IDOM's websocket consumer path using `IDOM_WEBSOCKET_PATH`.
 
-@idom.component
-def Hello(websocket, greeting_recipient):  # component names are camelcase by convention
-    return idom.html.header(f"Hello {greeting_recipient}!")
-```
-
-## `example_app/templates/your-template.html`
-
-In your templates, you may inject a view of an IDOM component into your templated HTML
-by using the `idom_component` template tag. This tag which requires the name of a component
-to render (of the form `module_name.ComponentName`) and keyword arguments you'd like to
-pass it from the template.
+_Note: If you wish to change the route where this websocket is served from, see the
+available [settings](#settingspy)._
 
 ```python
-idom_component module_name.ComponentName param_1="something" param_2="something-else"
-```
 
-In context this will look a bit like the following...
+import os
+from django.core.asgi import get_asgi_application
+from django_idom import IDOM_WEBSOCKET_PATH
 
-```jinja
-{% load idom %}
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
+http_asgi_app = get_asgi_application()
 
-<!DOCTYPE html>
-<html>
-  <body>
-    ...
-    {% idom_component "your_project.example_app.components.Hello" greeting_recipient="World" %}
-  </body>
-</html>
-```
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
 
-## `example_app/views.py`
-
-You can then serve `your-template.html` from a view just
-[like any other](https://docs.djangoproject.com/en/3.2/intro/tutorial03/#write-views-that-actually-do-something).
-
-```python
-from django.shortcuts import render
-
-def your_view(request):
-    context = {}
-    return render(request, "your-template.html", context)
-```
-
-## `example_app/urls.py`
-
-Include your view in the list of urlpatterns
-
-```python
-from django.urls import path
-from .views import your_view  # define this view like any other HTML template view
-
-urlpatterns = [
-    path("", your_view),
-    ...
-]
+application = ProtocolTypeRouter(
+    {
+        "http": http_asgi_app,
+        "websocket": SessionMiddlewareStack(
+            AuthMiddlewareStack(URLRouter([IDOM_WEBSOCKET_PATH]))
+        ),
+    }
+)
 ```
 
 # Developer Guide
