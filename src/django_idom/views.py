@@ -18,5 +18,6 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
     response = idom_cache.get(cache_key, version=last_modified_time)
     if response is None:
         response = HttpResponse(path.read_text(), content_type="text/javascript")
+        idom_cache.delete(cache_key)
         idom_cache.set(cache_key, response, timeout=None, version=last_modified_time)
     return response
