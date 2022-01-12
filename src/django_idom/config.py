@@ -15,7 +15,7 @@ IDOM_WS_MAX_RECONNECT_DELAY = getattr(settings, "IDOM_WS_MAX_RECONNECT_DELAY", 6
 _CACHES = getattr(settings, "CACHES", {})
 if _CACHES:
     if "idom_web_modules" in getattr(settings, "CACHES", {}):
-        IDOM_WEB_MODULE_CACHE = "idom_web_modules"
+        IDOM_WEB_MODULE_CACHE = "idom"
     else:
         IDOM_WEB_MODULE_CACHE = DEFAULT_CACHE_ALIAS
 else:
