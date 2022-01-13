@@ -21,7 +21,6 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
     if response is None:
         async with async_open(path, "r") as fp:
             response = HttpResponse(await fp.read(), content_type="text/javascript")
-        await idom_cache.adelete(cache_key)
         await idom_cache.aset(
             cache_key, response, timeout=None, version=last_modified_time
         )
