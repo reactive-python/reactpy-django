@@ -12,7 +12,8 @@ idom_cache = caches[IDOM_CACHE]
 
 
 async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
-    """Gets a web modules file. Web modules files  from cache"""
+    """Gets JavaScript required for IDOM modules at runtime. These modules are
+    returned from cache if available."""
     path = IDOM_WED_MODULES_DIR.current.joinpath(*file.split("/")).absolute()
     last_modified_time = os.stat(path).st_mtime
     cache_key = f"django_idom:web_module:{path}"
