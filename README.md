@@ -41,7 +41,7 @@ from django_idom import IdomWebsocket
 
 
 @component
-def Hello(websocket: IdomWebsocket, greeting_recipient):  # Names are CamelCase by ReactJS convention
+def Hello(websocket: IdomWebsocket, greeting_recipient: str):  # Names are CamelCase by ReactJS convention
     return html.header(f"Hello {greeting_recipient}!")
 ```
 
