@@ -1,7 +1,6 @@
 import os
 
 from aiofile import async_open
-from django.core.cache import caches
 from django.http import HttpRequest, HttpResponse
 from idom.config import IDOM_WED_MODULES_DIR
 
