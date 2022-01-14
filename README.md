@@ -80,7 +80,7 @@ You'll also need to modify a few files in your Django project...
 ## [`settings.py`](https://docs.djangoproject.com/en/dev/topics/settings/)
 
 In your settings you'll need to add `django_idom` to the
-[`INSTALLED_APPS`](https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-INSTALLED_APPS)
+[`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS)
 list:
 
 ```python
