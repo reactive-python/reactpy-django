@@ -45,7 +45,7 @@ def Hello(websocket: IdomWebsocket, greeting_recipient):  # Names are CamelCase 
     return html.header(f"Hello {greeting_recipient}!")
 ```
 
-## `example_app/templates/your-template.html`
+## [`example_app/templates/your-template.html`](https://docs.djangoproject.com/en/dev/topics/templates/)
 
 In your templates, you may add IDOM components into your HTML by using the `idom_component`
 template tag. This tag requires the dotted path to the component function. Additonally, you can
@@ -77,7 +77,7 @@ pip install django-idom
 
 You'll also need to modify a few files in your Django project...
 
-## `settings.py`
+## [`settings.py`](https://docs.djangoproject.com/en/dev/topics/settings/)
 
 In your settings you'll need to add `django_idom` to the
 [`INSTALLED_APPS`](https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-INSTALLED_APPS)
@@ -113,7 +113,7 @@ IDOM_WS_MAX_RECONNECT_DELAY: int = 604800
 IDOM_WEBSOCKET_URL: str = "idom/"
 ```
 
-## `urls.py`
+## [`urls.py`](https://docs.djangoproject.com/en/dev/topics/http/urls/)
 
 Add Django-IDOM http URLs to your `urlpatterns`.
 
@@ -124,7 +124,7 @@ urlpatterns = [
 ]
 ```
 
-## `asgi.py`
+## [`asgi.py`](https://docs.djangoproject.com/en/dev/howto/deployment/asgi/)
 
 If you do not have an `asgi.py`, first follow the [`channels` installation guide](https://channels.readthedocs.io/en/stable/installation.html) in
 order to create websockets within Django.
