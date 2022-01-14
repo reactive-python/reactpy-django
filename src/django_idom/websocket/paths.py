@@ -1,6 +1,7 @@
 from django.urls import path
 
-from ..config import IDOM_WEBSOCKET_URL
+from django_idom.config import IDOM_WEBSOCKET_URL
+
 from .consumer import IdomAsyncWebsocketConsumer
 
 

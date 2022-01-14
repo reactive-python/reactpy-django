@@ -6,7 +6,7 @@ from django.core.cache import caches
 from django.http import HttpRequest, HttpResponse
 from idom.config import IDOM_WED_MODULES_DIR
 
-from ..config import IDOM_WEB_MODULE_CACHE, IDOM_WEB_MODULE_LRU_CACHE_SIZE
+from django_idom.config import IDOM_WEB_MODULE_CACHE, IDOM_WEB_MODULE_LRU_CACHE_SIZE
 
 
 if IDOM_WEB_MODULE_CACHE is None:
