@@ -22,7 +22,7 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
 
     # Fetch the web modules file from cache, if available
     last_modified_time = os.stat(path).st_mtime
-    cache_key = f"django_idom:web_module:{path}"
+    cache_key = f"django_idom:web_module:{str(path).lstrip(str(web_modules_dir))}"
     response = await IDOM_CACHE.aget(cache_key, version=last_modified_time)
     if response is None:
         async with async_open(path, "r") as fp:
