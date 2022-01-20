@@ -106,20 +106,14 @@ You may configure additional options as well:
 # the base URL for all IDOM-releated resources
 IDOM_BASE_URL: str = "_idom/"
 
-# Set cache size limit for loading JS files for IDOM.
-# Only applies when not using Django's caching framework (see below).
-IDOM_WEB_MODULE_LRU_CACHE_SIZE: int | None = None
-
 # Maximum seconds between two reconnection attempts that would cause the client give up.
 # 0 will disable reconnection.
 IDOM_WS_MAX_RECONNECT_DELAY: int = 604800
 
 # Configure a cache for loading JS files
 CACHES = {
-  # Configure a cache for loading JS files for IDOM
-  "idom_web_modules": {"BACKEND": ...},
-  # If the above cache is not configured, then we'll use the "default" instead
-  "default": {"BACKEND": ...},
+  # If "idom" cache is not configured, then we'll use the "default" instead
+  "idom": {"BACKEND": ...},
 }
 ```
 
