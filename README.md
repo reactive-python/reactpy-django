@@ -1,20 +1,6 @@
-# Django IDOM
+# Django IDOM &middot; [![Tests](https://github.com/idom-team/django-idom/workflows/Test/badge.svg?event=push)](https://github.com/idom-team/django-idom/actions?query=workflow%3ATest) [![PyPI Version](https://img.shields.io/pypi/v/django-idom.svg)](https://pypi.python.org/pypi/django-idom) [![License](https://img.shields.io/badge/License-MIT-purple.svg)](https://github.com/idom-team/django-idom/blob/main/LICENSE)
 
-<p>
-  <a href="https://github.com/idom-team/django-idom/actions?query=workflow%3ATest">
-    <img alt="Tests" src="https://github.com/idom-team/django-idom/workflows/Test/badge.svg?event=push" />
-  </a>
-  <a href="https://pypi.python.org/pypi/django-idom">
-    <img alt="Version Info" src="https://img.shields.io/pypi/v/django-idom.svg"/>
-  </a>
-  <a href="https://github.com/idom-team/django-idom/blob/main/LICENSE">
-    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-purple.svg">
-  </a>
-</p>
-
-`django-idom` allows Django to integrate with [IDOM](https://github.com/idom-team/idom),
-a package inspired by [ReactJS](https://reactjs.org/) for creating responsive web
-interfaces in pure Python.
+`django-idom` allows Django to integrate with [IDOM](https://github.com/idom-team/idom), a reactive Python web framework for building **interactive websites without needing a single line of Javascript**.
 
 **You can try IDOM now in a Jupyter Notebook:**
 <a
