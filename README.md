@@ -93,17 +93,10 @@ INSTALLED_APPS = [
 You may configure additional options as well...
 
 ```python
-# Configure a cache for loading JS files
+# If "idom" cache is not configured, then we'll use the "default" instead
 CACHES = {
-  # Configure a cache for loading JS files for IDOM
-  "idom_web_modules": {"BACKEND": ...},
-  # If the above cache is not configured, then we'll use the "default" instead
-  "default": {"BACKEND": ...},
+  "idom": {"BACKEND": ...},
 }
-
-# If your project has no caching configured, django-idom will use an in-memory
-# LRU cache for caching JavaScript.
-IDOM_WEB_MODULE_LRU_CACHE_SIZE: int | None = None
 
 # Maximum seconds between two reconnection attempts that would cause the client give up.
 # 0 will disable reconnection.

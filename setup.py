@@ -38,7 +38,7 @@ package_dir = src_dir / name
 
 package = {
     "name": name,
-    "python_requires": ">=3.7",
+    "python_requires": ">=3.8",
     "packages": find_packages(str(src_dir)),
     "package_dir": {"": "src"},
     "description": "Control the web with Python",
@@ -52,15 +52,14 @@ package = {
     "zip_safe": False,
     "classifiers": [
         "Framework :: Django",
-        "Framework :: Django :: 3.1",
-        "Framework :: Django :: 3.2",
+        "Framework :: Django :: 4.0",
         "Operating System :: OS Independent",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         "Topic :: Multimedia :: Graphics",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Environment :: Web Environment",
     ],
 }
