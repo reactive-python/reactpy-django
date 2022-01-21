@@ -18,12 +18,12 @@ jobs:
           node-version: "14.x"
           registry-url: "https://registry.npmjs.org"
       - name: Prepare Release
-        working-directory: ./src/client
+        working-directory: ./src/js
         run: |
           npm install -g npm@7.22.0
           npm install
       - name: Publish Release
-        working-directory: ./src/client
+        working-directory: ./src/js
         run: npm run publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTOMATION_TOKEN }}
