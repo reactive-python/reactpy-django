@@ -5,7 +5,7 @@ from django.core.exceptions import SuspiciousOperation
 from django.http import HttpRequest, HttpResponse
 from idom.config import IDOM_WED_MODULES_DIR
 
-from .config import IDOM_CACHE
+from django_idom.config import IDOM_CACHE
 
 
 async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:

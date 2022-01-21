@@ -1,7 +1,7 @@
 {% load static %}
 <div id="{{ idom_mount_uuid }}" class="{{ class }}"></div>
 <script type="module" crossorigin="anonymous">
-  import { mountViewToElement } from "{% static '/django_idom/client.js' %}";
+  import { mountViewToElement } from "{% static 'django_idom/client.js' %}";
   const mountPoint = document.getElementById("{{ idom_mount_uuid }}");
   mountViewToElement(
     mountPoint,

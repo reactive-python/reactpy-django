@@ -12,14 +12,14 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from idom.core.dispatcher import dispatch_single_view
 from idom.core.layout import Layout, LayoutEvent
 
-from .config import IDOM_REGISTERED_COMPONENTS
+from django_idom.config import IDOM_REGISTERED_COMPONENTS
 
 
 _logger = logging.getLogger(__name__)
 
 
 @dataclass
-class WebsocketConnection:
+class IdomWebsocket:
     scope: dict
     close: Callable[[Optional[int]], Awaitable[None]]
     disconnect: Callable[[int], Awaitable[None]]
@@ -67,7 +67,7 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         component_kwargs = json.loads(query_dict.get("kwargs", "{}"))
 
         # Provide developer access to parts of this websocket
-        socket = WebsocketConnection(self.scope, self.close, self.disconnect, view_id)
+        socket = IdomWebsocket(self.scope, self.close, self.disconnect, view_id)
 
         try:
             component_instance = component_constructor(socket, **component_kwargs)

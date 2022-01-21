@@ -1,5 +1,6 @@
-from .paths import IDOM_WEB_MODULES_PATH, IDOM_WEBSOCKET_PATH
+from .websocket.consumer import IdomWebsocket
+from .websocket.paths import IDOM_WEBSOCKET_PATH
 
 
 __version__ = "0.0.1"
-__all__ = ["IDOM_WEB_MODULES_PATH", "IDOM_WEBSOCKET_PATH"]
+__all__ = ["IDOM_WEBSOCKET_PATH", "IdomWebsocket"]
