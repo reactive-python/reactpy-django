@@ -18,7 +18,7 @@
 ## `example_app/components.py`
 
 This is where you'll define your [IDOM](https://github.com/idom-team/idom) components. Ultimately though, you should
-feel free to organize your component modules you wish. Any components created will ultimately be referenced
+feel free to organize your component modules as you wish. Any components created will ultimately be referenced
 by Python dotted path in `your-template.html`.
 
 ```python
