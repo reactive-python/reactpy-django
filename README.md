@@ -83,7 +83,7 @@ ASGI_APPLICATION = "my_django_project.asgi.application"
 **Optional:** You can also configure IDOM settings.
 
 ```python
-# If "idom" cache is not configured, then we'll use the "default" instead
+# If "idom" cache is not configured, then we'll use "default" instead
 CACHES = {
   "idom": {"BACKEND": ...},
 }
