@@ -63,8 +63,6 @@ Install `django-idom` via pip.
 pip install django-idom
 ```
 
----
-
 You'll also need to modify a few files in your Django project.
 
 ## [`settings.py`](https://docs.djangoproject.com/en/dev/topics/settings/)
