@@ -86,7 +86,7 @@ CACHES = {
 
 # Maximum seconds between two reconnection attempts that would cause the client give up.
 # 0 will disable reconnection.
-IDOM_WS_MAX_RECONNECT_DELAY: int = 604800
+IDOM_WS_MAX_RECONNECT_TIMEOUT: int = 604800
 
 # The URL for IDOM to serve its Websockets
 IDOM_WEBSOCKET_URL: str = "idom/"
