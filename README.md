@@ -45,8 +45,11 @@ In context this will look a bit like the following...
 
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Example Project</title>
+  </head>
+
   <body>
-    ...
     {% idom_component "my_django_project.example_app.components.Hello" greeting_recipient="World" %}
   </body>
 </html>
