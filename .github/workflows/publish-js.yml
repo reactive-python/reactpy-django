@@ -24,6 +24,6 @@ jobs:
           npm install
       - name: Publish Release
         working-directory: ./src/js
-        run: npm run publish
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTOMATION_TOKEN }}
