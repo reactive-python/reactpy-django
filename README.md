@@ -25,17 +25,18 @@ by Python dotted path in `your-template.html`.
 from idom import component, html
 from django_idom import IdomWebsocket
 
-
+# Components are CamelCase by ReactJS convention
 @component
-def Hello(websocket: IdomWebsocket, greeting_recipient: str):  # Names are CamelCase by ReactJS convention
+def Hello(websocket: IdomWebsocket, greeting_recipient: str):
     return html.header(f"Hello {greeting_recipient}!")
 ```
 
 ## [`example_app/templates/your-template.html`](https://docs.djangoproject.com/en/dev/topics/templates/)
 
 In your templates, you may add IDOM components into your HTML by using the `idom_component`
-template tag. This tag requires the dotted path to the component function. Additonally, you can
-pass in keyworded arguments into your component function.
+template tag. This tag requires the dotted path to the component function.
+
+Additonally, you can pass in keyworded arguments into your component function.
 
 In context this will look a bit like the following...
 
@@ -44,8 +45,11 @@ In context this will look a bit like the following...
 
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Example Project</title>
+  </head>
+
   <body>
-    ...
     {% idom_component "my_django_project.example_app.components.Hello" greeting_recipient="World" %}
   </body>
 </html>
@@ -59,27 +63,27 @@ Install `django-idom` via pip.
 pip install django-idom
 ```
 
----
-
-You'll also need to modify a few files in your Django project...
+You'll also need to modify a few files in your Django project.
 
 ## [`settings.py`](https://docs.djangoproject.com/en/dev/topics/settings/)
 
-In your settings you'll need to add `django_idom` to the
-[`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS)
-list:
+In your settings you'll need to add `channels` and `django_idom` to [`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS).
 
 ```python
 INSTALLED_APPS = [
   ...,
+  "channels",
   "django_idom",
 ]
+
+# Ensure ASGI_APPLICATION is set properly based on your project name!
+ASGI_APPLICATION = "my_django_project.asgi.application"
 ```
 
-You may configure additional options as well...
+**Optional:** You can also configure IDOM settings.
 
 ```python
-# If "idom" cache is not configured, then we'll use the "default" instead
+# If "idom" cache is not configured, then we'll use "default" instead
 CACHES = {
   "idom": {"BACKEND": ...},
 }
@@ -88,15 +92,17 @@ CACHES = {
 # 0 will disable reconnection.
 IDOM_WS_MAX_RECONNECT_TIMEOUT: int = 604800
 
-# The URL for IDOM to serve its Websockets
+# The URL for IDOM to serve websockets
 IDOM_WEBSOCKET_URL: str = "idom/"
 ```
 
 ## [`urls.py`](https://docs.djangoproject.com/en/dev/topics/http/urls/)
 
-Add Django-IDOM http URLs to your `urlpatterns`.
+Add IDOM HTTP paths to your `urlpatterns`.
 
 ```python
+from django.urls import include, path
+
 urlpatterns = [
     path("idom/", include("django_idom.http.urls")),
     ...
@@ -105,29 +111,27 @@ urlpatterns = [
 
 ## [`asgi.py`](https://docs.djangoproject.com/en/dev/howto/deployment/asgi/)
 
-If you do not have an `asgi.py`, first follow the [`channels` installation guide](https://channels.readthedocs.io/en/stable/installation.html) in
-order to create websockets within Django.
+Register IDOM's websocket using `IDOM_WEBSOCKET_PATH`.
 
-We will add IDOM's websocket consumer path using `IDOM_WEBSOCKET_PATH`.
-
-_Note: If you wish to change the route where this websocket is served from, see the
-available [settings](#settingspy)._
+_Note: If you do not have an `asgi.py`, follow the [`channels` installation guide](https://channels.readthedocs.io/en/stable/installation.html)._
 
 ```python
 
 import os
 from django.core.asgi import get_asgi_application
-from django_idom import IDOM_WEBSOCKET_PATH
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
-http_asgi_app = get_asgi_application()
+# Ensure DJANGO_SETTINGS_MODULE is set properly based on your project name!
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "my_django_project.settings")
+django_asgi_app = get_asgi_application()
 
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.sessions import SessionMiddlewareStack
+from django_idom import IDOM_WEBSOCKET_PATH
 
 application = ProtocolTypeRouter(
     {
-        "http": http_asgi_app,
+        "http": django_asgi_app,
         "websocket": SessionMiddlewareStack(
             AuthMiddlewareStack(URLRouter([IDOM_WEBSOCKET_PATH]))
         ),
