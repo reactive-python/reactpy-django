@@ -71,7 +71,7 @@ In your settings you'll need to add `channels` and `django_idom` to [`INSTALLED_
 
 ```python
 INSTALLED_APPS = [
-  ... ,
+  ...,
   "channels",
   "django_idom",
 ]
