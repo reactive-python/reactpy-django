@@ -37,13 +37,13 @@ Types of changes are to be listed in this order
 - Static files are now contained within a `django_idom/` parent folder
 - `IDOM_WS_MAX_RECONNECT_DELAY` has been renamed to `IDOM_WS_MAX_RECONNECT_TIMEOUT`
 - Upgraded IDOM to version `0.36.0`
-- The optional `idom_web_modules` cache backend has been renamed to `idom`
 - Minimum Django required is now `4.0`
 - Minimum Python required is now `3.8`
 
 ### Removed
 
 - `IDOM_WEB_MODULES_PATH` has been removed and replaced with Django `include(...)`
+- `idom_web_modules` cache backend has been renamed to `idom`
 
 ### Fixed
 
