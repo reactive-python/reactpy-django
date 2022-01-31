@@ -1,29 +1,23 @@
-name: Draft a Change
-description: Create a detailed plan for enhancement (ONLY START AFTER DISCUSSION PLEASE 🙏)
-labels: [triage]
+name: Plan a Task
+description: Create a detailed plan of action (ONLY START AFTER DISCUSSION PLEASE 🙏).
+labels: ["flag: triage"]
 body:
 - type: textarea
   attributes:
-    label: Old Behavior
-    description: Describe how things currently work.
+    label: Current Situation
+    description: Discuss how things currently are, why they require action, and any relevant prior discussion/context.
   validations:
     required: false
 - type: textarea
   attributes:
-    label: New Behavior
-    description: Describe how things ought to work.
+    label: Proposed Actions
+    description: Describe what ought to be done, and why that will address the reasons for action mentioned above.
   validations:
     required: false
 - type: textarea
   attributes:
-    label: Implementation Details
+    label: Work Items
     description: |
-      A thorough explanation for how the new behavior will be implemented and the old behavior will be deprecated.
+      An itemized list or detailed description of the work to be done to based on the proposed actions above.
   validations:
     required: false
-- type: checkboxes
-  attributes:
-    label: Code of Conduct
-    options:
-      - label: I agree to follow the [Code of Conduct](https://github.com/idom-team/django-idom/blob/main/CODE_OF_CONDUCT.md).
-        required: true
