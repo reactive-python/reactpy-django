@@ -41,7 +41,7 @@ Types of changes are to be listed in this order
 
 ### Removed
 
-- `IDOM_WEB_MODULES_PATH` has been removed and replaced with Django `include(...)`
+- `IDOM_WEB_MODULES_PATH` has been replaced with Django `include(...)`
 - `IDOM_WS_MAX_RECONNECT_DELAY` has been renamed to `IDOM_WS_MAX_RECONNECT_TIMEOUT`
 - `idom_web_modules` cache backend has been renamed to `idom`
 
