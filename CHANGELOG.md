@@ -33,7 +33,7 @@ Types of changes are to be listed in this order
 
 ### Changed
 
-- Fetching `web_modules` from disk and/or cache is now fully async
+- Fetching web modules from disk and/or cache is now fully async
 - Static files are now contained within a `django_idom/` parent folder
 - Upgraded IDOM to version `0.36.0`
 - Minimum Django version required is now `4.0`
