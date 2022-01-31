@@ -27,13 +27,13 @@ Types of changes are to be listed in this order
 
 - Ability to declare the HTML class of the top-level component `div`
 - `name = ...` parameter to IDOM HTTP paths for use with `django.urls.reverse()`
-- Fully async method of fetching `web_modules` from disk
 - Cache versioning to automatically invalidate old web module files from the cache backend
 - Automatic pre-population of the IDOM component registry
 - Type hinting for `IdomWebsocket`
 
 ### Changed
 
+- Fetching `web_modules` from disk and/or cache is now fully async
 - Static files are now contained within a `django_idom/` parent folder
 - `IDOM_WS_MAX_RECONNECT_DELAY` has been renamed to `IDOM_WS_MAX_RECONNECT_TIMEOUT`
 - Upgraded IDOM to version `0.36.0`
