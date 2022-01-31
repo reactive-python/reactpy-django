@@ -25,7 +25,7 @@ Types of changes are to be listed in this order
 
 ### Added
 
-- Support for declaring the HTML class of the component div via the `idom_component` tag
+- Ability to declare the HTML class of the top-level component `div`
 - `name = ...` parameter to IDOM HTTP paths for use with `django.urls.reverse()`
 - Fully async method of fetching `web_modules` from disk
 - Cache versioning to automatically invalidate old web module files from the cache backend
