@@ -47,7 +47,7 @@ Types of changes are to be listed in this order
 
 ### Fixed
 
-- Increase test timeout values to prevent them from failing as a false positive
+- Increase test timeout values to prevent false positives
 - Windows compatibility for building Django-IDOM
 
 ### Security
