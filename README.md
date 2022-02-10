@@ -28,7 +28,7 @@ from django_idom import IdomWebsocket
 # Components are CamelCase by ReactJS convention
 @component
 def Hello(websocket: IdomWebsocket, greeting_recipient: str):
-    return html.header(f"Hello {greeting_recipient}!")
+    return html.h1(f"Hello {greeting_recipient}!")
 ```
 
 ## [`example_app/templates/your-template.html`](https://docs.djangoproject.com/en/dev/topics/templates/)
