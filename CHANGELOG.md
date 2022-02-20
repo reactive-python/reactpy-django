@@ -17,6 +17,10 @@ Types of changes are to be listed in this order
 
 ## [Unreleased]
 
+- Nothing (yet)
+
+## [0.0.3] - 2022-02-19
+
 ### Changed
 
 - Bumped the minimum IDOM client version to 0.36.3
