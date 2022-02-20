@@ -1,6 +1,6 @@
 {
   "name": "django-idom-client",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "test app for idom_django websocket server",
   "main": "src/index.js",
   "files": [
