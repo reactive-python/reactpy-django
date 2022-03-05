@@ -19,7 +19,7 @@ Types of changes are to be listed in this order
 
 - Nothing (yet)
 
-## [0.0.4] - 2022-02-28
+## [0.0.4] - 2022-03-05
 
 ### Changed
 
