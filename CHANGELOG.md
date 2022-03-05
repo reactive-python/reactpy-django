@@ -19,6 +19,12 @@ Types of changes are to be listed in this order
 
 - Nothing (yet)
 
+## [0.0.4] - 2022-02-28
+
+### Changed
+
+- Bumped the minimum IDOM client version to 0.37.1
+
 ## [0.0.3] - 2022-02-19
 
 ### Changed
@@ -65,5 +71,7 @@ Types of changes are to be listed in this order
 - Support for IDOM within the Django
 
 [unreleased]: https://github.com/idom-team/django-idom/compare/0.0.2...HEAD
+[0.0.4]: https://github.com/idom-team/django-idom/compare/0.0.3...0.0.4
+[0.0.3]: https://github.com/idom-team/django-idom/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/idom-team/django-idom/compare/0.0.1...0.0.2
 [0.0.1]: https://github.com/idom-team/django-idom/releases/tag/0.0.1
