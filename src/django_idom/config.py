@@ -2,7 +2,7 @@ from typing import Dict
 
 from django.conf import settings
 from django.core.cache import DEFAULT_CACHE_ALIAS, caches
-from idom.core.proto import ComponentConstructor
+from idom.core.types import ComponentConstructor
 
 
 IDOM_REGISTERED_COMPONENTS: Dict[str, ComponentConstructor] = {}
