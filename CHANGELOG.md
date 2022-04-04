@@ -25,6 +25,10 @@ Types of changes are to be listed in this order
 
 - Bumped the minimum IDOM version to 0.37.2
 
+### Fixed
+
+- ModuleNotFoundError: No module named `idom.core.proto`
+
 ## [0.0.4] - 2022-03-05
 
 ### Changed
