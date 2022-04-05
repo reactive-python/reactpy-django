@@ -19,17 +19,27 @@ Types of changes are to be listed in this order
 
 - Nothing (yet)
 
+## [0.0.5] - 2022-04-04
+
+### Changed
+
+- Bumped the minimum IDOM version to 0.37.2
+
+### Fixed
+
+- ModuleNotFoundError: No module named `idom.core.proto` caused by IDOM 0.37.2
+
 ## [0.0.4] - 2022-03-05
 
 ### Changed
 
-- Bumped the minimum IDOM client version to 0.37.1
+- Bumped the minimum IDOM version to 0.37.1
 
 ## [0.0.3] - 2022-02-19
 
 ### Changed
 
-- Bumped the minimum IDOM client version to 0.36.3
+- Bumped the minimum IDOM version to 0.36.3
 
 ## [0.0.2] - 2022-01-30
 
@@ -71,6 +81,7 @@ Types of changes are to be listed in this order
 - Support for IDOM within the Django
 
 [unreleased]: https://github.com/idom-team/django-idom/compare/0.0.2...HEAD
+[0.0.5]: https://github.com/idom-team/django-idom/compare/0.0.4...0.0.5
 [0.0.4]: https://github.com/idom-team/django-idom/compare/0.0.3...0.0.4
 [0.0.3]: https://github.com/idom-team/django-idom/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/idom-team/django-idom/compare/0.0.1...0.0.2
