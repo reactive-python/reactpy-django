@@ -27,7 +27,7 @@ Types of changes are to be listed in this order
 
 ### Fixed
 
-- ModuleNotFoundError: No module named `idom.core.proto`
+- ModuleNotFoundError: No module named `idom.core.proto` caused by IDOM 0.37.2
 
 ## [0.0.4] - 2022-03-05
 
