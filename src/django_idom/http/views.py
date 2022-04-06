@@ -12,7 +12,7 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
     """Gets JavaScript required for IDOM modules at runtime. These modules are
     returned from cache if available."""
     web_modules_dir = IDOM_WED_MODULES_DIR.current
-    path = web_modules_dir.joinpath(*file.split("/")).absolute()
+    path = os.path.abspath(web_modules_dir.joinpath(*file.split("/")))
 
     # Prevent attempts to walk outside of the web modules dir
     if str(web_modules_dir) != os.path.commonpath((path, web_modules_dir)):
