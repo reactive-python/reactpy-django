@@ -1,3 +1,4 @@
+import contextlib
 import logging
 import os
 import re
@@ -88,7 +89,7 @@ class ComponentPreloader:
                     os.path.join(root, name)
                     for name in files
                     if not name.startswith(".")
-                    and any(fnmatch(name, "*%s" % glob) for glob in extensions)
+                    and any(fnmatch(name, f"*{glob}") for glob in extensions)
                 )
 
         return templates
