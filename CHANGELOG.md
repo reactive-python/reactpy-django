@@ -21,9 +21,14 @@ Types of changes are to be listed in this order
 
 ## [0.0.6] - 2022-04-16
 
+### Added
+
+- Django-specific hooks! `use_websocket`, `use_scope`, and `use_location` are now available within the `django_idom.hooks` module.
+
 ### Changed
 
 - Bumped the minimum IDOM version to 0.38.0
+- `websocket` positional parameter within component functions has been removed. Functionally, it is replaced with `django_idom.hooks.use_websocket`.
 
 ## [0.0.5] - 2022-04-04
 
