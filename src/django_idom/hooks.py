@@ -35,7 +35,5 @@ def use_websocket() -> IdomWebsocket:
     """Get the current IdomWebsocket object"""
     websocket = use_context(WebsocketContext)
     if websocket is None:
-        raise RuntimeError(
-            "No websocket. Are you running with a Django server?"
-        )
+        raise RuntimeError("No websocket. Are you running with a Django server?")
     return websocket
