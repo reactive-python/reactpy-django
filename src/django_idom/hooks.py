@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Awaitable, Callable, Dict, Optional
+from typing import Awaitable, Callable, Dict, Optional, Union
 
 from idom.backend.types import Location
 from idom.core.hooks import Context, create_context, use_context
@@ -13,7 +13,7 @@ class IdomWebsocket:
     view_id: str
 
 
-WebsocketContext: type[Context[IdomWebsocket | None]] = create_context(
+WebsocketContext: type[Context[Union[IdomWebsocket, None]]] = create_context(
     None, "WebSocketContext"
 )
 
