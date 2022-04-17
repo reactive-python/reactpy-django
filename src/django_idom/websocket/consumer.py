@@ -9,8 +9,8 @@ from urllib.parse import parse_qsl
 from channels.auth import login
 from channels.db import database_sync_to_async as convert_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from idom.core.serve import serve_json_patch
 from idom.core.layout import Layout, LayoutEvent
+from idom.core.serve import serve_json_patch
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
 
