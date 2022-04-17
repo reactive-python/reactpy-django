@@ -23,12 +23,11 @@ by Python dotted path in `your-template.html`.
 
 ```python
 from idom import component, html
-from django_idom import IdomWebsocket
 
 # Components are CamelCase by ReactJS convention
 @component
-def Hello(websocket: IdomWebsocket, greeting_recipient: str):
-    return html.h1(f"Hello {greeting_recipient}!")
+def Hello(recipient: str):
+    return html.h1(f"Hello {recipient}!")
 ```
 
 ## [`example_app/templates/your-template.html`](https://docs.djangoproject.com/en/dev/topics/templates/)
@@ -50,7 +49,7 @@ In context this will look a bit like the following...
   </head>
 
   <body>
-    {% idom_component "my_django_project.example_app.components.Hello" greeting_recipient="World" %}
+    {% idom_component "my_django_project.example_app.components.Hello" recipient="World" %}
   </body>
 </html>
 ```

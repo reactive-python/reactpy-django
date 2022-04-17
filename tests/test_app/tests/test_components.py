@@ -5,7 +5,7 @@ from channels.testing import ChannelsLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 # These tests are broken on Windows due to Selenium
@@ -46,6 +46,18 @@ if sys.platform != "win32":
                     (By.CLASS_NAME, "VictoryContainer")
                 )
             )
+
+        def test_use_websocket(self):
+            element = self.driver.find_element_by_id("use-websocket")
+            self.assertEqual(element.get_attribute("data-success"), "true")
+
+        def test_use_scope(self):
+            element = self.driver.find_element_by_id("use-scope")
+            self.assertEqual(element.get_attribute("data-success"), "true")
+
+        def test_use_location(self):
+            element = self.driver.find_element_by_id("use-location")
+            self.assertEqual(element.get_attribute("data-success"), "true")
 
 
 def make_driver(page_load_timeout, implicit_wait_timeout):
