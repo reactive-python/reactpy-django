@@ -1,5 +1,3 @@
-
-
 ## Install `django-idom` from PyPI
 
 ```bash

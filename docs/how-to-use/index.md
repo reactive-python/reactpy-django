@@ -1,4 +1,4 @@
-## Create a Django Project and App
+## Create a Django project and app
 
 We are going to assume you've [created a basic **Django project**](https://docs.djangoproject.com/en/dev/intro/tutorial01/) before, which also involves creating/installing at least one **Django app**. If not, check out this [9 minute video tutorial](https://www.youtube.com/watch?v=ZsJRXS_vrw0) created by _IDG TECHtalk_.
 
@@ -10,7 +10,7 @@ Django provides you the flexibility to place your apps anywhere you wish. In the
 
 ### `components.py`
 
-{% 
+{%
    include-markdown "../../README.md"
    start="<!--py-example-start-->"
    end="<!--py-example-end-->"
@@ -22,7 +22,7 @@ Django provides you the flexibility to place your apps anywhere you wish. In the
 
 ### `templates/my-template.html`
 
-{% 
+{%
    include-markdown "../../README.md"
    start="<!--html-example-start-->"
    end="<!--html-example-end-->"
@@ -47,7 +47,7 @@ def index(request):
 
 ### `urls.py`
 
-To simplify things for this example, we are adding this view directly to your [**Django project**'s `urls.py`](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view) rather than adding to a **Django app*.
+To simplify things for this example, we are adding this view directly to your [**Django project**'s `urls.py`](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view) rather than adding to a **Django app**.
 
 ```python
 from django.urls import path
