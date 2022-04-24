@@ -60,7 +60,9 @@ urlpatterns = [
 
 Register IDOM's websocket using `IDOM_WEBSOCKET_PATH`.
 
-_Note: If you do not have an `asgi.py`, follow the [`channels` installation guide](https://channels.readthedocs.io/en/stable/installation.html)._
+!!! note
+
+    If you do not have an `asgi.py`, follow the [`channels` installation guide](https://channels.readthedocs.io/en/stable/installation.html).
 
 ```python
 

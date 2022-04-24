@@ -28,9 +28,11 @@ IDOM's ecosystem independent design allows components to be reused across a vari
 
 <!--py-example-start-->
 
-Define your [IDOM](https://github.com/idom-team/idom) components within any Python module. To start out, we recommend creating a `components.py` file within your chosen **Django app**.
+You'll need a file to define your [IDOM](https://github.com/idom-team/idom) components. This can be within any Python module, however, we recommend creating a `components.py` file within your chosen **Django app** to start out.
 
-_Note: You are free to name and place this file anywhere. Ultimately, components are referenced by Python dotted path in `my-template.html`._
+!!! note
+
+    You can name `components.py` anything you wish, and place it within any Python module. Ultimately, components are referenced by Python dotted path in `my-template.html`. So, at minimum this path needs to be valid to Python's `importlib`.
 
 ```python
 from idom import component, html
@@ -53,6 +55,10 @@ Additonally, you can pass in keyworded arguments into your component function.
 
 In context this will look a bit like the following...
 
+!!! note
+
+    If you do not have a `templates` folder in your **Django app**, simply create one! Keep in mind, templates within this folder will not be detected unless you [add the corresponding **Django app** to `settings.py:INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/applications/#configuring-applications).
+
 ```jinja
 {% load idom %}
 <!DOCTYPE html>
@@ -62,8 +68,6 @@ In context this will look a bit like the following...
   </body>
 </html>
 ```
-
-_Note: If you do not have a `templates` folder in your **Django app**, simply create one! Also, your `templates` folder will not be detected unless you [add the corresponding **Django app** to `settings.py:INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/applications/#configuring-applications)._
 
 <!--html-example-end-->
 

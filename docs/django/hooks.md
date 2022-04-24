@@ -14,9 +14,11 @@ def MyComponent():
     return html.div(my_websocket)
 ```
 
+---
+
 ## Use Scope
 
-This is a shortcut that returns the websocket's `scope`.
+This is a shortcut that returns the Websocket's `scope`.
 
 ```python
 from idom import component, html
@@ -28,11 +30,15 @@ def MyComponent():
     return html.div(my_scope)
 ```
 
+---
+
 ## Use Location
 
-Returns the URL that the websocket was opened from.
+This is a shortcut that returns the Websocket's `path`.
 
-_Note: This will [eventually be updated](https://github.com/idom-team/idom/issues/569) to return the client's current webpage URL. This will come in conjunction with Single Page Application (SPA) support._
+!!! note
+
+        This hook will [eventually be updated](https://github.com/idom-team/idom/issues/569) to return the client's current webpage URL. This will come in conjunction with Single Page Application (SPA) support.
 
 ```python
 from idom import component, html

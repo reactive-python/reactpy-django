@@ -1,4 +1,4 @@
-mkdocs==1.2.3
-mkdocs-git-revision-date-localized-plugin==1.0.0
-mkdocs-material==8.2.5
-mkdocs-include-markdown-plugin==3.3.0
+mkdocs
+mkdocs-git-revision-date-localized-plugin
+mkdocs-material
+mkdocs-include-markdown-plugin

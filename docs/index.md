@@ -16,8 +16,6 @@ hide:
    end="<!--intro-end-->"
 %}
 
----
-
 ## Resources
 
 {%

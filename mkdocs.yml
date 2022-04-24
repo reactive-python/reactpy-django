@@ -2,27 +2,33 @@
 nav:
     - Home: index.md
     - Installation: installation/install.md
-    - How to Use: how-to-use/index.md
-    - Django-Only Features: django/index.md
+    - How to Use:
+          - Initial Steps: how-to-use/initial-steps.md
+          - Render your component: how-to-use/render-component.md
+    - Django-Only Features:
+          - Hooks: django/hooks.md
+          - Template Tags: django/templatetags.md
     - Contribute:
-          - Setup Development Enviroment: contribute/development-env.md
+          - Django-IDOM Environment: contribute/idom-env.md
+          - Documentation Environment: contribute/docs-env.md
           - Running Tests: contribute/running-tests.md
+    - Changelog: changelog/index.md
 
 theme:
     name: material
     palette:
-    - scheme: slate 
-      toggle:
-        icon: material/toggle-switch
-        name: Switch to light mode
-      primary: deep-orange
-      accent: deep-orange
-    - scheme: default
-      toggle:
-        icon: material/toggle-switch-off-outline 
-        name: Switch to dark mode
-      primary: deep-orange
-      accent: deep-orange
+        - scheme: slate
+          toggle:
+              icon: material/toggle-switch
+              name: Switch to light mode
+          primary: deep-orange
+          accent: deep-orange
+        - scheme: default
+          toggle:
+              icon: material/toggle-switch-off-outline
+              name: Switch to dark mode
+          primary: deep-orange
+          accent: deep-orange
     features:
         - navigation.instant
         - navigation.tracking
@@ -42,6 +48,8 @@ markdown_extensions:
           emoji_generator: !!python/name:materialx.emoji.to_svg
     - pymdownx.highlight
     - pymdownx.superfences
+    - pymdownx.details
+    - admonition
     - attr_list
 
 plugins:
