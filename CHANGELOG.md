@@ -24,7 +24,7 @@ Types of changes are to be listed in this order
 ### Added
 
 - Django-specific hooks! `use_websocket`, `use_scope`, and `use_location` are now available within the `django_idom.hooks` module.
-- A real docs page to show off these new features.
+- Documentation has been placed into a formal docs webpage.
 
 ### Changed
 
