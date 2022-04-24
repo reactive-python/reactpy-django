@@ -1,0 +1,59 @@
+---
+nav:
+    - Home: index.md
+    - Installation: installation/install.md
+    - How to Use: how-to-use/index.md
+    - Django-Only Features: django/index.md
+    - Contribute:
+          - Setup Development Enviroment: contribute/development-env.md
+          - Running Tests: contribute/running-tests.md
+
+theme:
+    name: material
+    palette:
+    - scheme: slate 
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+      primary: deep-orange
+      accent: deep-orange
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline 
+        name: Switch to dark mode
+      primary: deep-orange
+      accent: deep-orange
+    features:
+        - navigation.instant
+        - navigation.tracking
+        - navigation.tabs
+        - navigation.sections
+        - toc.integrate
+        - navigation.top
+
+    icon:
+        repo: fontawesome/brands/github
+
+markdown_extensions:
+    - toc:
+          permalink: true
+    - pymdownx.emoji:
+          emoji_index: !!python/name:materialx.emoji.twemoji
+          emoji_generator: !!python/name:materialx.emoji.to_svg
+    - pymdownx.highlight
+    - pymdownx.superfences
+    - attr_list
+
+plugins:
+    - search
+    - include-markdown
+    - git-revision-date-localized:
+          fallback_to_build_date: true
+
+site_name: Django IDOM Docs
+site_author: Archmonger
+site_description: React for Django developers.
+repo_url: https://github.com/idom-team/django-idom
+site_url: https://idom-team.github.io/django-idom
+repo_name: idom-team/django-idom
+edit_uri: edit/docs
