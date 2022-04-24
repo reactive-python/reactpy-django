@@ -14,7 +14,7 @@ register = template.Library()
 
 
 @register.inclusion_tag("idom/component.html")
-def idom_component(_component_id_, **kwargs):
+def component(_component_id_, **kwargs):
     _register_component(_component_id_)
 
     class_ = kwargs.pop("class", "")

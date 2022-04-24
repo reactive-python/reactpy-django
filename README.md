@@ -40,7 +40,7 @@ def HelloComponent(recipient: str):
 ## [`example_app/templates/my-template.html`](https://docs.djangoproject.com/en/dev/topics/templates/)
 
 <!--html-example-start-->
-In your **Django app**'s `templates` folder, you can now add your IDOM component into your HTML using the `idom_component` template tag using dotted path to the component function.
+In your **Django app**'s `templates` folder, you can now add your IDOM component into your HTML using the `component` template tag using your dotted path to the component function.
 
 Additonally, you can pass in keyworded arguments into your component function.
 
@@ -51,7 +51,7 @@ In context this will look a bit like the following...
 <!DOCTYPE html>
 <html>
   <body>
-    {% idom_component "django_project.example_app.components.HelloComponent" recipient="World" %}
+    {% component "django_project.example_app.components.HelloComponent" recipient="World" %}
   </body>
 </html>
 ```

@@ -30,6 +30,7 @@ Types of changes are to be listed in this order
 
 - Bumped the minimum IDOM version to 0.38.0
 - `websocket` positional parameter within component functions has been removed. Functionally, it is replaced with `django_idom.hooks.use_websocket`.
+- `idom_component` template tag has been renamed to `component`
 
 ## [0.0.5] - 2022-04-04
 
