@@ -22,7 +22,7 @@ IDOM's ecosystem independent design allows components to be reused across a vari
 
 ---
 
-# Quick Start
+# At a Glance
 
 ## `example_app/components.py`
 
