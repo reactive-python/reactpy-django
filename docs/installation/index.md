@@ -25,6 +25,19 @@ INSTALLED_APPS = [
 ]
 ```
 
+??? warning "Enabling ASGI on Django (Required)"
+
+    Django-IDOM requires ASGI in order to use Websockets.
+
+    If you haven't [enabled ASGI](https://channels.readthedocs.io/en/stable/installation.html) on your Django project yet, you'll need to add `channels` to `INSTALLED_APPS` and set your `ASGI_APPLICATION` variable.
+    ```python title="settings.py"
+    INSTALLED_APPS = [
+        "channels",
+        ...
+    ]
+    ASGI_APPLICATION = "example_project.asgi.application"
+    ```
+
 ??? note "Configure IDOM settings (Optional)"
 
     Below are a handful of values you can change within `settings.py` to modify the behavior of IDOM.
@@ -41,19 +54,6 @@ INSTALLED_APPS = [
 
     # The URL for IDOM to serve websockets
     IDOM_WEBSOCKET_URL = "idom/"
-    ```
-
-??? warning "Enabling ASGI on Django (Required)"
-
-    Django-IDOM requires ASGI in order to use Websockets.
-
-    If you haven't [enabled ASGI](https://channels.readthedocs.io/en/stable/installation.html) on your Django project yet, you'll need to add `channels` to `INSTALLED_APPS` and set your `ASGI_APPLICATION` variable.
-    ```python title="settings.py"
-    INSTALLED_APPS = [
-        "channels",
-        ...
-    ]
-    ASGI_APPLICATION = "example_project.asgi.application"
     ```
 
 ---

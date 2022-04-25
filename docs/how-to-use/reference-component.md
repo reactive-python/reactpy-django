@@ -10,11 +10,7 @@
 
 {% include-markdown "../django/templatetag.md" start="<!--q-multiple-components-start-->" end="<!--q-multiple-components-end-->" %}
 
-??? question "Can I use positional arguments instead of keyworded arguments?"
-
-       You can only pass in **keyworded arguments** within the template tag. Due to technical limitations, **positional arguments** are not supported at this time.
-
-       Also, be mindful of [reserved keywords](../django/templatetag.md).
+{% include-markdown "../django/templatetag.md" start="<!--q-kwargs-start-->" end="<!--q-kwargs-end-->" %}
 
 ??? question "Where is my templates folder?"
 

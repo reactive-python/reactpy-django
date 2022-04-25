@@ -19,6 +19,15 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
     But keep in mind, in scenarios where you are trying to create a Single Page Application (SPA) within Django, you will only have one central component within your body tag as shown below.
 
 <!--q-multiple-components-end-->
+<!--q-kwargs-start-->
+
+??? question "Can I use positional arguments instead of keyworded arguments?"
+
+       You can only pass in **keyworded arguments** within the template tag. Due to technical limitations, **positional arguments** are not supported at this time.
+
+       Also, be mindful of [reserved keywords](../django/templatetag.md).
+
+<!--q-kwargs-end-->
 
 ---
 
