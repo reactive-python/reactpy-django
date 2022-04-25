@@ -1,6 +1,6 @@
 <!--dj-proj-start-->
 
-We are going to assume you have created [a basic **Django project**](https://docs.djangoproject.com/en/dev/intro/tutorial01/), which also involves generating/installing at least one **Django app**. If not, check out this [9 minute video tutorial](https://www.youtube.com/watch?v=ZsJRXS_vrw0) created by _IDG TECHtalk_.
+These docs assumes you have created [a basic **Django project**](https://docs.djangoproject.com/en/dev/intro/tutorial01/), which also involves generating/installing at least one **Django app**. If not, check out this [9 minute YouTube tutorial](https://www.youtube.com/watch?v=ZsJRXS_vrw0) created by _IDG TECHtalk_.
 
 <!--dj-proj-end-->
 

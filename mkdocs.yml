@@ -5,8 +5,8 @@ nav:
     - How to Use:
           - 1. Initial Steps: how-to-use/initial-steps.md
           - 2. Create a Component: how-to-use/create-component.md
-          - 3. Reference Your Component: how-to-use/reference-component.md
-          - 4. Render Your Component: how-to-use/render-component.md
+          - 3. Use the Template Tag: how-to-use/reference-component.md
+          - 4. Render Your View: how-to-use/render-view.md
           - 5. Learn More: how-to-use/learn-more.md
     - Django-Only Features:
           - Hooks: django/hooks.md

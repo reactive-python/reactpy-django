@@ -37,6 +37,7 @@ def _register_component(full_component_name: str) -> None:
         ) from error
 
     IDOM_REGISTERED_COMPONENTS[full_component_name] = component
+    _logger.debug("IDOM has registered component %s", full_component_name)
 
 
 class ComponentPreloader:
@@ -118,8 +119,8 @@ class ComponentPreloader:
 
         for component in components:
             try:
+                _logger.info("IDOM preloader has detected component %s", component)
                 _register_component(component)
-                _logger.info("IDOM has registered component %s", component)
             except Exception:
                 _logger.exception(
                     "IDOM failed to register component %s! This component path may not be valid, or an error may have occurred while importing.",

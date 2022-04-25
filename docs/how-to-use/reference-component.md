@@ -1,16 +1,15 @@
 ???+ summary
 
-       Use our template tag in your HTML.
+       Decide where the component will be displayed by using our template tag.
 
 ---
 
 {% include-markdown "../../README.md" start="<!--html-header-start-->" end="<!--html-header-end-->" %}
-
 {% include-markdown "../../README.md" start="<!--html-code-start-->" end="<!--html-code-end-->" %}
-
-{% include-markdown "../django/templatetag.md" start="<!--q-multiple-components-start-->" end="<!--q-multiple-components-end-->" %}
-
-{% include-markdown "../django/templatetag.md" start="<!--q-kwargs-start-->" end="<!--q-kwargs-end-->" %}
+{% include-markdown "../django/templatetag.md" start="<!--context-start-->" end="<!--context-end-->" %}
+{% include-markdown "../django/templatetag.md" start="<!--kwarg-start-->" end="<!--kwarg-end-->" %}
+{% include-markdown "../django/templatetag.md" start="<!--multiple-components-start-->" end="<!--multiple-components-end-->" %}
+{% include-markdown "../django/templatetag.md" start="<!--kwargs-start-->" end="<!--kwargs-end-->" %}
 
 ??? question "Where is my templates folder?"
 

@@ -1,6 +1,6 @@
 ???+ summary
 
-    Render the template with a view.
+    Select your template containing an IDOM component, and render it using a Django view.
 
 ---
 

@@ -3,7 +3,6 @@
 # Django IDOM &middot; [![Tests](https://github.com/idom-team/django-idom/workflows/Test/badge.svg?event=push)](https://github.com/idom-team/django-idom/actions?query=workflow%3ATest) [![PyPI Version](https://img.shields.io/pypi/v/django-idom.svg)](https://pypi.python.org/pypi/django-idom) [![License](https://img.shields.io/badge/License-MIT-purple.svg)](https://github.com/idom-team/django-idom/blob/main/LICENSE)
 
 <!--header-end-->
-
 <!--intro-start-->
 
 IDOM is a Python micro-framework that links your web framework of choice to a ReactJS frontend, allowing you to create **interactive websites without needing JavaScript!**
@@ -50,7 +49,7 @@ def HelloComponent(recipient: str):
 
 In your **Django app**'s HTML located within your `templates` folder, you can now embed your IDOM component using the `component` template tag. Within this tag, you will need to type in your dotted path to the component function as the first argument.
 
-Additonally, you can pass in keyworded arguments into your component function. For example, pay attention to how the function definition for HelloComponent (_in the previous example_) accepts a 'recipient' argument.
+Additonally, you can pass in keyword arguments into your component function. For example, pay attention to how the function definition for HelloComponent (_in the previous example_) accepts a 'recipient' argument.
 
 <!--html-header-end-->
 <!--html-code-start-->
