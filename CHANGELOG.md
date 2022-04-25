@@ -24,7 +24,7 @@ Types of changes are to be listed in this order
 
 -   Nothing (yet)
 
-## [0.0.6] - 2022-04-30
+## [1.0.0] - 2022-05-22
 
 ### Added
 
@@ -34,9 +34,12 @@ Types of changes are to be listed in this order
 
 ### Changed
 
--   Bumped the minimum IDOM version to 0.38.0
--   `websocket` positional parameter within component functions has been removed. Functionally, it is replaced with `django_idom.hooks.use_websocket`.
 -   `idom_component` template tag has been renamed to `component`
+-   Bumped the minimum IDOM version to 0.38.0
+
+### Removed
+
+-   `websocket` parameter for components has been removed. Functionally, it is replaced with `django_idom.hooks.use_websocket`.
 
 ## [0.0.5] - 2022-04-04
 
@@ -100,7 +103,7 @@ Types of changes are to be listed in this order
 -   Support for IDOM within the Django
 
 [unreleased]: https://github.com/idom-team/django-idom/compare/0.0.2...HEAD
-[0.0.6]: https://github.com/idom-team/django-idom/compare/0.0.5...0.0.6
+[1.0.0]: https://github.com/idom-team/django-idom/compare/0.0.5...1.0.0
 [0.0.5]: https://github.com/idom-team/django-idom/compare/0.0.4...0.0.5
 [0.0.4]: https://github.com/idom-team/django-idom/compare/0.0.3...0.0.4
 [0.0.3]: https://github.com/idom-team/django-idom/compare/0.0.2...0.0.3
