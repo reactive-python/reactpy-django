@@ -6,7 +6,7 @@
 
         You can only pass in **keyworded arguments** within the template tag. Due to technical limitations, **positional arguments** are not supported at this time.
 
-        Also, be mindful of [reserved keywords](../django/templatetags.md).
+        Also, be mindful of [reserved keywords](../django/templatetag.md).
 
 !!! note "Note: Django HTML Templates"
 

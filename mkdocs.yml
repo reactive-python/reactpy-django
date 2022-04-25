@@ -10,7 +10,7 @@ nav:
           - 5. Learn More: how-to-use/learn-more.md
     - Django-Only Features:
           - Hooks: django/hooks.md
-          - Template Tags: django/templatetags.md
+          - Template Tag: django/templatetag.md
     - Contribute:
           - Django-IDOM Environment: contribute/idom-env.md
           - Documentation Environment: contribute/docs-env.md
