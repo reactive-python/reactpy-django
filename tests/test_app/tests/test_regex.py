@@ -7,6 +7,7 @@ class RegexTests(TestCase):
     def test_component_regex(self):
         for component in {
             r'{%component "my.component"%}',
+            r'{%component  "my.component"%}',
             r"{%component 'my.component'%}",
             r'{% component "my.component" %}',
             r"{% component 'my.component' %}",

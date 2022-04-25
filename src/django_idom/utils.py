@@ -12,7 +12,7 @@ from django.utils.encoding import smart_str
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
 
 
-COMPONENT_REGEX = re.compile(r"{% *component ((\"[^\"']*\")|('[^\"']*')).*?%}")
+COMPONENT_REGEX = re.compile(r"{% *component +((\"[^\"']*\")|('[^\"']*'))(.*?)%}")
 _logger = logging.getLogger(__name__)
 
 
@@ -32,7 +32,7 @@ def _register_component(full_component_name: str) -> None:
     try:
         component = getattr(module, component_name)
     except AttributeError as error:
-        raise RuntimeError(
+    raise RuntimeError(
             f"Module {module_name!r} has no component named {component_name!r}"
         ) from error
 
@@ -100,7 +100,6 @@ class ComponentPreloader:
         for template in templates:
             with contextlib.suppress(Exception):
                 with open(template, "r", encoding="utf-8") as template_file:
-                    # TODO: Only match if the template also contains {% load idom %}
                     match = COMPONENT_REGEX.findall(template_file.read())
                     if not match:
                         continue
@@ -111,6 +110,12 @@ class ComponentPreloader:
 
     def _register_components(self, components: Set) -> None:
         """Registers all IDOM components in an iterable."""
+        if not components:
+            _logger.warning(
+                "No IDOM components were found. Are you sure you are using the template tag correctly?"
+            )
+            return
+
         for component in components:
             try:
                 _register_component(component)
