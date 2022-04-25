@@ -32,7 +32,7 @@ def _register_component(full_component_name: str) -> None:
     try:
         component = getattr(module, component_name)
     except AttributeError as error:
-    raise RuntimeError(
+        raise RuntimeError(
             f"Module {module_name!r} has no component named {component_name!r}"
         ) from error
 
