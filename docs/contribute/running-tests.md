@@ -4,7 +4,7 @@ This repo uses [Nox](https://nox.thea.codes/en/stable/) to run scripts which can
 nox -s test
 ```
 
-To run the tests using a headless browser:
+If you want to run the tests in the background (headless):
 
 ```
 nox -s test -- --headless

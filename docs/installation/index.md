@@ -1,4 +1,4 @@
-## Install `django-idom` from PyPI
+## Install from PyPI
 
 ```bash
 pip install django-idom
@@ -10,34 +10,38 @@ You'll also need to modify a few files in your Django project...
 
 ## Configure [`settings.py`](https://docs.djangoproject.com/en/dev/topics/settings/)
 
-In your settings you'll need to add `channels` and `django_idom` to [`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS).
+In your settings you'll need to add `django_idom` to [`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS).
 
-```python
+```python title="settings.py"
 INSTALLED_APPS = [
-  ...,
-  "channels",
-  "django_idom",
+    "django_idom",
+    ...
 ]
-
-# Ensure ASGI_APPLICATION is set properly based on your project name!
-ASGI_APPLICATION = "my_django_project.asgi.application"
 ```
 
-**Optional:** You can also configure IDOM settings.
+!!! note "Optional: Configure IDOM settings"
 
-```python
-# If "idom" cache is not configured, then we'll use "default" instead
-CACHES = {
-  "idom": {"BACKEND": ...},
-}
+        ```python title="settings.py"
+        # If "idom" cache is not configured, then we'll use "default" instead
+        CACHES = {
+        "idom": {"BACKEND": ...},
+        }
 
-# Maximum seconds between two reconnection attempts that would cause the client give up.
-# 0 will disable reconnection.
-IDOM_WS_MAX_RECONNECT_TIMEOUT = 604800
+        # Maximum seconds between two reconnection attempts that would cause the client give up.
+        # 0 will disable reconnection.
+        IDOM_WS_MAX_RECONNECT_TIMEOUT = 604800
 
-# The URL for IDOM to serve websockets
-IDOM_WEBSOCKET_URL = "idom/"
-```
+        # The URL for IDOM to serve websockets
+        IDOM_WEBSOCKET_URL = "idom/"
+        ```
+
+!!! note "Note: Configuring New Django Projects"
+
+        If you haven't enabled ASGI on your Django project yet, don't forget to add `channels` to `INSTALLED_APPS` and set your `ASGI_APPLICATION`.
+        ```python title="settings.py"
+        INSTALLED_APPS = [..., "channels", ...]
+        ASGI_APPLICATION = "my_django_project.asgi.application"
+        ```
 
 ---
 
@@ -45,7 +49,7 @@ IDOM_WEBSOCKET_URL = "idom/"
 
 Add IDOM HTTP paths to your `urlpatterns`.
 
-```python
+```python title="urls.py"
 from django.urls import include, path
 
 urlpatterns = [
@@ -58,9 +62,9 @@ urlpatterns = [
 
 ## Configure [`asgi.py`](https://docs.djangoproject.com/en/dev/howto/deployment/asgi/)
 
-Register IDOM's websocket using `IDOM_WEBSOCKET_PATH`.
+Register IDOM's Websocket using `IDOM_WEBSOCKET_PATH`.
 
-```python
+```python title="asgi.py"
 import os
 from django.core.asgi import get_asgi_application
 

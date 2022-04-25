@@ -1,10 +1,13 @@
 ---
 nav:
     - Home: index.md
-    - Installation: installation/install.md
+    - Installation: installation/index.md
     - How to Use:
-          - Initial Steps: how-to-use/initial-steps.md
-          - Use Component with Django: how-to-use/render-component.md
+          - 1. Create a Django project: how-to-use/start-project.md
+          - 2. Create a Component: how-to-use/create-component.md
+          - 3. Reference your Component: how-to-use/reference-component.md
+          - 4. Render your Component: how-to-use/render-component.md
+          - 5. Learn More: how-to-use/learn-more.md
     - Django-Only Features:
           - Hooks: django/hooks.md
           - Template Tags: django/templatetags.md
@@ -33,7 +36,6 @@ theme:
         - navigation.instant
         - navigation.tracking
         - navigation.tabs
-        - navigation.sections
         - toc.integrate
         - navigation.top
 

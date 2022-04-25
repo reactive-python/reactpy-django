@@ -28,12 +28,12 @@ IDOM's ecosystem independent design allows components to be reused across a vari
 
 <!--py-header-start-->
 
-You'll need a file to define your [IDOM](https://github.com/idom-team/idom) components. This can be within any Python module, however, we recommend creating a `components.py` file within your chosen **Django app** to start out.
+You'll need a file to define your [IDOM](https://github.com/idom-team/idom) components. We recommend creating a `components.py` file within your chosen **Django app** to start out.
 
 <!--py-header-end-->
 <!--py-code-start-->
 
-```python
+```python title="components.py"
 from idom import component, html
 
 # Components are CamelCase by ReactJS convention
@@ -50,14 +50,12 @@ def HelloComponent(recipient: str):
 
 In your **Django app**'s HTML located within your `templates` folder, you can now embed your IDOM component using the `component` template tag. Within this tag, you will need to type in your dotted path to the component function as the first argument.
 
-Additonally, you can pass in keyworded arguments into your component function.
-
-In context this will look a bit like the following...
+Additonally, you can pass in keyworded arguments into your component function. For example, pay attention to how the function definition for HelloComponent (_in the previous example_) accepts a 'recipient' argument.
 
 <!--html-header-end-->
 <!--html-code-start-->
 
-```jinja
+```jinja title="my-template.html"
 {% load idom %}
 <!DOCTYPE html>
 <html>

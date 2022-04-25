@@ -4,7 +4,7 @@
 
 You can fetch the Django Channels websocket at any time by using `use_websocket`.
 
-```python
+```python title="components.py"
 from idom import component, html
 from django_idom.hooks import use_websocket
 
@@ -20,7 +20,7 @@ def MyComponent():
 
 This is a shortcut that returns the Websocket's `scope`.
 
-```python
+```python title="components.py"
 from idom import component, html
 from django_idom.hooks import use_scope
 
@@ -36,11 +36,11 @@ def MyComponent():
 
 !!! note "Note: Use Location Behavior"
 
-        This hook will [eventually be updated](https://github.com/idom-team/idom/issues/569) to return the client's current webpage URL. This will come in conjunction with Single Page Application (SPA) support.
+        This hook will [eventually be updated](https://github.com/idom-team/idom/issues/569) to return the client's current webpage URL. This will come in alongside our built-in Single Page Application (SPA) support.
 
 This is a shortcut that returns the Websocket's `path`.
 
-```python
+```python title="components.py"
 from idom import component, html
 from django_idom.hooks import use_location
 

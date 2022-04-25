@@ -3,7 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 <!--attr-start-->
+
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 <!--attr-end-->
 
 <!--
@@ -28,6 +30,7 @@ Types of changes are to be listed in this order
 
 -   Django-specific hooks! `use_websocket`, `use_scope`, and `use_location` are now available within the `django_idom.hooks` module.
 -   Documentation has been placed into a formal docs webpage.
+-   More verbose logging information for when a component fails to import.
 
 ### Changed
 

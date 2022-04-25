@@ -100,6 +100,7 @@ class ComponentPreloader:
         for template in templates:
             with contextlib.suppress(Exception):
                 with open(template, "r", encoding="utf-8") as template_file:
+                    # TODO: Only match if the template also contains {% load idom %}
                     match = COMPONENT_REGEX.findall(template_file.read())
                     if not match:
                         continue
@@ -115,4 +116,7 @@ class ComponentPreloader:
                 _register_component(component)
                 _logger.info("IDOM has registered component %s", component)
             except Exception:
-                _logger.warning("IDOM failed to register component %s", component)
+                _logger.exception(
+                    "IDOM failed to register component %s! This component path may not be valid, or an error may have occurred while importing.",
+                    component,
+                )
