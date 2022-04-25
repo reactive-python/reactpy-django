@@ -33,10 +33,10 @@ CACHES = {
 
 # Maximum seconds between two reconnection attempts that would cause the client give up.
 # 0 will disable reconnection.
-IDOM_WS_MAX_RECONNECT_TIMEOUT: int = 604800
+IDOM_WS_MAX_RECONNECT_TIMEOUT = 604800
 
 # The URL for IDOM to serve websockets
-IDOM_WEBSOCKET_URL: str = "idom/"
+IDOM_WEBSOCKET_URL = "idom/"
 ```
 
 ---
@@ -60,12 +60,7 @@ urlpatterns = [
 
 Register IDOM's websocket using `IDOM_WEBSOCKET_PATH`.
 
-!!! note
-
-    If you do not have an `asgi.py`, follow the [`channels` installation guide](https://channels.readthedocs.io/en/stable/installation.html).
-
 ```python
-
 import os
 from django.core.asgi import get_asgi_application
 
@@ -87,3 +82,7 @@ application = ProtocolTypeRouter(
     }
 )
 ```
+
+!!! note "Note: Locating `asgi.py`"
+
+    If you do not have an `asgi.py`, follow the [`channels` installation guide](https://channels.readthedocs.io/en/stable/installation.html).

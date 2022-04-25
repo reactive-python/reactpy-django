@@ -4,7 +4,7 @@ nav:
     - Installation: installation/install.md
     - How to Use:
           - Initial Steps: how-to-use/initial-steps.md
-          - Render your component: how-to-use/render-component.md
+          - Use Component with Django: how-to-use/render-component.md
     - Django-Only Features:
           - Hooks: django/hooks.md
           - Template Tags: django/templatetags.md

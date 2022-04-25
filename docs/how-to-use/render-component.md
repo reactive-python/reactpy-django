@@ -2,11 +2,17 @@
 
 ### `templates/my-template.html`
 
-{%
-   include-markdown "../../README.md"
-   start="<!--html-example-start-->"
-   end="<!--html-example-end-->"
-%}
+{% include-markdown "../../README.md" start="<!--html-header-start-->" end="<!--html-header-end-->" %}
+
+{% include-markdown "../../README.md" start="<!--html-code-start-->" end="<!--html-code-end-->" %}
+
+!!! note "Note: Django HTML Templates"
+
+        If you do not have a `templates` folder in your **Django app**, simply create one! Keep in mind, templates within this folder will not be detected unless you [add the corresponding **Django app** to `settings.py:INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/applications/#configuring-applications).
+
+!!! note "Note: `recipient` Argument"
+
+        Pay attention to how the function definition for HelloComponent (_in the previous example_) accepts a 'recipient' arguement.
 
 ---
 

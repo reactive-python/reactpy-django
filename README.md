@@ -22,17 +22,16 @@ IDOM's ecosystem independent design allows components to be reused across a vari
 
 ---
 
-# At a Glance
+# Quick Start
 
 ## `example_app/components.py`
 
-<!--py-example-start-->
+<!--py-header-start-->
 
 You'll need a file to define your [IDOM](https://github.com/idom-team/idom) components. This can be within any Python module, however, we recommend creating a `components.py` file within your chosen **Django app** to start out.
 
-!!! note
-
-    You can name `components.py` anything you wish, and place it within any Python module. Ultimately, components are referenced by Python dotted path in `my-template.html`. So, at minimum this path needs to be valid to Python's `importlib`.
+<!--py-header-end-->
+<!--py-code-start-->
 
 ```python
 from idom import component, html
@@ -43,21 +42,20 @@ def HelloComponent(recipient: str):
     return html.h1(f"Hello {recipient}!")
 ```
 
-<!--py-example-end-->
+<!--py-code-end-->
 
 ## [`example_app/templates/my-template.html`](https://docs.djangoproject.com/en/dev/topics/templates/)
 
-<!--html-example-start-->
+<!--html-header-start-->
 
-In your **Django app**'s `templates` folder, you can now add your IDOM component into your HTML using the `component` template tag using your dotted path to the component function.
+In your **Django app**'s HTML located within your `templates` folder, you can now embed your IDOM component using the `component` template tag. Within this tag, you will need to type in your dotted path to the component function as the first argument.
 
 Additonally, you can pass in keyworded arguments into your component function.
 
 In context this will look a bit like the following...
 
-!!! note
-
-    If you do not have a `templates` folder in your **Django app**, simply create one! Keep in mind, templates within this folder will not be detected unless you [add the corresponding **Django app** to `settings.py:INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/applications/#configuring-applications).
+<!--html-header-end-->
+<!--html-code-start-->
 
 ```jinja
 {% load idom %}
@@ -69,7 +67,7 @@ In context this will look a bit like the following...
 </html>
 ```
 
-<!--html-example-end-->
+<!--html-code-end-->
 
 ---
 

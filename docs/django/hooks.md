@@ -34,11 +34,11 @@ def MyComponent():
 
 ## Use Location
 
-This is a shortcut that returns the Websocket's `path`.
-
-!!! note
+!!! note "Note: Use Location Behavior"
 
         This hook will [eventually be updated](https://github.com/idom-team/idom/issues/569) to return the client's current webpage URL. This will come in conjunction with Single Page Application (SPA) support.
+
+This is a shortcut that returns the Websocket's `path`.
 
 ```python
 from idom import component, html
