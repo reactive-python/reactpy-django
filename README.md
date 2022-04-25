@@ -24,7 +24,7 @@ IDOM's ecosystem independent design allows components to be reused across a vari
 
 # At a Glance
 
-## `example_app/components.py`
+## `my_app/components.py`
 
 <!--py-header-start-->
 
@@ -44,7 +44,7 @@ def HelloComponent(recipient: str):
 
 <!--py-code-end-->
 
-## [`example_app/templates/my-template.html`](https://docs.djangoproject.com/en/dev/topics/templates/)
+## [`my_app/templates/my-template.html`](https://docs.djangoproject.com/en/dev/topics/templates/)
 
 <!--html-header-start-->
 
@@ -60,7 +60,7 @@ Additonally, you can pass in keyworded arguments into your component function. F
 <!DOCTYPE html>
 <html>
   <body>
-    {% component "django_project.example_app.components.HelloComponent" recipient="World" %}
+    {% component "example_project.my_app.components.HelloComponent" recipient="World" %}
   </body>
 </html>
 ```

@@ -3,10 +3,10 @@ nav:
     - Home: index.md
     - Installation: installation/index.md
     - How to Use:
-          - 1. Create a Django project: how-to-use/start-project.md
+          - 1. Initial Steps: how-to-use/initial-steps.md
           - 2. Create a Component: how-to-use/create-component.md
-          - 3. Reference your Component: how-to-use/reference-component.md
-          - 4. Render your Component: how-to-use/render-component.md
+          - 3. Reference Your Component: how-to-use/reference-component.md
+          - 4. Render Your Component: how-to-use/render-component.md
           - 5. Learn More: how-to-use/learn-more.md
     - Django-Only Features:
           - Hooks: django/hooks.md

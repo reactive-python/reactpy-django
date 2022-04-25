@@ -1,10 +1,16 @@
+???+ summary
+
+      Create a component function using our decorator.
+
+---
+
 {% include-markdown "../../README.md" start="<!--py-header-start-->" end="<!--py-header-end-->" %}
 
 {% include-markdown "../../README.md" start="<!--py-code-start-->" end="<!--py-code-end-->" %}
 
-!!! note "Note: File Naming"
+??? question "What do I name my component files and functions?"
 
-      You can name `components.py` anything you wish, and place it within any Python module.
+      You can have full freedom in where you name or place your files/functions within IDOM.
 
       You should determine the best way to sort your Python modules and component functions to fit your needs.
 

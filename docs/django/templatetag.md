@@ -10,11 +10,15 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
 </html>
 ```
 
-!!! note "Note: Multiple Components on One Page"
+<!--q-multiple-components-start-->
+
+??? question "Can I use multiple components on one page?"
 
     You can add as many components to a webpage as needed by using the template tag multiple times. Retrofitting legacy sites to use reactive components will typically involve many components on one page.
 
     But keep in mind, in scenarios where you are trying to create a Single Page Application (SPA) within Django, you will only have one central component within your body tag as shown below.
+
+<!--q-multiple-components-end-->
 
 ---
 

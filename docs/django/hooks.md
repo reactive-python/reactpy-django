@@ -34,9 +34,9 @@ def MyComponent():
 
 ## Use Location
 
-!!! note "Note: Use Location Behavior"
+??? info "This hook's behavior will be changed in a future update"
 
-        This hook will [eventually be updated](https://github.com/idom-team/idom/issues/569) to return the client's current webpage URL. This will come in alongside our built-in Single Page Application (SPA) support.
+    This hook will [eventually be updated](https://github.com/idom-team/idom/issues/569) to return the client's current webpage URL. This will come in alongside our built-in Single Page Application (SPA) support.
 
 This is a shortcut that returns the Websocket's `path`.
 
