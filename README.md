@@ -49,7 +49,7 @@ def HelloComponent(recipient: str):
 
 In your **Django app**'s HTML located within your `templates` folder, you can now embed your IDOM component using the `component` template tag. Within this tag, you will need to type in your dotted path to the component function as the first argument.
 
-Additonally, you can pass in keyword arguments into your component function. For example, pay attention to how the function definition for HelloComponent (_in the previous example_) accepts a 'recipient' argument.
+Additonally, you can pass in keyword arguments into your component function. For example, after reading the code below, pay attention to how the function definition for `HelloComponent` (_in the previous example_) accepts a 'recipient' argument.
 
 <!--html-header-end-->
 <!--html-code-start-->
