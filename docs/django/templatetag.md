@@ -55,7 +55,7 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
        <html>
          <body>
             {% component "example_project.my_app.components.HelloComponent" recipient="World" %}
-            {% component "example_project.my_app_2.components.StyledComponent" class="bold small-font"%}
+            {% component "example_project.my_app_2.components.ClassComponent" class="bold small-font" %}
             <div>{% component "example_project.my_app_3.components.SimpleComponent" %}</div>
          </body>
        </html>
