@@ -10,6 +10,7 @@
 {% include-markdown "../django/templatetag.md" start="<!--kwarg-start-->" end="<!--kwarg-end-->" %}
 {% include-markdown "../django/templatetag.md" start="<!--multiple-components-start-->" end="<!--multiple-components-end-->" %}
 {% include-markdown "../django/templatetag.md" start="<!--kwargs-start-->" end="<!--kwargs-end-->" %}
+{% include-markdown "../django/templatetag.md" start="<!--tags-start-->" end="<!--tags-end-->" %}
 
 ??? question "Where is my templates folder?"
 

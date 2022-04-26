@@ -8,21 +8,23 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
 
        Our pre-processor relies on the template tag containing a string.
 
-       **Do not** use Django context variables for the component path. For example, **do not** do the following:
+       **Do not** use a Django context variable for the path string. For example, **do not** do the following:
 
        ```python title="views.py"
        def example_view():
-              context = {"MyVariable": "example_project.my_app.components.HelloComponent"}
-              return render(request, "my-template.html", context)
+              context_vars = {"DontDoThis": "example_project.my_app.components.HelloComponent"}
+              return render(request, "my-template.html", context_vars)
        ```
 
        ```jinja title="my-template.html"
-       ...
-       {% component MyVariable recipient="World" %}
-       ...
+       <!-- This is bad -->
+       {% component DontDoThis recipient="World" %}
+
+       <!-- This is good -->
+       {% component "example_project.my_app.components.HelloComponent" recipient="World" %}
        ```
 
-       Failure to follow this warning will result in a performance penalty and jankiness when using the Django autoreloader.
+       Failure to follow this warning will result in a performance penalty and also jankiness when using the Django autoreloader.
 
 <!--context-end-->
 <!--kwarg-start-->
@@ -47,7 +49,19 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
 
     You can add as many components to a webpage as needed by using the template tag multiple times. Retrofitting legacy sites to use reactive components will typically involve many components on one page.
 
-    But keep in mind, in scenarios where you are trying to create a Single Page Application (SPA) within Django, you will only have one central component within your body tag as shown below.
+       ```jinja
+       {% load idom %}
+       <!DOCTYPE html>
+       <html>
+         <body>
+            {% component "example.my_app_1.components.MyFirstComponent" %}
+            {% component "example.my_app_2.components.MySecondComponent" %}
+            <div>{% component "example.my_app_3.components.MyThirdComponent" %}</div>
+         </body>
+       </html>
+       ```
+
+    But keep in mind, in scenarios where you are trying to create a Single Page Application (SPA) within Django, you will only have one central component within your body tag.
 
 <!--multiple-components-end-->
 <!--kwargs-start-->
@@ -56,5 +70,15 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
 
        You can only pass in **keyword arguments** within the template tag. Due to technical limitations, **positional arguments** are not supported at this time.
 
-
 <!--kwargs-end-->
+<!--tags-start-->
+
+??? question "What is a "template tag"?"
+
+       Template tags are Django's way of allowing you to run Python code within your HTML. Django IDOM uses a `#!jinja {% component ... %}` template tag to perform it's magic.
+
+       Keep in mind, in order to use the `#!jinja {% component ... %}` tag, you'll need to first call `#!jinja {% load idom %}` to gain access to it.
+
+       {% include-markdown "../../README.md" start="<!--html-code-start-->" end="<!--html-code-end-->" %}
+
+<!--tags-end-->
