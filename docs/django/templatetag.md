@@ -47,16 +47,16 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
 
 ??? question "Can I use multiple components on one page?"
 
-    You can add as many components to a webpage as needed by using the template tag multiple times. Retrofitting legacy sites to use reactive components will typically involve many components on one page.
+    You can add as many components to a webpage as needed by using the template tag multiple times. Retrofitting legacy sites to use IDOM will typically involve many components on one page.
 
        ```jinja
        {% load idom %}
        <!DOCTYPE html>
        <html>
          <body>
-            {% component "example.my_app_1.components.MyFirstComponent" %}
-            {% component "example.my_app_2.components.MySecondComponent" %}
-            <div>{% component "example.my_app_3.components.MyThirdComponent" %}</div>
+            {% component "example_project.my_app.components.HelloComponent" recipient="World" %}
+            {% component "example_project.my_app_2.components.StyledComponent" class="bold small-font"%}
+            <div>{% component "example_project.my_app_3.components.SimpleComponent" %}</div>
          </body>
        </html>
        ```
