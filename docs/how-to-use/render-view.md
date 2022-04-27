@@ -8,7 +8,7 @@ We will assume you've [created a Django View](https://docs.djangoproject.com/en/
 
 Within your **Django app**'s `views.py` file, you'll need to create a function to render the HTML template containing your IDOM components.
 
-In this example, we will render the `my-template.html` from the previous step.
+In this example, we will create a view that renders `my-template.html` (_from the previous step_).
 
 ```python title="views.py"
 from django.shortcuts import render
