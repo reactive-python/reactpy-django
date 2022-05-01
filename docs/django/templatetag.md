@@ -12,7 +12,7 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
 
        ```python title="views.py"
        def example_view():
-              context_vars = {"DontDoThis": "example_project.my_app.components.HelloComponent"}
+              context_vars = {"DontDoThis": "example_project.my_app.components.HelloWorld"}
               return render(request, "my-template.html", context_vars)
        ```
 
@@ -21,7 +21,7 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
        {% component DontDoThis recipient="World" %}
 
        <!-- This is good -->
-       {% component "example_project.my_app.components.HelloComponent" recipient="World" %}
+       {% component "example_project.my_app.components.HelloWorld" recipient="World" %}
        ```
 
        Failure to follow this warning will result in a performance penalty and also jankiness when using the Django autoreloader.
@@ -54,7 +54,7 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
        <!DOCTYPE html>
        <html>
          <body>
-            {% component "example_project.my_app.components.HelloComponent" recipient="World" %}
+            {% component "example_project.my_app.components.HelloWorld" recipient="World" %}
             {% component "example_project.my_app_2.components.ClassComponent" class="bold small-font" %}
             <div>{% component "example_project.my_app_3.components.SimpleComponent" %}</div>
          </body>
