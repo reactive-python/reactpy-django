@@ -109,10 +109,10 @@ class ComponentPreloader:
                     )
         if not components:
             _logger.warning(
-                """IDOM did not find any components! 
-                You are either not using any IDOM components, 
-                not using the template tag correctly, 
-                or your templates are not registered correctly within Django.""",
+                "IDOM did not find any components! "
+                "You are either not using any IDOM components, "
+                "not using the template tag correctly, "
+                "or your templates are not registered correctly within Django.",
             )
         return components
 
@@ -130,8 +130,8 @@ class ComponentPreloader:
                 _register_component(component)
             except Exception:
                 _logger.exception(
-                    """IDOM failed to register component %s! 
-                    This component path may not be valid, 
-                    or an error may have occurred while importing.""",
+                    "IDOM failed to register component '%s'! "
+                    "This component path may not be valid, "
+                    "or an error may have occurred while importing.",
                     component,
                 )
