@@ -102,7 +102,7 @@ Types of changes are to be listed in this order
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/idom-team/django-idom/compare/0.0.2...HEAD
+[unreleased]: https://github.com/idom-team/django-idom/compare/1.0.0...HEAD
 [1.0.0]: https://github.com/idom-team/django-idom/compare/0.0.5...1.0.0
 [0.0.5]: https://github.com/idom-team/django-idom/compare/0.0.4...0.0.5
 [0.0.4]: https://github.com/idom-team/django-idom/compare/0.0.3...0.0.4
