@@ -6,4 +6,6 @@ The docs you are reading only covers our Django integration.
 
 To learn more about our advanced features, such as interactive events and hooks, check out the [IDOM Core Documentation](https://idom-docs.herokuapp.com/docs/guides/creating-interfaces/index.html)!
 
-[Learn More](https://idom-docs.herokuapp.com/docs/guides/creating-interfaces/index.html){ .md-button .md-button--primary}
+| Learn More |
+| --- |
+| [Django-Only Features](../django/hooks.md){ .md-button } [IDOM Core — Hooks, Events, and More](https://idom-docs.herokuapp.com/docs/guides/creating-interfaces/index.html){ .md-button } |
