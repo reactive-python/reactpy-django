@@ -8,15 +8,15 @@
 
 {% include-markdown "../../README.md" start="<!--html-code-start-->" end="<!--html-code-end-->" %}
 
-{% include-markdown "../django/templatetag.md" start="<!--context-start-->" end="<!--context-end-->" %}
+{% include-markdown "../features/templatetag.md" start="<!--context-start-->" end="<!--context-end-->" %}
 
-{% include-markdown "../django/templatetag.md" start="<!--kwarg-start-->" end="<!--kwarg-end-->" %}
+{% include-markdown "../features/templatetag.md" start="<!--kwarg-start-->" end="<!--kwarg-end-->" %}
 
-{% include-markdown "../django/templatetag.md" start="<!--multiple-components-start-->" end="<!--multiple-components-end-->" %}
+{% include-markdown "../features/templatetag.md" start="<!--multiple-components-start-->" end="<!--multiple-components-end-->" %}
 
-{% include-markdown "../django/templatetag.md" start="<!--kwargs-start-->" end="<!--kwargs-end-->" %}
+{% include-markdown "../features/templatetag.md" start="<!--kwargs-start-->" end="<!--kwargs-end-->" %}
 
-{% include-markdown "../django/templatetag.md" start="<!--tags-start-->" end="<!--tags-end-->" %}
+{% include-markdown "../features/templatetag.md" start="<!--tags-start-->" end="<!--tags-end-->" %}
 
 ??? question "Where is my templates folder?"
 

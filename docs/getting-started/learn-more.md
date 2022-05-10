@@ -8,4 +8,4 @@ To learn more about our advanced features, such as interactive events and hooks,
 
 | Learn More |
 | --- |
-| [Django-Only Features](../django/hooks.md){ .md-button } [IDOM Core — Hooks, Events, and More](https://idom-docs.herokuapp.com/docs/guides/creating-interfaces/index.html){ .md-button } |
+| [Django-IDOM — Exclusive Features](../features/hooks.md){ .md-button } [IDOM Core — Hooks, Events, and More](https://idom-docs.herokuapp.com/docs/guides/creating-interfaces/index.html){ .md-button } |
