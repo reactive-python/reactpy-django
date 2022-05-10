@@ -2,12 +2,12 @@
 nav:
     - Home: index.md
     - Installation: installation/index.md
-    - How to Use:
-          - 1. Initial Steps: how-to-use/initial-steps.md
-          - 2. Create a Component: how-to-use/create-component.md
-          - 3. Use the Template Tag: how-to-use/reference-component.md
-          - 4. Render Your View: how-to-use/render-view.md
-          - 5. Learn More: how-to-use/learn-more.md
+    - Getting Started:
+          - 1. Initial Steps: getting-started/initial-steps.md
+          - 2. Create a Component: getting-started/create-component.md
+          - 3. Use the Template Tag: getting-started/reference-component.md
+          - 4. Render Your View: getting-started/render-view.md
+          - 5. Learn More: getting-started/learn-more.md
     - Django-Only Features:
           - Hooks: django/hooks.md
           - Template Tag: django/templatetag.md
