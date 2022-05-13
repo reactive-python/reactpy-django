@@ -113,21 +113,13 @@ class ComponentPreloader:
                 "IDOM did not find any components! "
                 "You are either not using any IDOM components, "
                 "using the template tag incorrectly, "
-                "or your HTML templates are not registered correctly within Django."
+                "or your HTML templates are not registered with Django."
                 "\033[0m"
             )
         return components
 
     def _register_components(self, components: Set) -> None:
         """Registers all IDOM components in an iterable."""
-        if not components:
-            _logger.warning(
-                "\033[93m"
-                "No IDOM components were found. Are you sure you are using the template tag correctly?"
-                "\033[0m"
-            )
-            return
-
         for component in components:
             try:
                 _logger.info("IDOM preloader has detected component %s", component)
