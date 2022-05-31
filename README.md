@@ -5,7 +5,7 @@
 <!--header-end-->
 <!--intro-start-->
 
-IDOM connects your Python web framework of choice to a ReactJS frontend, allowing you to create **interactive websites without needing JavaScript!**
+Django-IDOM connects your project to a ReactJS frontend, allowing you to create **interactive websites without needing JavaScript!**
 
 Following ReactJS styling, web elements are combined into [reusable "components"](https://idom-docs.herokuapp.com/docs/guides/creating-interfaces/your-first-components/index.html#parametrizing-components). These components can utilize [hooks](https://idom-docs.herokuapp.com/docs/reference/hooks-api.html) and [events](https://idom-docs.herokuapp.com/docs/guides/adding-interactivity/responding-to-events/index.html#async-event-handlers) to create infinitely complex web pages.
 
