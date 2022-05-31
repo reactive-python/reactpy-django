@@ -1,3 +1,4 @@
+import contextlib
 import logging
 import os
 import re
@@ -11,7 +12,7 @@ from django.utils.encoding import smart_str
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
 
 
-COMPONENT_REGEX = re.compile(r"{% *idom_component ((\"[^\"']*\")|('[^\"']*')).*?%}")
+COMPONENT_REGEX = re.compile(r"{% *component +((\"[^\"']*\")|('[^\"']*'))(.*?)%}")
 _logger = logging.getLogger(__name__)
 
 
@@ -36,6 +37,7 @@ def _register_component(full_component_name: str) -> None:
         ) from error
 
     IDOM_REGISTERED_COMPONENTS[full_component_name] = component
+    _logger.debug("IDOM has registered component %s", full_component_name)
 
 
 class ComponentPreloader:
@@ -70,15 +72,12 @@ class ComponentPreloader:
         """Obtains a set of all template directories."""
         paths = set()
         for loader in self._get_loaders():
-            try:
+            with contextlib.suppress(ImportError, AttributeError, TypeError):
                 module = import_module(loader.__module__)
                 get_template_sources = getattr(module, "get_template_sources", None)
                 if get_template_sources is None:
                     get_template_sources = loader.get_template_sources
                 paths.update(smart_str(origin) for origin in get_template_sources(""))
-            except (ImportError, AttributeError, TypeError):
-                pass
-
         return paths
 
     def _get_templates(self, paths: Set) -> Set:
@@ -91,7 +90,7 @@ class ComponentPreloader:
                     os.path.join(root, name)
                     for name in files
                     if not name.startswith(".")
-                    and any(fnmatch(name, "*%s" % glob) for glob in extensions)
+                    and any(fnmatch(name, f"*{glob}") for glob in extensions)
                 )
 
         return templates
@@ -100,7 +99,7 @@ class ComponentPreloader:
         """Obtains a set of all IDOM components by parsing HTML templates."""
         components = set()
         for template in templates:
-            try:
+            with contextlib.suppress(Exception):
                 with open(template, "r", encoding="utf-8") as template_file:
                     match = COMPONENT_REGEX.findall(template_file.read())
                     if not match:
@@ -108,16 +107,29 @@ class ComponentPreloader:
                     components.update(
                         [group[0].replace('"', "").replace("'", "") for group in match]
                     )
-            except Exception:
-                pass
-
+        if not components:
+            _logger.warning(
+                "\033[93m"
+                "IDOM did not find any components! "
+                "You are either not using any IDOM components, "
+                "using the template tag incorrectly, "
+                "or your HTML templates are not registered with Django."
+                "\033[0m"
+            )
         return components
 
     def _register_components(self, components: Set) -> None:
         """Registers all IDOM components in an iterable."""
         for component in components:
             try:
+                _logger.info("IDOM preloader has detected component %s", component)
                 _register_component(component)
-                _logger.info("IDOM has registered component %s", component)
             except Exception:
-                _logger.warning("IDOM failed to register component %s", component)
+                _logger.error(
+                    "\033[91m"
+                    "IDOM failed to register component '%s'! "
+                    "This component path may not be valid, "
+                    "or an exception may have occurred while importing."
+                    "\033[0m",
+                    component,
+                )

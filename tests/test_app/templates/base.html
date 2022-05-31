@@ -12,11 +12,13 @@
 
 <body>
   <h1>IDOM Test Page</h1>
-  <div>{% idom_component "test_app.components.HelloWorld" class="hello-world" %}</div>
-  <div>{% idom_component "test_app.components.Button" class="button" %}</div>
-  <div>{% idom_component "test_app.components.ParametrizedComponent" class="parametarized-component" x=123 y=456 %}
-  </div>
-  <div>{% idom_component "test_app.components.SimpleBarChart" class="simple-bar-chart" %}</div>
+  <div>{% component "test_app.components.HelloWorld" class="hello-world" %}</div>
+  <div>{% component "test_app.components.Button" class="button" %}</div>
+  <div>{% component "test_app.components.ParametrizedComponent" class="parametarized-component" x=123 y=456 %}</div>
+  <div>{% component "test_app.components.SimpleBarChart" %}</div>
+  <div>{% component "test_app.components.UseWebsocket" %}</div>
+  <div>{% component "test_app.components.UseScope" %}</div>
+  <div>{% component "test_app.components.UseLocation" %}</div>
 </body>
 
 </html>

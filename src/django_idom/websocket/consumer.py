@@ -2,28 +2,20 @@
 import asyncio
 import json
 import logging
-from dataclasses import dataclass
-from typing import Any, Awaitable, Callable, Optional
+from typing import Any
 from urllib.parse import parse_qsl
 
 from channels.auth import login
 from channels.db import database_sync_to_async as convert_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from idom.core.dispatcher import dispatch_single_view
 from idom.core.layout import Layout, LayoutEvent
+from idom.core.serve import serve_json_patch
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
+from django_idom.hooks import IdomWebsocket, WebsocketContext
 
 
 _logger = logging.getLogger(__name__)
-
-
-@dataclass
-class IdomWebsocket:
-    scope: dict
-    close: Callable[[Optional[int]], Awaitable[None]]
-    disconnect: Callable[[int], Awaitable[None]]
-    view_id: str
 
 
 class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
@@ -70,7 +62,7 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         socket = IdomWebsocket(self.scope, self.close, self.disconnect, view_id)
 
         try:
-            component_instance = component_constructor(socket, **component_kwargs)
+            component_instance = component_constructor(**component_kwargs)
         except Exception:
             _logger.exception(
                 f"Failed to construct component {component_constructor} "
@@ -80,8 +72,8 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
         self._idom_recv_queue = recv_queue = asyncio.Queue()
         try:
-            await dispatch_single_view(
-                Layout(component_instance),
+            await serve_json_patch(
+                Layout(WebsocketContext(component_instance, value=socket)),
                 self.send_json,
                 recv_queue.get,
             )
