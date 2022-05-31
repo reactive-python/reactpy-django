@@ -12,8 +12,8 @@ nav:
           - Hooks: features/hooks.md
           - Template Tag: features/templatetag.md
     - Contribute:
-          - Django-IDOM Environment: contribute/idom-env.md
-          - Documentation Environment: contribute/docs-env.md
+          - Code: contribute/django-idom.md
+          - Docs: contribute/docs.md
           - Running Tests: contribute/running-tests.md
     - Changelog: changelog/index.md
 
