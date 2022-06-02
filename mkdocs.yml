@@ -60,6 +60,9 @@ plugins:
     - git-revision-date-localized:
           fallback_to_build_date: true
 
+extra:
+    generator: false
+
 extra_css:
     - stylesheets/extra.css
 
