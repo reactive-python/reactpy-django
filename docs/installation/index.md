@@ -1,8 +1,6 @@
-<!--dj-proj-start-->
+???+ tip "Learn Django before reading these docs!"
 
-These docs assumes you have created [a basic **Django project**](https://docs.djangoproject.com/en/dev/intro/tutorial01/), which also involves generating/installing at least one **Django app**. If not, check out this [9 minute YouTube tutorial](https://www.youtube.com/watch?v=ZsJRXS_vrw0) created by _IDG TECHtalk_.
-
-<!--dj-proj-end-->
+    <!--dj-proj-start-->These docs assumes you have created [a basic **Django project**](https://docs.djangoproject.com/en/dev/intro/tutorial01/), which also involves generating/installing at least one **Django app**. If not, check out this [9 minute YouTube tutorial](https://www.youtube.com/watch?v=ZsJRXS_vrw0) created by _IDG TECHtalk_.<!--dj-proj-end-->
 
 ## Install from PyPI
 
