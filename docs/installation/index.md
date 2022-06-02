@@ -23,11 +23,14 @@ INSTALLED_APPS = [
 ]
 ```
 
-??? warning "Enabling ASGI on Django (Required)"
+??? warning "Enable Django ASGI (Required)"
 
     Django-IDOM requires ASGI in order to use Websockets.
 
-    If you haven't [enabled ASGI](https://channels.readthedocs.io/en/stable/installation.html) on your Django project yet, you'll need to add `channels` to `INSTALLED_APPS` and set your `ASGI_APPLICATION` variable.
+    If you haven't enabled ASGI on your Django project yet, you'll need to add `channels` to `INSTALLED_APPS` and set your `ASGI_APPLICATION` variable.
+
+    Read the [Django Channels Docs](https://channels.readthedocs.io/en/stable/installation.html) for more info.
+
     ```python title="settings.py"
     INSTALLED_APPS = [
         "channels",
