@@ -66,6 +66,12 @@ extra:
 extra_css:
     - stylesheets/extra.css
 
+watch:
+    - docs
+    - mkdocs.yml
+    - README.md
+    - CHANGELOG.md
+
 site_name: Django IDOM Docs
 site_author: Archmonger
 site_description: React for Django developers.
