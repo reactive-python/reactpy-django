@@ -60,6 +60,9 @@ plugins:
     - git-revision-date-localized:
           fallback_to_build_date: true
 
+extra_css:
+    - stylesheets/extra.css
+
 site_name: Django IDOM Docs
 site_author: Archmonger
 site_description: React for Django developers.
