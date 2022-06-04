@@ -8,7 +8,7 @@
 pip install django-idom
 ```
 
-You'll also need to modify a few files in your Django project...
+You'll also need to modify a few files in your **Django project**...
 
 ---
 
@@ -27,7 +27,7 @@ INSTALLED_APPS = [
 
     Django-IDOM requires ASGI in order to use Websockets.
 
-    If you haven't enabled ASGI on your Django project yet, you'll need to add `channels` to `INSTALLED_APPS` and set your `ASGI_APPLICATION` variable.
+    If you haven't enabled ASGI on your **Django project** yet, you'll need to add `channels` to `INSTALLED_APPS` and set your `ASGI_APPLICATION` variable.
 
     Read the [Django Channels Docs](https://channels.readthedocs.io/en/stable/installation.html) for more info.
 

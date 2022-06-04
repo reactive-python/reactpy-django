@@ -1,6 +1,6 @@
 ???+ summary
 
-      Set up a Django Project with at least one app.
+      Set up a **Django Project** with at least one app.
 
 ---
 
@@ -10,7 +10,7 @@ For the examples within this section, we will assume you've placed the files [ge
 
 ??? question "How do I organize my Django project for IDOM?"
 
-      Django-IDOM has no project structure requirements. Organize everything as you wish, just like any Django project.
+      Django-IDOM has no project structure requirements. Organize everything as you wish, just like any **Django project**.
 
 ??? question "I've never used Django, what do I need to learn?"
 
