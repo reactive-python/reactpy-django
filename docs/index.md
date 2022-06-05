@@ -6,7 +6,7 @@ hide:
 
 {% include-markdown "../README.md" start="<!--header-start-->" end="<!--header-end-->" %}
 
-## It's React for Django Developers.
+## ReactJS for Django Developers.
 
 ---
 
