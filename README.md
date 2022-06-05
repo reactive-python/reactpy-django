@@ -27,7 +27,7 @@ Any Python web framework with Websockets can support IDOM. See below for what fr
 
 <!--py-header-start-->
 
-You'll need a file to define your [IDOM](https://github.com/idom-team/idom) components. We recommend creating a `components.py` file within your chosen **Django app** to start out.
+You'll need a file to define your [IDOM](https://github.com/idom-team/idom) components. We recommend creating a `components.py` file within your chosen **Django app** to start out. Within this file, we will create a simple `HelloWorld` component.
 
 <!--py-header-end-->
 <!--py-code-start-->
