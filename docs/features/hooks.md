@@ -1,5 +1,9 @@
 # Django Hooks
 
+???+ tip "Looking for more hooks?"
+
+    Check out the [IDOM Core docs](https://idom-docs.herokuapp.com/docs/reference/hooks-api.html?highlight=hooks) on hooks!
+
 ## Use Websocket
 
 You can fetch the Django Channels websocket at any time by using `use_websocket`.
