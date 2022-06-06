@@ -20,13 +20,15 @@ nav:
 theme:
     name: material
     palette:
-        - scheme: slate
+        - media: "(prefers-color-scheme: dark)"
+          scheme: slate
           toggle:
               icon: material/toggle-switch
               name: Switch to light mode
           primary: deep-orange
-          accent: deep-orange
-        - scheme: default
+          accent: orange
+        - media: "(prefers-color-scheme: light)"
+          scheme: default
           toggle:
               icon: material/toggle-switch-off-outline
               name: Switch to dark mode
@@ -37,7 +39,6 @@ theme:
         - navigation.tabs
         - toc.integrate
         - navigation.top
-
     icon:
         repo: fontawesome/brands/github
 
@@ -60,9 +61,22 @@ plugins:
     - git-revision-date-localized:
           fallback_to_build_date: true
 
+extra:
+    generator: false
+
+extra_css:
+    - stylesheets/extra.css
+
+watch:
+    - docs
+    - mkdocs.yml
+    - README.md
+    - CHANGELOG.md
+
 site_name: Django IDOM Docs
 site_author: Archmonger
 site_description: React for Django developers.
+copyright: Copyright &copy; 2022 IDOM Team
 repo_url: https://github.com/idom-team/django-idom
 site_url: https://idom-team.github.io/django-idom
 repo_name: idom-team/django-idom

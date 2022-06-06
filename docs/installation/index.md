@@ -1,8 +1,6 @@
-<!--dj-proj-start-->
+???+ tip "Learning Django first is recommended!"
 
-These docs assumes you have created [a basic **Django project**](https://docs.djangoproject.com/en/dev/intro/tutorial01/), which also involves generating/installing at least one **Django app**. If not, check out this [9 minute YouTube tutorial](https://www.youtube.com/watch?v=ZsJRXS_vrw0) created by _IDG TECHtalk_.
-
-<!--dj-proj-end-->
+    <!--dj-proj-start-->These docs assumes you have created [a basic **Django project**](https://docs.djangoproject.com/en/dev/intro/tutorial01/), which involves creating and installing at least one **Django app**. If not, check out this [9 minute YouTube tutorial](https://www.youtube.com/watch?v=ZsJRXS_vrw0) created by _IDG TECHtalk_.<!--dj-proj-end-->
 
 ## Install from PyPI
 
@@ -10,7 +8,7 @@ These docs assumes you have created [a basic **Django project**](https://docs.dj
 pip install django-idom
 ```
 
-You'll also need to modify a few files in your Django project...
+You'll also need to modify a few files in your **Django project**...
 
 ---
 
@@ -25,11 +23,14 @@ INSTALLED_APPS = [
 ]
 ```
 
-??? warning "Enabling ASGI on Django (Required)"
+??? warning "Enable Django ASGI (Required)"
 
     Django-IDOM requires ASGI in order to use Websockets.
 
-    If you haven't [enabled ASGI](https://channels.readthedocs.io/en/stable/installation.html) on your Django project yet, you'll need to add `channels` to `INSTALLED_APPS` and set your `ASGI_APPLICATION` variable.
+    If you haven't enabled ASGI on your **Django project** yet, you'll need to add `channels` to `INSTALLED_APPS` and set your `ASGI_APPLICATION` variable.
+
+    Read the [Django Channels Docs](https://channels.readthedocs.io/en/stable/installation.html) for more info.
+
     ```python title="settings.py"
     INSTALLED_APPS = [
         "channels",
