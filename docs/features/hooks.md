@@ -40,7 +40,7 @@ def MyComponent():
 
 ??? info "This hook's behavior will be changed in a future update"
 
-    This hook will eventually be updated to return the client's current webpage URL. This will come in alongside our built-in [Single Page Application (SPA) support](https://github.com/idom-team/idom/issues/569).
+    This hook will be updated to return the browser's current URL. This will come in alongside our built-in [Single Page Application (SPA) support](https://github.com/idom-team/idom/issues/569).
 
 This is a shortcut that returns the Websocket's `path`.
 
