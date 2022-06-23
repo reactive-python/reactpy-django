@@ -26,18 +26,18 @@ if sys.platform != "win32":
             return self.wait(timeout).until(lambda driver: condition())
 
         def test_hello_world(self):
-            self.driver.find_element_by_id("hello-world")
+            self.driver.find_element("hello-world")
 
         def test_counter(self):
-            button = self.driver.find_element_by_id("counter-inc")
-            count = self.driver.find_element_by_id("counter-num")
+            button = self.driver.find_element("counter-inc")
+            count = self.driver.find_element("counter-num")
 
             for i in range(5):
                 self.wait_until(lambda: count.get_attribute("data-count") == str(i))
                 button.click()
 
         def test_parametrized_component(self):
-            element = self.driver.find_element_by_id("parametrized-component")
+            element = self.driver.find_element("parametrized-component")
             self.assertEqual(element.get_attribute("data-value"), "579")
 
         def test_component_from_web_module(self):
@@ -48,15 +48,15 @@ if sys.platform != "win32":
             )
 
         def test_use_websocket(self):
-            element = self.driver.find_element_by_id("use-websocket")
+            element = self.driver.find_element("use-websocket")
             self.assertEqual(element.get_attribute("data-success"), "true")
 
         def test_use_scope(self):
-            element = self.driver.find_element_by_id("use-scope")
+            element = self.driver.find_element("use-scope")
             self.assertEqual(element.get_attribute("data-success"), "true")
 
         def test_use_location(self):
-            element = self.driver.find_element_by_id("use-location")
+            element = self.driver.find_element("use-location")
             self.assertEqual(element.get_attribute("data-success"), "true")
 
 
