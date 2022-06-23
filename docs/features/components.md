@@ -9,23 +9,117 @@ from django_idom.components import static_css
 @component
 def MyComponent():
     return html.div(
-        static_css("/static/css/buttons.css"),
-        html.button("My Button!")
+        static_css("css/buttons.css"),
+        html.button("My Button!"),
     )
 ```
 
 ??? question "Should I put `static_css` at the top of my component?"
 
-<!-- Yes, to ensure proper load order -->
+    Yes, if the stylesheet is contains styling for your component.
 
-??? question "Can I load HTML using `html.link`?"
+??? question "Can I load CSS using `html.link` instead?"
 
-??? question "What about external stylesheets?"
+    While you can load a with `html.link`, keep in mind that loading this way **does not** ensure load order. Thus, your stylesheet will likely be loaded after your component is displayed.
+
+    Here's an example on this use case:
+
+    ```python
+    from idom import component, html
+    from django_idom.components import static_js
+    from django.templatetags.static import static
+
+    @component
+    def MyComponent():
+        return html.div(
+            html.link({"rel": "stylesheet", "href": static("css/buttons.css")}),
+            html.button("My Button!"),
+        )
+    ```
+
+??? question "How do I load external CSS?"
+
+    `static_css` can only be used with local static files.
+
+    For external CSS, substitute `static_css` with `html.link` as such:
+
+    ```python
+    from idom import component, html
+    from django_idom.components import static_js
+
+    @component
+    def MyComponent():
+        return html.div(
+            html.link({"rel": "stylesheet", "href": "https://example.com/external-styles.css"}),
+            html.button("My Button!"),
+        )
+    ```
 
 ??? question "Why not load my CSS in `#!html <head>`?"
 
-<!-- Generally, Django stylesheets are loaded in your `#!html <head>` using the `#!jinja {% load static %}` template tag.  -->
+    Traditionally, stylesheets are loaded in your `#!html <head>` using the `#!jinja {% load static %}` template tag.
+
+    Instead, you can use the `static_css` component to help improve webpage load times to deferring loading stylesheets until they are needed.
 
 ## Static JavaScript
 
-<!-- In progress -->
+Allows you to defer loading JavaScript until a component begins rendering. This JavaScript must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).
+
+```python
+from idom import component, html
+from django_idom.components import static_js
+
+@component
+def MyComponent():
+    return html.div(
+        html.button("My Button!"),
+        static_js("js/scripts.js"),
+    )
+```
+
+??? question "Should I put `static_js` at the bottom of my component?"
+
+    Yes, if your scripts are reliant on the contents of the component.
+
+??? question "Can I load JavaScript using `html.script` instead?"
+
+    While you can load with `html.script`, keep in mind that loading this way **does not** ensure load order. Thus, your JavaScript will likely be loaded at an arbitrary time after your component is displayed.
+
+    Here's an example on this use case:
+
+    ```python
+    from idom import component, html
+    from django_idom.components import static_js
+    from django.templatetags.static import static
+
+    @component
+    def MyComponent():
+        return html.div(
+            html.script({"src": static("js/scripts.js")}),
+            html.button("My Button!"),
+        )
+    ```
+
+??? question "How do I load external JS?"
+
+    `static_js` can only be used with local static files.
+
+    For external JavaScript, substitute `static_js` with `html.script` as such:
+
+    ```python
+    from idom import component, html
+    from django_idom.components import static_js
+
+    @component
+    def MyComponent():
+        return html.div(
+            html.script({"src": static("https://example.com/external-scripts.js")}),
+            html.button("My Button!"),
+        )
+    ```
+
+??? question "Why not load my JS in `#!html <head>`?"
+
+    Traditionally, JavaScript is loaded in your `#!html <head>` using the `#!jinja {% load static %}` template tag.
+
+    Instead, you can use the `static_js` component to help improve webpage load times to deferring loading scripts until they are needed.
