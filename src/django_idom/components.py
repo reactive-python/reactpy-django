@@ -13,7 +13,9 @@ def static_css(static_path: str):
     # Try to find the file within Django's static files
     abs_path = find(static_path)
     if not abs_path:
-        raise FileNotFoundError(f"Could not find static file {static_path} within Django's static files.")
+        raise FileNotFoundError(
+            f"Could not find static file {static_path} within Django's static files."
+        )
 
     # Fetch the file from cache, if available
     last_modified_time = os.stat(abs_path).st_mtime
