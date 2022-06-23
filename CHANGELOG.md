@@ -28,7 +28,7 @@ Types of changes are to be listed in this order
 
 ### Added
 
--   `static_css` and `static_js` components to defer loading CSS & JS files until you need them.
+-   `static_css` and `static_js` components to defer loading CSS & JS files until needed.
 
 ## [1.0.0] - 2022-05-22
 
