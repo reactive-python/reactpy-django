@@ -24,6 +24,12 @@ Types of changes are to be listed in this order
 
 -   Nothing (yet)
 
+## [1.1.0] - 2022-06-25
+
+### Added
+
+-   `static_css` component that can be used to defer loading CSS for your IDOM components until you need them.
+
 ## [1.0.0] - 2022-05-22
 
 ### Added
@@ -103,6 +109,7 @@ Types of changes are to be listed in this order
 -   Support for IDOM within the Django
 
 [unreleased]: https://github.com/idom-team/django-idom/compare/1.0.0...HEAD
+[1.1.0]: https://github.com/idom-team/django-idom/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/idom-team/django-idom/compare/0.0.5...1.0.0
 [0.0.5]: https://github.com/idom-team/django-idom/compare/0.0.4...0.0.5
 [0.0.4]: https://github.com/idom-team/django-idom/compare/0.0.3...0.0.4
