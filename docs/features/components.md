@@ -65,7 +65,7 @@ def MyComponent():
 
 Allows you to defer loading JavaScript until a component begins rendering. This JavaScript must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).
 
-```python
+```python title="components.py"
 from idom import component, html
 from django_idom.components import static_js
 
