@@ -9,6 +9,7 @@ nav:
           - 4. Render Your View: getting-started/render-view.md
           - 5. Learn More: getting-started/learn-more.md
     - Exclusive Features:
+          - Components: features/components.md
           - Hooks: features/hooks.md
           - Template Tag: features/templatetag.md
     - Contribute:
