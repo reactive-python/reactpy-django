@@ -1,6 +1,6 @@
 ## Static CSS
 
-Allows you to defer loading a CSS stylesheet until a component's begins rendering. This stylesheet must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).
+Allows you to defer loading a CSS stylesheet until a component begins rendering. This stylesheet must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).
 
 ```python title="components.py"
 from idom import component, html
