@@ -19,8 +19,6 @@ Any Python web framework with Websockets can support IDOM. See below for what fr
 
 <!--intro-end-->
 
----
-
 # At a Glance
 
 ## `my_app/components.py`
@@ -64,8 +62,6 @@ Additonally, you can pass in keyword arguments into your component function. For
 ```
 
 <!--html-code-end-->
-
----
 
 # Resources
 
