@@ -8,8 +8,7 @@ from django_idom.config import IDOM_CACHE
 
 @component
 def static_css(static_path: str):
-    """Returns a Django CSS static file CSS stylesheet within a style tag.
-    This helps avoid the need to wait for CSS files to load."""
+    """Fetches a CSS static file for use within IDOM. This allows for deferred CSS loading."""
     # Try to find the file within Django's static files
     abs_path = find(static_path)
     if not abs_path:
