@@ -18,11 +18,11 @@ def MyComponent():
 
     Yes, if the stylesheet is contains styling for your component.
 
-??? question "Can I load CSS using `html.link` instead?"
+??? question "Can I load static CSS using `html.link` instead?"
 
-    While you can load a with `html.link`, keep in mind that loading this way **does not** ensure load order. Thus, your stylesheet will likely be loaded after your component is displayed.
+    While you can load stylesheets with `html.link`, keep in mind that loading this way **does not** ensure load order. Thus, your stylesheet will be loaded after your component is displayed. This would likely cause some visual jankiness, so use this at your own discretion.
 
-    Here's an example on this use case:
+    Here's an example on what you should typically avoid doing:
 
     ```python
     from idom import component, html
@@ -41,7 +41,7 @@ def MyComponent():
 
     `static_css` can only be used with local static files.
 
-    For external CSS, substitute `static_css` with `html.link` as such:
+    For external CSS, substitute `static_css` with `html.link`.
 
     ```python
     from idom import component, html
@@ -59,7 +59,7 @@ def MyComponent():
 
     Traditionally, stylesheets are loaded in your `#!html <head>` using the `#!jinja {% load static %}` template tag.
 
-    Instead, you can use the `static_css` component to help improve webpage load times to deferring loading stylesheets until they are needed.
+    To help improve webpage load times, you can use the `static_css` component to defer loading your stylesheet until it is needed.
 
 ## Static JavaScript
 
@@ -81,11 +81,11 @@ def MyComponent():
 
     Yes, if your scripts are reliant on the contents of the component.
 
-??? question "Can I load JavaScript using `html.script` instead?"
+??? question "Can I load static JavaScript using `html.script` instead?"
 
-    While you can load with `html.script`, keep in mind that loading this way **does not** ensure load order. Thus, your JavaScript will likely be loaded at an arbitrary time after your component is displayed.
+    While you can load JavaScript with `html.script`, keep in mind that loading this way **does not** ensure load order. Thus, your JavaScript will likely be loaded at an arbitrary time after your component is displayed.
 
-    Here's an example on this use case:
+    Here's an example on what you should typically avoid doing:
 
     ```python
     from idom import component, html
@@ -104,7 +104,7 @@ def MyComponent():
 
     `static_js` can only be used with local static files.
 
-    For external JavaScript, substitute `static_js` with `html.script` as such:
+    For external JavaScript, substitute `static_js` with `html.script`.
 
     ```python
     from idom import component, html
@@ -122,4 +122,4 @@ def MyComponent():
 
     Traditionally, JavaScript is loaded in your `#!html <head>` using the `#!jinja {% load static %}` template tag.
 
-    Instead, you can use the `static_js` component to help improve webpage load times to deferring loading scripts until they are needed.
+    To help improve webpage load times, you can use the `static_js` component to defer loading your JavaScript until it is needed.
