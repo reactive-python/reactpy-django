@@ -11,4 +11,3 @@ class RegexTests(TestCase):
 
         fake_component = get_component("test_app.components.FakeComponent")
         self.assertIsNone(fake_component)
-
