@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
-from django_idom.utils import ComponentPreloader
+from django_idom.utils import _ComponentPreloader
 
 
 class DjangoIdomConfig(AppConfig):
@@ -8,4 +8,4 @@ class DjangoIdomConfig(AppConfig):
 
     def ready(self):
         # Populate the IDOM component registry when Django is ready
-        ComponentPreloader().register_all()
+        _ComponentPreloader().register_all()

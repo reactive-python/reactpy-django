@@ -4,10 +4,11 @@ import os
 import re
 from fnmatch import fnmatch
 from importlib import import_module
-from typing import Set
+from typing import Set, Union
 
 from django.template import engines
 from django.utils.encoding import smart_str
+from idom.types import ComponentType
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
 
@@ -16,11 +17,21 @@ COMPONENT_REGEX = re.compile(r"{% *component +((\"[^\"']*\")|('[^\"']*'))(.*?)%}
 _logger = logging.getLogger(__name__)
 
 
-def _register_component(full_component_name: str) -> None:
-    if full_component_name in IDOM_REGISTERED_COMPONENTS:
+def get_component(dotted_path: str) -> Union[ComponentType, None]:
+    """Fetches a component given it's Python dotted path, if it exists."""
+    try:
+        return IDOM_REGISTERED_COMPONENTS[dotted_path]
+    except KeyError:
+        _logger.debug("A component named %s was never registered!", dotted_path)
+        return None
+
+
+def register_component(dotted_path: str) -> None:
+    """Registers a component given it's Python dotted path."""
+    if dotted_path in IDOM_REGISTERED_COMPONENTS:
         return
 
-    module_name, component_name = full_component_name.rsplit(".", 1)
+    module_name, component_name = dotted_path.rsplit(".", 1)
 
     try:
         module = import_module(module_name)
@@ -36,11 +47,11 @@ def _register_component(full_component_name: str) -> None:
             f"Module {module_name!r} has no component named {component_name!r}"
         ) from error
 
-    IDOM_REGISTERED_COMPONENTS[full_component_name] = component
-    _logger.debug("IDOM has registered component %s", full_component_name)
+    IDOM_REGISTERED_COMPONENTS[dotted_path] = component
+    _logger.debug("IDOM has registered component %s", dotted_path)
 
 
-class ComponentPreloader:
+class _ComponentPreloader:
     def register_all(self):
         """Registers all IDOM components found within Django templates."""
         # Get all template folder paths
@@ -123,7 +134,7 @@ class ComponentPreloader:
         for component in components:
             try:
                 _logger.info("IDOM preloader has detected component %s", component)
-                _register_component(component)
+                register_component(component)
             except Exception:
                 _logger.error(
                     "\033[91m"

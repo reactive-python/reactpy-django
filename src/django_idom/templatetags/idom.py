@@ -6,7 +6,7 @@ from django import template
 from django.urls import reverse
 
 from django_idom.config import IDOM_WEBSOCKET_URL, IDOM_WS_MAX_RECONNECT_TIMEOUT
-from django_idom.utils import _register_component
+from django_idom.utils import register_component
 
 
 IDOM_WEB_MODULES_URL = reverse("idom:web_modules", args=["x"])[:-1][1:]
@@ -15,7 +15,7 @@ register = template.Library()
 
 @register.inclusion_tag("idom/component.html")
 def component(_component_id_, **kwargs):
-    _register_component(_component_id_)
+    register_component(_component_id_)
 
     class_ = kwargs.pop("class", "")
     json_kwargs = json.dumps(kwargs, separators=(",", ":"))
