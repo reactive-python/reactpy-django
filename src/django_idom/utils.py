@@ -22,7 +22,7 @@ def get_component(dotted_path: str) -> Union[ComponentType, None]:
     try:
         return IDOM_REGISTERED_COMPONENTS[dotted_path]
     except KeyError:
-        _logger.debug("A component named %s was never registered!", dotted_path)
+        _logger.info("A component named %s was never registered!", dotted_path)
         return None
 
 
