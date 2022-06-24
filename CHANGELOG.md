@@ -30,6 +30,10 @@ Types of changes are to be listed in this order
 
 -   `static_css` and `static_js` components to defer loading CSS & JS files until needed.
 
+### Changed
+
+-   Bumped the minimum IDOM version to 0.39.0
+
 ## [1.0.0] - 2022-05-22
 
 ### Added
