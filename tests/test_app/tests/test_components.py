@@ -63,6 +63,10 @@ if sys.platform != "win32":
             element = self.driver.find_element_by_id("orm-in-component")
             self.assertEqual(element.get_attribute("data-success"), "true")
 
+            # Make sure ASYNC_UNSAFE value was reset after component render
+            element = self.driver.find_element_by_id("allow-async-unsafe")
+            self.assertEqual(element.get_attribute("data-value"), "False")
+
 
 def make_driver(page_load_timeout, implicit_wait_timeout):
     options = webdriver.ChromeOptions()

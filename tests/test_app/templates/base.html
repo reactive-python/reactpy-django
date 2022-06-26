@@ -1,4 +1,4 @@
-{% load static %} {% load idom %}
+{% load static %} {% load idom %} {% load idom_tests %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,6 +20,7 @@
   <div>{% component "test_app.components.UseScope" %}</div>
   <div>{% component "test_app.components.UseLocation" %}</div>
   <div>{% component "test_app.components.OrmInComponent" %}</div>
+  <div id="allow-async-unsafe" data-value="{% check_async_unsafe %}">DJANGO_ALLOW_ASYNC_UNSAFE: {% check_async_unsafe %}<hr></div>
 </body>
 
 </html>
