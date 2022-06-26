@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 import idom
 
 import django_idom
@@ -69,5 +71,21 @@ def UseLocation():
     return idom.html.div(
         {"id": "use-location", "data-success": success},
         f"UseLocation: {location}",
+        idom.html.hr(),
+    )
+
+
+@idom.component
+def OrmInComponent():
+    from .models import NamedThingy
+
+    NamedThingy.objects.all().delete()
+    NamedThingy(name=f"foo-{uuid4()}").save()
+    model = NamedThingy.objects.all()
+    success = bool(model)
+
+    return idom.html.div(
+        {"id": "orm-in-component", "data-success": success},
+        f"OrmInComponent: {model}",
         idom.html.hr(),
     )

@@ -59,6 +59,10 @@ if sys.platform != "win32":
             element = self.driver.find_element_by_id("use-location")
             self.assertEqual(element.get_attribute("data-success"), "true")
 
+        def test_orm_in_component(self):
+            element = self.driver.find_element_by_id("orm-in-component")
+            self.assertEqual(element.get_attribute("data-success"), "true")
+
 
 def make_driver(page_load_timeout, implicit_wait_timeout):
     options = webdriver.ChromeOptions()
