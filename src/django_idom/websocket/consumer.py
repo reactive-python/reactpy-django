@@ -8,11 +8,12 @@ from urllib.parse import parse_qsl
 from channels.auth import login
 from channels.db import database_sync_to_async as convert_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from idom.core.layout import Layout, LayoutEvent
+from idom.core.layout import LayoutEvent
 from idom.core.serve import serve_json_patch
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
 from django_idom.hooks import IdomWebsocket, WebsocketContext
+from django_idom.layout import DjangoLayout
 
 
 _logger = logging.getLogger(__name__)
@@ -73,7 +74,7 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         self._idom_recv_queue = recv_queue = asyncio.Queue()
         try:
             await serve_json_patch(
-                Layout(WebsocketContext(component_instance, value=socket)),
+                DjangoLayout(WebsocketContext(component_instance, value=socket)),
                 self.send_json,
                 recv_queue.get,
             )
