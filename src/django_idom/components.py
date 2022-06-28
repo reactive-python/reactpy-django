@@ -7,14 +7,24 @@ from django_idom.config import IDOM_CACHE
 
 
 @component
-def static_css(static_path: str):
-    """Fetches a CSS static file for use within IDOM. This allows for deferred CSS loading."""
+def DjangoCSS(static_path: str):
+    """Fetches a CSS static file for use within IDOM. This allows for deferred CSS loading.
+    
+    Args:
+        static_path: The path to the static file. This path is identical to what you would
+        use on a `static` template tag.
+    """
     return html.style(_cached_static_contents(static_path))
 
 
 @component
-def static_js(static_path: str):
-    """Fetches a JS static file for use within IDOM. This allows for deferred JS loading."""
+def DjangoJS(static_path: str):
+    """Fetches a JS static file for use within IDOM. This allows for deferred JS loading.
+    
+    Args:
+        static_path: The path to the static file. This path is identical to what you would
+        use on a `static` template tag.
+    """
     return html.script(_cached_static_contents(static_path))
 
 

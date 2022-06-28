@@ -1,20 +1,20 @@
-## Static CSS
+## Django CSS
 
 Allows you to defer loading a CSS stylesheet until a component begins rendering. This stylesheet must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).
 
 ```python title="components.py"
 from idom import component, html
-from django_idom.components import static_css
+from django_idom.components import DjangoCSS
 
 @component
 def MyComponent():
     return html.div(
-        static_css("css/buttons.css"),
+        DjangoCSS("css/buttons.css"),
         html.button("My Button!"),
     )
 ```
 
-??? question "Should I put `static_css` at the top of my component?"
+??? question "Should I put `DjangoCSS` at the top of my component?"
 
     Yes, if the stylesheet is contains styling for your component.
 
@@ -26,7 +26,7 @@ def MyComponent():
 
     ```python
     from idom import component, html
-    from django_idom.components import static_js
+    from django_idom.components import DjangoJS
     from django.templatetags.static import static
 
     @component
@@ -39,13 +39,13 @@ def MyComponent():
 
 ??? question "How do I load external CSS?"
 
-    `static_css` can only be used with local static files.
+    `DjangoCSS` can only be used with local static files.
 
-    For external CSS, substitute `static_css` with `html.link`.
+    For external CSS, substitute `DjangoCSS` with `html.link`.
 
     ```python
     from idom import component, html
-    from django_idom.components import static_js
+    from django_idom.components import DjangoJS
 
     @component
     def MyComponent():
@@ -59,25 +59,25 @@ def MyComponent():
 
     Traditionally, stylesheets are loaded in your `#!html <head>` using the `#!jinja {% load static %}` template tag.
 
-    To help improve webpage load times, you can use the `static_css` component to defer loading your stylesheet until it is needed.
+    To help improve webpage load times, you can use the `DjangoCSS` component to defer loading your stylesheet until it is needed.
 
-## Static JavaScript
+## Django JS
 
 Allows you to defer loading JavaScript until a component begins rendering. This JavaScript must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).
 
 ```python title="components.py"
 from idom import component, html
-from django_idom.components import static_js
+from django_idom.components import DjangoJS
 
 @component
 def MyComponent():
     return html.div(
         html.button("My Button!"),
-        static_js("js/scripts.js"),
+        DjangoJS("js/scripts.js"),
     )
 ```
 
-??? question "Should I put `static_js` at the bottom of my component?"
+??? question "Should I put `DjangoJS` at the bottom of my component?"
 
     Yes, if your scripts are reliant on the contents of the component.
 
@@ -89,7 +89,7 @@ def MyComponent():
 
     ```python
     from idom import component, html
-    from django_idom.components import static_js
+    from django_idom.components import DjangoJS
     from django.templatetags.static import static
 
     @component
@@ -102,13 +102,13 @@ def MyComponent():
 
 ??? question "How do I load external JS?"
 
-    `static_js` can only be used with local static files.
+    `DjangoJS` can only be used with local static files.
 
-    For external JavaScript, substitute `static_js` with `html.script`.
+    For external JavaScript, substitute `DjangoJS` with `html.script`.
 
     ```python
     from idom import component, html
-    from django_idom.components import static_js
+    from django_idom.components import DjangoJS
 
     @component
     def MyComponent():
@@ -122,4 +122,4 @@ def MyComponent():
 
     Traditionally, JavaScript is loaded in your `#!html <head>` using the `#!jinja {% load static %}` template tag.
 
-    To help improve webpage load times, you can use the `static_js` component to defer loading your JavaScript until it is needed.
+    To help improve webpage load times, you can use the `DjangoJS` component to defer loading your JavaScript until it is needed.

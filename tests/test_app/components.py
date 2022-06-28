@@ -77,7 +77,7 @@ def UseLocation():
 def StaticCSS():
     return idom.html.div(
         {"id": "static-css"},
-        django_idom.components.static_css("static-css-test.css"),
+        django_idom.components.DjangoCSS("static-css-test.css"),
         idom.html.div({"style": {"display": "inline"}}, "StaticCSS: "),
         idom.html.button("This text should be blue."),
         idom.html.hr(),
@@ -90,6 +90,6 @@ def StaticJS():
     return idom.html.div(
         {"id": "static-js", "data-success": success},
         f"StaticJS: {success}",
-        django_idom.components.static_js("static-js-test.js"),
+        django_idom.components.DjangoJS("static-js-test.js"),
         idom.html.hr(),
     )
