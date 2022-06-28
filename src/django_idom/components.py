@@ -9,7 +9,7 @@ from django_idom.config import IDOM_CACHE
 @component
 def DjangoCSS(static_path: str):
     """Fetches a CSS static file for use within IDOM. This allows for deferred CSS loading.
-    
+
     Args:
         static_path: The path to the static file. This path is identical to what you would
         use on a `static` template tag.
@@ -20,7 +20,7 @@ def DjangoCSS(static_path: str):
 @component
 def DjangoJS(static_path: str):
     """Fetches a JS static file for use within IDOM. This allows for deferred JS loading.
-    
+
     Args:
         static_path: The path to the static file. This path is identical to what you would
         use on a `static` template tag.
