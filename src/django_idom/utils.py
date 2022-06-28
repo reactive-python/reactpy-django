@@ -8,6 +8,7 @@ from inspect import isclass, iscoroutinefunction
 from typing import Callable, Set
 
 from asgiref.sync import async_to_sync
+from django.http import HttpRequest
 from django.template import engines
 from django.urls import reverse
 from django.utils.encoding import smart_str
@@ -57,16 +58,16 @@ def view_to_component(
         # TODO: Apply middleware using some helper function
         if isclass(view):
             print("class view")
-            rendered_view = view.as_view()(*args, **kwargs)
+            rendered_view = view.as_view()(HttpRequest(), *args, **kwargs)
         elif iscoroutinefunction(view):
             print("async view")
-            rendered_view = async_to_sync(view)(*args, **kwargs)
+            rendered_view = async_to_sync(view)(HttpRequest(), *args, **kwargs)
         else:
             print("function view")
-            rendered_view = view(*args, **kwargs)
+            rendered_view = view(HttpRequest(), *args, **kwargs)
 
         print("vdom")
-        return html._(utils.html_to_vdom(rendered_view))
+        return html._(utils.html_to_vdom(rendered_view.content.decode("utf-8")))
 
     # Register the component as an iFrame if using compatibility mode
     if compatibility:
