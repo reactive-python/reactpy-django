@@ -2,6 +2,8 @@ import idom
 
 import django_idom
 
+from . import views
+
 
 @idom.component
 def HelloWorld():
@@ -93,3 +95,30 @@ def StaticJS():
         django_idom.components.DjangoJS("static-js-test.js"),
         idom.html.hr(),
     )
+
+
+@idom.component
+def ViewToComponent():
+    return django_idom.utils.view_to_component(views.view_to_component)
+
+
+@idom.component
+def ViewToComponentAsync():
+    return django_idom.utils.view_to_component(views.view_to_component_async)
+
+
+@idom.component
+def ViewToComponentClass():
+    return django_idom.utils.view_to_component(views.ViewToComponentClass)
+
+
+@idom.component
+def ViewToComponentCompat():
+    return django_idom.utils.view_to_component(
+        views.view_to_component_compat, compatibility=True
+    )
+
+
+@idom.component
+def ViewToComponentMiddleware():
+    return django_idom.utils.view_to_component(views.view_to_component_middleware)

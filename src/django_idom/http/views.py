@@ -7,7 +7,7 @@ from django.core.exceptions import SuspiciousOperation
 from django.http import HttpRequest, HttpResponse
 from idom.config import IDOM_WED_MODULES_DIR
 
-from django_idom.config import IDOM_CACHE, IDOM_REGISTERED_IFRAMES
+from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
 
 
 async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
@@ -36,20 +36,22 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
     return response
 
 
-async def view_to_component_iframe(view_path: str) -> HttpResponse:
+async def view_to_component_iframe(
+    request: HttpRequest, view_path: str
+) -> HttpResponse:
     """Returns a Django view that was registered by view_to_component.
     This is used by `view_to_component` to render the view within an iframe."""
     # Get the view from IDOM_REGISTERED_IFRAMES
-    iframe = IDOM_REGISTERED_IFRAMES.get(view_path)
+    iframe = IDOM_VIEW_COMPONENT_IFRAMES.get(view_path)
     if not iframe:
         raise ValueError(f"No view registered for component {view_path}.")
 
     # Render the view
     # TODO: Apply middleware using some helper function~
     if isclass(iframe):
-        return await database_sync_to_async(iframe.view.as_view())()
+        return await database_sync_to_async(iframe.view.as_view())(request)
 
     if iscoroutinefunction(iframe):
-        return await iframe.view()
+        return await iframe.view(request)
 
-    return await database_sync_to_async(iframe.view)()
+    return await database_sync_to_async(iframe.view)(request)

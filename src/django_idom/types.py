@@ -6,8 +6,8 @@ from idom.core.component import Component
 
 
 @dataclass
-class ViewToComponentIframe:
-    middleware: list[Callable | str]
+class ViewComponentIframe:
+    middleware: list[Callable | str] | None
     view: View | Callable
     component: Component | object
     args: Tuple

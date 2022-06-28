@@ -4,16 +4,77 @@ import os
 import re
 from fnmatch import fnmatch
 from importlib import import_module
-from typing import Set
+from inspect import isclass, iscoroutinefunction
+from typing import Callable, Set
 
+from asgiref.sync import async_to_sync
 from django.template import engines
+from django.urls import reverse
 from django.utils.encoding import smart_str
+from idom import component, html, utils
 
-from django_idom.config import IDOM_REGISTERED_COMPONENTS
+from django_idom.config import IDOM_REGISTERED_COMPONENTS, IDOM_VIEW_COMPONENT_IFRAMES
+from django_idom.types import ViewComponentIframe
 
 
 COMPONENT_REGEX = re.compile(r"{% *component +((\"[^\"']*\")|('[^\"']*'))(.*?)%}")
 _logger = logging.getLogger(__name__)
+
+
+def view_to_component(
+    view: Callable,
+    middleware: list[Callable | str] | None = None,
+    compatibility: bool = False,
+    *args,
+    **kwargs,
+):
+    """Converts a Django view to an IDOM component.
+
+    Args:
+        middleware: The list of middleware to use when rendering the component.
+        compatibility: If True, the component will be rendered in an iframe.
+            This requires X_FRAME_OPTIONS = 'SAMEORIGIN' in settings.py.
+        *args: The positional arguments to pass to the view.
+
+    Keyword Args:
+        **kwargs: The keyword arguments to pass to the view.
+    """
+
+    dotted_path = f"{view.__module__}.{view.__name__}".replace("<", "").replace(">", "")
+
+    @component
+    def new_component():
+
+        # Use compatibility mode if requested
+        if compatibility:
+            return html.iframe(
+                {
+                    "src": reverse("idom:view_to_component", args=[dotted_path]),
+                    "loading": "lazy",
+                }
+            )
+
+        # TODO: Apply middleware using some helper function
+        if isclass(view):
+            print("class view")
+            rendered_view = view.as_view()(*args, **kwargs)
+        elif iscoroutinefunction(view):
+            print("async view")
+            rendered_view = async_to_sync(view)(*args, **kwargs)
+        else:
+            print("function view")
+            rendered_view = view(*args, **kwargs)
+
+        print("vdom")
+        return html._(utils.html_to_vdom(rendered_view))
+
+    # Register the component as an iFrame if using compatibility mode
+    if compatibility:
+        IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
+            middleware, view, new_component, args, kwargs
+        )
+
+    return new_component()
 
 
 def _register_component(full_component_name: str) -> None:
