@@ -4,8 +4,11 @@ from django.conf import settings
 from django.core.cache import DEFAULT_CACHE_ALIAS, caches
 from idom.core.types import ComponentConstructor
 
+from django_idom.types import ViewToComponentIframe
+
 
 IDOM_REGISTERED_COMPONENTS: Dict[str, ComponentConstructor] = {}
+IDOM_REGISTERED_IFRAMES: Dict[str, ViewToComponentIframe] = {}
 
 IDOM_WEBSOCKET_URL = getattr(settings, "IDOM_WEBSOCKET_URL", "idom/")
 IDOM_WS_MAX_RECONNECT_TIMEOUT = getattr(

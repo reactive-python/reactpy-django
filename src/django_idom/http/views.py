@@ -1,11 +1,13 @@
 import os
+from inspect import isclass, iscoroutinefunction
 
 from aiofile import async_open
+from channels.db import database_sync_to_async
 from django.core.exceptions import SuspiciousOperation
 from django.http import HttpRequest, HttpResponse
 from idom.config import IDOM_WED_MODULES_DIR
 
-from django_idom.config import IDOM_CACHE
+from django_idom.config import IDOM_CACHE, IDOM_REGISTERED_IFRAMES
 
 
 async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
@@ -32,3 +34,22 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
             cache_key, response, timeout=None, version=last_modified_time
         )
     return response
+
+
+async def view_to_component_iframe(view_path: str) -> HttpResponse:
+    """Returns a Django view that was registered by view_to_component.
+    This is used by `view_to_component` to render the view within an iframe."""
+    # Get the view from IDOM_REGISTERED_IFRAMES
+    iframe = IDOM_REGISTERED_IFRAMES.get(view_path)
+    if not iframe:
+        raise ValueError(f"No view registered for component {view_path}.")
+
+    # Render the view
+    # TODO: Apply middleware using some helper function~
+    if isclass(iframe):
+        return await database_sync_to_async(iframe.view.as_view())()
+
+    if iscoroutinefunction(iframe):
+        return await iframe.view()
+
+    return await database_sync_to_async(iframe.view)()
