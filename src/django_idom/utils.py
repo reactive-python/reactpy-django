@@ -96,7 +96,7 @@ def view_to_component(
                 request_obj, *args, **kwargs
             )
 
-        return html._(utils.html_to_vdom(rendered_view.content.decode("utf-8")))
+        return html._(utils.html_to_vdom(rendered_view.content.decode("utf-8").strip()))
 
     # Register the iframe component for compatibility, if requested
     if compatibility:

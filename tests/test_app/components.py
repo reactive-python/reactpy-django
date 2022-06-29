@@ -130,7 +130,7 @@ def ViewToComponentMiddleware():
     def str_replace_middleware(view):
         def middleware(request, *args, **kwargs):
             render = view(request, *args, **kwargs)
-            render.content = render.content.decode("utf-8").replace("_not_working", "")
+            render.content = render.content.decode("utf-8").replace("Fail", "Success")
             return render
 
         return middleware
@@ -141,5 +141,5 @@ def ViewToComponentMiddleware():
 
 
 @idom.component
-def ViewToComponentScripts():
-    return django_idom.utils.view_to_component(views.view_to_component_scripts)
+def ViewToComponentScript():
+    return django_idom.utils.view_to_component(views.view_to_component_script)

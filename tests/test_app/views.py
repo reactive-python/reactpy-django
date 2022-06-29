@@ -36,13 +36,13 @@ def view_to_component_middleware(request):
     return render(
         request,
         "view_to_component.html",
-        {"test_name": "view_to_component_middleware_not_working"},
+        {"test_name": "view_to_component_middleware", "status": "Fail"},
     )
 
 
-def view_to_component_scripts(request):
+def view_to_component_script(request):
     return render(
         request,
-        "view_to_component.html",
-        {"test_name": "view_to_component_scripts_not_working"},
+        "view_to_component_script.html",
+        {"test_name": "view_to_component_script", "status": "Fail"},
     )
