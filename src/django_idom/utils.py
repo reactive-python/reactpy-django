@@ -26,6 +26,7 @@ def view_to_component(
     view: Callable,
     middleware: list[Callable | str] | None = None,
     compatibility: bool = False,
+    request: HttpRequest | None = None,
     *args,
     **kwargs,
 ) -> ComponentType:
@@ -35,6 +36,7 @@ def view_to_component(
         middleware: The list of middleware to use when rendering the component.
         compatibility: If True, the component will be rendered in an iframe.
             This requires X_FRAME_OPTIONS = 'SAMEORIGIN' in settings.py.
+        request: Request object to provide to the view.
         *args: The positional arguments to pass to the view.
 
     Keyword Args:
@@ -45,7 +47,14 @@ def view_to_component(
 
     @component
     def new_component():
+        # Create a synthetic request object.
+        request_obj = request
+        if not request:
+            request_obj = HttpRequest()
+            request_obj.method = "GET"
+
         # Hack for getting around some of Django's Async/Sync protections
+        # Without this, we wouldn't be able to render async views within components
         async_view = False
         async_render, set_async_render = hooks.use_state(None)
         if async_render:
@@ -53,12 +62,14 @@ def view_to_component(
 
         async def async_renderer():
             if async_view is True and not async_render:
-                rendered_view = await view(HttpRequest(), *args, **kwargs)
+                rendered_view = await _view_middleware(middleware, view)(
+                    request_obj, *args, **kwargs
+                )
                 set_async_render(rendered_view)
 
         hooks.use_effect(async_renderer, dependencies=[async_view])
 
-        # Generate an iFrame component for compatibility, if requested
+        # Generate an iframe component for compatibility, if requested
         if compatibility:
             return html.iframe(
                 {
@@ -70,19 +81,23 @@ def view_to_component(
         # Convert the view HTML to VDOM
         # TODO: Apply middleware using some helper function
         if isclass(view):
-            request = HttpRequest()
-            request.method = "GET"
-            rendered_view = view.as_view()(request, *args, **kwargs)
+            rendered_view = _view_middleware(middleware, view.as_view())(
+                request_obj, *args, **kwargs
+            )
             rendered_view.render()
         elif iscoroutinefunction(view):
+            # Queue the view to be rendered within an UseEffect hook due to
+            # async/sync limitations
             async_view = True
             return None
         else:
-            rendered_view = view(HttpRequest(), *args, **kwargs)
+            rendered_view = _view_middleware(middleware, view)(
+                request_obj, *args, **kwargs
+            )
 
         return html._(utils.html_to_vdom(rendered_view.content.decode("utf-8")))
 
-    # Register the iFrame component for compatibility, if requested
+    # Register the iframe component for compatibility, if requested
     if compatibility:
         IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
             middleware, view, new_component, args, kwargs
@@ -91,11 +106,27 @@ def view_to_component(
     return new_component()
 
 
-def _register_component(full_component_name: str) -> None:
-    if full_component_name in IDOM_REGISTERED_COMPONENTS:
-        return
+def _view_middleware(
+    middleware: list[Callable | str] | None, view: Callable
+) -> Callable:
+    """Applies middleware to a view."""
+    if not middleware:
+        return view
 
-    module_name, component_name = full_component_name.rsplit(".", 1)
+    def _wrapper(*args, **kwargs):
+        new_view = view
+        for middleware_item in middleware:
+            if isinstance(middleware_item, str):
+                middleware_item = _import_dotted_path(middleware_item)
+            new_view = middleware_item(new_view)(*args, **kwargs)
+        return new_view
+
+    return _wrapper
+
+
+def _import_dotted_path(dotted_path: str) -> Callable:
+    """Imports a dotted path and returns the callable."""
+    module_name, component_name = dotted_path.rsplit(".", 1)
 
     try:
         module = import_module(module_name)
@@ -105,14 +136,19 @@ def _register_component(full_component_name: str) -> None:
         ) from error
 
     try:
-        component = getattr(module, component_name)
+        return getattr(module, component_name)
     except AttributeError as error:
         raise RuntimeError(
             f"Module {module_name!r} has no component named {component_name!r}"
         ) from error
 
-    IDOM_REGISTERED_COMPONENTS[full_component_name] = component
-    _logger.debug("IDOM has registered component %s", full_component_name)
+
+def _register_component(dotted_path: str) -> None:
+    if dotted_path in IDOM_REGISTERED_COMPONENTS:
+        return
+
+    IDOM_REGISTERED_COMPONENTS[dotted_path] = _import_dotted_path(dotted_path)
+    _logger.debug("IDOM has registered component %s", dotted_path)
 
 
 class ComponentPreloader:

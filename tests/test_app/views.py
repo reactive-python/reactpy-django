@@ -34,5 +34,11 @@ def view_to_component_compatibility(request):
 
 def view_to_component_middleware(request):
     return render(
-        request, "view_to_component.html", {"test_name": "view_to_component_middleware"}
+        request, "view_to_component.html", {"test_name": "view_to_component_middleware_not_working"}
+    )
+
+
+def view_to_component_scripts(request):
+    return render(
+        request, "view_to_component.html", {"test_name": "view_to_component_scripts_not_working"}
     )

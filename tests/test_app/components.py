@@ -121,9 +121,24 @@ def ViewToComponentCompatibility():
         django_idom.utils.view_to_component(
             views.view_to_component_compatibility, compatibility=True
         ),
+        idom.html.hr(),
     )
 
 
 @idom.component
 def ViewToComponentMiddleware():
-    return django_idom.utils.view_to_component(views.view_to_component_middleware)
+    def str_replace_middleware(view):
+        def middleware(request, *args, **kwargs):
+            render = view(request, *args, **kwargs)
+            render.content = render.content.decode("utf-8").replace("_not_working", "")
+            return render
+        return middleware
+
+    return django_idom.utils.view_to_component(
+        views.view_to_component_middleware, middleware=[str_replace_middleware]
+    )
+
+
+@idom.component
+def ViewToComponentScripts():
+    return django_idom.utils.view_to_component(views.view_to_component_scripts)
