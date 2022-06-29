@@ -47,7 +47,6 @@ async def view_to_component_iframe(
         raise ValueError(f"No view registered for component {view_path}.")
 
     # Render the view
-    # TODO: Apply middleware using some helper function~
     if isclass(iframe):
         return await database_sync_to_async(iframe.view.as_view())(request)
 

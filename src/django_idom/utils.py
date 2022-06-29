@@ -80,7 +80,6 @@ def view_to_component(
         hooks.use_effect(async_renderer, dependencies=[async_view])
 
         # Convert the view HTML to VDOM
-        # TODO: Apply middleware using some helper function
         if isclass(view):
             rendered_view = _view_middleware(middleware, view.as_view())(
                 request_obj, *args, **kwargs
