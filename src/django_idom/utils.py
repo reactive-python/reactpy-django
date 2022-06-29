@@ -13,6 +13,7 @@ from django.template import engines
 from django.urls import reverse
 from django.utils.encoding import smart_str
 from idom import component, html, utils
+from idom.types import ComponentType
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS, IDOM_VIEW_COMPONENT_IFRAMES
 from django_idom.types import ViewComponentIframe
@@ -28,7 +29,7 @@ def view_to_component(
     compatibility: bool = False,
     *args,
     **kwargs,
-):
+) -> ComponentType:
     """Converts a Django view to an IDOM component.
 
     Args:
