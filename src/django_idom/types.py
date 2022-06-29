@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Callable, Tuple
+from typing import Callable, Tuple, Union
 
 from django.views.generic import View
 from idom.core.component import Component
@@ -7,8 +7,8 @@ from idom.core.component import Component
 
 @dataclass
 class ViewComponentIframe:
-    middleware: list[Callable | str] | None
-    view: View | Callable
-    component: Component | object
+    middleware: Union[list[Union[Callable, str]], None]
+    view: Union[View, Callable]
+    component: Union[Component, object]
     args: Tuple
     kwargs: dict

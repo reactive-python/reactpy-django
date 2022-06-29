@@ -5,7 +5,7 @@ import re
 from fnmatch import fnmatch
 from importlib import import_module
 from inspect import isclass, iscoroutinefunction
-from typing import Callable, Set
+from typing import Callable, Set, Union
 
 import idom
 from django.http import HttpRequest
@@ -25,9 +25,9 @@ _logger = logging.getLogger(__name__)
 
 def view_to_component(
     view: Callable,
-    middleware: list[Callable | str] | None = None,
+    middleware: Union[list[Union[Callable, str]], None] = None,
     compatibility: bool = False,
-    request: HttpRequest | None = None,
+    request: Union[HttpRequest, None] = None,
     *args,
     **kwargs,
 ) -> ComponentType:
@@ -108,7 +108,7 @@ def view_to_component(
 
 
 def _view_middleware(
-    middleware: list[Callable | str] | None, view: Callable
+    middleware: Union[list[Union[Callable, str]], None], view: Callable
 ) -> Callable:
     """Applies middleware to a view."""
     if not middleware:
