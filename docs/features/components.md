@@ -16,13 +16,13 @@ def MyComponent():
 
 ??? question "Should I put `DjangoCSS` at the top of my component?"
 
-    Yes, if the stylesheet is contains styling for your component.
+    Yes, if the stylesheet contains styling for your component.
 
 ??? question "Can I load static CSS using `html.link` instead?"
 
     While you can load stylesheets with `html.link`, keep in mind that loading this way **does not** ensure load order. Thus, your stylesheet will be loaded after your component is displayed. This would likely cause some visual jankiness, so use this at your own discretion.
 
-    Here's an example on what you should typically avoid doing:
+    Here's an example on what you should avoid doing for Django static files:
 
     ```python
     from idom import component, html
@@ -85,7 +85,7 @@ def MyComponent():
 
     While you can load JavaScript with `html.script`, keep in mind that loading this way **does not** ensure load order. Thus, your JavaScript will likely be loaded at an arbitrary time after your component is displayed.
 
-    Here's an example on what you should typically avoid doing:
+    Here's an example on what you should avoid doing for Django static files:
 
     ```python
     from idom import component, html
