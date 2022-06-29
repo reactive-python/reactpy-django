@@ -7,11 +7,12 @@ from importlib import import_module
 from inspect import isclass, iscoroutinefunction
 from typing import Callable, Set
 
+import idom
 from django.http import HttpRequest
 from django.template import engines
 from django.urls import reverse
 from django.utils.encoding import smart_str
-from idom import component, hooks, html, utils
+from idom import hooks, html, utils
 from idom.types import ComponentType
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS, IDOM_VIEW_COMPONENT_IFRAMES
@@ -45,7 +46,7 @@ def view_to_component(
 
     dotted_path = f"{view.__module__}.{view.__name__}".replace("<", "").replace(">", "")
 
-    @component
+    @idom.component
     def new_component():
         # Create a synthetic request object.
         request_obj = request
