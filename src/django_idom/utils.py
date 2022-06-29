@@ -68,7 +68,9 @@ def view_to_component(
         async_view = False
         async_render, set_async_render = hooks.use_state(None)
         if async_render:
-            return html._(utils.html_to_vdom(async_render.content.decode("utf-8").strip()))
+            return html._(
+                utils.html_to_vdom(async_render.content.decode("utf-8").strip())
+            )
 
         async def async_renderer():
             if async_view is True and not async_render:
