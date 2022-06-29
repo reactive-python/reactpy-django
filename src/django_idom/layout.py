@@ -12,7 +12,7 @@ class DjangoLayout(Layout):
     def _create_layout_update(self, old_state) -> LayoutUpdate:
         """Create a layout update, but set ALLOW ASYNC UNSAFE flags prior.
         This allows the Django ORM to be used within components."""
-        async_unsafe_prev = os.environ.get("IDOM_ALLOW_ASYNC_UNSAFE", None)
+        async_unsafe_prev = os.environ.get("DJANGO_ALLOW_ASYNC_UNSAFE", None)
 
         # Set ALLOW ASYNC UNSAFE to True
         os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
