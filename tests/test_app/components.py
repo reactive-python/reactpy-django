@@ -116,8 +116,11 @@ def ViewToComponentClass():
 
 @idom.component
 def ViewToComponentCompatibility():
-    return django_idom.utils.view_to_component(
-        views.view_to_component_compatibility, compatibility=True
+    return idom.html.div(
+        {"id": "view_to_component_compatibility"},
+        django_idom.utils.view_to_component(
+            views.view_to_component_compatibility, compatibility=True
+        ),
     )
 
 
