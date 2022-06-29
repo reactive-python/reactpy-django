@@ -89,10 +89,12 @@ def StaticCSS():
 @idom.component
 def StaticJS():
     success = False
-    return idom.html.div(
-        {"id": "static-js", "data-success": success},
-        f"StaticJS: {success}",
-        django_idom.components.DjangoJS("static-js-test.js"),
+    return idom.html._(
+        idom.html.div(
+            {"id": "static-js", "data-success": success},
+            f"StaticJS: {success}",
+            django_idom.components.DjangoJS("static-js-test.js"),
+        ),
         idom.html.hr(),
     )
 
