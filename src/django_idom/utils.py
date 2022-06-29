@@ -45,7 +45,6 @@ def view_to_component(
 
     @component
     def new_component():
-
         # Use compatibility mode if requested
         if compatibility:
             return html.iframe(
@@ -57,16 +56,15 @@ def view_to_component(
 
         # TODO: Apply middleware using some helper function
         if isclass(view):
-            print("class view")
-            rendered_view = view.as_view()(HttpRequest(), *args, **kwargs)
+            request = HttpRequest()
+            request.method = "GET"
+            rendered_view = view.as_view()(request, *args, **kwargs)
+            rendered_view.render()
         elif iscoroutinefunction(view):
-            print("async view")
             rendered_view = async_to_sync(view)(HttpRequest(), *args, **kwargs)
         else:
-            print("function view")
             rendered_view = view(HttpRequest(), *args, **kwargs)
 
-        print("vdom")
         return html._(utils.html_to_vdom(rendered_view.content.decode("utf-8")))
 
     # Register the component as an iFrame if using compatibility mode

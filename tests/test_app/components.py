@@ -113,9 +113,9 @@ def ViewToComponentClass():
 
 
 @idom.component
-def ViewToComponentCompat():
+def ViewToComponentCompatibility():
     return django_idom.utils.view_to_component(
-        views.view_to_component_compat, compatibility=True
+        views.view_to_component_compatibility, compatibility=True
     )
 
 

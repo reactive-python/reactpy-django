@@ -20,10 +20,15 @@ async def view_to_component_async(request):
 class ViewToComponentClass(TemplateView):
     template_name = "view_to_component.html"
 
+    def get_context_data(self, **kwargs):
+        return {"test_name": "view_to_component_class"}
 
-def view_to_component_compat(request):
+
+def view_to_component_compatibility(request):
     return render(
-        request, "view_to_component.html", {"test_name": "view_to_component_compat"}
+        request,
+        "view_to_component.html",
+        {"test_name": "view_to_component_compatibility"},
     )
 
 
