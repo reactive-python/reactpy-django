@@ -54,12 +54,21 @@ def view_to_component(
             request_obj = HttpRequest()
             request_obj.method = "GET"
 
+        # Generate an iframe if compatibility mode is enabled.
+        if compatibility:
+            return html.iframe(
+                {
+                    "src": reverse("idom:view_to_component", args=[dotted_path]),
+                    "loading": "lazy",
+                }
+            )
+
         # Hack for getting around some of Django's Async/Sync protections
         # Without this, we wouldn't be able to render async views within components
         async_view = False
         async_render, set_async_render = hooks.use_state(None)
         if async_render:
-            return html._(utils.html_to_vdom(async_render.content.decode("utf-8")))
+            return html._(utils.html_to_vdom(async_render.content.decode("utf-8").strip()))
 
         async def async_renderer():
             if async_view is True and not async_render:
@@ -69,15 +78,6 @@ def view_to_component(
                 set_async_render(rendered_view)
 
         hooks.use_effect(async_renderer, dependencies=[async_view])
-
-        # Generate an iframe component for compatibility, if requested
-        if compatibility:
-            return html.iframe(
-                {
-                    "src": reverse("idom:view_to_component", args=[dotted_path]),
-                    "loading": "lazy",
-                }
-            )
 
         # Convert the view HTML to VDOM
         # TODO: Apply middleware using some helper function
@@ -98,7 +98,7 @@ def view_to_component(
 
         return html._(utils.html_to_vdom(rendered_view.content.decode("utf-8").strip()))
 
-    # Register the iframe component for compatibility, if requested
+    # Register an iframe if compatibility mode is enabled
     if compatibility:
         IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
             middleware, view, new_component, args, kwargs
