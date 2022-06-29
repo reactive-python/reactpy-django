@@ -7,12 +7,11 @@ from importlib import import_module
 from inspect import isclass, iscoroutinefunction
 from typing import Callable, Set
 
-from asgiref.sync import async_to_sync
 from django.http import HttpRequest
 from django.template import engines
 from django.urls import reverse
 from django.utils.encoding import smart_str
-from idom import component, html, utils
+from idom import component, hooks, html, utils
 from idom.types import ComponentType
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS, IDOM_VIEW_COMPONENT_IFRAMES
@@ -46,7 +45,20 @@ def view_to_component(
 
     @component
     def new_component():
-        # Use compatibility mode if requested
+        # Hack for getting around some of Django's Async/Sync protections
+        async_view = False
+        async_render, set_async_render = hooks.use_state(None)
+        if async_render:
+            return html._(utils.html_to_vdom(async_render.content.decode("utf-8")))
+
+        async def async_renderer():
+            if async_view is True and not async_render:
+                rendered_view = await view(HttpRequest(), *args, **kwargs)
+                set_async_render(rendered_view)
+
+        hooks.use_effect(async_renderer, dependencies=[async_view])
+
+        # Generate an iFrame component for compatibility, if requested
         if compatibility:
             return html.iframe(
                 {
@@ -55,6 +67,7 @@ def view_to_component(
                 }
             )
 
+        # Convert the view HTML to VDOM
         # TODO: Apply middleware using some helper function
         if isclass(view):
             request = HttpRequest()
@@ -62,13 +75,14 @@ def view_to_component(
             rendered_view = view.as_view()(request, *args, **kwargs)
             rendered_view.render()
         elif iscoroutinefunction(view):
-            rendered_view = async_to_sync(view)(HttpRequest(), *args, **kwargs)
+            async_view = True
+            return None
         else:
             rendered_view = view(HttpRequest(), *args, **kwargs)
 
         return html._(utils.html_to_vdom(rendered_view.content.decode("utf-8")))
 
-    # Register the component as an iFrame if using compatibility mode
+    # Register the iFrame component for compatibility, if requested
     if compatibility:
         IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
             middleware, view, new_component, args, kwargs
