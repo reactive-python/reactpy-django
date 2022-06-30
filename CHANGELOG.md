@@ -22,7 +22,9 @@ Types of changes are to be listed in this order
 
 ## [Unreleased]
 
--   Nothing (yet)
+### Fixed
+
+-   Django ORM can now be directly called within components without causing a `SynchronousOnlyOperation` exception.
 
 ## [1.0.0] - 2022-05-22
 
