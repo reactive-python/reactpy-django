@@ -11,6 +11,7 @@ nav:
     - Exclusive Features:
           - Hooks: features/hooks.md
           - Template Tag: features/templatetag.md
+          - Utilities: features/utilities.md
     - Contribute:
           - Code: contribute/django-idom.md
           - Docs: contribute/docs.md
