@@ -14,7 +14,16 @@ def DjangoCSS(static_path: str):
         static_path: The path to the static file. This path is identical to what you would
         use on a `static` template tag.
     """
-    return html.style(_cached_static_contents(static_path))
+    return html._(
+        html.script(
+            """
+            let parentTag = document.currentScript;
+            console.log(parentTag);
+            //parentTag.attachShadow({ mode: 'open' });
+            """
+        ),
+        html.style(_cached_static_contents(static_path)),
+    )
 
 
 @component
@@ -37,6 +46,7 @@ def _cached_static_contents(static_path: str):
         )
 
     # Fetch the file from cache, if available
+    # Cache is preferrable to `use_memo` due to multiprocessing capabilities
     last_modified_time = os.stat(abs_path).st_mtime
     cache_key = f"django_idom:static_contents:{static_path}"
     file_contents = IDOM_CACHE.get(cache_key, version=last_modified_time)
