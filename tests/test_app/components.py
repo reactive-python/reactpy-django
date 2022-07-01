@@ -71,3 +71,27 @@ def UseLocation():
         f"UseLocation: {location}",
         idom.html.hr(),
     )
+
+
+@idom.component
+def StaticCSS():
+    return idom.html.div(
+        {"id": "static-css"},
+        django_idom.components.django_css("static-css-test.css"),
+        idom.html.div({"style": {"display": "inline"}}, "StaticCSS: "),
+        idom.html.button("This text should be blue."),
+        idom.html.hr(),
+    )
+
+
+@idom.component
+def StaticJS():
+    success = False
+    return idom.html._(
+        idom.html.div(
+            {"id": "static-js", "data-success": success},
+            f"StaticJS: {success}",
+            django_idom.components.django_js("static-js-test.js"),
+        ),
+        idom.html.hr(),
+    )

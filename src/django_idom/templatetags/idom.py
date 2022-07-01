@@ -15,6 +15,21 @@ register = template.Library()
 
 @register.inclusion_tag("idom/component.html")
 def component(_component_id_, **kwargs):
+    """
+    This tag is used to embed an existing IDOM component into your HTML template.
+
+    The first argument within this tag is your dotted path to the component function.
+
+    Subsequent values are keyworded arguments are passed into your component::
+
+        {% load idom %}
+        <!DOCTYPE html>
+        <html>
+        <body>
+            {% component "example_project.my_app.components.HelloWorld" recipient="World" %}
+        </body>
+        </html>
+    """
     _register_component(_component_id_)
 
     class_ = kwargs.pop("class", "")

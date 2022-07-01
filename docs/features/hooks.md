@@ -18,7 +18,7 @@ def MyComponent():
     return html.div(my_websocket)
 ```
 
----
+
 
 ## Use Scope
 
@@ -34,7 +34,6 @@ def MyComponent():
     return html.div(my_scope)
 ```
 
----
 
 ## Use Location
 
