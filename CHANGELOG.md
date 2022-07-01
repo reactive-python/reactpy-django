@@ -28,7 +28,7 @@ Types of changes are to be listed in this order
 
 ### Added
 
--   `DjangoCSS` and `DjangoJS` components to defer loading CSS & JS files until needed.
+-   `django_css` and `django_js` components to defer loading CSS & JS files until needed.
 
 ### Changed
 

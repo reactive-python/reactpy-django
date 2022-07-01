@@ -4,29 +4,28 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
 ```python title="components.py"
 from idom import component, html
-from django_idom.components import DjangoCSS
+from django_idom.components import django_css
 
 @component
 def MyComponent():
     return html.div(
-        DjangoCSS("css/buttons.css"),
+        django_css("css/buttons.css"),
         html.button("My Button!"),
     )
 ```
 
-??? question "Should I put `DjangoCSS` at the top of my component?"
+??? question "Should I put `django_css` at the top of my component?"
 
-    Yes, if the stylesheet is contains styling for your component.
+    Yes, if the stylesheet contains styling for your component.
 
 ??? question "Can I load static CSS using `html.link` instead?"
 
     While you can load stylesheets with `html.link`, keep in mind that loading this way **does not** ensure load order. Thus, your stylesheet will be loaded after your component is displayed. This would likely cause some visual jankiness, so use this at your own discretion.
 
-    Here's an example on what you should typically avoid doing:
+    Here's an example on what you should avoid doing for Django static files:
 
     ```python
     from idom import component, html
-    from django_idom.components import DjangoJS
     from django.templatetags.static import static
 
     @component
@@ -39,13 +38,12 @@ def MyComponent():
 
 ??? question "How do I load external CSS?"
 
-    `DjangoCSS` can only be used with local static files.
+    `django_css` can only be used with local static files.
 
-    For external CSS, substitute `DjangoCSS` with `html.link`.
+    For external CSS, substitute `django_css` with `html.link`.
 
     ```python
     from idom import component, html
-    from django_idom.components import DjangoJS
 
     @component
     def MyComponent():
@@ -59,7 +57,7 @@ def MyComponent():
 
     Traditionally, stylesheets are loaded in your `#!html <head>` using the `#!jinja {% load static %}` template tag.
 
-    To help improve webpage load times, you can use the `DjangoCSS` component to defer loading your stylesheet until it is needed.
+    To help improve webpage load times, you can use the `django_css` component to defer loading your stylesheet until it is needed.
 
 ## Django JS
 
@@ -67,17 +65,17 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
 
 ```python title="components.py"
 from idom import component, html
-from django_idom.components import DjangoJS
+from django_idom.components import django_js
 
 @component
 def MyComponent():
     return html.div(
         html.button("My Button!"),
-        DjangoJS("js/scripts.js"),
+        django_js("js/scripts.js"),
     )
 ```
 
-??? question "Should I put `DjangoJS` at the bottom of my component?"
+??? question "Should I put `django_js` at the bottom of my component?"
 
     Yes, if your scripts are reliant on the contents of the component.
 
@@ -85,11 +83,10 @@ def MyComponent():
 
     While you can load JavaScript with `html.script`, keep in mind that loading this way **does not** ensure load order. Thus, your JavaScript will likely be loaded at an arbitrary time after your component is displayed.
 
-    Here's an example on what you should typically avoid doing:
+    Here's an example on what you should avoid doing for Django static files:
 
     ```python
     from idom import component, html
-    from django_idom.components import DjangoJS
     from django.templatetags.static import static
 
     @component
@@ -102,13 +99,12 @@ def MyComponent():
 
 ??? question "How do I load external JS?"
 
-    `DjangoJS` can only be used with local static files.
+    `django_js` can only be used with local static files.
 
-    For external JavaScript, substitute `DjangoJS` with `html.script`.
+    For external JavaScript, substitute `django_js` with `html.script`.
 
     ```python
     from idom import component, html
-    from django_idom.components import DjangoJS
 
     @component
     def MyComponent():
@@ -122,4 +118,4 @@ def MyComponent():
 
     Traditionally, JavaScript is loaded in your `#!html <head>` using the `#!jinja {% load static %}` template tag.
 
-    To help improve webpage load times, you can use the `DjangoJS` component to defer loading your JavaScript until it is needed.
+    To help improve webpage load times, you can use the `django_js` component to defer loading your JavaScript until it is needed.

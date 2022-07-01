@@ -7,7 +7,7 @@ from django_idom.config import IDOM_CACHE
 
 
 @component
-def DjangoCSS(static_path: str):
+def django_css(static_path: str):
     """Fetches a CSS static file for use within IDOM. This allows for deferred CSS loading.
 
     Args:
@@ -18,7 +18,7 @@ def DjangoCSS(static_path: str):
 
 
 @component
-def DjangoJS(static_path: str):
+def django_js(static_path: str):
     """Fetches a JS static file for use within IDOM. This allows for deferred JS loading.
 
     Args:
@@ -37,6 +37,7 @@ def _cached_static_contents(static_path: str):
         )
 
     # Fetch the file from cache, if available
+    # Cache is preferrable to `use_memo` due to multiprocessing capabilities
     last_modified_time = os.stat(abs_path).st_mtime
     cache_key = f"django_idom:static_contents:{static_path}"
     file_contents = IDOM_CACHE.get(cache_key, version=last_modified_time)
