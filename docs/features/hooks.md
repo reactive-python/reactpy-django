@@ -4,7 +4,9 @@
 
 ## Use Sync to Async
 
-This is the suggested method of performing ORM queries when using Django IDOM.
+This is the suggested method of performing ORM queries when using Django IDOM. 
+
+Fundamentally, this hook is an ORM-safe version of [use_effect](https://idom-docs.herokuapp.com/docs/reference/hooks-api.html#use-effect).
 
 ```python title="components.py"
 from example_project.my_app.models import Category
