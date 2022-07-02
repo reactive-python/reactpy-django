@@ -133,3 +133,12 @@ class ComponentPreloader:
                     "\033[0m",
                     component,
                 )
+
+
+class _Undefined:
+    def __repr__(self):
+        return "UNDEFINED"
+
+
+UNDEFINED = _Undefined()
+"""Sentinel for undefined values"""
