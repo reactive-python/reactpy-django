@@ -24,7 +24,7 @@ Types of changes are to be listed in this order
 
 -   Nothing (yet)
 
-## [1.1.0] - 2022-06-25
+## [1.1.0] - 2022-07-01
 
 ### Added
 
