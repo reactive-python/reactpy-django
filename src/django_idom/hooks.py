@@ -1,5 +1,7 @@
 from dataclasses import dataclass
+from inspect import iscoroutinefunction
 from typing import (
+    TYPE_CHECKING,
     Any,
     Awaitable,
     Callable,
@@ -11,6 +13,7 @@ from typing import (
     overload,
 )
 
+from channels.db import database_sync_to_async
 from idom.backend.types import Location
 from idom.core.hooks import (
     Context,
@@ -19,8 +22,12 @@ from idom.core.hooks import (
     use_context,
     use_effect,
 )
-from channels.db import database_sync_to_async
-from inspect import iscoroutinefunction
+
+
+if not TYPE_CHECKING:
+    # make flake8 think that this variable exists
+    ellipsis = type(...)
+
 
 @dataclass
 class IdomWebsocket:
