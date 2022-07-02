@@ -16,8 +16,6 @@ def my_component():
     return html.div(my_websocket)
 ```
 
-
-
 ## Use Scope
 
 This is a shortcut that returns the Websocket's `scope`.
@@ -31,7 +29,6 @@ def my_component():
     my_scope = use_scope()
     return html.div(my_scope)
 ```
-
 
 ## Use Location
 

@@ -62,7 +62,7 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
     ```
 
     But keep in mind, in scenarios where you are trying to create a Single Page Application (SPA) within Django, you will only have one central component within your `#!html <body>` tag.
-    
+
     Additionally, the components in the example above will not be able to interact with each other, except through database queries.
 
 <!--multiple-components-end-->

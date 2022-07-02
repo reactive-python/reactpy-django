@@ -22,6 +22,6 @@ IDOM_WEBSOCKET_URL = "idom/"
 
 ??? question "Do I need to modify my settings?"
 
-    The default configuration of IDOM is adequate for the majority of use cases. 
+    The default configuration of IDOM is adequate for the majority of use cases.
 
     You should only consider changing settings when the necessity arises.
