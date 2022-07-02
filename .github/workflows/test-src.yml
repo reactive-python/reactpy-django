@@ -1,4 +1,4 @@
-name: Test Source
+name: Test
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-  test-python-versions:
+  source:
     runs-on: ubuntu-latest
     strategy:
       matrix:
