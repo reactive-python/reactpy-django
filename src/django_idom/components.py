@@ -14,16 +14,7 @@ def django_css(static_path: str):
         static_path: The path to the static file. This path is identical to what you would
         use on a `static` template tag.
     """
-    return html._(
-        html.script(
-            """
-            let parentTag = document.currentScript;
-            console.log(parentTag);
-            //parentTag.attachShadow({ mode: 'open' });
-            """
-        ),
-        html.style(_cached_static_contents(static_path)),
-    )
+    return html._(html.style(_cached_static_contents(static_path)))
 
 
 @component
