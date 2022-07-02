@@ -39,8 +39,8 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
 async def view_to_component_iframe(
     request: HttpRequest, view_path: str
 ) -> HttpResponse:
-    """Returns a Django view that was registered by view_to_component.
-    This is used by `view_to_component` to render the view within an iframe."""
+    """Returns a view that was registered by view_to_component.
+    This view is intended to be used as iframe, for compatibility purposes."""
     # Get the view from IDOM_REGISTERED_IFRAMES
     iframe = IDOM_VIEW_COMPONENT_IFRAMES.get(view_path)
     if not iframe:
@@ -49,7 +49,6 @@ async def view_to_component_iframe(
     # Render the view
     if isclass(iframe):
         return await database_sync_to_async(iframe.view.as_view())(request)
-
     if iscoroutinefunction(iframe):
         return await iframe.view(request)
 
