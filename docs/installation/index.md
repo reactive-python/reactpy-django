@@ -43,19 +43,7 @@ INSTALLED_APPS = [
 
     Below are a handful of values you can change within `settings.py` to modify the behavior of IDOM.
 
-    ```python title="settings.py"
-    # If "idom" cache is not configured, then we'll use "default" instead
-    CACHES = {
-    "idom": {"BACKEND": ...},
-    }
-
-    # Maximum seconds between two reconnection attempts that would cause the client give up.
-    # 0 will disable reconnection.
-    IDOM_WS_MAX_RECONNECT_TIMEOUT = 604800
-
-    # The URL for IDOM to serve websockets
-    IDOM_WEBSOCKET_URL = "idom/"
-    ```
+    {% include-markdown "../features/settings.md" start="<!--settings-start-->" end="<!--settings-end-->" %}
 
 ---
 
