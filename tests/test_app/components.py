@@ -4,12 +4,12 @@ import django_idom
 
 
 @idom.component
-def HelloWorld():
+def hello_world():
     return idom.html.h1({"id": "hello-world"}, "Hello World!")
 
 
 @idom.component
-def Button():
+def button():
     count, set_count = idom.hooks.use_state(0)
     return idom.html.div(
         idom.html.button(
@@ -24,7 +24,7 @@ def Button():
 
 
 @idom.component
-def ParametrizedComponent(x, y):
+def parameterized_component(x, y):
     total = x + y
     return idom.html.h1({"id": "parametrized-component", "data-value": total}, total)
 
@@ -34,64 +34,64 @@ VictoryBar = idom.web.export(victory, "VictoryBar")
 
 
 @idom.component
-def SimpleBarChart():
+def simple_bar_chart():
     return VictoryBar()
 
 
 @idom.component
-def UseWebsocket():
+def use_websocket():
     ws = django_idom.hooks.use_websocket()
     ws.scope = "..."
     success = bool(ws.scope and ws.close and ws.disconnect and ws.view_id)
     return idom.html.div(
         {"id": "use-websocket", "data-success": success},
         idom.html.hr(),
-        f"UseWebsocket: {ws}",
+        f"use_websocket: {ws}",
         idom.html.hr(),
     )
 
 
 @idom.component
-def UseScope():
+def use_scope():
     scope = django_idom.hooks.use_scope()
     success = len(scope) >= 10 and scope["type"] == "websocket"
     return idom.html.div(
         {"id": "use-scope", "data-success": success},
-        f"UseScope: {scope}",
+        f"use_scope: {scope}",
         idom.html.hr(),
     )
 
 
 @idom.component
-def UseLocation():
+def use_location():
     location = django_idom.hooks.use_location()
     success = bool(location)
     return idom.html.div(
         {"id": "use-location", "data-success": success},
-        f"UseLocation: {location}",
+        f"use_location: {location}",
         idom.html.hr(),
     )
 
 
 @idom.component
-def StaticCSS():
+def django_css():
     return idom.html.div(
-        {"id": "static-css"},
-        django_idom.components.django_css("static-css-test.css"),
-        idom.html.div({"style": {"display": "inline"}}, "StaticCSS: "),
+        {"id": "django-css"},
+        django_idom.components.django_css("django-css-test.css"),
+        idom.html.div({"style": {"display": "inline"}}, "django_css: "),
         idom.html.button("This text should be blue."),
         idom.html.hr(),
     )
 
 
 @idom.component
-def StaticJS():
+def django_js():
     success = False
     return idom.html._(
         idom.html.div(
-            {"id": "static-js", "data-success": success},
-            f"StaticJS: {success}",
-            django_idom.components.django_js("static-js-test.js"),
+            {"id": "django-js", "data-success": success},
+            f"django_js: {success}",
+            django_idom.components.django_js("django-js-test.js"),
         ),
         idom.html.hr(),
     )

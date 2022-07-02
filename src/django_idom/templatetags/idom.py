@@ -26,7 +26,7 @@ def component(_component_id_, **kwargs):
         <!DOCTYPE html>
         <html>
         <body>
-            {% component "example_project.my_app.components.HelloWorld" recipient="World" %}
+            {% component "example_project.my_app.components.hello_world" recipient="World" %}
         </body>
         </html>
     """
