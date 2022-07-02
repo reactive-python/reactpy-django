@@ -1,9 +1,26 @@
 from dataclasses import dataclass
-from typing import Awaitable, Callable, Dict, Optional, Type, Union
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    Dict,
+    Optional,
+    Sequence,
+    Type,
+    Union,
+    overload,
+)
 
 from idom.backend.types import Location
-from idom.core.hooks import Context, create_context, use_context
-
+from idom.core.hooks import (
+    Context,
+    _EffectApplyFunc,
+    create_context,
+    use_context,
+    use_effect,
+)
+from channels.db import database_sync_to_async
+from inspect import iscoroutinefunction
 
 @dataclass
 class IdomWebsocket:
@@ -37,3 +54,47 @@ def use_websocket() -> IdomWebsocket:
     if websocket is None:
         raise RuntimeError("No websocket. Are you running with a Django server?")
     return websocket
+
+
+@overload
+def use_sync_to_async(
+    function: None = None,
+    dependencies: Sequence[Any] | ellipsis | None = ...,
+) -> Callable[[_EffectApplyFunc], None]:
+    ...
+
+
+@overload
+def use_sync_to_async(
+    function: _EffectApplyFunc,
+    dependencies: Sequence[Any] | ellipsis | None = ...,
+) -> None:
+    ...
+
+
+def use_sync_to_async(
+    function: Optional[_EffectApplyFunc] = None,
+    dependencies: Sequence[Any] | ellipsis | None = ...,
+) -> Optional[Callable[[_EffectApplyFunc], None]]:
+    """This is a sync_to_async wrapper for `idom.hooks.use_effect`.
+    See the full :ref:`Use Effect` docs for details
+
+    Parameters:
+        function:
+            Applies the effect and can return a clean-up function
+        dependencies:
+            Dependencies for the effect. The effect will only trigger if the identity
+            of any value in the given sequence changes (i.e. their :func:`id` is
+            different). By default these are inferred based on local variables that are
+            referenced by the given function.
+
+    Returns:
+        If a function is not provided:
+            A decorator.
+        Otherwise:
+            `None`
+    """
+    if function and iscoroutinefunction(function):
+        raise ValueError("use_sync_to_async cannot be used with async functions")
+    sync_to_async_function = database_sync_to_async(function) if function else None
+    return use_effect(sync_to_async_function, dependencies)
