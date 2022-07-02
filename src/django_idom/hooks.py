@@ -66,7 +66,7 @@ def use_websocket() -> IdomWebsocket:
 @overload
 def use_sync_to_async(
     function: None = None,
-    dependencies: Sequence[Any] | ellipsis | None = ...,
+    dependencies: Union[Sequence[Any], ellipsis, None] = ...,
 ) -> Callable[[_EffectApplyFunc], None]:
     ...
 
@@ -74,14 +74,14 @@ def use_sync_to_async(
 @overload
 def use_sync_to_async(
     function: _EffectApplyFunc,
-    dependencies: Sequence[Any] | ellipsis | None = ...,
+    dependencies: Union[Sequence[Any], ellipsis, None] = ...,
 ) -> None:
     ...
 
 
 def use_sync_to_async(
     function: Optional[_EffectApplyFunc] = None,
-    dependencies: Sequence[Any] | ellipsis | None = ...,
+    dependencies: Union[Sequence[Any], ellipsis, None] = ...,
 ) -> Optional[Callable[[_EffectApplyFunc], None]]:
     """This is a sync_to_async wrapper for `idom.hooks.use_effect`.
     See the full :ref:`Use Effect` docs for details
