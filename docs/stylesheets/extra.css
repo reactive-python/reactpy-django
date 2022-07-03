@@ -6,3 +6,7 @@
 .md-header {
 	background-color: var(--md-footer-bg-color--dark);
 }
+
+.md-typeset :is(.admonition, details) {
+	margin: 1em 0;
+}

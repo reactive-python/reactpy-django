@@ -9,8 +9,10 @@ nav:
           - 4. Render Your View: getting-started/render-view.md
           - 5. Learn More: getting-started/learn-more.md
     - Exclusive Features:
+          - Components: features/components.md
           - Hooks: features/hooks.md
           - Template Tag: features/templatetag.md
+          - Settings: features/settings.md
     - Contribute:
           - Code: contribute/django-idom.md
           - Docs: contribute/docs.md
@@ -23,14 +25,14 @@ theme:
         - media: "(prefers-color-scheme: dark)"
           scheme: slate
           toggle:
-              icon: material/toggle-switch
+              icon: material/white-balance-sunny
               name: Switch to light mode
           primary: deep-orange
           accent: orange
         - media: "(prefers-color-scheme: light)"
           scheme: default
           toggle:
-              icon: material/toggle-switch-off-outline
+              icon: material/weather-night
               name: Switch to dark mode
           primary: black
     features:

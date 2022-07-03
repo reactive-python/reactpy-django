@@ -67,6 +67,16 @@ if sys.platform != "win32":
             element = self.driver.find_element_by_id("allow-async-unsafe")
             self.assertEqual(element.get_attribute("data-value"), "False")
 
+        def test_static_css(self):
+            element = self.driver.find_element_by_css_selector("#django-css button")
+            self.assertEqual(
+                element.value_of_css_property("color"), "rgba(0, 0, 255, 1)"
+            )
+
+        def test_static_js(self):
+            element = self.driver.find_element_by_id("django-js")
+            self.assertEqual(element.get_attribute("data-success"), "true")
+
 
 def make_driver(page_load_timeout, implicit_wait_timeout):
     options = webdriver.ChromeOptions()

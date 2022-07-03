@@ -14,16 +14,16 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
 
     ```python title="views.py"
     def example_view():
-        context_vars = {"DontDoThis": "example_project.my_app.components.HelloWorld"}
+        context_vars = {"dont_do_this": "example_project.my_app.components.hello_world"}
         return render(request, "my-template.html", context_vars)
     ```
 
     ```jinja title="my-template.html"
     <!-- This is bad -->
-    {% component DontDoThis recipient="World" %}
+    {% component dont_do_this recipient="World" %}
 
     <!-- This is good -->
-    {% component "example_project.my_app.components.HelloWorld" recipient="World" %}
+    {% component "example_project.my_app.components.hello_world" recipient="World" %}
     ```
 
 <!--context-end-->
@@ -38,7 +38,7 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
 
     ```jinja title="my-template.html"
     ...
-    {% component "example.components.MyComponent" class="my-html-class" key=123 %}
+    {% component "example.components.my_component" class="my-html-class" key=123 %}
     ...
     ```
 
@@ -54,14 +54,16 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
     <!DOCTYPE html>
     <html>
         <body>
-        {% component "example_project.my_app.components.HelloWorld" recipient="World" %}
-        {% component "example_project.my_app_2.components.ClassComponent" class="bold small-font" %}
-        <div>{% component "example_project.my_app_3.components.SimpleComponent" %}</div>
+        {% component "example_project.my_app.components.hello_world" recipient="World" %}
+        {% component "example_project.my_app_2.components.class_component" class="bold small-font" %}
+        <div>{% component "example_project.my_app_3.components.simple_component" %}</div>
         </body>
     </html>
     ```
 
     But keep in mind, in scenarios where you are trying to create a Single Page Application (SPA) within Django, you will only have one central component within your `#!html <body>` tag.
+
+    Additionally, the components in the example above will not be able to interact with each other, except through database queries.
 
 <!--multiple-components-end-->
 <!--kwargs-start-->
