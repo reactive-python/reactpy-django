@@ -33,6 +33,12 @@ def simple_list():
     )
 ```
 
+??? question "Why does this example use `list()` within `set_categories`?"
+
+    [Django's ORM is lazy](https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy). Thus, `list()` is used to ensure that the database query is executed while within the hook.
+
+    Failure to do this will result in `SynchronousOnlyOperation` when attempting to access your data.
+
 ??? question "Why can't I make ORM calls without hooks?"
 
     Due to Django's ORM design, database queries must be deferred using hooks. Otherwise, you will see a `SynchronousOnlyOperation` exception.
@@ -44,9 +50,3 @@ def simple_list():
     A Python **Object Relational Mapper** is an API for your code to access a database.
 
     See the [Django ORM documentation](https://docs.djangoproject.com/en/dev/topics/db/queries/) for more information.
-
-??? question "Why did this example use `list()` within `set_categories`?"
-
-    [Django's ORM is lazy](https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy). Thus, `list()` is used to ensure that the database query is executed while within the hook.
-
-    Failure to do this will result in `SynchronousOnlyOperation` when attempting to access your data.
