@@ -7,9 +7,9 @@ from django_idom.hooks import use_websocket
 from django_idom.types import AuthLevel
 
 
-def authenticated(
+def auth_required(
     component: Union[Callable, None] = None,
-    auth_level: str = AuthLevel.active_user,
+    auth_level: str = AuthLevel.active,
     fallback: Union[ComponentType, VdomDict, None] = None,
 ) -> Callable:
     """If the user is authenticated, the decorated component will be rendered.
@@ -19,9 +19,9 @@ def authenticated(
 
     Args:
         auth_level: The user's auth level. This value can be
-           - One of the predefined `django_idom.AuthLevel` values
+           - One of the predefined `django_idom.AuthLevel` values.
            - A string for a custom user attribute to check (ex. `UserModel.is_<auth_level>`).
-        fallback: The component to render if the user is not authenticated.
+        fallback: The component or VDOM (`idom.html` snippet) to render if the user is not authenticated.
     """
 
     def decorator(component):

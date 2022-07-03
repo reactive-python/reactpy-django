@@ -12,7 +12,14 @@ class IdomWebsocket:
 
 @dataclass
 class AuthLevel:
-    user: str = "authenticated"
-    active_user: str = "active"
+    authenticated: str = "authenticated"
+    """Anyone logged in with a registered account."""
+
+    active: str = "active"
+    """Any account that has not been deactivated."""
+
     staff: str = "staff"
+    """Any account that is a staff member."""
+
     superuser: str = "superuser"
+    """Any account that is a superuser."""
