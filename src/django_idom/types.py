@@ -1,0 +1,18 @@
+from dataclasses import dataclass
+from typing import Awaitable, Callable, Optional
+
+
+@dataclass
+class IdomWebsocket:
+    scope: dict
+    close: Callable[[Optional[int]], Awaitable[None]]
+    disconnect: Callable[[int], Awaitable[None]]
+    view_id: str
+
+
+@dataclass
+class AuthLevel:
+    user: str = "authenticated"
+    active_user: str = "active"
+    staff: str = "staff"
+    superuser: str = "superuser"

@@ -12,7 +12,8 @@ from idom.core.layout import Layout, LayoutEvent
 from idom.core.serve import serve_json_patch
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
-from django_idom.hooks import IdomWebsocket, WebsocketContext
+from django_idom.hooks import WebsocketContext
+from django_idom.types import IdomWebsocket
 
 
 _logger = logging.getLogger(__name__)
