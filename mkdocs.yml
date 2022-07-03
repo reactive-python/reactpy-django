@@ -11,6 +11,7 @@ nav:
     - Exclusive Features:
           - Components: features/components.md
           - Hooks: features/hooks.md
+          - ORM: features/orm.md
           - Template Tag: features/templatetag.md
           - Settings: features/settings.md
     - Contribute:
