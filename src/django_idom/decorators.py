@@ -20,7 +20,7 @@ def auth_required(
     Args:
         auth_attribute: The field to check within the user object. This value can be
            - One of the predefined `django_idom.AuthAttribute` values.
-           - A string for a custom user attribute to check (ex. `UserModel.is_<auth_attribute>`).
+           - A string for a custom user attribute to check (ex. `UserModel.<auth_attribute>`).
         fallback: The component or VDOM (`idom.html` snippet) to render if the user is not authenticated.
     """
 
@@ -29,7 +29,7 @@ def auth_required(
         def _wrapped_func(*args, **kwargs):
             websocket = use_websocket()
 
-            if getattr(websocket.scope["user"], f"is_{auth_attribute}", False):
+            if getattr(websocket.scope["user"], auth_attribute, False):
                 return component(*args, **kwargs)
 
             if callable(fallback):

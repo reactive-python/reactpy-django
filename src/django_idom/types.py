@@ -12,17 +12,17 @@ class IdomWebsocket:
 
 @dataclass
 class AuthAttribute:
-    anonymous: str = "anonymous"
+    anonymous: str = "is_anonymous"
     """Individuals that are not logged in."""
 
-    authenticated: str = "authenticated"
+    authenticated: str = "is_authenticated"
     """Anyone logged in with a registered account."""
 
-    active: str = "active"
+    active: str = "is_active"
     """A registered account that has not been deactivated."""
 
-    staff: str = "staff"
+    staff: str = "is_staff"
     """Any account that is a staff member."""
 
-    superuser: str = "superuser"
+    superuser: str = "is_superuser"
     """Any account that is a superuser."""
