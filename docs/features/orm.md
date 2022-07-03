@@ -6,7 +6,7 @@
 
     Check out [idom-team/django-idom#79](https://github.com/idom-team/django-idom/issues/79) for more information.
 
-This is the suggested method of using the Django ORM with Django IDOM.
+This is the suggested method of using the Django ORM with your components.
 
 ```python title="components.py"
 from channels.db import database_sync_to_async
