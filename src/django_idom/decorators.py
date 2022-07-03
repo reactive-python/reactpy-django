@@ -9,9 +9,9 @@ from django_idom.types import AuthLevel
 
 def authenticated(
     component: Union[Callable, None] = None,
-    auth_level: str = AuthLevel.user,
+    auth_level: str = AuthLevel.active_user,
     fallback: Union[ComponentType, VdomDict, None] = None,
-) -> ComponentType | VdomDict | Callable | None:
+) -> Callable:
     """If the user is authenticated, the decorated component will be rendered.
     Otherwise, the fallback component will be rendered.
 
@@ -38,9 +38,9 @@ def authenticated(
 
         return _wrapped_func
 
-    # Return when used as @authenticated
+    # Return when used as @authenticated(...)
     if component is None:
         return decorator
 
-    # Return when used as @authenticated(...)
+    # Return when used as @authenticated
     return decorator(component)
