@@ -115,7 +115,7 @@ def unauthorized_user():
 
 @idom.component
 @django_idom.decorators.auth_required(
-    auth_level="anonymous",
+    auth_attribute="anonymous",
     fallback=idom.html.div(
         {"id": "authorized-user-fallback"},
         "authorized_user: Fail.",

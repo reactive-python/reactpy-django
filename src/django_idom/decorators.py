@@ -4,23 +4,23 @@ from typing import Callable, Union
 from idom.core.types import ComponentType, VdomDict
 
 from django_idom.hooks import use_websocket
-from django_idom.types import AuthLevel
+from django_idom.types import AuthAttribute
 
 
 def auth_required(
     component: Union[Callable, None] = None,
-    auth_level: str = AuthLevel.active,
+    auth_attribute: str = AuthAttribute.active,
     fallback: Union[ComponentType, VdomDict, None] = None,
 ) -> Callable:
-    """If the user is authenticated, the decorated component will be rendered.
+    """If the user passes authentication criteria, the decorated component will be rendered.
     Otherwise, the fallback component will be rendered.
 
-    This decorator can be used with or without paranthesis.
+    This decorator can be used with or without parentheses.
 
     Args:
-        auth_level: The user's auth level. This value can be
-           - One of the predefined `django_idom.AuthLevel` values.
-           - A string for a custom user attribute to check (ex. `UserModel.is_<auth_level>`).
+        auth_attribute: The field to check within the user object. This value can be
+           - One of the predefined `django_idom.AuthAttribute` values.
+           - A string for a custom user attribute to check (ex. `UserModel.is_<auth_attribute>`).
         fallback: The component or VDOM (`idom.html` snippet) to render if the user is not authenticated.
     """
 
@@ -29,7 +29,7 @@ def auth_required(
         def _wrapped_func(*args, **kwargs):
             websocket = use_websocket()
 
-            if getattr(websocket.scope["user"], f"is_{auth_level}", False):
+            if getattr(websocket.scope["user"], f"is_{auth_attribute}", False):
                 return component(*args, **kwargs)
 
             if callable(fallback):
