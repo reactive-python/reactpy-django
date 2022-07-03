@@ -7,7 +7,7 @@ from idom import component, html
 from django_idom.components import django_css
 
 @component
-def MyComponent():
+def my_component():
     return html.div(
         django_css("css/buttons.css"),
         html.button("My Button!"),
@@ -29,7 +29,7 @@ def MyComponent():
     from django.templatetags.static import static
 
     @component
-    def MyComponent():
+    def my_component():
         return html.div(
             html.link({"rel": "stylesheet", "href": static("css/buttons.css")}),
             html.button("My Button!"),
@@ -46,7 +46,7 @@ def MyComponent():
     from idom import component, html
 
     @component
-    def MyComponent():
+    def my_component():
         return html.div(
             html.link({"rel": "stylesheet", "href": "https://example.com/external-styles.css"}),
             html.button("My Button!"),
@@ -68,7 +68,7 @@ from idom import component, html
 from django_idom.components import django_js
 
 @component
-def MyComponent():
+def my_component():
     return html.div(
         html.button("My Button!"),
         django_js("js/scripts.js"),
@@ -90,7 +90,7 @@ def MyComponent():
     from django.templatetags.static import static
 
     @component
-    def MyComponent():
+    def my_component():
         return html.div(
             html.script({"src": static("js/scripts.js")}),
             html.button("My Button!"),
@@ -107,7 +107,7 @@ def MyComponent():
     from idom import component, html
 
     @component
-    def MyComponent():
+    def my_component():
         return html.div(
             html.script({"src": static("https://example.com/external-scripts.js")}),
             html.button("My Button!"),
