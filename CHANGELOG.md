@@ -24,7 +24,7 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
--   `authenticated` decorator to prevent your components from rendered to unauthenticated users.
+-   `auth_required` decorator to prevent your components from rendered to unauthenticated users.
 
 ## [1.1.0] - 2022-07-01
 
