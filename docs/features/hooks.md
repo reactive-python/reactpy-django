@@ -1,5 +1,3 @@
-# Django Hooks
-
 ???+ tip "Looking for more hooks?"
 
     Check out the [IDOM Core docs](https://idom-docs.herokuapp.com/docs/reference/hooks-api.html?highlight=hooks) on hooks!
@@ -18,8 +16,6 @@ def MyComponent():
     return html.div(my_websocket)
 ```
 
-
-
 ## Use Scope
 
 This is a shortcut that returns the Websocket's `scope`.
@@ -33,7 +29,6 @@ def MyComponent():
     my_scope = use_scope()
     return html.div(my_scope)
 ```
-
 
 ## Use Location
 
