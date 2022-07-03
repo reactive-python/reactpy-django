@@ -71,15 +71,15 @@ if sys.platform != "win32":
 
         def test_unauthorized_user(self):
             element = self.driver.find_element_by_id("unauthorized-user")
-            self.assertIsNotNone(element)
-            element = self.driver.find_element_by_id("unauthorized-user-fallback")
             self.assertIsNone(element)
+            element = self.driver.find_element_by_id("unauthorized-user-fallback")
+            self.assertIsNotNone(element)
 
         def test_authorized_user(self):
             element = self.driver.find_element_by_id("authorized-user")
-            self.assertIsNone(element)
-            element = self.driver.find_element_by_id("authorized-user-fallback")
             self.assertIsNotNone(element)
+            element = self.driver.find_element_by_id("authorized-user-fallback")
+            self.assertIsNone(element)
 
 
 def make_driver(page_load_timeout, implicit_wait_timeout):
