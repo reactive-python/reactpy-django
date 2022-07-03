@@ -47,6 +47,6 @@ def simple_list():
 
 ??? question "Why did this example use `list()` within `set_categories`?"
 
-    [Django's ORM is lazy](https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy). Thus, `list()` is used to ensure that the query is executed while the hook is executing.
+    [Django's ORM is lazy](https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy). Thus, `list()` is used to ensure that the database query is executed while within the hook.
 
     Failure to do this will result in `SynchronousOnlyOperation` when attempting to access your data.
