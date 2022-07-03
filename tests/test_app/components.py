@@ -100,7 +100,7 @@ def django_js():
 
 
 @idom.component
-def OrmInComponent():
+def orm_in_component():
     from .models import NamedThingy
 
     NamedThingy.objects.all().delete()
@@ -110,6 +110,6 @@ def OrmInComponent():
 
     return idom.html.div(
         {"id": "orm-in-component", "data-success": success},
-        f"OrmInComponent: {model}",
+        f"orm_in_component: {model}",
         idom.html.hr(),
     )
