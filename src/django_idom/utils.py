@@ -4,7 +4,7 @@ import os
 import re
 from fnmatch import fnmatch
 from importlib import import_module
-from inspect import isclass, iscoroutinefunction
+from inspect import iscoroutinefunction
 from typing import Callable, List, Set, Union
 
 import idom
@@ -12,6 +12,7 @@ from django.http import HttpRequest
 from django.template import engines
 from django.urls import reverse
 from django.utils.encoding import smart_str
+from django.views import View
 from idom import hooks, html, utils
 from idom.types import ComponentType
 
@@ -24,7 +25,7 @@ _logger = logging.getLogger(__name__)
 
 
 def view_to_component(
-    view: Callable,
+    view: Union[Callable, View],
     middleware: Union[List[Union[Callable, str]], None] = None,
     compatibility: bool = False,
     request: Union[HttpRequest, None] = None,
@@ -34,7 +35,8 @@ def view_to_component(
     """Converts a Django view to an IDOM component.
 
     Args:
-        middleware: The list of middleware to use when rendering the component.
+        middleware: The list of Django middleware to use when rendering the view.
+            This can either be a list of middleware functions or string dotted paths.
         compatibility: If True, the component will be rendered in an iframe.
             This requires X_FRAME_OPTIONS = 'SAMEORIGIN' in settings.py.
         request: Request object to provide to the view.
@@ -72,6 +74,7 @@ def view_to_component(
                 utils.html_to_vdom(async_render.content.decode("utf-8").strip())
             )
 
+        @hooks.use_effect(dependencies=[async_view])
         async def async_renderer():
             if async_view is True and not async_render:
                 rendered_view = await _view_middleware(middleware, view)(
@@ -79,10 +82,8 @@ def view_to_component(
                 )
                 set_async_render(rendered_view)
 
-        hooks.use_effect(async_renderer, dependencies=[async_view])
-
         # Convert the view HTML to VDOM
-        if isclass(view):
+        if isinstance(view, View):
             rendered_view = _view_middleware(middleware, view.as_view())(
                 request_obj, *args, **kwargs
             )
@@ -109,7 +110,7 @@ def view_to_component(
 
 
 def _view_middleware(
-    middleware: Union[List[Union[Callable, str]], None], view: Callable
+    middleware: Union[List[Union[Callable, str]], None], view: Union[Callable, View]
 ) -> Callable:
     """Applies middleware to a view."""
     if not middleware:
