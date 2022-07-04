@@ -25,7 +25,7 @@ Any Python web framework with Websockets can support IDOM. See below for what fr
 
 <!--py-header-start-->
 
-You'll need a file to define your [IDOM](https://github.com/idom-team/idom) components. We recommend creating a `components.py` file within your chosen **Django app** to start out. Within this file, we will create a simple `HelloWorld` component.
+You'll need a file to define your [IDOM](https://github.com/idom-team/idom) components. We recommend creating a `components.py` file within your chosen **Django app** to start out. Within this file, we will create a simple `hello_world` component.
 
 <!--py-header-end-->
 <!--py-code-start-->
@@ -34,7 +34,7 @@ You'll need a file to define your [IDOM](https://github.com/idom-team/idom) comp
 from idom import component, html
 
 @component
-def HelloWorld(recipient: str):
+def hello_world(recipient: str):
     return html.h1(f"Hello {recipient}!")
 ```
 
@@ -46,7 +46,7 @@ def HelloWorld(recipient: str):
 
 In your **Django app**'s HTML template, you can now embed your IDOM component using the `component` template tag. Within this tag, you will need to type in your dotted path to the component function as the first argument.
 
-Additonally, you can pass in keyword arguments into your component function. For example, after reading the code below, pay attention to how the function definition for `HelloWorld` (_in the previous example_) accepts a `recipient` argument.
+Additonally, you can pass in keyword arguments into your component function. For example, after reading the code below, pay attention to how the function definition for `hello_world` (_in the previous example_) accepts a `recipient` argument.
 
 <!--html-header-end-->
 <!--html-code-start-->
@@ -56,7 +56,7 @@ Additonally, you can pass in keyword arguments into your component function. For
 <!DOCTYPE html>
 <html>
   <body>
-    {% component "example_project.my_app.components.HelloWorld" recipient="World" %}
+    {% component "example_project.my_app.components.hello_world" recipient="World" %}
   </body>
 </html>
 ```

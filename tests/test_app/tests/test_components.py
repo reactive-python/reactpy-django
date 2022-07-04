@@ -60,13 +60,13 @@ if sys.platform != "win32":
             self.assertEqual(element.get_attribute("data-success"), "true")
 
         def test_static_css(self):
-            element = self.driver.find_element_by_css_selector("#static-css button")
+            element = self.driver.find_element_by_css_selector("#django-css button")
             self.assertEqual(
                 element.value_of_css_property("color"), "rgba(0, 0, 255, 1)"
             )
 
         def test_static_js(self):
-            element = self.driver.find_element_by_id("static-js")
+            element = self.driver.find_element_by_id("django-js")
             self.assertEqual(element.get_attribute("data-success"), "true")
 
 
