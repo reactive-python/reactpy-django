@@ -34,7 +34,9 @@ def my_component():
 
 ??? info "This hook's behavior will be changed in a future update"
 
-    This hook will be updated to return the browser's current URL. This change will come in alongside [IDOM URL routing support](https://github.com/idom-team/idom/issues/569).
+    This hook will be updated to return the browser's current URL. This change will come in alongside IDOM URL routing support.
+
+    Check out [idom-team/idom#569](https://github.com/idom-team/idom/issues/569) for more information.
 
 This is a shortcut that returns the Websocket's `path`.
 
