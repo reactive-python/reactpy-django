@@ -36,9 +36,9 @@ def auth_required(
 
         return _wrapped_func
 
-    # Return when used as @authenticated(...)
+    # Return for @authenticated(...)
     if component is None:
         return decorator
 
-    # Return when used as @authenticated
+    # Return for @authenticated
     return decorator(component)
