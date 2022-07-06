@@ -109,7 +109,7 @@ def my_component():
     @component
     def my_component():
         return html.div(
-            html.script({"src": static("https://example.com/external-scripts.js")}),
+            html.script({"src": "https://example.com/external-scripts.js"}),
             html.button("My Button!"),
         )
     ```
