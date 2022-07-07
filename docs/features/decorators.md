@@ -38,6 +38,8 @@ def my_component():
 
 ??? question "How do I render a different component if authentication fails?"
 
+    You can use a component within the `fallback` argument, as seen below.
+
     ```python title="components.py"
     from django_idom.decorators import auth_required
     from django_idom.hooks import use_websocket
@@ -55,6 +57,8 @@ def my_component():
 
 ??? question "How do I render a simple `idom.html` snippet if authentication fails?"
 
+    You can use a `idom.html` snippet within the `fallback` argument, as seen below.
+
     ```python title="components.py"
     from django_idom.decorators import auth_required
     from django_idom.hooks import use_websocket
@@ -67,6 +71,8 @@ def my_component():
     ```
 
 ??? question "How can I check if a user `is_staff`?"
+
+    You can set the `auth_attribute` utilize `UserModel.is_staff`, as seen blow.
 
     ```python title="components.py"
     from django_idom.decorators import auth_required
