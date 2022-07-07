@@ -36,4 +36,4 @@ Now, navigate to `http://127.0.0.1:8000/example/`. If you copy-pasted the compon
 
     Once you reach that point, we recommend creating an individual `urls.py` within each of your **Django apps**.
 
-    Then, within your **Django project's** `urls.py` you will use Django's [`include` function](https://docs.djangoproject.com/en/dev/ref/urls/) to link it all together.
+    Then, within your **Django project's** `urls.py` you will use Django's [`include` function](https://docs.djangoproject.com/en/dev/ref/urls/#include) to link it all together.

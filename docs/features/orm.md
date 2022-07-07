@@ -45,7 +45,7 @@ def simple_list():
 
     This may be resolved in a future version of Django with a natively asynchronous ORM.
 
-??? question "What is an ORM?"
+??? question "What is an "ORM"?"
 
     A Python **Object Relational Mapper** is an API for your code to access a database.
 
