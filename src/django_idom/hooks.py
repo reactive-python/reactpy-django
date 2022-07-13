@@ -1,16 +1,9 @@
-from dataclasses import dataclass
-from typing import Awaitable, Callable, Dict, Optional, Type, Union
+from typing import Dict, Type, Union
 
 from idom.backend.types import Location
 from idom.core.hooks import Context, create_context, use_context
 
-
-@dataclass
-class IdomWebsocket:
-    scope: dict
-    close: Callable[[Optional[int]], Awaitable[None]]
-    disconnect: Callable[[int], Awaitable[None]]
-    view_id: str
+from django_idom.types import IdomWebsocket
 
 
 WebsocketContext: Type[Context[Union[IdomWebsocket, None]]] = create_context(

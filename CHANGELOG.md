@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 <!--attr-end-->
 
 <!--
-Types of changes are to be listed in this order
+Using the following categories, list your changes in this order:
     - "Added" for new features.
     - "Changed" for changes in existing functionality.
     - "Deprecated" for soon-to-be removed features.
@@ -22,7 +22,9 @@ Types of changes are to be listed in this order
 
 ## [Unreleased]
 
--   Nothing (yet)
+### Added
+
+-   `auth_required` decorator to prevent your components from rendered to unauthenticated users.
 
 ## [1.1.0] - 2022-07-01
 
