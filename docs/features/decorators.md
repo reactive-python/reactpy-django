@@ -1,6 +1,6 @@
 ## Auth Required
 
-You can limit access to a component to a specific `auth_attribute` by using this decorator.
+You can limit access to a component to users with a specific `auth_attribute` by using this decorator.
 
 By default, this decorator checks if the user is logged in, and his/her account has not been deactivated.
 
@@ -72,7 +72,7 @@ def my_component():
 
 ??? question "How can I check if a user `is_staff`?"
 
-    You can set the `auth_attribute` to use `is_staff`, as seen blow.
+    You can set the `auth_attribute` to `is_staff`, as seen blow.
 
     ```python title="components.py"
     from django_idom.decorators import auth_required
@@ -98,7 +98,7 @@ def my_component():
     class CustomUserModel(AbstractBaseUser):
         @property
         def is_really_cool(self):
-            return self.name == "Groot"
+            return True
     ```
 
     ... then you would do the following within your decorator:

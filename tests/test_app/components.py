@@ -101,7 +101,7 @@ def django_js():
 @django_idom.decorators.auth_required(
     fallback=idom.html.div(
         {"id": "unauthorized-user-fallback"},
-        "unauthorized_user: Success. User was blocked from accessing this component.",
+        "unauthorized_user: Success",
         idom.html.hr(),
     )
 )
@@ -118,13 +118,13 @@ def unauthorized_user():
     auth_attribute="is_anonymous",
     fallback=idom.html.div(
         {"id": "authorized-user-fallback"},
-        "authorized_user: Fail.",
+        "authorized_user: Fail",
         idom.html.hr(),
     ),
 )
 def authorized_user():
     return idom.html.div(
         {"id": "authorized-user"},
-        "authorized_user: Success. User was not blocked from accessing this component.",
+        "authorized_user: Success",
         idom.html.hr(),
     )
