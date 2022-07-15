@@ -127,8 +127,7 @@ def use_query(
             set_error(None)
 
         # We need to run this in a thread so we don't prevent rendering when loading.
-        # I'm also hoping that Django is ok with this since this thread won't have an
-        # active event loop.
+        # We also can't do this async since Django's ORM doesn't support this yet.
         Thread(target=thread_target, daemon=True).start()
 
     return Query(data, loading, error, refetch)
@@ -167,8 +166,7 @@ def use_mutation(
                         refetch_callback()
 
         # We need to run this in a thread so we don't prevent rendering when loading.
-        # I'm also hoping that Django is ok with this since this thread won't have an
-        # active event loop.
+        # We also can't do this async since Django's ORM doesn't support this yet.
         Thread(target=thread_target, daemon=True).start()
 
     @use_callback
