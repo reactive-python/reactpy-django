@@ -1,17 +1,13 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from threading import Thread
 from types import FunctionType
 from typing import (
-    Dict,
     Type,
     Union,
     Any,
-    Awaitable,
     Callable,
     DefaultDict,
-    Optional,
     Sequence,
     Type,
     Union,
@@ -20,6 +16,8 @@ from typing import (
     NamedTuple,
 )
 
+from django.db.models.base import Model
+from django.db.models.query import QuerySet
 from typing_extensions import ParamSpec
 from idom import use_callback
 
@@ -68,6 +66,7 @@ _Params = ParamSpec("_Params")
 def use_query(
     query: Callable[_Params, _Data],
     *args: _Params.args,
+    fetch_deferred_fields: bool = True,
     **kwargs: _Params.kwargs,
 ) -> Query[_Data]:
     given_query = query
@@ -99,15 +98,33 @@ def use_query(
 
         def thread_target():
             try:
-                returned = query(*args, **kwargs)
+                query_result = query(*args, **kwargs)
             except Exception as e:
                 set_data(UNDEFINED)
                 set_loading(False)
                 set_error(e)
-            else:
-                set_data(returned)
-                set_loading(False)
-                set_error(None)
+                return
+
+            if isinstance(query_result, QuerySet):
+                if fetch_deferred_fields:
+                    for model in query_result:
+                        _fetch_deferred_fields(model)
+                else:
+                    # still force query set to execute
+                    for _ in query_result:
+                        pass
+            elif isinstance(query_result, Model):
+                if fetch_deferred_fields:
+                    _fetch_deferred_fields(query_result)
+            elif fetch_deferred_fields:
+                raise ValueError(
+                    f"Expected {query} to return Model or Query because "
+                    f"{fetch_deferred_fields=}, got {query_result!r}"
+                )
+
+            set_data(query_result)
+            set_loading(False)
+            set_error(None)
 
         # We need to run this in a thread so we don't prevent rendering when loading.
         # I'm also hoping that Django is ok with this since this thread won't have an
@@ -167,3 +184,13 @@ class Mutation(NamedTuple, Generic[_Params]):
     loading: bool
     error: Exception | None
     reset: Callable[[], None]
+
+
+_Model = TypeVar("_Model", bound=Model)
+
+
+def _fetch_deferred_fields(model: _Model) -> _Model:
+    for field in model.get_deferred_fields():
+        value = getattr(model, field)
+        if isinstance(value, Model):
+            _fetch_deferred_fields(value)
