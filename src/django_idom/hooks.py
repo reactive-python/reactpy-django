@@ -1,4 +1,5 @@
 from __future__ import annotations
+from dataclasses import dataclass
 
 from threading import Thread
 from types import FunctionType
@@ -13,7 +14,6 @@ from typing import (
     Union,
     TypeVar,
     Generic,
-    NamedTuple,
 )
 
 from django.db.models.base import Model
@@ -133,7 +133,8 @@ def use_query(
     return Query(data, loading, error, refetch)
 
 
-class Query(NamedTuple, Generic[_Data]):
+@dataclass
+class Query(Generic[_Data]):
     data: _Data
     loading: bool
     error: Exception | None
@@ -177,7 +178,8 @@ def use_mutation(
     return Query(call, loading, error, reset)
 
 
-class Mutation(NamedTuple, Generic[_Params]):
+@dataclass
+class Mutation(Generic[_Params]):
     execute: Callable[_Params, None]
     loading: bool
     error: Exception | None
