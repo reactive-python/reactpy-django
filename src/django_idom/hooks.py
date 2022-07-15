@@ -1,31 +1,19 @@
 from __future__ import annotations
-from dataclasses import dataclass
 
+from dataclasses import dataclass
 from threading import Thread
 from types import FunctionType
-from typing import (
-    Type,
-    Union,
-    Any,
-    Callable,
-    DefaultDict,
-    Sequence,
-    Type,
-    Union,
-    TypeVar,
-    Generic,
-)
+from typing import Any, Callable, DefaultDict, Generic, Sequence, Type, TypeVar, Union
 
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
-from typing_extensions import ParamSpec
 from idom import use_callback
-
 from idom.backend.types import Location
-from idom.core.hooks import Context, create_context, use_context, use_state, use_effect
-from django_idom.utils import UNDEFINED
+from idom.core.hooks import Context, create_context, use_context, use_effect, use_state
+from typing_extensions import ParamSpec
 
 from django_idom.types import IdomWebsocket
+from django_idom.utils import UNDEFINED
 
 
 WebsocketContext: Type[Context[Union[IdomWebsocket, None]]] = create_context(
