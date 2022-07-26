@@ -12,8 +12,7 @@ from idom.backend.types import Location
 from idom.core.hooks import Context, create_context, use_context, use_effect, use_state
 from typing_extensions import ParamSpec
 
-from django_idom.types import IdomWebsocket
-from django_idom.utils import UNDEFINED
+from django_idom.types import UNDEFINED, IdomWebsocket
 
 
 WebsocketContext: Type[Context[Union[IdomWebsocket, None]]] = create_context(

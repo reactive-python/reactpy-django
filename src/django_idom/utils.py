@@ -135,10 +135,4 @@ class ComponentPreloader:
                 )
 
 
-class _Undefined:
-    def __repr__(self):
-        return "UNDEFINED"
 
-
-UNDEFINED = _Undefined()
-"""Sentinel for undefined values"""
