@@ -133,6 +133,3 @@ class ComponentPreloader:
                     "\033[0m",
                     component,
                 )
-
-
-

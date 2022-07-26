@@ -9,6 +9,7 @@ class IdomWebsocket:
     disconnect: Callable[[int], Awaitable[None]]
     view_id: str
 
+
 class _Undefined:
     def __repr__(self):
         return "UNDEFINED"
