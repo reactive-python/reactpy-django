@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: "3.x"
-      - name: Install latest NPM
+      - name: Install NPM
         run: |
           npm install -g npm@7.22.0
           npm --version
