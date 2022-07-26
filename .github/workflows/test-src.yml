@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: nanasess/setup-chromedriver@master
-      - uses: actions/setup-node@v2-beta
+      - uses: actions/setup-node@v3
         with:
           node-version: "14"
       - name: Use Python ${{ matrix.python-version }}
