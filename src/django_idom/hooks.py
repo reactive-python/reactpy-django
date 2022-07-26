@@ -148,7 +148,7 @@ def use_mutation(
             else:
                 set_loading(False)
                 set_error(None)
-                for query in (refetch,) if isinstance(refetch, Query) else refetch:
+                for query in (refetch,) if callable(refetch) else refetch:
                     refetch_callback = _REFETCH_CALLBACKS.get(query)
                     if refetch_callback is not None:
                         refetch_callback()
