@@ -39,13 +39,13 @@ def todo_list():
     else:
         add_item_status = ""
 
-    def handle_add_item(event):
+    def click_event(event):
         set_item_draft("")
         add_item_mutation.execute(text=item_draft)
 
     return html.div(
         html.label("Add an item:")
-        html.input({"type": "text", "onClick": handle_add_item})
+        html.input({"type": "text", "onClick": click_event})
         add_item_status,
         items_view,
     )
