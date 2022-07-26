@@ -2,54 +2,116 @@
 
     Check out the [IDOM Core docs](https://idom-docs.herokuapp.com/docs/reference/hooks-api.html?highlight=hooks) on hooks!
 
-## Use Query and Use Mutation
+## Use Query
 
-<!-- TODO: Add description -->
+The `use_query` hook is used make ORM queries.
 
-```python
-from example_project.my_app.models import TodoItem
-from idom import component, html
-from django_idom.hooks import use_query, use_mutation
+=== "components.py"
 
+    ```python
+    from example_project.my_app.models import TodoItem
+    from idom import component, html
+    from django_idom.hooks import use_query
 
-def get_items():
-    return TodoItem.objects.all()
+    def get_items():
+        return TodoItem.objects.all()
 
-def add_item(text: str):
-    TodoItem(text=text).save()
+    @component
+    def todo_list():
+        item_query = use_query(get_items)
 
+        if item_query.loading:
+            rendered_items = html.h2("Loading...")
+        elif item_query.error:
+            rendered_items = html.h2("Error when loading!")
+        else:
+            rendered_items = html.ul(html.li(item, key=item) for item in item_query.data)
 
-@component
-def todo_list():
-    items_query = use_query(get_items)
-    add_item_mutation = use_mutation(add_item, refetch=get_items)
-    item_draft, set_item_draft = use_state("")
+        return rendered_items
+    ```
 
-    if items_query.loading:
-        items_view = html.h2("Loading...")
-    elif items_query.error:
-        items_view = html.h2(f"Error when loading: {items.error}")
-    else:
-        items_view = html.ul(html.li(item, key=item) for item in items_query.data)
+=== "models.py"
 
-    if add_item_mutation.loading:
-        add_item_status = html.h2("Adding...")
-    elif add_item_mutation.error:
-        add_item_status = html.h2(f"Error when adding: {add_item_mutation.error}")
-    else:
-        add_item_status = ""
+    ```python
+    from django.db import models
 
-    def click_event(event):
-        set_item_draft("")
-        add_item_mutation.execute(text=item_draft)
+    class TodoItem(models.Model):
+        text = models.CharField(max_length=255)
+    ```
 
-    return html.div(
-        html.label("Add an item:")
-        html.input({"type": "text", "onClick": click_event})
-        add_item_status,
-        items_view,
-    )
-```
+??? question "Can I make ORM calls without hooks?"
+
+    Due to Django's ORM design, database queries must be deferred using hooks. Otherwise, you will see a `SynchronousOnlyOperation` exception.
+
+    This may be resolved in a future version of Django with a natively asynchronous ORM.
+
+??? question "What is an "ORM"?"
+
+    A Python **Object Relational Mapper** is an API for your code to access a database.
+
+    See the [Django ORM documentation](https://docs.djangoproject.com/en/dev/topics/db/queries/) for more information.
+
+## Use Mutation
+
+The `use_mutation` hook is used to modify ORM objects.
+
+=== "components.py"
+
+    ```python
+    from example_project.my_app.models import TodoItem
+    from idom import component, html
+    from django_idom.hooks import use_mutation
+
+    def add_item(text: str):
+        TodoItem(text=text).save()
+
+    @component
+    def todo_list():
+        item_mutation = use_mutation(add_item)
+
+        if item_mutation.loading:
+            mutation_status = html.h2("Adding...")
+        elif item_mutation.error:
+            mutation_status = html.h2("Error when adding!")
+        else:
+            mutation_status = ""
+
+        def submit_event(event):
+            # TODO: How do I get the text from this input?
+            if event["key"] == "Enter":
+                item_mutation.execute(text="Testing")
+
+        return html.div(
+            html.label("Add an item:"),
+            html.input({"type": "text", "onKeyDown": submit_event}),
+            mutation_status,
+        )
+    ```
+
+=== "models.py"
+
+    ```python
+    from django.db import models
+
+    class TodoItem(models.Model):
+        text = models.CharField(max_length=255)
+    ```
+
+??? question "`refetch`?"
+
+    Need to figure out what refetch does before writing this question
+
+??? question "Can I make ORM calls without hooks?"
+
+    Due to Django's ORM design, database queries must be deferred using hooks. Otherwise, you will see a `SynchronousOnlyOperation` exception.
+
+    This may be resolved in a future version of Django with a natively asynchronous ORM.
+
+??? question "What is an "ORM"?"
+
+    A Python **Object Relational Mapper** is an API for your code to access a database.
+
+    See the [Django ORM documentation](https://docs.djangoproject.com/en/dev/topics/db/queries/) for more information.
 
 ## Use Websocket
 
