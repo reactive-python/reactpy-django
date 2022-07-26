@@ -4,7 +4,7 @@
 
 ## Use Query
 
-The `use_query` hook is used make ORM queries.
+The `use_query` hook is used fetch Django ORM queries.
 
 === "components.py"
 
@@ -53,7 +53,7 @@ The `use_query` hook is used make ORM queries.
 
 ## Use Mutation
 
-The `use_mutation` hook is used to modify ORM objects.
+The `use_mutation` hook is used to modify Django ORM objects.
 
 === "components.py"
 
@@ -101,7 +101,9 @@ The `use_mutation` hook is used to modify ORM objects.
 
     Yes, `use_mutation` can queue a refetch of a `use_query` via the `refetch=...` argument.
 
-    In the example below, please note that any `use_query` hooks that use the `get_items` hook will be refetched upon a successful mutation.
+    The example below is a merge of the `use_query` and `use_mutation` examples above with the addition of a `refetch` argument on `use_mutation`.
+    
+    Please note that any `use_query` hooks that use `get_items` will be refetched upon a successful mutation.
 
     ```python title="components.py"
     from example_project.my_app.models import TodoItem
