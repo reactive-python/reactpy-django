@@ -97,9 +97,53 @@ The `use_mutation` hook is used to modify ORM objects.
         text = models.CharField(max_length=255)
     ```
 
-??? question "`refetch`?"
+??? question "Can `use_mutation` trigger refetch of a `use_query`?"
 
-    Need to figure out what refetch does before writing this question
+    Yes, `use_mutation` can queue a refetch of a `use_query` via the `refetch=...` argument.
+
+    In the example below, please note that any `use_query` hooks that use the `get_items` hook will be refetched upon a successful mutation.
+
+    ```python title="components.py"
+    from example_project.my_app.models import TodoItem
+    from idom import component, html
+    from django_idom.hooks import use_mutation
+
+    def get_items():
+        return TodoItem.objects.all()
+
+    def add_item(text: str):
+        TodoItem(text=text).save()
+
+    @component
+    def todo_list():
+        item_query = use_query(get_items)
+        if item_query.loading:
+            rendered_items = html.h2("Loading...")
+        elif item_query.error:
+            rendered_items = html.h2("Error when loading!")
+        else:
+            rendered_items = html.ul(html.li(item, key=item) for item in item_query.data)
+
+        item_mutation = use_mutation(add_item, refetch=get_items)
+        if item_mutation.loading:
+            mutation_status = html.h2("Adding...")
+        elif item_mutation.error:
+            mutation_status = html.h2("Error when adding!")
+        else:
+            mutation_status = ""
+
+        def submit_event(event):
+            # TODO: How do I get the text from this input?
+            if event["key"] == "Enter":
+                item_mutation.execute(text="Testing")
+
+        return html.div(
+            html.label("Add an item:"),
+            html.input({"type": "text", "onKeyDown": submit_event}),
+            mutation_status,
+            rendered_items,
+        )
+    ```
 
 ??? question "Can I make ORM calls without hooks?"
 
