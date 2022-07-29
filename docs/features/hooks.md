@@ -77,9 +77,8 @@ The `use_mutation` hook is used to modify Django ORM objects.
             mutation_status = ""
 
         def submit_event(event):
-            # TODO: How do I get the text from this input?
             if event["key"] == "Enter":
-                item_mutation.execute(text="Testing")
+                item_mutation.execute(text=event["target"]["value"])
 
         return html.div(
             html.label("Add an item:"),
@@ -97,7 +96,7 @@ The `use_mutation` hook is used to modify Django ORM objects.
         text = models.CharField(max_length=255)
     ```
 
-??? question "Can `use_mutation` trigger refetch of a `use_query`?"
+??? question "Can `use_mutation` trigger a refetch of `use_query`?"
 
     Yes, `use_mutation` can queue a refetch of a `use_query` via the `refetch=...` argument.
 
@@ -135,9 +134,8 @@ The `use_mutation` hook is used to modify Django ORM objects.
             mutation_status = ""
 
         def submit_event(event):
-            # TODO: How do I get the text from this input?
             if event["key"] == "Enter":
-                item_mutation.execute(text="Testing")
+                item_mutation.execute(text=event["target"]["value"])
 
         return html.div(
             html.label("Add an item:"),
