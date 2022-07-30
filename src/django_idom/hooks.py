@@ -57,7 +57,7 @@ def use_query(
     **kwargs: _Params.kwargs,
 ) -> Query[_Data]:
     given_query = query
-    query, _ = use_state(given_query)
+    query, _ = use_state(given_query)  # type: ignore
     if given_query is not query:
         raise ValueError(f"Query function changed from {query} to {given_query}.")
 
@@ -75,8 +75,8 @@ def use_query(
     def add_refetch_callback():
         # By tracking callbacks globally, any usage of the query function will be re-run
         # if the user has told a mutation to refetch it.
-        _REFETCH_CALLBACKS[query].add(refetch)
-        return lambda: _REFETCH_CALLBACKS[query].remove(refetch)
+        _REFETCH_CALLBACKS[query].add(refetch)  # type: ignore
+        return lambda: _REFETCH_CALLBACKS[query].remove(refetch)  # type: ignore
 
     @use_effect(dependencies=None)
     def execute_query():
@@ -84,15 +84,16 @@ def use_query(
             return
 
         def thread_target():
+            # sourcery skip: remove-empty-nested-block, remove-redundant-pass
             try:
                 query_result = query(*args, **kwargs)
             except Exception as e:
                 set_data(UNDEFINED)
                 set_loading(False)
-                set_error(e)
+                set_error(e)  # type: ignore
                 return
 
-            if isinstance(query_result, QuerySet):
+            if isinstance(query_result, QuerySet):  # type: ignore
                 if fetch_deferred_fields:
                     for model in query_result:
                         _fetch_deferred_fields(model)
@@ -109,7 +110,7 @@ def use_query(
                     f"{fetch_deferred_fields=}, got {query_result!r}"
                 )
 
-            set_data(query_result)
+            set_data(query_result)  # type: ignore
             set_loading(False)
             set_error(None)
 
@@ -117,7 +118,7 @@ def use_query(
         # We also can't do this async since Django's ORM doesn't support this yet.
         Thread(target=thread_target, daemon=True).start()
 
-    return Query(data, loading, error, refetch)
+    return Query(data, loading, error, refetch)  # type: ignore
 
 
 @dataclass
@@ -144,14 +145,14 @@ def use_mutation(
                 mutate(*args, **kwargs)
             except Exception as e:
                 set_loading(False)
-                set_error(e)
+                set_error(e)  # type: ignore
             else:
                 set_loading(False)
                 set_error(None)
                 for query in (refetch,) if callable(refetch) else refetch:
-                    refetch_callback = _REFETCH_CALLBACKS.get(query)
+                    refetch_callback = _REFETCH_CALLBACKS.get(query)  # type: ignore
                     if refetch_callback is not None:
-                        refetch_callback()
+                        refetch_callback()  # type: ignore
 
         # We need to run this in a thread so we don't prevent rendering when loading.
         # We also can't do this async since Django's ORM doesn't support this yet.
@@ -162,7 +163,7 @@ def use_mutation(
         set_loading(False)
         set_error(None)
 
-    return Query(call, loading, error, reset)
+    return Query(call, loading, error, reset)  # type: ignore
 
 
 @dataclass
@@ -173,10 +174,7 @@ class Mutation(Generic[_Params]):
     reset: Callable[[], None]
 
 
-_Model = TypeVar("_Model", bound=Model)
-
-
-def _fetch_deferred_fields(model: _Model) -> _Model:
+def _fetch_deferred_fields(model):
     for field in model.get_deferred_fields():
         value = getattr(model, field)
         if isinstance(value, Model):
