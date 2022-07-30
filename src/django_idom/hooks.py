@@ -2,17 +2,26 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from threading import Thread
-from types import FunctionType
-from typing import Any, Callable, DefaultDict, Generic, Sequence, Type, TypeVar, Union
+from typing import (
+    Any,
+    Callable,
+    DefaultDict,
+    Generic,
+    Sequence,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+)
 
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
-from idom import use_callback
+from idom import use_callback, use_ref
 from idom.backend.types import Location
 from idom.core.hooks import Context, create_context, use_context, use_effect, use_state
 from typing_extensions import ParamSpec
 
-from django_idom.types import UNDEFINED, IdomWebsocket
+from django_idom.types import IdomWebsocket
 
 
 WebsocketContext: Type[Context[Union[IdomWebsocket, None]]] = create_context(
@@ -41,76 +50,61 @@ def use_websocket() -> IdomWebsocket:
     return websocket
 
 
-_REFETCH_CALLBACKS: DefaultDict[FunctionType, set[Callable[[], None]]] = DefaultDict(
-    set
-)
+_REFETCH_CALLBACKS: DefaultDict[
+    Callable[..., Any], set[Callable[[], None]]
+] = DefaultDict(set)
 
 
-_Data = TypeVar("_Data")
+_Result = TypeVar("_Result", bound=Union[Model, QuerySet[Any]])
 _Params = ParamSpec("_Params")
 
 
 def use_query(
-    query: Callable[_Params, _Data],
+    query: Callable[_Params, _Result | None],
     *args: _Params.args,
-    fetch_deferred_fields: bool = True,
     **kwargs: _Params.kwargs,
-) -> Query[_Data]:
-    given_query = query
-    query, _ = use_state(given_query)  # type: ignore
-    if given_query is not query:
-        raise ValueError(f"Query function changed from {query} to {given_query}.")
+) -> Query[_Result | None]:
+    query_ref = use_ref(query)
+    if query_ref.current is not query:
+        raise ValueError(f"Query function changed from {query_ref.current} to {query}.")
 
-    data, set_data = use_state(UNDEFINED)
+    should_execute, set_should_execute = use_state(True)
+    data, set_data = use_state(cast(Union[_Result, None], None))
     loading, set_loading = use_state(True)
-    error, set_error = use_state(None)
+    error, set_error = use_state(cast(Union[Exception, None], None))
 
     @use_callback
     def refetch() -> None:
-        set_data(UNDEFINED)
+        set_should_execute(True)
+        set_data(None)
         set_loading(True)
         set_error(None)
 
     @use_effect(dependencies=[])
-    def add_refetch_callback():
+    def add_refetch_callback() -> Callable[[], None]:
         # By tracking callbacks globally, any usage of the query function will be re-run
         # if the user has told a mutation to refetch it.
-        _REFETCH_CALLBACKS[query].add(refetch)  # type: ignore
-        return lambda: _REFETCH_CALLBACKS[query].remove(refetch)  # type: ignore
+        _REFETCH_CALLBACKS[query].add(refetch)
+        return lambda: _REFETCH_CALLBACKS[query].remove(refetch)
 
     @use_effect(dependencies=None)
-    def execute_query():
-        if data is not UNDEFINED:
+    def execute_query() -> None:
+        if not should_execute:
             return
 
-        def thread_target():
+        def thread_target() -> None:
             # sourcery skip: remove-empty-nested-block, remove-redundant-pass
             try:
                 query_result = query(*args, **kwargs)
             except Exception as e:
-                set_data(UNDEFINED)
+                set_data(None)
                 set_loading(False)
-                set_error(e)  # type: ignore
+                set_error(e)
                 return
+            finally:
+                set_should_execute(False)
 
-            if isinstance(query_result, QuerySet):  # type: ignore
-                if fetch_deferred_fields:
-                    for model in query_result:
-                        _fetch_deferred_fields(model)
-                else:
-                    # still force query set to execute
-                    for _ in query_result:
-                        pass
-            elif isinstance(query_result, Model):
-                if fetch_deferred_fields:
-                    _fetch_deferred_fields(query_result)
-            elif fetch_deferred_fields:
-                raise ValueError(
-                    f"Expected {query} to return Model or Query because "
-                    f"{fetch_deferred_fields=}, got {query_result!r}"
-                )
-
-            set_data(query_result)  # type: ignore
+            set_data(query_result)
             set_loading(False)
             set_error(None)
 
@@ -118,7 +112,10 @@ def use_query(
         # We also can't do this async since Django's ORM doesn't support this yet.
         Thread(target=thread_target, daemon=True).start()
 
-    return Query(data, loading, error, refetch)  # type: ignore
+    return Query(data, loading, error, refetch)
+
+
+_Data = TypeVar("_Data")
 
 
 @dataclass
@@ -140,7 +137,7 @@ def use_mutation(
     def call(*args: _Params.args, **kwargs: _Params.kwargs) -> None:
         set_loading(True)
 
-        def thread_target():
+        def thread_target() -> None:
             try:
                 mutate(*args, **kwargs)
             except Exception as e:
@@ -150,9 +147,8 @@ def use_mutation(
                 set_loading(False)
                 set_error(None)
                 for query in (refetch,) if callable(refetch) else refetch:
-                    refetch_callback = _REFETCH_CALLBACKS.get(query)  # type: ignore
-                    if refetch_callback is not None:
-                        refetch_callback()  # type: ignore
+                    for callback in _REFETCH_CALLBACKS.get(query) or ():
+                        callback()
 
         # We need to run this in a thread so we don't prevent rendering when loading.
         # We also can't do this async since Django's ORM doesn't support this yet.
@@ -174,7 +170,7 @@ class Mutation(Generic[_Params]):
     reset: Callable[[], None]
 
 
-def _fetch_deferred_fields(model):
+def _fetch_deferred_fields(model: Any) -> None:
     for field in model.get_deferred_fields():
         value = getattr(model, field)
         if isinstance(value, Model):
