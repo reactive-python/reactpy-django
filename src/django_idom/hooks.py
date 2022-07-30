@@ -93,7 +93,6 @@ def use_query(
             return
 
         def thread_target() -> None:
-            # sourcery skip: remove-empty-nested-block, remove-redundant-pass
             try:
                 query_result = query(*args, **kwargs)
             except Exception as e:
