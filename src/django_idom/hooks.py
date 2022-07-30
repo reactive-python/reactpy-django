@@ -24,9 +24,15 @@ from typing_extensions import ParamSpec
 from django_idom.types import IdomWebsocket
 
 
+_REFETCH_CALLBACKS: DefaultDict[
+    Callable[..., Any], set[Callable[[], None]]
+] = DefaultDict(set)
 WebsocketContext: Type[Context[Union[IdomWebsocket, None]]] = create_context(
     None, "WebSocketContext"
 )
+_Result = TypeVar("_Result", bound=Union[Model, QuerySet[Any]])
+_Params = ParamSpec("_Params")
+_Data = TypeVar("_Data")
 
 
 def use_location() -> Location:
@@ -48,15 +54,6 @@ def use_websocket() -> IdomWebsocket:
     if websocket is None:
         raise RuntimeError("No websocket. Are you running with a Django server?")
     return websocket
-
-
-_REFETCH_CALLBACKS: DefaultDict[
-    Callable[..., Any], set[Callable[[], None]]
-] = DefaultDict(set)
-
-
-_Result = TypeVar("_Result", bound=Union[Model, QuerySet[Any]])
-_Params = ParamSpec("_Params")
 
 
 def use_query(
@@ -114,23 +111,12 @@ def use_query(
     return Query(data, loading, error, refetch)
 
 
-_Data = TypeVar("_Data")
-
-
-@dataclass
-class Query(Generic[_Data]):
-    data: _Data
-    loading: bool
-    error: Exception | None
-    refetch: Callable[[], None]
-
-
 def use_mutation(
     mutate: Callable[_Params, None],
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]],
 ) -> Mutation[_Params]:
     loading, set_loading = use_state(True)
-    error, set_error = use_state(None)
+    error, set_error = use_state(cast(Union[Exception, None], None))
 
     @use_callback
     def call(*args: _Params.args, **kwargs: _Params.kwargs) -> None:
@@ -141,7 +127,7 @@ def use_mutation(
                 mutate(*args, **kwargs)
             except Exception as e:
                 set_loading(False)
-                set_error(e)  # type: ignore
+                set_error(e)
             else:
                 set_loading(False)
                 set_error(None)
@@ -158,7 +144,15 @@ def use_mutation(
         set_loading(False)
         set_error(None)
 
-    return Query(call, loading, error, reset)  # type: ignore
+    return Mutation(call, loading, error, reset)
+
+
+@dataclass
+class Query(Generic[_Data]):
+    data: _Data
+    loading: bool
+    error: Exception | None
+    refetch: Callable[[], None]
 
 
 @dataclass
