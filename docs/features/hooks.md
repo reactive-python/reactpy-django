@@ -151,6 +151,8 @@ The `use_mutation` hook is used to modify Django ORM objects.
 
     This may be resolved in a future version of Django with a natively asynchronous ORM.
 
+    However, even when resolved it is best practice to perform ORM queries within the `use_query` in order to handle `loading` and `error` states.
+
 ??? question "What is an "ORM"?"
 
     A Python **Object Relational Mapper** is an API for your code to access a database.
