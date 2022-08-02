@@ -50,13 +50,14 @@ def test_suite(session: Session) -> None:
     session.env["IDOM_DEBUG_MODE"] = "1"
 
     posargs = session.posargs[:]
-    if "--headless" in posargs:
-        posargs.remove("--headless")
-        session.env["SELENIUM_HEADLESS"] = "1"
+    if "--headed" in posargs:
+        posargs.remove("--headed")
+        session.env["PLAYWRIGHT_HEADED"] = "1"
 
     if "--no-debug-mode" not in posargs:
         posargs.append("--debug-mode")
 
+    session.run("playwright", "install", "chromium")
     session.run("python", "manage.py", "test", *posargs)
 
 

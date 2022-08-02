@@ -119,7 +119,7 @@ def use_mutation(
     mutate: Callable[_Params, None],
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]],
 ) -> Mutation[_Params]:
-    loading, set_loading = use_state(True)
+    loading, set_loading = use_state(False)
     error, set_error = use_state(cast(Union[Exception, None], None))
 
     @use_callback
