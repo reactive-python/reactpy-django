@@ -140,6 +140,9 @@ def get_items():
 def add_item(text: str):
     existing = TodoItem.objects.filter(text=text).first()
     if existing:
+        print("existing")
+        from time import sleep
+        sleep(1)
         if existing.done:
             existing.done = False
             existing.save()
@@ -175,7 +178,7 @@ def todo_list():
                             "id": f"todo-item-{item.text}-checkbox",
                             "type": "checkbox",
                             "defaultChecked": item.done,
-                            "onClick": lambda event: toggle_item_mutation.execute(item),
+                            "onChange": lambda event: toggle_item_mutation.execute(item),
                         }
                     ),
                     key=item.text,
