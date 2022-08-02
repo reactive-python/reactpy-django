@@ -15,7 +15,7 @@ if sys.platform != "win32":
             os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
             super().setUpClass()
             cls.playwright = sync_playwright().start()
-            headed = bool(int(os.environ.get("PLAYWRIGHT_HEADED", 1)))
+            headed = bool(int(os.environ.get("PLAYWRIGHT_HEADED", 0)))
             cls.browser = cls.playwright.chromium.launch(headless=not headed)
             cls.page = cls.browser.new_page()
 
