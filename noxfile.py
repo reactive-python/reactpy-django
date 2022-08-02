@@ -66,13 +66,12 @@ def test_style(session: Session) -> None:
     """Check that style guidelines are being followed"""
     install_requirements_file(session, "check-style")
     session.run("flake8", "src/django_idom", "tests")
-    black_default_exclude = r"\.eggs|\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|\.svn|_build|buck-out|build|dist"
     session.run(
         "black",
         ".",
         "--check",
-        "--exclude",
-        rf"/({black_default_exclude}|venv|node_modules)/",
+        "--extend-exclude",
+        rf"/migrations/",
     )
     session.run("isort", ".", "--check-only")
 

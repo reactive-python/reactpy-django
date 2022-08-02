@@ -1,9 +1,10 @@
 import os
 import sys
 
-from django.test import TestCase
 from channels.testing import ChannelsLiveServerTestCase
+from django.test import TestCase
 from playwright.sync_api import TimeoutError, sync_playwright
+
 
 # These tests are broken on Windows due to Selenium
 if sys.platform != "win32":

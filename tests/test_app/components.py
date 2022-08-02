@@ -1,9 +1,9 @@
 import idom
 from idom import html
+from test_app.models import TodoItem
 
 import django_idom
 from django_idom.hooks import use_mutation, use_query
-from test_app.models import TodoItem
 
 
 @idom.component
