@@ -83,7 +83,7 @@ def view_to_component(
                 set_async_render(rendered_view)
 
         # Convert the view HTML to VDOM
-        if isinstance(view, View):
+        if getattr(view, "as_view", None):
             rendered_view = _view_middleware(middleware, view.as_view())(
                 request_obj, *args, **kwargs
             )
