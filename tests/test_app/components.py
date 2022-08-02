@@ -134,7 +134,7 @@ def authorized_user():
 
 
 def get_items():
-    return TodoItem.objects.filter(done=False).order_by("done")
+    return TodoItem.objects.all().order_by("done")
 
 
 def add_item(text: str):
@@ -174,7 +174,7 @@ def todo_list():
                         {
                             "id": f"todo-item-{item.text}-checkbox",
                             "type": "checkbox",
-                            "checked": item.done,
+                            "defaultChecked": item.done,
                             "onClick": lambda event: toggle_item_mutation.execute(item),
                         }
                     ),
