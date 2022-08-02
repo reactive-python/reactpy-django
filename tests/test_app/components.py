@@ -134,11 +134,19 @@ def authorized_user():
 
 
 def get_items():
-    return TodoItem.objects.all().order_by("done")
+    return TodoItem.objects.filter(done=False).order_by("done")
 
 
 def add_item(text: str):
-    TodoItem(text=text, done=False).save()
+    existing = TodoItem.objects.filter(text=text).first()
+    if existing:
+        if existing.done:
+            existing.done = False
+            existing.save()
+        else:
+            return False
+    else:
+        TodoItem(text=text, done=False).save()
 
 
 def toggle_item(item: TodoItem):
@@ -152,23 +160,28 @@ def todo_list():
     add_item_mutation = use_mutation(add_item, refetch=get_items)
     toggle_item_mutation = use_mutation(toggle_item, refetch=get_items)
 
-    if get_item_query.loading:
+    if get_item_query.data is None:
         rendered_items = html.h2("Loading...")
     elif get_item_query.error:
         rendered_items = html.h2(f"Error when loading - {get_item_query.error}")
     else:
         rendered_items = html.ul(
-            html.li(
-                item,
-                html.button(
-                    {
-                        "type": "checkbox",
-                        "onClick": lambda event: toggle_item_mutation.execute(item),
-                    }
-                ),
-                key=item,
-            )
-            for item in reversed(get_item_query.data)
+            [
+                html.li(
+                    {"id": f"todo-item-{item.text}"},
+                    item.text,
+                    html.input(
+                        {
+                            "id": f"todo-item-{item.text}-checkbox",
+                            "type": "checkbox",
+                            "checked": item.done,
+                            "onClick": lambda event: toggle_item_mutation.execute(item),
+                        }
+                    ),
+                    key=item.text,
+                )
+                for item in reversed(get_item_query.data)
+            ]
         )
 
     if add_item_mutation.loading:
@@ -184,7 +197,7 @@ def todo_list():
 
     return html.div(
         html.label("Add an item:"),
-        html.input({"type": "text", "onKeyDown": submit_event}),
+        html.input({"type": "text", "id": "todo-input", "onKeyDown": submit_event}),
         mutation_status,
         rendered_items,
     )

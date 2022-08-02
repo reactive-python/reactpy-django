@@ -80,7 +80,6 @@ def use_query(
     @use_callback
     def refetch() -> None:
         set_should_execute(True)
-        set_data(None)
         set_loading(True)
         set_error(None)
 
@@ -116,7 +115,7 @@ def use_query(
 
 
 def use_mutation(
-    mutate: Callable[_Params, None],
+    mutate: Callable[_Params, bool | None],
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]],
 ) -> Mutation[_Params]:
     loading, set_loading = use_state(False)
@@ -129,16 +128,17 @@ def use_mutation(
         @database_sync_to_async
         def execute_mutation() -> None:
             try:
-                mutate(*args, **kwargs)
+                should_refetch = mutate(*args, **kwargs)
             except Exception as e:
                 set_loading(False)
                 set_error(e)
             else:
                 set_loading(False)
                 set_error(None)
-                for query in (refetch,) if callable(refetch) else refetch:
-                    for callback in _REFETCH_CALLBACKS.get(query) or ():
-                        callback()
+                if should_refetch is not False:
+                    for query in (refetch,) if callable(refetch) else refetch:
+                        for callback in _REFETCH_CALLBACKS.get(query) or ():
+                            callback()
 
         asyncio.ensure_future(execute_mutation())
 

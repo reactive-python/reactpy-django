@@ -1,4 +1,3 @@
-from multiprocessing.sharedctypes import Value
 import os
 import sys
 
@@ -9,7 +8,7 @@ from playwright.sync_api import TimeoutError, sync_playwright
 # These tests are broken on Windows due to Selenium
 if sys.platform != "win32":
 
-    class TestIdomCapabilities(ChannelsLiveServerTestCase, TestCase):
+    class TestIdomCapabilities(TestCase, ChannelsLiveServerTestCase):
         @classmethod
         def setUpClass(cls):
             os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
@@ -18,7 +17,6 @@ if sys.platform != "win32":
             headed = bool(int(os.environ.get("PLAYWRIGHT_HEADED", 1)))
             cls.browser = cls.playwright.chromium.launch(headless=not headed)
             cls.page = cls.browser.new_page()
-            cls.page.set_default_timeout(10000)
 
         @classmethod
         def tearDownClass(cls):
@@ -82,3 +80,16 @@ if sys.platform != "win32":
                 timeout=1,
             )
             self.page.wait_for_selector("#authorized-user")
+
+        def test_use_query_and_mutation(self):
+            todo_input = self.page.wait_for_selector("#todo-input")
+            todo_input.type("sample-1")
+            todo_input.press("Enter")
+            self.page.wait_for_selector("#todo-item-sample-1")
+            self.page.wait_for_selector("#todo-item-sample-1-checkbox").click()
+            self.assertRaises(
+                TimeoutError,
+                self.page.wait_for_selector,
+                "#todo-item-sample-1",
+                timeout=1,
+            )
