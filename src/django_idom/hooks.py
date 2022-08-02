@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass
-from threading import Thread
 from typing import (
     Any,
+    Awaitable,
     Callable,
     DefaultDict,
     Generic,
@@ -14,6 +15,7 @@ from typing import (
     cast,
 )
 
+from channels.db import database_sync_to_async as _database_sync_to_async
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
 from idom import use_callback, use_ref
@@ -23,6 +25,11 @@ from typing_extensions import ParamSpec
 
 from django_idom.types import IdomWebsocket
 
+
+database_sync_to_async = cast(
+    Callable[..., Callable[..., Awaitable[Any]]],
+    _database_sync_to_async,
+)
 
 _REFETCH_CALLBACKS: DefaultDict[
     Callable[..., Any], set[Callable[[], None]]
@@ -85,28 +92,25 @@ def use_query(
         return lambda: _REFETCH_CALLBACKS[query].remove(refetch)
 
     @use_effect(dependencies=None)
+    @database_sync_to_async
     def execute_query() -> None:
         if not should_execute:
             return
 
-        def thread_target() -> None:
-            try:
-                query_result = query(*args, **kwargs)
-            except Exception as e:
-                set_data(None)
-                set_loading(False)
-                set_error(e)
-                return
-            finally:
-                set_should_execute(False)
-
-            set_data(query_result)
+        try:
+            new_data = query(*args, **kwargs)
+            _fetch_deferred(new_data)
+        except Exception as e:
+            set_data(None)
             set_loading(False)
-            set_error(None)
+            set_error(e)
+            return
+        finally:
+            set_should_execute(False)
 
-        # We need to run this in a thread so we don't prevent rendering when loading.
-        # We also can't do this async since Django's ORM doesn't support this yet.
-        Thread(target=thread_target, daemon=True).start()
+        set_data(new_data)
+        set_loading(False)
+        set_error(None)
 
     return Query(data, loading, error, refetch)
 
@@ -122,7 +126,8 @@ def use_mutation(
     def call(*args: _Params.args, **kwargs: _Params.kwargs) -> None:
         set_loading(True)
 
-        def thread_target() -> None:
+        @database_sync_to_async
+        def execute_mutation() -> None:
             try:
                 mutate(*args, **kwargs)
             except Exception as e:
@@ -135,9 +140,7 @@ def use_mutation(
                     for callback in _REFETCH_CALLBACKS.get(query) or ():
                         callback()
 
-        # We need to run this in a thread so we don't prevent rendering when loading.
-        # We also can't do this async since Django's ORM doesn't support this yet.
-        Thread(target=thread_target, daemon=True).start()
+        asyncio.ensure_future(execute_mutation())
 
     @use_callback
     def reset() -> None:
@@ -163,8 +166,19 @@ class Mutation(Generic[_Params]):
     reset: Callable[[], None]
 
 
-def _fetch_deferred_fields(model: Any) -> None:
+def _fetch_deferred(data: Any) -> None:
+    # https://github.com/typeddjango/django-stubs/issues/704
+    if isinstance(data, QuerySet):  # type: ignore[misc]
+        for model in data:
+            _fetch_deferred_model_fields(model)
+    elif isinstance(data, Model):
+        _fetch_deferred_model_fields(data)
+    else:
+        raise ValueError(f"Expected a Model or QuerySet, got {data!r}")
+
+
+def _fetch_deferred_model_fields(model: Any) -> None:
     for field in model.get_deferred_fields():
         value = getattr(model, field)
         if isinstance(value, Model):
-            _fetch_deferred_fields(value)
+            _fetch_deferred_model_fields(value)
