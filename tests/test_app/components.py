@@ -133,11 +133,11 @@ def authorized_user():
     )
 
 
-def get_items():
-    return TodoItem.objects.all().order_by("done")
+def get_items_query():
+    return TodoItem.objects.all()
 
 
-def add_item(text: str):
+def add_item_mutation(text: str):
     existing = TodoItem.objects.filter(text=text).first()
     if existing:
         if existing.done:
@@ -149,55 +149,65 @@ def add_item(text: str):
         TodoItem(text=text, done=False).save()
 
 
-def toggle_item(item: TodoItem):
+def toggle_item_mutation(item: TodoItem):
     item.done = not item.done
     item.save()
 
 
 @idom.component
 def todo_list():
-    get_item_query = use_query(get_items)
-    add_item_mutation = use_mutation(add_item, refetch=get_items)
-    toggle_item_mutation = use_mutation(toggle_item, refetch=get_items)
+    items = use_query(get_items_query)
+    toggle_item = use_mutation(toggle_item_mutation, refetch=get_items_query)
 
-    if get_item_query.data is None:
+    if items.error:
+        rendered_items = html.h2(f"Error when loading - {items.error}")
+    elif items.data is None:
         rendered_items = html.h2("Loading...")
-    elif get_item_query.error:
-        rendered_items = html.h2(f"Error when loading - {get_item_query.error}")
     else:
-        rendered_items = html.ul(
-            [
-                html.li(
-                    {"id": f"todo-item-{item.text}"},
-                    item.text,
-                    html.input(
-                        {
-                            "id": f"todo-item-{item.text}-checkbox",
-                            "type": "checkbox",
-                            "defaultChecked": item.done,
-                            "onChange": lambda event: toggle_item_mutation.execute(item),
-                        }
-                    ),
-                    key=item.text,
-                )
-                for item in reversed(get_item_query.data)
-            ]
+        rendered_items = html._(
+            html.h3("Not Done"),
+            _render_items([i for i in items.data if not i.done], toggle_item),
+            html.h3("Done"),
+            _render_items([i for i in items.data if i.done], toggle_item),
         )
 
-    if add_item_mutation.loading:
-        mutation_status = html.h2("Adding...")
-    elif add_item_mutation.error:
-        mutation_status = html.h2(f"Error when adding - {add_item_mutation.error}")
+    add_item = use_mutation(add_item_mutation, refetch=get_items_query)
+
+    if add_item.loading:
+        mutation_status = html.h2("Working...")
+    elif add_item.error:
+        mutation_status = html.h2(f"Error when adding - {add_item.error}")
     else:
         mutation_status = ""
 
     def submit_event(event):
         if event["key"] == "Enter":
-            add_item_mutation.execute(text=event["target"]["value"])
+            add_item.execute(text=event["target"]["value"])
 
     return html.div(
         html.label("Add an item:"),
         html.input({"type": "text", "id": "todo-input", "onKeyDown": submit_event}),
         mutation_status,
         rendered_items,
+    )
+
+
+def _render_items(items, toggle_item):
+    return html.ul(
+        [
+            html.li(
+                {"id": f"todo-item-{item.text}"},
+                item.text,
+                html.input(
+                    {
+                        "id": f"todo-item-{item.text}-checkbox",
+                        "type": "checkbox",
+                        "checked": item.done,
+                        "onChange": lambda event, i=item: toggle_item.execute(i),
+                    }
+                ),
+                key=item.text,
+            )
+            for item in items
+        ]
     )

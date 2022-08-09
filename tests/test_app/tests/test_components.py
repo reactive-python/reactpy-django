@@ -2,14 +2,18 @@ import os
 import sys
 
 from channels.testing import ChannelsLiveServerTestCase
-from django.test import TestCase
+from django.test import TransactionTestCase
 from playwright.sync_api import TimeoutError, sync_playwright
 
 
 # These tests are broken on Windows due to Selenium
 if sys.platform != "win32":
 
-    class TestIdomCapabilities(TestCase, ChannelsLiveServerTestCase):
+    class TestIdomCapabilities(
+        ChannelsLiveServerTestCase,
+        # using the normal TestCase caused the database to lock up after tests
+        TransactionTestCase,
+    ):
         @classmethod
         def setUpClass(cls):
             os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
