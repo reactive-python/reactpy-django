@@ -34,7 +34,7 @@ database_sync_to_async = cast(
 _REFETCH_CALLBACKS: DefaultDict[
     Callable[..., Any], set[Callable[[], None]]
 ] = DefaultDict(set)
-WebsocketContext: Type[Context[Union[IdomWebsocket, None]]] = create_context(None)
+WebsocketContext: Context[IdomWebsocket | None] = create_context(None)
 _Result = TypeVar("_Result", bound=Union[Model, QuerySet[Any]])
 _Params = ParamSpec("_Params")
 _Data = TypeVar("_Data")
