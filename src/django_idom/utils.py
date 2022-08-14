@@ -84,16 +84,19 @@ def view_to_component(
 
         # Convert the view HTML to VDOM
         if getattr(view, "as_view", None):
+            # Django Class Based Views
+            # TODO: Support async views
             rendered_view = _view_middleware(middleware, view.as_view())(
                 request_obj, *args, **kwargs
             )
             rendered_view.render()
         elif iscoroutinefunction(view):
-            # Queue the view to be rendered within an UseEffect hook due to
-            # async/sync limitations
+            # Async Django Functions
+            # Queuer render within an async hook due to async/sync limitations
             async_view = True
             return None
         else:
+            # Django Function Based Views
             rendered_view = _view_middleware(middleware, view)(
                 request_obj, *args, **kwargs
             )
