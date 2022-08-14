@@ -1,4 +1,4 @@
-from typing import Dict, Type, Union
+from typing import Dict, Union
 
 from idom.backend.types import Location
 from idom.core.hooks import Context, create_context, use_context
@@ -6,7 +6,7 @@ from idom.core.hooks import Context, create_context, use_context
 from django_idom.types import IdomWebsocket
 
 
-WebsocketContext: Context[IdomWebsocket | None] = create_context(None)
+WebsocketContext: Context[Union[IdomWebsocket, None]] = create_context(None)
 
 
 def use_location() -> Location:
