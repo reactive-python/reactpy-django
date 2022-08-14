@@ -65,7 +65,7 @@ def view_to_component(
                 }
             )
 
-        # Hack for getting around some of Django's Async/Sync protections
+        # Hack for getting around some of Django's async/sync protections
         # Without this, we wouldn't be able to render async views within components
         async_view = False
         async_render, set_async_render = hooks.use_state(None)
@@ -76,7 +76,7 @@ def view_to_component(
 
         @hooks.use_effect(dependencies=[async_view])
         async def async_renderer():
-            if async_view is True and not async_render:
+            if async_view and not async_render:
                 rendered_view = await _view_middleware(middleware, view)(
                     request_obj, *args, **kwargs
                 )
