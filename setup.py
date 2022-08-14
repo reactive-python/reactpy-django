@@ -6,8 +6,8 @@ import subprocess
 import sys
 import traceback
 from distutils import log
+from logging import StreamHandler, getLogger
 from pathlib import Path
-from logging import getLogger, StreamHandler
 
 from setuptools import find_packages, setup
 from setuptools.command.develop import develop
