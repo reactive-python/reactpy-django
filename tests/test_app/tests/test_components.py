@@ -88,13 +88,17 @@ if sys.platform != "win32":
 
         def test_use_query_and_mutation(self):
             todo_input = self.page.wait_for_selector("#todo-input")
-            todo_input.type("sample-1")
-            todo_input.press("Enter")
-            self.page.wait_for_selector("#todo-item-sample-1")
-            self.page.wait_for_selector("#todo-item-sample-1-checkbox").click()
-            self.assertRaises(
-                TimeoutError,
-                self.page.wait_for_selector,
-                "#todo-item-sample-1",
-                timeout=1,
-            )
+
+            item_ids = list(range(5))
+
+            for i in item_ids:
+                todo_input.type(f"sample-{i}")
+                todo_input.press("Enter")
+                self.page.wait_for_selector(f"#todo-item-sample-{i}")
+                self.page.wait_for_selector(f"#todo-item-sample-{i}-checkbox").click()
+                self.assertRaises(
+                    TimeoutError,
+                    self.page.wait_for_selector,
+                    f"#todo-item-sample-{i}",
+                    timeout=1,
+                )

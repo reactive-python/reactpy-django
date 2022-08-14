@@ -156,6 +156,7 @@ def toggle_item_mutation(item: TodoItem):
 
 @idom.component
 def todo_list():
+    input_value, set_input_value = idom.use_state("")
     items = use_query(get_items_query)
     toggle_item = use_mutation(toggle_item_mutation, refetch=get_items_query)
 
@@ -180,13 +181,25 @@ def todo_list():
     else:
         mutation_status = ""
 
-    def submit_event(event):
+    def on_submit(event):
         if event["key"] == "Enter":
             add_item.execute(text=event["target"]["value"])
+            set_input_value("")
+
+    def on_change(event):
+        set_input_value(event["target"]["value"])
 
     return html.div(
         html.label("Add an item:"),
-        html.input({"type": "text", "id": "todo-input", "onKeyDown": submit_event}),
+        html.input(
+            {
+                "type": "text",
+                "id": "todo-input",
+                "value": input_value,
+                "onKeyPress": on_submit,
+                "onChange": on_change,
+            }
+        ),
         mutation_status,
         rendered_items,
     )
