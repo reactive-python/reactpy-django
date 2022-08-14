@@ -3,6 +3,7 @@ import sys
 
 from channels.testing import ChannelsLiveServerTestCase
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -68,6 +69,24 @@ if sys.platform != "win32":
         def test_static_js(self):
             element = self.driver.find_element_by_id("django-js")
             self.assertEqual(element.get_attribute("data-success"), "true")
+
+        def test_unauthorized_user(self):
+            self.assertRaises(
+                NoSuchElementException,
+                self.driver.find_element_by_id,
+                "unauthorized-user",
+            )
+            element = self.driver.find_element_by_id("unauthorized-user-fallback")
+            self.assertIsNotNone(element)
+
+        def test_authorized_user(self):
+            self.assertRaises(
+                NoSuchElementException,
+                self.driver.find_element_by_id,
+                "authorized-user-fallback",
+            )
+            element = self.driver.find_element_by_id("authorized-user")
+            self.assertIsNotNone(element)
 
 
 def make_driver(page_load_timeout, implicit_wait_timeout):

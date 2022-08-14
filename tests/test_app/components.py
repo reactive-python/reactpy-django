@@ -100,6 +100,39 @@ def django_js():
 
 
 @idom.component
+@django_idom.decorators.auth_required(
+    fallback=idom.html.div(
+        {"id": "unauthorized-user-fallback"},
+        "unauthorized_user: Success",
+        idom.html.hr(),
+    )
+)
+def unauthorized_user():
+    return idom.html.div(
+        {"id": "unauthorized-user"},
+        "unauthorized_user: Fail",
+        idom.html.hr(),
+    )
+
+
+@idom.component
+@django_idom.decorators.auth_required(
+    auth_attribute="is_anonymous",
+    fallback=idom.html.div(
+        {"id": "authorized-user-fallback"},
+        "authorized_user: Fail",
+        idom.html.hr(),
+    ),
+)
+def authorized_user():
+    return idom.html.div(
+        {"id": "authorized-user"},
+        "authorized_user: Success",
+        idom.html.hr(),
+    )
+
+
+@idom.component
 def view_to_component():
     return django_idom.utils.view_to_component(views.view_to_component)
 
