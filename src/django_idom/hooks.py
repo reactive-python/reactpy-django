@@ -6,9 +6,7 @@ from idom.core.hooks import Context, create_context, use_context
 from django_idom.types import IdomWebsocket
 
 
-WebsocketContext: Type[Context[Union[IdomWebsocket, None]]] = create_context(
-    None, "WebSocketContext"
-)
+WebsocketContext: Context[IdomWebsocket | None] = create_context(None)
 
 
 def use_location() -> Location:
