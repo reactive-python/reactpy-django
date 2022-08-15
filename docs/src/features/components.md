@@ -18,48 +18,55 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
 === "views.py"
 
-    ```python
-    from django.http import HttpResponse
-
-    def hello_world_view(request):
-        return HttpResponse("Hello, World!")
-    ```
+    {% include-markdown "../../includes/examples.md" start="<!--hello-world-view-start-->" end="<!--hello-world-view-end-->" %}
 
 ??? question "How do I use this for Class Based Views?"
 
     You can simply pass your Class Based View directly into this function.
 
-    ```python title="components.py"
-    from idom import component, html
-    from django_idom.components import view_to_component
-    from .views import HelloWorldView
+    === "components.py"
 
-    @component
-    def my_component():
-        return html.div(
-            view_to_component(HelloWorldView),
-        )
-    ```
+        ```python
+        from idom import component, html
+        from django_idom.components import view_to_component
+        from .views import HelloWorldView
+
+        @component
+        def my_component():
+            return html.div(
+                view_to_component(HelloWorldView),
+            )
+        ```
+
+    === "views.py"
+
+        {% include-markdown "../../includes/examples.md" start="<!--hello-world-cbv-start-->" end="<!--hello-world-cbv-end-->" %}
 
 ??? question "How do I pass arguments into the view?"
 
     You can use the `args` and `kwargs` parameters to pass arguments to the view.
 
-    ```python title="components.py"
-    from idom import component, html
-    from django_idom.components import view_to_component
-    from .views import HelloWorldView
+    === "components.py"
 
-    @component
-    def my_component():
-        return html.div(
-            view_to_component(
-                HelloWorldView,
-                args=["value_1", "value_2"],
-                kwargs={"key_1": "value_1", "key_2": "value_2"},
-            ),
-        )
-    ```
+        ```python
+        from idom import component, html
+        from django_idom.components import view_to_component
+        from .views import hello_world_view
+
+        @component
+        def my_component():
+            return html.div(
+                view_to_component(
+                    hello_world_view,
+                    args=["value_1", "value_2"],
+                    kwargs={"key_1": "value_1", "key_2": "value_2"},
+                ),
+            )
+        ```
+
+    === "views.py"
+
+        {% include-markdown "../../includes/examples.md" start="<!--hello-world-view-start-->" end="<!--hello-world-view-end-->" %}
 
 ??? question "What is compatibility mode?"
 
@@ -69,35 +76,51 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
     Please note that by default the iframe is unstyled, and thus won't look pretty until you add some CSS.
 
-    ```python title="components.py"
-    from idom import component, html
-    from django_idom.components import view_to_component
-    from .views import hello_world_view
+    === "components.py"
 
-    @component
-    def my_component():
-        return html.div(
-            view_to_component(hello_world_view, compatibility=True),
-        )
-    ```
+        ```python
+        from idom import component, html
+        from django_idom.components import view_to_component
+        from .views import hello_world_view
+
+        @component
+        def my_component():
+            return html.div(
+                view_to_component(hello_world_view, compatibility=True),
+            )
+        ```
+
+    === "views.py"
+
+        {% include-markdown "../../includes/examples.md" start="<!--hello-world-view-start-->" end="<!--hello-world-view-end-->" %}
 
 ??? question "What is strict parsing?"
 
     By default, an exception will be generated if your view's HTML does not perfectly adhere to HTML5.
 
-    You can rely on best-fit parsing by setting the `strict_parsing` parameter to `False`.
+    However, there are some circumstances where you may not have control over the original HTML, so you may be unable to fix it. Or you may be relying on non-standard HTML tags such as `#!html <my-tag> Hello World </my-tag>`.
 
-    ```python title="components.py"
-    from idom import component, html
-    from django_idom.components import view_to_component
-    from .views import hello_world_view
+    In these scenarios, you may want to rely on best-fit parsing by setting the `strict_parsing` parameter to `False`.
 
-    @component
-    def my_component():
-        return html.div(
-            view_to_component(hello_world_view, strict_parsing=False),
-        )
-    ```
+    === "components.py"
+
+        ```python
+        from idom import component, html
+        from django_idom.components import view_to_component
+        from .views import hello_world_view
+
+        @component
+        def my_component():
+            return html.div(
+                view_to_component(hello_world_view, strict_parsing=False),
+            )
+        ```
+
+    === "views.py"
+
+        {% include-markdown "../../includes/examples.md" start="<!--hello-world-view-start-->" end="<!--hello-world-view-end-->" %}
+
+    Note that best-fit parsing is very similar to how web browsers will handle broken HTML.
 
 ## Django CSS
 
