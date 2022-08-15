@@ -62,8 +62,7 @@ def view_to_component(
         dotted_path = dotted_path.replace("<", "").replace(">", "")
 
         # Register the iframe's URL if needed
-        if not IDOM_VIEW_COMPONENT_IFRAMES.get(dotted_path):
-            IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
+        IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
                 view, args, kwargs
             )
 

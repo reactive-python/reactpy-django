@@ -1,8 +1,7 @@
 from dataclasses import dataclass
-from typing import Awaitable, Callable, List, Optional, Tuple, Union
+from typing import Awaitable, Callable, Iterable, Optional, Union
 
 from django.views.generic import View
-from idom.core.component import Component
 
 
 @dataclass
@@ -16,5 +15,5 @@ class IdomWebsocket:
 @dataclass
 class ViewComponentIframe:
     view: Union[View, Callable]
-    args: Tuple
+    args: Iterable
     kwargs: dict
