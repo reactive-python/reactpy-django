@@ -1,6 +1,6 @@
 Integrated within Django IDOM, we bundle a template tag. Within this tag, you can pass in keyword arguments directly into your component.
 
-{% include-markdown "../../README.md" start="<!--html-code-start-->" end="<!--html-code-end-->" %}
+{% include-markdown "../../../README.md" start="<!--html-code-start-->" end="<!--html-code-end-->" %}
 
 <!--context-start-->
 
@@ -81,6 +81,6 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
 
     Keep in mind, in order to use the `#!jinja {% component ... %}` tag, you'll need to first call `#!jinja {% load idom %}` to gain access to it.
 
-    {% include-markdown "../../README.md" start="<!--html-code-start-->" end="<!--html-code-end-->" %}
+    {% include-markdown "../../../README.md" start="<!--html-code-start-->" end="<!--html-code-end-->" %}
 
 <!--tags-end-->

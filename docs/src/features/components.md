@@ -1,3 +1,104 @@
+## View To Component
+
+Convert any Django view into a IDOM component by usng this decorator. Compatible with sync/async [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/).
+
+=== "components.py"
+
+    ```python
+    from idom import component, html
+    from django_idom.components import view_to_component
+    from .views import hello_world_view
+
+    @component
+    def my_component():
+        return html.div(
+            view_to_component(hello_world_view),
+        )
+    ```
+
+=== "views.py"
+
+    ```python
+    from django.http import HttpResponse
+
+    def hello_world_view(request):
+        return HttpResponse("Hello, World!")
+    ```
+
+??? question "How do I use this for Class Based Views?"
+
+    You can simply pass your Class Based View directly into this function.
+
+    ```python title="components.py"
+    from idom import component, html
+    from django_idom.components import view_to_component
+    from .views import HelloWorldView
+
+    @component
+    def my_component():
+        return html.div(
+            view_to_component(HelloWorldView),
+        )
+    ```
+
+??? question "How do I pass arguments into the view?"
+
+    You can use the `args` and `kwargs` parameters to pass arguments to the view.
+
+    ```python title="components.py"
+    from idom import component, html
+    from django_idom.components import view_to_component
+    from .views import HelloWorldView
+
+    @component
+    def my_component():
+        return html.div(
+            view_to_component(
+                HelloWorldView,
+                args=["value_1", "value_2"],
+                kwargs={"key_1": "value_1", "key_2": "value_2"},
+            ),
+        )
+    ```
+
+??? question "What is compatibility mode?"
+
+    For views that rely on HTTP responses other than `GET` (such as `PUT`, `POST`, `PATCH`, etc), you should consider using compatibility mode to render your view within an iframe.
+
+    Any view can be rendered within compatibility mode.
+
+    Please note that by default the iframe is unstyled, and thus won't look pretty until you add some CSS.
+
+    ```python title="components.py"
+    from idom import component, html
+    from django_idom.components import view_to_component
+    from .views import hello_world_view
+
+    @component
+    def my_component():
+        return html.div(
+            view_to_component(hello_world_view, compatibility=True),
+        )
+    ```
+
+??? question "What is strict parsing?"
+
+    By default, an exception will be generated if your view's HTML does not perfectly adhere to HTML5.
+
+    You can rely on best-fit parsing by setting the `strict_parsing` parameter to `False`.
+
+    ```python title="components.py"
+    from idom import component, html
+    from django_idom.components import view_to_component
+    from .views import hello_world_view
+
+    @component
+    def my_component():
+        return html.div(
+            view_to_component(hello_world_view, strict_parsing=False),
+        )
+    ```
+
 ## Django CSS
 
 Allows you to defer loading a CSS stylesheet until a component begins rendering. This stylesheet must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).

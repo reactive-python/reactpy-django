@@ -52,6 +52,8 @@ markdown_extensions:
     - pymdownx.emoji:
           emoji_index: !!python/name:materialx.emoji.twemoji
           emoji_generator: !!python/name:materialx.emoji.to_svg
+    - pymdownx.tabbed:
+          alternate_style: true
     - pymdownx.highlight
     - pymdownx.superfences
     - pymdownx.details
@@ -85,3 +87,4 @@ repo_url: https://github.com/idom-team/django-idom
 site_url: https://idom-team.github.io/django-idom
 repo_name: idom-team/django-idom
 edit_uri: edit/docs
+docs_dir: docs/src

@@ -4,9 +4,9 @@
 
 ---
 
-{% include-markdown "../../README.md" start="<!--html-header-start-->" end="<!--html-header-end-->" %}
+{% include-markdown "../../../README.md" start="<!--html-header-start-->" end="<!--html-header-end-->" %}
 
-{% include-markdown "../../README.md" start="<!--html-code-start-->" end="<!--html-code-end-->" %}
+{% include-markdown "../../../README.md" start="<!--html-code-start-->" end="<!--html-code-end-->" %}
 
 {% include-markdown "../features/templatetag.md" start="<!--context-start-->" end="<!--context-end-->" %}
 
