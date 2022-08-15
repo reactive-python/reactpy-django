@@ -154,7 +154,7 @@ def view_to_component_compatibility():
         django_idom.utils.view_to_component(
             views.view_to_component_compatibility, compatibility=True
         ),
-        idom.html.hr(), # FIXME: Looks like elements can't follow an iframe
+        idom.html.hr(),
     )
 
 

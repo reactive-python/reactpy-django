@@ -17,6 +17,5 @@ class IdomWebsocket:
 class ViewComponentIframe:
     middleware: Union[List[Union[Callable, str]], None]
     view: Union[View, Callable]
-    component: Union[Component, object]
     args: Tuple
     kwargs: dict

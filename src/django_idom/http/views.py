@@ -5,6 +5,7 @@ from aiofile import async_open
 from channels.db import database_sync_to_async
 from django.core.exceptions import SuspiciousOperation
 from django.http import HttpRequest, HttpResponse
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 from idom.config import IDOM_WED_MODULES_DIR
 
 from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
@@ -48,8 +49,10 @@ async def view_to_component_iframe(
 
     # Render the view
     if isclass(iframe):
-        return await database_sync_to_async(iframe.view.as_view())(request)
+        return await database_sync_to_async(
+            xframe_options_sameorigin(iframe.view.as_view)()
+        )(request)
     if iscoroutinefunction(iframe):
-        return await iframe.view(request)
+        return await xframe_options_sameorigin(iframe.view)(request)
 
-    return await database_sync_to_async(iframe.view)(request)
+    return await database_sync_to_async(xframe_options_sameorigin(iframe.view))(request)
