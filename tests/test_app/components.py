@@ -133,43 +133,28 @@ def authorized_user():
 
 
 @idom.component
-def view_to_component():
-    return django_idom.utils.view_to_component(views.view_to_component)
+def view_to_component_sync_func():
+    return django_idom.utils.view_to_component(views.view_to_component_sync_func)
 
 
 @idom.component
-def view_to_component_async():
-    return django_idom.utils.view_to_component(views.view_to_component_async)
+def view_to_component_async_func():
+    return django_idom.utils.view_to_component(views.view_to_component_async_func)
 
 
 @idom.component
-def view_to_component_class():
-    return django_idom.utils.view_to_component(views.ViewToComponentClass)
+def view_to_component_sync_class():
+    return django_idom.utils.view_to_component(views.ViewToComponentSyncClass)
 
 
 @idom.component
-def view_to_component_compatibility():
+def view_to_component_sync_func_compatibility():
     return idom.html.div(
         {"id": "view_to_component_compatibility"},
         django_idom.utils.view_to_component(
-            views.view_to_component_compatibility, compatibility=True
+            views.view_to_component_sync_func_compatibility, compatibility=True
         ),
         idom.html.hr(),
-    )
-
-
-@idom.component
-def view_to_component_middleware():
-    def str_replace_middleware(view):
-        def middleware(request, *args, **kwargs):
-            render = view(request, *args, **kwargs)
-            render.content = render.content.decode("utf-8").replace("Fail", "Success")
-            return render
-
-        return middleware
-
-    return django_idom.utils.view_to_component(
-        views.view_to_component_middleware, middleware=[str_replace_middleware]
     )
 
 

@@ -8,7 +8,7 @@ nav:
           - 3. Use the Template Tag: getting-started/reference-component.md
           - 4. Render Your View: getting-started/render-view.md
           - 5. Learn More: getting-started/learn-more.md
-    - Exclusive Features:
+    - Usage:
           - Components: features/components.md
           - Hooks: features/hooks.md
           - Decorators: features/decorators.md

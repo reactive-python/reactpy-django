@@ -23,16 +23,13 @@
   <div>{% component "test_app.components.django_js" %}</div>
   <div>{% component "test_app.components.unauthorized_user" %}</div>
   <div>{% component "test_app.components.authorized_user" %}</div>
-  <div>{% component "test_app.components.view_to_component" %}</div>
-  <div>{% component "test_app.components.view_to_component_middleware" %}</div>
-  <div>{% component "test_app.components.view_to_component_async" %}</div>
-  <!-- TODO: AsyncMiddleware -->
-  <div>{% component "test_app.components.view_to_component_class" %}</div>
-  <!-- TODO: ClassMiddleware -->
-  <div>{% component "test_app.components.view_to_component_compatibility" %}</div>
-  <!-- TODO: CompatibilityMiddleware -->
+  <div>{% component "test_app.components.view_to_component_sync_func" %}</div>
+  <div>{% component "test_app.components.view_to_component_async_func" %}</div>
+  <div>{% component "test_app.components.view_to_component_sync_class" %}</div>
+  <!-- TODO: view_to_component_async_class -->
+  <div>{% component "test_app.components.view_to_component_sync_func_compatibility" %}</div>
+  <!-- TODO: view_to_component_async_compatibility -->
   <div>{% component "test_app.components.view_to_component_script" %}</div>
-  <!-- FIXME: ViewToComponentScript -->
 </body>
 
 </html>

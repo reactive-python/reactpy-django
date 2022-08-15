@@ -5,8 +5,9 @@ import re
 from fnmatch import fnmatch
 from importlib import import_module
 from inspect import iscoroutinefunction
-from typing import Callable, List, Set, Union
+from typing import Callable, Set, Union
 
+from channels.db import database_sync_to_async
 from django.http import HttpRequest
 from django.template import engines
 from django.urls import reverse
@@ -14,7 +15,6 @@ from django.utils.encoding import smart_str
 from django.views import View
 from idom import component, hooks, html, utils
 from idom.types import VdomDict
-from channels.db import database_sync_to_async
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS, IDOM_VIEW_COMPONENT_IFRAMES
 from django_idom.types import ViewComponentIframe
@@ -27,7 +27,6 @@ _logger = logging.getLogger(__name__)
 @component
 def view_to_component(
     view: Union[Callable, View],
-    middleware: Union[List[Union[Callable, str]], None] = None,
     compatibility: bool = False,
     request: Union[HttpRequest, None] = None,
     *args,
@@ -36,8 +35,6 @@ def view_to_component(
     """Converts a Django view to an IDOM component.
 
     Args:
-        middleware: The list of Django middleware to use when rendering the view.
-            This can either be a list of middleware functions or string dotted paths.
         compatibility: If True, the component will be rendered in an iframe.
         request: Request object to provide to the view.
         *args: The positional arguments to pass to the view.
@@ -55,7 +52,7 @@ def view_to_component(
     if not request:
         request_obj = HttpRequest()
         # TODO: Figure out some intelligent way to set the method.
-        # Might need intercepting common things such as form submission.
+        # Might need intercepting common things such as form submission?
         request_obj.method = "GET"
 
     # Render Check 1: Compatibility mode
@@ -66,7 +63,7 @@ def view_to_component(
         # Register the iframe's URL if needed
         if not IDOM_VIEW_COMPONENT_IFRAMES.get(dotted_path):
             IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
-                middleware, view, args, kwargs
+                view, args, kwargs
             )
 
         return html.iframe(
@@ -76,56 +73,36 @@ def view_to_component(
             }
         )
 
-    # Render the view in an async hook to avoid blocking the main thread
+    # Asynchronous view rendering via hooks
     @hooks.use_effect(dependencies=[rendered_view])
     async def async_renderer():
+        """Render the view in an async hook to avoid blocking the main thread."""
         if rendered_view:
             return
 
         # Render Check 2: Async function view
         if iscoroutinefunction(view):
-            render = await _view_middleware(middleware, view)(
-                request_obj, *args, **kwargs
-            )
+            render = await view(request_obj, *args, **kwargs)
 
-        # Render Check 3: Async class based view
+        # Render Check 3: Async class view
         # TODO: Support Django 4.1 async CBV
         elif getattr(view, "view_is_async", False):
-            return
+            async_cbv = view.as_view()
+            async_view = await async_cbv(request_obj, *args, **kwargs)
+            render = await async_view.render()
 
-        # Render Check 3: Sync class based view
-        # TODO: Make this async, maybe through database_sync_to_async on a helper function?
+        # Render Check 3: Sync class view
         elif getattr(view, "as_view", None):
-            render = _view_middleware(middleware, view.as_view())(
-                request_obj, *args, **kwargs
-            ).render()
+            async_cbv = database_sync_to_async(view.as_view())
+            async_view = await async_cbv(request_obj, *args, **kwargs)
+            render = await database_sync_to_async(async_view.render)()
 
-        # Render Check 4: Sync function based view
-        # TODO: Make this async, maybe through database_sync_to_async on a helper function?
+        # Render Check 4: Sync function view
         else:
-            render = _view_middleware(middleware, view)(request_obj, *args, **kwargs)
+            wrapped_view = database_sync_to_async(view)
+            render = await wrapped_view(request_obj, *args, **kwargs)
 
         set_rendered_view(render)
-
-
-def _view_middleware(
-    middleware: Union[List[Union[Callable, str]], None], view: Union[Callable, View]
-) -> Callable:
-    """Applies middleware to a view."""
-    if not middleware:
-        return view
-
-    def _wrapper(*args, **kwargs):
-        new_view = view
-        for middleware_item in middleware:
-            if isinstance(middleware_item, str):
-                middleware_item = _import_dotted_path(middleware_item)
-
-            # TODO: Consider doing this async if needed. Also consider class based middleware.
-            new_view = middleware_item(new_view)(*args, **kwargs)
-        return new_view
-
-    return _wrapper
 
 
 def _import_dotted_path(dotted_path: str) -> Callable:
@@ -139,12 +116,7 @@ def _import_dotted_path(dotted_path: str) -> Callable:
             f"Failed to import {module_name!r} while loading {component_name!r}"
         ) from error
 
-    try:
-        return getattr(module, component_name)
-    except AttributeError as error:
-        raise RuntimeError(
-            f"Module {module_name!r} has no component named {component_name!r}"
-        ) from error
+    return getattr(module, component_name)
 
 
 def _register_component(dotted_path: str) -> None:
