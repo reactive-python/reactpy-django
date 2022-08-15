@@ -3,6 +3,7 @@ import logging
 import os
 import re
 from fnmatch import fnmatch
+from functools import wraps
 from importlib import import_module
 from inspect import iscoroutinefunction
 from typing import Callable, Set, Union
@@ -93,7 +94,7 @@ def view_to_component(
             else:
                 render = async_view
 
-        # Render Check 3: Sync class view
+        # Render Check 4: Sync class view
         elif getattr(view, "as_view", None):
             async_cbv = database_sync_to_async(view.as_view())
             async_view = await async_cbv(request_obj, *args, **kwargs)
@@ -102,7 +103,7 @@ def view_to_component(
             else:
                 render = async_view
 
-        # Render Check 4: Sync function view
+        # Render Check 5: Sync function view
         else:
             wrapped_view = database_sync_to_async(view)
             render = await wrapped_view(request_obj, *args, **kwargs)
@@ -225,3 +226,15 @@ class ComponentPreloader:
                     "\033[0m",
                     component,
                 )
+
+
+def async_xframe_options_sameorigin(view_func):
+    """Async version of `django.views.decorators.clickjacking.xframe_options_sameorigin`."""
+
+    async def wrapped_view(*args, **kwargs):
+        resp = await view_func(*args, **kwargs)
+        if resp.get("X-Frame-Options") is None:
+            resp["X-Frame-Options"] = "SAMEORIGIN"
+        return resp
+
+    return wraps(view_func)(wrapped_view)

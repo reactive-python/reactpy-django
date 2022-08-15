@@ -1,3 +1,5 @@
+import inspect
+
 import idom
 
 import django_idom
@@ -160,9 +162,53 @@ def view_to_component_template_view_class():
 @idom.component
 def view_to_component_sync_func_compatibility():
     return idom.html.div(
-        {"id": "view_to_component_compatibility"},
+        {"id": inspect.currentframe().f_code.co_name},
         django_idom.utils.view_to_component(
             views.view_to_component_sync_func_compatibility, compatibility=True
+        ),
+        idom.html.hr(),
+    )
+
+
+@idom.component
+def view_to_component_async_func_compatibility():
+    return idom.html.div(
+        {"id": inspect.currentframe().f_code.co_name},
+        django_idom.utils.view_to_component(
+            views.view_to_component_async_func_compatibility, compatibility=True
+        ),
+        idom.html.hr(),
+    )
+
+
+@idom.component
+def view_to_component_sync_class_compatibility():
+    return idom.html.div(
+        {"id": inspect.currentframe().f_code.co_name},
+        django_idom.utils.view_to_component(
+            views.ViewToComponentSyncClassCompatibility, compatibility=True
+        ),
+        idom.html.hr(),
+    )
+
+
+@idom.component
+def view_to_component_async_class_compatibility():
+    return idom.html.div(
+        {"id": inspect.currentframe().f_code.co_name},
+        django_idom.utils.view_to_component(
+            views.ViewToComponentAsyncClassCompatibility, compatibility=True
+        ),
+        idom.html.hr(),
+    )
+
+
+@idom.component
+def view_to_component_template_view_class_compatibility():
+    return idom.html.div(
+        {"id": inspect.currentframe().f_code.co_name},
+        django_idom.utils.view_to_component(
+            views.ViewToComponentTemplateViewClassCompatibility, compatibility=True
         ),
         idom.html.hr(),
     )

@@ -1,14 +1,16 @@
 import os
-from inspect import isclass, iscoroutinefunction
+from inspect import iscoroutinefunction
 
 from aiofile import async_open
 from channels.db import database_sync_to_async
 from django.core.exceptions import SuspiciousOperation
 from django.http import HttpRequest, HttpResponse
+from django.utils.decorators import method_decorator
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from idom.config import IDOM_WED_MODULES_DIR
 
 from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
+from django_idom.utils import async_xframe_options_sameorigin
 
 
 async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
@@ -47,12 +49,23 @@ async def view_to_component_iframe(
     if not iframe:
         raise ValueError(f"No view registered for component {view_path}.")
 
-    # Render the view
-    if isclass(iframe):
-        return await database_sync_to_async(
-            xframe_options_sameorigin(iframe.view.as_view)()
-        )(request)
-    if iscoroutinefunction(iframe):
-        return await xframe_options_sameorigin(iframe.view)(request)
+    # Render Check 1: Async function view
+    if iscoroutinefunction(iframe.view):
+        return await async_xframe_options_sameorigin(iframe.view)(request)
 
+    # Render Check 2: Async class view
+    if getattr(iframe.view, "view_is_async", False):
+        return await method_decorator(async_xframe_options_sameorigin, name="dispatch")(
+            iframe.view.as_view()
+        )(request)
+
+    # Render Check 3: Sync class view
+    if getattr(iframe.view, "as_view", None):
+        return await database_sync_to_async(
+            method_decorator(xframe_options_sameorigin, name="dispatch")(
+                iframe.view.as_view()
+            )
+        )(request)
+
+    # Render Check 4: Sync function view
     return await database_sync_to_async(xframe_options_sameorigin(iframe.view))(request)
