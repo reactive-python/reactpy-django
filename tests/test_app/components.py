@@ -148,6 +148,16 @@ def view_to_component_sync_class():
 
 
 @idom.component
+def view_to_component_async_class():
+    return django_idom.utils.view_to_component(views.ViewToComponentAsyncClass)
+
+
+@idom.component
+def view_to_component_template_view_class():
+    return django_idom.utils.view_to_component(views.ViewToComponentTemplateViewClass)
+
+
+@idom.component
 def view_to_component_sync_func_compatibility():
     return idom.html.div(
         {"id": "view_to_component_compatibility"},

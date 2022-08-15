@@ -85,17 +85,22 @@ def view_to_component(
             render = await view(request_obj, *args, **kwargs)
 
         # Render Check 3: Async class view
-        # TODO: Support Django 4.1 async CBV
         elif getattr(view, "view_is_async", False):
             async_cbv = view.as_view()
             async_view = await async_cbv(request_obj, *args, **kwargs)
-            render = await async_view.render()
+            if getattr(async_view, "render", None):
+                render = await async_view.render()
+            else:
+                render = async_view
 
         # Render Check 3: Sync class view
         elif getattr(view, "as_view", None):
             async_cbv = database_sync_to_async(view.as_view())
             async_view = await async_cbv(request_obj, *args, **kwargs)
-            render = await database_sync_to_async(async_view.render)()
+            if getattr(async_view, "render", None):
+                render = await database_sync_to_async(async_view.render)()
+            else:
+                render = async_view
 
         # Render Check 4: Sync function view
         else:
