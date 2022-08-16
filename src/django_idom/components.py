@@ -104,8 +104,7 @@ def view_to_component(
 
         # Render Check 5: Sync function view
         else:
-            wrapped_view = database_sync_to_async(view)
-            render = await wrapped_view(request_obj, *args, **kwargs)
+            render = await database_sync_to_async(view)(request_obj, *args, **kwargs)
 
         set_rendered_view(render)
 
