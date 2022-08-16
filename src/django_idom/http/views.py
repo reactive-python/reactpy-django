@@ -51,13 +51,15 @@ async def view_to_component_iframe(
 
     # Render Check 1: Async function view
     if iscoroutinefunction(iframe.view):
-        return await async_xframe_options_sameorigin(iframe.view)(request)
+        return await async_xframe_options_sameorigin(iframe.view)(
+            request, *iframe.args, **iframe.kwargs
+        )
 
     # Render Check 2: Async class view
     if getattr(iframe.view, "view_is_async", False):
         return await method_decorator(async_xframe_options_sameorigin, name="dispatch")(
             iframe.view.as_view()
-        )(request)
+        )(request, *iframe.args, **iframe.kwargs)
 
     # Render Check 3: Sync class view
     if getattr(iframe.view, "as_view", None):
@@ -65,7 +67,9 @@ async def view_to_component_iframe(
             method_decorator(xframe_options_sameorigin, name="dispatch")(
                 iframe.view.as_view()
             )
-        )(request)
+        )(request, *iframe.args, **iframe.kwargs)
 
     # Render Check 4: Sync function view
-    return await database_sync_to_async(xframe_options_sameorigin(iframe.view))(request)
+    return await database_sync_to_async(xframe_options_sameorigin(iframe.view))(
+        request, *iframe.args, **iframe.kwargs
+    )
