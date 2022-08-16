@@ -33,8 +33,8 @@ def view_to_component(
         strict_parsing: If True, an exception will be generated if the HTML does not
             perfectly adhere to HTML5.
         request: Request object to provide to the view.
-        *args: The positional arguments to pass to the view.
-        **kwargs: The keyword arguments to pass to the view.
+        args: The positional arguments to pass to the view.
+        kwargs: The keyword arguments to pass to the view.
     """
     args = args or []
     kwargs = kwargs or {}
