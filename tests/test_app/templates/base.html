@@ -12,6 +12,11 @@
 
 <body>
   <h1>IDOM Test Page</h1>
+  <style>
+    iframe {
+      width: 100%;
+    }
+  </style>
   <div>{% component "test_app.components.hello_world" class="hello-world" %}</div>
   <div>{% component "test_app.components.button" class="button" %}</div>
   <div>{% component "test_app.components.parameterized_component" class="parametarized-component" x=123 y=456 %}</div>
@@ -27,13 +32,13 @@
   <div>{% component "test_app.components.view_to_component_async_func" %}</div>
   <div>{% component "test_app.components.view_to_component_sync_class" %}</div>
   <div>{% component "test_app.components.view_to_component_async_class" %}</div>
+  <div>{% component "test_app.components.view_to_component_template_view_class" %}</div>
+  <div>{% component "test_app.components.view_to_component_script" %}</div>
   <div>{% component "test_app.components.view_to_component_sync_func_compatibility" %}</div>
   <div>{% component "test_app.components.view_to_component_async_func_compatibility" %}</div>
   <div>{% component "test_app.components.view_to_component_sync_class_compatibility" %}</div>
   <div>{% component "test_app.components.view_to_component_async_class_compatibility" %}</div>
   <div>{% component "test_app.components.view_to_component_template_view_class_compatibility" %}</div>
-  <div>{% component "test_app.components.view_to_component_template_view_class" %}</div>
-  <div>{% component "test_app.components.view_to_component_script" %}</div>
 </body>
 
 </html>

@@ -3,7 +3,6 @@ import logging
 import os
 import re
 from fnmatch import fnmatch
-from functools import wraps
 from importlib import import_module
 from typing import Callable, Set
 
@@ -132,15 +131,3 @@ class ComponentPreloader:
                     "\033[0m",
                     component,
                 )
-
-
-def async_xframe_options_sameorigin(view_func):
-    """Async version of `django.views.decorators.clickjacking.xframe_options_sameorigin`."""
-
-    async def wrapped_view(*args, **kwargs):
-        resp = await view_func(*args, **kwargs)
-        if resp.get("X-Frame-Options") is None:
-            resp["X-Frame-Options"] = "SAMEORIGIN"
-        return resp
-
-    return wraps(view_func)(wrapped_view)

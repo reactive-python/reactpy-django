@@ -30,6 +30,7 @@ def view_to_component(
 
     Keyword Args:
         compatibility: If True, the component will be rendered in an iframe.
+            Strict parsing does not apply to compatibility mode.
         strict_parsing: If True, an exception will be generated if the HTML does not
             perfectly adhere to HTML5.
         request: Request object to provide to the view.
