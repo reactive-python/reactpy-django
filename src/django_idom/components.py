@@ -14,6 +14,8 @@ from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
 from django_idom.types import ViewComponentIframe
 
 
+# TODO: Might want to intercept href clicks and form submit events.
+# Form events will probably be accomplished through the upcoming DjangoForm.
 @component
 def view_to_component(
     view: Union[Callable, View],
@@ -43,10 +45,8 @@ def view_to_component(
     # Return the view if it's been rendered via the `async_renderer`
     rendered_view, set_rendered_view = hooks.use_state(None)
     if rendered_view:
-        return html._(
-            utils.html_to_vdom(
-                rendered_view.content.decode("utf-8").strip(), strict=strict_parsing
-            )
+        return utils.html_to_vdom(
+            rendered_view.content.decode("utf-8").strip(), strict=strict_parsing
         )
 
     # Create a synthetic request object.
@@ -64,8 +64,8 @@ def view_to_component(
 
         # Register the iframe's URL if needed
         IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
-                view, args, kwargs
-            )
+            view, args, kwargs
+        )
 
         return html.iframe(
             {
