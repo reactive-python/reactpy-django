@@ -16,6 +16,14 @@ COMPONENT_REGEX = re.compile(r"{% *component +((\"[^\"']*\")|('[^\"']*'))(.*?)%}
 _logger = logging.getLogger(__name__)
 
 
+def _register_component(dotted_path: str) -> None:
+    if dotted_path in IDOM_REGISTERED_COMPONENTS:
+        return
+
+    IDOM_REGISTERED_COMPONENTS[dotted_path] = _import_dotted_path(dotted_path)
+    _logger.debug("IDOM has registered component %s", dotted_path)
+
+
 def _import_dotted_path(dotted_path: str) -> Callable:
     """Imports a dotted path and returns the callable."""
     module_name, component_name = dotted_path.rsplit(".", 1)
@@ -28,14 +36,6 @@ def _import_dotted_path(dotted_path: str) -> Callable:
         ) from error
 
     return getattr(module, component_name)
-
-
-def _register_component(dotted_path: str) -> None:
-    if dotted_path in IDOM_REGISTERED_COMPONENTS:
-        return
-
-    IDOM_REGISTERED_COMPONENTS[dotted_path] = _import_dotted_path(dotted_path)
-    _logger.debug("IDOM has registered component %s", dotted_path)
 
 
 class ComponentPreloader:
