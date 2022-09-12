@@ -169,7 +169,7 @@ def view_to_component_template_view_class():
 @component
 def view_to_component_sync_func_compatibility():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},
+        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         view_to_component(
             views.view_to_component_sync_func_compatibility, compatibility=True
         ),
@@ -180,7 +180,7 @@ def view_to_component_sync_func_compatibility():
 @component
 def view_to_component_async_func_compatibility():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},
+        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         view_to_component(
             views.view_to_component_async_func_compatibility, compatibility=True
         ),
@@ -191,7 +191,7 @@ def view_to_component_async_func_compatibility():
 @component
 def view_to_component_sync_class_compatibility():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},
+        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         view_to_component(
             views.ViewToComponentSyncClassCompatibility, compatibility=True
         ),
@@ -202,7 +202,7 @@ def view_to_component_sync_class_compatibility():
 @component
 def view_to_component_async_class_compatibility():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},
+        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         view_to_component(
             views.ViewToComponentAsyncClassCompatibility, compatibility=True
         ),
@@ -213,7 +213,7 @@ def view_to_component_async_class_compatibility():
 @component
 def view_to_component_template_view_class_compatibility():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},
+        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         view_to_component(
             views.ViewToComponentTemplateViewClassCompatibility, compatibility=True
         ),

@@ -59,7 +59,7 @@ def view_to_component(
 
     # Render Check 1: Compatibility mode
     if compatibility:
-        dotted_path = f"{view.__module__}.{view.__name__}"
+        dotted_path = f"{view.__module__}.{view.__name__}"  # type: ignore
         dotted_path = dotted_path.replace("<", "").replace(">", "")
 
         # Register the iframe's URL if needed
@@ -88,7 +88,7 @@ def view_to_component(
         # Render Check 3: Async class view
         elif getattr(view, "view_is_async", False):
             async_cbv = view.as_view()
-            async_view = await async_cbv(request_obj, *args, **kwargs)
+            async_view = await async_cbv(request_obj, *args, **kwargs)  # type: ignore
             if getattr(async_view, "render", None):
                 render = await async_view.render()
             else:
@@ -105,7 +105,7 @@ def view_to_component(
 
         # Render Check 5: Sync function view
         else:
-            render = await database_sync_to_async(view)(request_obj, *args, **kwargs)
+            render = await database_sync_to_async(view)(request_obj, *args, **kwargs)  # type: ignore
 
         set_rendered_view(render)
 
