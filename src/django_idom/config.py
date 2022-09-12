@@ -1,7 +1,7 @@
 from typing import Dict
 
 from django.conf import settings
-from django.core.cache import DEFAULT_CACHE_ALIAS, caches
+from django.core.cache import DEFAULT_CACHE_ALIAS, BaseCache, caches
 from idom.core.types import ComponentConstructor
 
 from django_idom.types import ViewComponentIframe
@@ -17,6 +17,6 @@ IDOM_WS_MAX_RECONNECT_TIMEOUT = getattr(
 
 # Determine if using Django caching or LRU cache
 if "idom" in getattr(settings, "CACHES", {}):
-    IDOM_CACHE = caches["idom"]
+    IDOM_CACHE: BaseCache = caches["idom"]
 else:
-    IDOM_CACHE = caches[DEFAULT_CACHE_ALIAS]
+    IDOM_CACHE: BaseCache = caches[DEFAULT_CACHE_ALIAS]
