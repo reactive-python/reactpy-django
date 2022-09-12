@@ -52,7 +52,6 @@ def simple_bar_chart():
 @component
 def use_websocket():
     ws = django_idom.hooks.use_websocket()
-    ws.__delattr__("scope")
     success = bool(ws.scope and ws.close and ws.disconnect and ws.view_id)
     return html.div(
         {"id": "use-websocket", "data-success": success},
