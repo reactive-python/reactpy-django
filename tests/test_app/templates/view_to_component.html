@@ -1,2 +1,3 @@
-<div id="{{test_name}}">{{ test_name }}: {% firstof status "Success" %}</div>
+<div id="{{test_name}}" data-success="{% firstof status 'true' %}">{{ test_name }}: {% firstof status "Success" %}
+</div>
 <hr> {% block bottom %}{% endblock %}
