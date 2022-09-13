@@ -8,7 +8,7 @@ app_name = "idom"
 urlpatterns = [
     path(
         "web_module/<path:file>",
-        views.web_modules_file,
+        views.web_modules_file,  # type: ignore[arg-type]
         name="web_modules",
     )
 ]
