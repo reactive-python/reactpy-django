@@ -33,11 +33,7 @@ def component(_component_id_, **kwargs):
     _register_component(_component_id_)
 
     class_ = kwargs.pop("class", "")
-    component_params = (
-        urlencode({"kwargs": json.dumps(kwargs, separators=(",", ":"))})
-        if kwargs
-        else ""
-    )
+    json_kwargs = json.dumps(kwargs, separators=(",", ":"))
 
     return {
         "class": class_,
@@ -46,5 +42,5 @@ def component(_component_id_, **kwargs):
         "idom_ws_max_reconnect_timeout": IDOM_WS_MAX_RECONNECT_TIMEOUT,
         "idom_mount_uuid": uuid4().hex,
         "idom_component_id": _component_id_,
-        "idom_component_params": component_params,
+        "idom_component_params": urlencode({"kwargs": json_kwargs}),
     }
