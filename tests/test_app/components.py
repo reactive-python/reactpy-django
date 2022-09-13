@@ -55,7 +55,6 @@ def use_websocket():
     success = bool(ws.scope and ws.close and ws.disconnect and ws.view_id)
     return html.div(
         {"id": "use-websocket", "data-success": success},
-        html.hr(),
         f"use_websocket: {ws}",
         html.hr(),
     )
