@@ -20,6 +20,26 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
     {% include-markdown "../../includes/examples.md" start="<!--hello-world-view-start-->" end="<!--hello-world-view-end-->" %}
 
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    | Name | Type | Description | Default |
+    | --- | --- | --- | --- |
+    | view | `Union[Callable, View]` | The view function or class to convert. | N/A |
+    | compatibility | `bool` | If True, the component will be rendered in an iframe. Strict parsing does not apply to compatibility mode. | `False` |
+    | strict_parsing | `bool` | If True, an exception will be generated if the HTML does not perfectly adhere to HTML5. | `True` |
+    | request | `Union[HttpRequest, None]` | Request object to provide to the view. | `None` |
+    | args | `Union[Iterable, None]` | The positional arguments to pass to the view. | `None` |
+    | kwargs | `Union[Dict, None]` | The keyword arguments to pass to the view. | `None` |
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `Component` | An IDOM component. |
+    | `None` | No component render. |
+
 ??? question "How do I use this for Class Based Views?"
 
     You can simply pass your Class Based View directly into this function.
