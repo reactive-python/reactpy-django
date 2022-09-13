@@ -1,6 +1,6 @@
 import os
 from inspect import iscoroutinefunction
-from typing import Callable, Dict, Iterable, Union
+from typing import Any, Callable, Dict, Iterable, Union
 
 from channels.db import database_sync_to_async
 from django.contrib.staticfiles.finders import find
@@ -20,6 +20,7 @@ from django_idom.types import ViewComponentIframe
 def view_to_component(
     view: Union[Callable, View],
     compatibility: bool = False,
+    transforms: Iterable[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
     request: Union[HttpRequest, None] = None,
     args: Union[Iterable, None] = None,
@@ -33,6 +34,8 @@ def view_to_component(
     Keyword Args:
         compatibility: If True, the component will be rendered in an iframe.
             Strict parsing does not apply to compatibility mode.
+        transforms: A list of functions that transforms the newly generated VDOM.
+            The functions will be called on each VDOM node.
         strict_parsing: If True, an exception will be generated if the HTML does not
             perfectly adhere to HTML5.
         request: Request object to provide to the view.
@@ -46,7 +49,9 @@ def view_to_component(
     rendered_view, set_rendered_view = hooks.use_state(None)
     if rendered_view:
         return utils.html_to_vdom(
-            rendered_view.content.decode("utf-8").strip(), strict=strict_parsing
+            rendered_view.content.decode("utf-8").strip(),
+            *transforms,
+            strict=strict_parsing,
         )
 
     # Create a synthetic request object.
