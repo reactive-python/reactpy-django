@@ -9,7 +9,6 @@ from typing import (
     DefaultDict,
     Generic,
     Sequence,
-    Type,
     TypeVar,
     Union,
     cast,
