@@ -16,7 +16,8 @@ IDOM_WS_MAX_RECONNECT_TIMEOUT = getattr(
 )
 
 # Determine if using Django caching or LRU cache
-if "idom" in getattr(settings, "CACHES", {}):
-    IDOM_CACHE: BaseCache = caches["idom"]
-else:
-    IDOM_CACHE: BaseCache = caches[DEFAULT_CACHE_ALIAS]
+IDOM_CACHE: BaseCache = (
+    caches["idom"]
+    if "idom" in getattr(settings, "CACHES", {})
+    else caches[DEFAULT_CACHE_ALIAS]
+)

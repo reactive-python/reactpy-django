@@ -74,7 +74,7 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         self._idom_recv_queue = recv_queue = asyncio.Queue()
         try:
             await serve_json_patch(
-                Layout(WebsocketContext(component_instance, value=socket)),  # type: ignore
+                Layout(WebsocketContext(component_instance, value=socket)),
                 self.send_json,
                 recv_queue.get,
             )

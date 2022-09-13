@@ -14,7 +14,7 @@ def view_to_component_sync_func(request):
     return render(
         request,
         "view_to_component.html",
-        {"test_name": inspect.currentframe().f_code.co_name},  # type: ignore
+        {"test_name": inspect.currentframe().f_code.co_name},
     )
 
 
@@ -22,7 +22,7 @@ async def view_to_component_async_func(request):
     return render(
         request,
         "view_to_component.html",
-        {"test_name": inspect.currentframe().f_code.co_name},  # type: ignore
+        {"test_name": inspect.currentframe().f_code.co_name},
     )
 
 
@@ -55,7 +55,7 @@ def view_to_component_sync_func_compatibility(request):
     return render(
         request,
         "view_to_component.html",
-        {"test_name": inspect.currentframe().f_code.co_name},  # type: ignore
+        {"test_name": inspect.currentframe().f_code.co_name},
     )
 
 
@@ -63,7 +63,7 @@ async def view_to_component_async_func_compatibility(request):
     return await database_sync_to_async(render)(
         request,
         "view_to_component.html",
-        {"test_name": inspect.currentframe().f_code.co_name},  # type: ignore
+        {"test_name": inspect.currentframe().f_code.co_name},
     )
 
 
@@ -97,7 +97,7 @@ def view_to_component_script(request):
         request,
         "view_to_component_script.html",
         {
-            "test_name": inspect.currentframe().f_code.co_name,  # type: ignore
+            "test_name": inspect.currentframe().f_code.co_name,
             "status": "false",
         },
     )

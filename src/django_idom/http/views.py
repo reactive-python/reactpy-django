@@ -25,12 +25,12 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
     # Fetch the file from cache, if available
     last_modified_time = os.stat(path).st_mtime
     cache_key = f"django_idom:web_module:{str(path).lstrip(str(web_modules_dir))}"
-    response = await IDOM_CACHE.aget(cache_key, version=last_modified_time)
+    response = await IDOM_CACHE.aget(cache_key, version=last_modified_time)  # type: ignore[attr-defined]
     if response is None:
         async with async_open(path, "r") as fp:
             response = HttpResponse(await fp.read(), content_type="text/javascript")
-        await IDOM_CACHE.adelete(cache_key)
-        await IDOM_CACHE.aset(
+        await IDOM_CACHE.adelete(cache_key)  # type: ignore[attr-defined]
+        await IDOM_CACHE.aset(  # type: ignore[attr-defined]
             cache_key, response, timeout=None, version=last_modified_time
         )
     return response
@@ -48,15 +48,15 @@ async def view_to_component_iframe(
 
     # Render Check 1: Async function view
     if iscoroutinefunction(iframe.view):
-        response = await iframe.view(request, *iframe.args, **iframe.kwargs)
+        response = await iframe.view(request, *iframe.args, **iframe.kwargs)  # type: ignore[operator]
 
     # Render Check 2: Async class view
     elif getattr(iframe.view, "view_is_async", False):
-        response = await iframe.view.as_view()(request, *iframe.args, **iframe.kwargs)
+        response = await iframe.view.as_view()(request, *iframe.args, **iframe.kwargs)  # type: ignore[misc, union-attr]
 
     # Render Check 3: Sync class view
     elif getattr(iframe.view, "as_view", None):
-        response = await database_sync_to_async(iframe.view.as_view())(
+        response = await database_sync_to_async(iframe.view.as_view())(  # type: ignore[union-attr]
             request, *iframe.args, **iframe.kwargs
         )
 

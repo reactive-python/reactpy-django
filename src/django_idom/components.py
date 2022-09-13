@@ -88,7 +88,7 @@ def view_to_component(
         # Render Check 3: Async class view
         elif getattr(view, "view_is_async", False):
             async_cbv = view.as_view()
-            async_view = await async_cbv(request_obj, *args, **kwargs)  # type: ignore
+            async_view = await async_cbv(request_obj, *args, **kwargs)
             if getattr(async_view, "render", None):
                 render = await async_view.render()
             else:
@@ -105,9 +105,11 @@ def view_to_component(
 
         # Render Check 5: Sync function view
         else:
-            render = await database_sync_to_async(view)(request_obj, *args, **kwargs)  # type: ignore
+            render = await database_sync_to_async(view)(request_obj, *args, **kwargs)
 
         set_rendered_view(render)
+
+    return None
 
 
 @component
@@ -144,13 +146,13 @@ def _cached_static_contents(static_path: str):
     # Cache is preferrable to `use_memo` due to multiprocessing capabilities
     last_modified_time = os.stat(abs_path).st_mtime
     cache_key = f"django_idom:static_contents:{static_path}"
-    file_contents = IDOM_CACHE.get(cache_key, version=last_modified_time)
+    file_contents = IDOM_CACHE.get(cache_key, version=int(last_modified_time))
     if file_contents is None:
         with open(abs_path, encoding="utf-8") as static_file:
             file_contents = static_file.read()
         IDOM_CACHE.delete(cache_key)
         IDOM_CACHE.set(
-            cache_key, file_contents, timeout=None, version=last_modified_time
+            cache_key, file_contents, timeout=None, version=int(last_modified_time)
         )
 
     return file_contents

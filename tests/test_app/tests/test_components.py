@@ -64,7 +64,7 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
 
     def test_static_css(self):
         self.assertEqual(
-            self.page.wait_for_selector("#django-css button").evaluate(  # type: ignore
+            self.page.wait_for_selector("#django-css button").evaluate(
                 "e => window.getComputedStyle(e).getPropertyValue('color')"
             ),
             "rgb(0, 0, 255)",
