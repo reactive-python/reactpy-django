@@ -53,8 +53,6 @@ def view_to_component(
     request_obj = request
     if not request:
         request_obj = HttpRequest()
-        # TODO: Figure out some intelligent way to set the method.
-        # Might need intercepting common things such as form submission?
         request_obj.method = "GET"
 
     # Render Check 1: Compatibility mode
