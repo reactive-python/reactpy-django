@@ -1,10 +1,7 @@
 from __future__ import annotations
 
-import os
 import re
-import subprocess
 from pathlib import Path
-from typing import List, Tuple
 
 import nox
 from nox.sessions import Session
@@ -50,13 +47,14 @@ def test_suite(session: Session) -> None:
     session.env["IDOM_DEBUG_MODE"] = "1"
 
     posargs = session.posargs[:]
-    if "--headless" in posargs:
-        posargs.remove("--headless")
-        session.env["SELENIUM_HEADLESS"] = "1"
+    if "--headed" in posargs:
+        posargs.remove("--headed")
+        session.env["PLAYWRIGHT_HEADED"] = "1"
 
     if "--no-debug-mode" not in posargs:
         posargs.append("--debug-mode")
 
+    session.run("playwright", "install", "chromium")
     session.run("python", "manage.py", "test", *posargs)
 
 
@@ -65,18 +63,17 @@ def test_style(session: Session) -> None:
     """Check that style guidelines are being followed"""
     install_requirements_file(session, "check-style")
     session.run("flake8", "src/django_idom", "tests")
-    black_default_exclude = r"\.eggs|\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|\.svn|_build|buck-out|build|dist"
     session.run(
         "black",
         ".",
         "--check",
-        "--exclude",
-        rf"/({black_default_exclude}|venv|node_modules)/",
+        "--extend-exclude",
+        "/migrations/",
     )
     session.run("isort", ".", "--check-only")
 
 
 def install_requirements_file(session: Session, name: str) -> None:
-    file_path = HERE / "requirements" / (name + ".txt")
+    file_path = HERE / "requirements" / f"{name}.txt"
     assert file_path.exists(), f"requirements file {file_path} does not exist"
     session.install("-r", str(file_path))
