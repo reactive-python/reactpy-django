@@ -1,10 +1,11 @@
+from __future__ import annotations
+
 import contextlib
 import logging
 import os
 import re
 from fnmatch import fnmatch
 from importlib import import_module
-from typing import Set
 
 from django.template import engines
 from django.utils.encoding import smart_str
@@ -68,9 +69,9 @@ class ComponentPreloader:
                 loaders.append(loader)
         return loaders
 
-    def _get_paths(self) -> Set:
+    def _get_paths(self) -> set[str]:
         """Obtains a set of all template directories."""
-        paths = set()
+        paths: set[str] = set()
         for loader in self._get_loaders():
             with contextlib.suppress(ImportError, AttributeError, TypeError):
                 module = import_module(loader.__module__)
@@ -80,12 +81,12 @@ class ComponentPreloader:
                 paths.update(smart_str(origin) for origin in get_template_sources(""))
         return paths
 
-    def _get_templates(self, paths: Set) -> Set:
+    def _get_templates(self, paths: set[str]) -> set[str]:
         """Obtains a set of all HTML template paths."""
         extensions = [".html"]
-        templates = set()
+        templates: set[str] = set()
         for path in paths:
-            for root, dirs, files in os.walk(path, followlinks=False):
+            for root, _, files in os.walk(path, followlinks=False):
                 templates.update(
                     os.path.join(root, name)
                     for name in files
@@ -95,9 +96,9 @@ class ComponentPreloader:
 
         return templates
 
-    def _get_components(self, templates: Set) -> Set:
+    def _get_components(self, templates: set[str]) -> set[str]:
         """Obtains a set of all IDOM components by parsing HTML templates."""
-        components = set()
+        components: set[str] = set()
         for template in templates:
             with contextlib.suppress(Exception):
                 with open(template, "r", encoding="utf-8") as template_file:
@@ -118,7 +119,7 @@ class ComponentPreloader:
             )
         return components
 
-    def _register_components(self, components: Set) -> None:
+    def _register_components(self, components: set[str]) -> None:
         """Registers all IDOM components in an iterable."""
         for component in components:
             try:
