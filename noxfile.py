@@ -34,6 +34,7 @@ def test(session: Session) -> None:
     """Run the complete test suite"""
     session.install("--upgrade", "pip", "setuptools", "wheel")
     session.notify("test_suite", posargs=session.posargs)
+    session.notify("test_types")
     session.notify("test_style")
 
 
@@ -56,6 +57,13 @@ def test_suite(session: Session) -> None:
 
     session.run("playwright", "install", "chromium")
     session.run("python", "manage.py", "test", *posargs)
+
+
+@nox.session
+def test_types(session: Session) -> None:
+    install_requirements_file(session, "check-types")
+    install_requirements_file(session, "pkg-deps")
+    session.run("mypy", "--show-error-codes", "src/django_idom", "tests/test_app")
 
 
 @nox.session
