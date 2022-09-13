@@ -23,7 +23,7 @@ def view_to_component(
     transforms: Iterable[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
     request: Union[HttpRequest, None] = None,
-    args: Union[Iterable, None] = None,
+    args: Iterable = (),
     kwargs: Union[Dict, None] = None,
 ) -> Union[VdomDict, None]:
     """Converts a Django view to an IDOM component.
@@ -42,7 +42,6 @@ def view_to_component(
         args: The positional arguments to pass to the view.
         kwargs: The keyword arguments to pass to the view.
     """
-    args = args or []
     kwargs = kwargs or {}
 
     # Return the view if it's been rendered via the `async_renderer`

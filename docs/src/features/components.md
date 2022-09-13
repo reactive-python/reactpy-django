@@ -31,7 +31,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
     | transforms | `Iterable[Callable[[VdomDict], Any]]` | A list of functions that transforms the newly generated VDOM. The functions will be called on each VDOM node. | `tuple` |
     | strict_parsing | `bool` | If True, an exception will be generated if the HTML does not perfectly adhere to HTML5. | `True` |
     | request | `Union[HttpRequest, None]` | Request object to provide to the view. | `None` |
-    | args | `Union[Iterable, None]` | The positional arguments to pass to the view. | `None` |
+    | args | `Iterable` | The positional arguments to pass to the view. | `tuple` |
     | kwargs | `Union[Dict, None]` | The keyword arguments to pass to the view. | `None` |
 
     <font size="4">**Returns**</font>
@@ -89,7 +89,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
         {% include-markdown "../../includes/examples.md" start="<!--hello-world-view-start-->" end="<!--hello-world-view-end-->" %}
 
-??? question "What is compatibility mode?"
+??? question "What is `compatibility` mode?"
 
     For views that rely on HTTP responses other than `GET` (such as `PUT`, `POST`, `PATCH`, etc), you should consider using compatibility mode to render your view within an iframe.
 
@@ -115,7 +115,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
         {% include-markdown "../../includes/examples.md" start="<!--hello-world-view-start-->" end="<!--hello-world-view-end-->" %}
 
-??? question "What is strict parsing?"
+??? question "What is `strict_parsing`?"
 
     By default, an exception will be generated if your view's HTML does not perfectly adhere to HTML5.
 
@@ -142,6 +142,44 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
         {% include-markdown "../../includes/examples.md" start="<!--hello-world-view-start-->" end="<!--hello-world-view-end-->" %}
 
     Note that best-fit parsing is very similar to how web browsers will handle broken HTML.
+
+??? question "What is `transforms`?"
+
+    After your view has been turned into [VDOM](https://idom-docs.herokuapp.com/docs/reference/specifications.html#vdom) (python dictionaries), `view_to_component` will call your `transforms` functions on every VDOM node.
+
+    This allows you to modify your view prior to rendering.
+
+    For example, if you are trying to modify the text of a node with a certain `id`, you can create a transform like such:
+
+    === "components.py"
+
+        ```python
+        from idom import component, html
+        from django_idom.components import view_to_component
+        from .views import hello_world_view
+
+        def example_transform(vdom):
+            attributes = vdom.get("attributes")
+
+            if attributes and attributes.get("id") == "hello-world":
+                vdom["children"][0] = "Good Bye World!"
+
+        @component
+        def my_component():
+            return view_to_component(
+                hello_world_view,
+                transforms=[example_transform],
+            )
+        ```
+
+    === "views.py"
+
+        ```python
+        from django.http import HttpResponse
+
+        def hello_world_view(request, *args, **kwargs):
+            return HttpResponse("<div id='hello-world'> Hello World! <div>")
+        ```
 
 ## Django CSS
 
