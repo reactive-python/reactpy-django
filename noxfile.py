@@ -79,12 +79,12 @@ def test_style(session: Session) -> None:
         ".",
         "--check",
         "--extend-exclude",
-        rf"/migrations/",
+        "/migrations/",
     )
     session.run("isort", ".", "--check-only")
 
 
 def install_requirements_file(session: Session, name: str) -> None:
-    file_path = HERE / "requirements" / (name + ".txt")
+    file_path = HERE / "requirements" / f"{name}.txt"
     assert file_path.exists(), f"requirements file {file_path} does not exist"
     session.install("-r", str(file_path))
