@@ -1,18 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from dataclasses import dataclass
-from typing import (
-    Any,
-    Awaitable,
-    Callable,
-    DefaultDict,
-    Generic,
-    Sequence,
-    TypeVar,
-    Union,
-    cast,
-)
+from typing import Any, Awaitable, Callable, DefaultDict, Sequence, Union, cast
 
 from channels.db import database_sync_to_async as _database_sync_to_async
 from django.db.models.base import Model
@@ -20,23 +9,18 @@ from django.db.models.query import QuerySet
 from idom import use_callback, use_ref
 from idom.backend.types import Location
 from idom.core.hooks import Context, create_context, use_context, use_effect, use_state
-from typing_extensions import ParamSpec
 
-from django_idom.types import IdomWebsocket
+from django_idom.types import IdomWebsocket, Mutation, Query, _Params, _Result
 
 
 database_sync_to_async = cast(
     Callable[..., Callable[..., Awaitable[Any]]],
     _database_sync_to_async,
 )
-
+WebsocketContext: Context[IdomWebsocket | None] = create_context(None)
 _REFETCH_CALLBACKS: DefaultDict[
     Callable[..., Any], set[Callable[[], None]]
 ] = DefaultDict(set)
-WebsocketContext: Context[IdomWebsocket | None] = create_context(None)
-_Result = TypeVar("_Result", bound=Union[Model, QuerySet[Any]])
-_Params = ParamSpec("_Params")
-_Data = TypeVar("_Data")
 
 
 def use_location() -> Location:
@@ -145,22 +129,6 @@ def use_mutation(
         set_error(None)
 
     return Mutation(call, loading, error, reset)
-
-
-@dataclass
-class Query(Generic[_Data]):
-    data: _Data
-    loading: bool
-    error: Exception | None
-    refetch: Callable[[], None]
-
-
-@dataclass
-class Mutation(Generic[_Params]):
-    execute: Callable[_Params, None]
-    loading: bool
-    error: Exception | None
-    reset: Callable[[], None]
 
 
 def _fetch_deferred(data: Any) -> None:
