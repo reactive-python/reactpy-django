@@ -29,7 +29,7 @@ class Query(Generic[_Data]):
 
     data: _Data
     loading: bool
-    error: Union[Exception, None]
+    error: Exception | None
     refetch: Callable[[], None]
 
 
@@ -39,5 +39,5 @@ class Mutation(Generic[_Params]):
 
     execute: Callable[_Params, None]
     loading: bool
-    error: Union[Exception, None]
+    error: Exception | None
     reset: Callable[[], None]

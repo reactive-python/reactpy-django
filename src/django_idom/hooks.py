@@ -17,7 +17,7 @@ database_sync_to_async = cast(
     Callable[..., Callable[..., Awaitable[Any]]],
     _database_sync_to_async,
 )
-WebsocketContext: Context[Union[IdomWebsocket, None]] = create_context(None)
+WebsocketContext: Context[IdomWebsocket | None] = create_context(None)
 _REFETCH_CALLBACKS: DefaultDict[
     Callable[..., Any], set[Callable[[], None]]
 ] = DefaultDict(set)
@@ -45,10 +45,10 @@ def use_websocket() -> IdomWebsocket:
 
 
 def use_query(
-    query: Callable[_Params, Union[_Result, None]],
+    query: Callable[_Params, _Result | None],
     *args: _Params.args,
     **kwargs: _Params.kwargs,
-) -> Query[Union[_Result, None]]:
+) -> Query[_Result | None]:
     query_ref = use_ref(query)
     if query_ref.current is not query:
         raise ValueError(f"Query function changed from {query_ref.current} to {query}.")
@@ -96,8 +96,8 @@ def use_query(
 
 
 def use_mutation(
-    mutate: Callable[_Params, Union[bool, None]],
-    refetch: Union[Callable[..., Any], Sequence[Callable[..., Any]]],
+    mutate: Callable[_Params, bool | None],
+    refetch: Callable[..., Any] | Sequence[Callable[..., Any]],
 ) -> Mutation[_Params]:
     loading, set_loading = use_state(False)
     error, set_error = use_state(cast(Union[Exception, None], None))
