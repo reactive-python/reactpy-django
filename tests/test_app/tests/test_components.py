@@ -91,6 +91,23 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
         )
         self.page.wait_for_selector("#authorized-user")
 
+    def test_use_query_and_mutation(self):
+        todo_input = self.page.wait_for_selector("#todo-input")
+
+        item_ids = list(range(5))
+
+        for i in item_ids:
+            todo_input.type(f"sample-{i}", delay=10)
+            todo_input.press("Enter")
+            self.page.wait_for_selector(f"#todo-item-sample-{i}")
+            self.page.wait_for_selector(f"#todo-item-sample-{i}-checkbox").click()
+            self.assertRaises(
+                TimeoutError,
+                self.page.wait_for_selector,
+                f"#todo-item-sample-{i}",
+                timeout=1,
+            )
+
     def test_view_to_component_sync_func(self):
         self.page.locator("#view_to_component_sync_func[data-success=true]").wait_for()
 
