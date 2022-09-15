@@ -30,7 +30,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
     | compatibility | `bool` | If True, the component will be rendered in an iframe. Strict parsing does not apply to compatibility mode. | `False` |
     | transforms | `Iterable[Callable[[VdomDict], Any]]` | A list of functions that transforms the newly generated VDOM. The functions will be called on each VDOM node. | `tuple` |
     | strict_parsing | `bool` | If True, an exception will be generated if the HTML does not perfectly adhere to HTML5. | `True` |
-    | request | `HttpRequest | None` | Request object to provide to the view. | `None` |
+    | request | `HttpRequest | None` | Request object to provide to the view. Custom request objects cannot be used in compatibility mode. | `None` |
     | args | `Iterable` | The positional arguments to pass to the view. | `tuple` |
     | kwargs | `Dict | None` | The keyword arguments to pass to the view. | `None` |
 

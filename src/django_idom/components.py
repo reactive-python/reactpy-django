@@ -43,6 +43,7 @@ def view_to_component(
         strict_parsing: If True, an exception will be generated if the HTML does not
             perfectly adhere to HTML5.
         request: Request object to provide to the view.
+            Custom request objects cannot be used in compatibility mode.
         args: The positional arguments to pass to the view.
         kwargs: The keyword arguments to pass to the view.
     """
@@ -62,15 +63,30 @@ def view_to_component(
     )
     async def async_renderer():
         """Render the view in an async hook to avoid blocking the main thread."""
-        # Avoid re-rendering the view
-        if rendered_view or compatibility:
+        # Render Check 1: Compatibility mode
+        if compatibility:
+            dotted_path = f"{view.__module__}.{view.__name__}"  # type: ignore
+            dotted_path = dotted_path.replace("<", "").replace(">", "")
+            IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
+                view, args, kwargs
+            )
+
+            # Signal that the view has been rendered
+            set_rendered_view(
+                html.iframe(
+                    {
+                        "src": reverse("idom:view_to_component", args=[dotted_path]),
+                        "loading": "lazy",
+                    }
+                )
+            )
             return
 
-        # Render Check 1: Async function view
-        if iscoroutinefunction(view):
+        # Render Check 2: Async function view
+        elif iscoroutinefunction(view):
             render = await view(request_obj, *args, **kwargs)
 
-        # Render Check 2: Async class view
+        # Render Check 3: Async class view
         elif getattr(view, "view_is_async", False):
             async_cbv = view.as_view()
             async_view = await async_cbv(request_obj, *args, **kwargs)
@@ -79,7 +95,7 @@ def view_to_component(
             else:
                 render = async_view
 
-        # Render Check 3: Sync class view
+        # Render Check 4: Sync class view
         elif getattr(view, "as_view", None):
             async_cbv = database_sync_to_async(view.as_view())
             async_view = await async_cbv(request_obj, *args, **kwargs)
@@ -88,7 +104,7 @@ def view_to_component(
             else:
                 render = async_view
 
-        # Render Check 4: Sync function view
+        # Render Check 5: Sync function view
         else:
             render = await database_sync_to_async(view)(request_obj, *args, **kwargs)
 
@@ -99,23 +115,6 @@ def view_to_component(
                 *transforms,
                 strict=strict_parsing,
             )
-        )
-
-    # Render Check 5: Compatibility mode
-    if compatibility:
-        dotted_path = f"{view.__module__}.{view.__name__}"  # type: ignore
-        dotted_path = dotted_path.replace("<", "").replace(">", "")
-
-        # Register the iframe's URL if needed
-        IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
-            view, args, kwargs
-        )
-
-        return html.iframe(
-            {
-                "src": reverse("idom:view_to_component", args=[dotted_path]),
-                "loading": "lazy",
-            }
         )
 
     # Return the view if it's been rendered via the `async_renderer` hook
