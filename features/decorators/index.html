@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://idom-team.github.io/django-idom/features/decorators/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.4.4">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.5.0">
     
     
       
@@ -23,13 +23,14 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.6b80c2a2.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.2e8b5541.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
         
       
       
+
     
     
     
@@ -48,6 +49,7 @@
     
       
 
+    
     
     
   </head>
@@ -150,7 +152,7 @@
       </label>
       <nav class="md-search__options" aria-label="Search">
         
-        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
         </button>
       </nav>
@@ -577,20 +579,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../orm/" class="md-nav__link">
-        ORM
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../templatetag/" class="md-nav__link">
         Template Tag
       </a>
@@ -718,10 +706,11 @@
             
             
           
-          <div class="md-content" data-md-component="content">
-            <article class="md-content__inner md-typeset">
-              
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
                 
+                  
 
   <a href="https://github.com/idom-team/django-idom/edit/docs/features/decorators.md" title="Edit this page" class="md-content__button md-icon">
     
@@ -800,7 +789,6 @@
 <summary>How do I render a different component if authentication fails?</summary>
 <p>You can use a component with the <code>fallback</code> argument, as seen below.</p>
 <div class="highlight"><span class="filename">components.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">django_idom.decorators</span> <span class="kn">import</span> <span class="n">auth_required</span>
-<span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_websocket</span>
 <span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 
 <span class="nd">@component</span>
@@ -868,7 +856,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 13, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 15, 2022</span>
       
     
   </small>
@@ -878,10 +866,11 @@
 
 
 
-              
-            </article>
-            
-          </div>
+                
+              </article>
+            </div>
+          
+          
         </div>
         
           <a href="#" class="md-top md-icon" data-md-component="top" hidden>
@@ -913,13 +902,13 @@
       
       
         
-        <a href="../orm/" class="md-footer__link md-footer__link--next" aria-label="Next: ORM" rel="next">
+        <a href="../templatetag/" class="md-footer__link md-footer__link--next" aria-label="Next: Template Tag" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              ORM
+              Template Tag
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -952,7 +941,7 @@
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.2ab50757.min.js"></script>
+      <script src="../../assets/javascripts/bundle.48f2be22.min.js"></script>
       
     
   </body>

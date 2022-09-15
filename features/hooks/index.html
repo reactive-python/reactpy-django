@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://idom-team.github.io/django-idom/features/hooks/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.4.4">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.5.0">
     
     
       
@@ -23,13 +23,14 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.6b80c2a2.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.2e8b5541.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
         
       
       
+
     
     
     
@@ -48,6 +49,7 @@
     
       
 
+    
     
     
   </head>
@@ -72,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#use-websocket" class="md-skip">
+        <a href="#use-query" class="md-skip">
           Skip to content
         </a>
       
@@ -150,7 +152,7 @@
       </label>
       <nav class="md-search__options" aria-label="Search">
         
-        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
         </button>
       </nav>
@@ -542,6 +544,20 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#use-query" class="md-nav__link">
+    Use Query
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-mutation" class="md-nav__link">
+    Use Mutation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#use-websocket" class="md-nav__link">
     Use Websocket
   </a>
@@ -579,20 +595,6 @@
     <li class="md-nav__item">
       <a href="../decorators/" class="md-nav__link">
         Decorators
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../orm/" class="md-nav__link">
-        ORM
       </a>
     </li>
   
@@ -732,10 +734,11 @@
             
             
           
-          <div class="md-content" data-md-component="content">
-            <article class="md-content__inner md-typeset">
-              
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
                 
+                  
 
   <a href="https://github.com/idom-team/django-idom/edit/docs/features/hooks.md" title="Edit this page" class="md-content__button md-icon">
     
@@ -748,6 +751,150 @@
 <details class="tip" open="open">
 <summary>Looking for more hooks?</summary>
 <p>Check out the <a href="https://idom-docs.herokuapp.com/docs/reference/hooks-api.html?highlight=hooks">IDOM Core docs</a> on hooks!</p>
+</details>
+<h2 id="use-query">Use Query<a class="headerlink" href="#use-query" title="Permanent link">&para;</a></h2>
+<p>The <code>use_query</code> hook is used fetch Django ORM queries.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">components.py</label><label for="__tabbed_1_2">models.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">example_project.my_app.models</span> <span class="kn">import</span> <span class="n">TodoItem</span>
+<span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_query</span>
+
+<span class="k">def</span> <span class="nf">get_items</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">TodoItem</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+<span class="nd">@component</span>
+<span class="k">def</span> <span class="nf">todo_list</span><span class="p">():</span>
+    <span class="n">item_query</span> <span class="o">=</span> <span class="n">use_query</span><span class="p">(</span><span class="n">get_items</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">item_query</span><span class="o">.</span><span class="n">loading</span><span class="p">:</span>
+        <span class="n">rendered_items</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">h2</span><span class="p">(</span><span class="s2">&quot;Loading...&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">item_query</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+        <span class="n">rendered_items</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">h2</span><span class="p">(</span><span class="s2">&quot;Error when loading!&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rendered_items</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">ul</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">li</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">item_query</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rendered_items</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="k">class</span> <span class="nc">TodoItem</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<details class="question">
+<summary>Can I make ORM calls without hooks?</summary>
+<p>Due to Django's ORM design, database queries must be deferred using hooks. Otherwise, you will see a <code>SynchronousOnlyOperation</code> exception.</p>
+<p>This may be resolved in a future version of Django with a natively asynchronous ORM.</p>
+</details>
+<details class="question">
+<summary>What is an "ORM"?</summary>
+<p>A Python <strong>Object Relational Mapper</strong> is an API for your code to access a database.</p>
+<p>See the <a href="https://docs.djangoproject.com/en/dev/topics/db/queries/">Django ORM documentation</a> for more information.</p>
+</details>
+<h2 id="use-mutation">Use Mutation<a class="headerlink" href="#use-mutation" title="Permanent link">&para;</a></h2>
+<p>The <code>use_mutation</code> hook is used to modify Django ORM objects.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">components.py</label><label for="__tabbed_2_2">models.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">example_project.my_app.models</span> <span class="kn">import</span> <span class="n">TodoItem</span>
+<span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_mutation</span>
+
+<span class="k">def</span> <span class="nf">add_item</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">TodoItem</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<span class="nd">@component</span>
+<span class="k">def</span> <span class="nf">todo_list</span><span class="p">():</span>
+    <span class="n">item_mutation</span> <span class="o">=</span> <span class="n">use_mutation</span><span class="p">(</span><span class="n">add_item</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">item_mutation</span><span class="o">.</span><span class="n">loading</span><span class="p">:</span>
+        <span class="n">mutation_status</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">h2</span><span class="p">(</span><span class="s2">&quot;Adding...&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">item_mutation</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+        <span class="n">mutation_status</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">h2</span><span class="p">(</span><span class="s2">&quot;Error when adding!&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mutation_status</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">submit_event</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Enter&quot;</span><span class="p">:</span>
+            <span class="n">item_mutation</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s2">&quot;Add an item:&quot;</span><span class="p">),</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">input</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;onKeyDown&quot;</span><span class="p">:</span> <span class="n">submit_event</span><span class="p">}),</span>
+        <span class="n">mutation_status</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="k">class</span> <span class="nc">TodoItem</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<details class="question">
+<summary>Can <code>use_mutation</code> trigger a refetch of <code>use_query</code>?</summary>
+<p>Yes, <code>use_mutation</code> can queue a refetch of a <code>use_query</code> via the <code>refetch=...</code> argument.</p>
+<p>The example below is a merge of the <code>use_query</code> and <code>use_mutation</code> examples above with the addition of a <code>refetch</code> argument on <code>use_mutation</code>.</p>
+<p>Please note that any <code>use_query</code> hooks that use <code>get_items</code> will be refetched upon a successful mutation.</p>
+<div class="highlight"><span class="filename">components.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">example_project.my_app.models</span> <span class="kn">import</span> <span class="n">TodoItem</span>
+<span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_mutation</span>
+
+<span class="k">def</span> <span class="nf">get_items</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">TodoItem</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">add_item</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">TodoItem</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<span class="nd">@component</span>
+<span class="k">def</span> <span class="nf">todo_list</span><span class="p">():</span>
+    <span class="n">item_query</span> <span class="o">=</span> <span class="n">use_query</span><span class="p">(</span><span class="n">get_items</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">item_query</span><span class="o">.</span><span class="n">loading</span><span class="p">:</span>
+        <span class="n">rendered_items</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">h2</span><span class="p">(</span><span class="s2">&quot;Loading...&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">item_query</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+        <span class="n">rendered_items</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">h2</span><span class="p">(</span><span class="s2">&quot;Error when loading!&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rendered_items</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">ul</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">li</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">item_query</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="n">item_mutation</span> <span class="o">=</span> <span class="n">use_mutation</span><span class="p">(</span><span class="n">add_item</span><span class="p">,</span> <span class="n">refetch</span><span class="o">=</span><span class="n">get_items</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">item_mutation</span><span class="o">.</span><span class="n">loading</span><span class="p">:</span>
+        <span class="n">mutation_status</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">h2</span><span class="p">(</span><span class="s2">&quot;Adding...&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">item_mutation</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+        <span class="n">mutation_status</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">h2</span><span class="p">(</span><span class="s2">&quot;Error when adding!&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mutation_status</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">submit_event</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Enter&quot;</span><span class="p">:</span>
+            <span class="n">item_mutation</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s2">&quot;Add an item:&quot;</span><span class="p">),</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">input</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;onKeyDown&quot;</span><span class="p">:</span> <span class="n">submit_event</span><span class="p">}),</span>
+        <span class="n">mutation_status</span><span class="p">,</span>
+        <span class="n">rendered_items</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+</details>
+<details class="question">
+<summary>Can I make ORM calls without hooks?</summary>
+<p>Due to Django's ORM design, database queries must be deferred using hooks. Otherwise, you will see a <code>SynchronousOnlyOperation</code> exception.</p>
+<p>This may be resolved in a future version of Django with a natively asynchronous ORM.</p>
+<p>However, even when resolved it is best practice to perform ORM queries within the <code>use_query</code> in order to handle <code>loading</code> and <code>error</code> states.</p>
+</details>
+<details class="question">
+<summary>What is an "ORM"?</summary>
+<p>A Python <strong>Object Relational Mapper</strong> is an API for your code to access a database.</p>
+<p>See the <a href="https://docs.djangoproject.com/en/dev/topics/db/queries/">Django ORM documentation</a> for more information.</p>
 </details>
 <h2 id="use-websocket">Use Websocket<a class="headerlink" href="#use-websocket" title="Permanent link">&para;</a></h2>
 <p>You can fetch the Django Channels websocket at any time by using <code>use_websocket</code>.</p>
@@ -790,7 +937,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 13, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 15, 2022</span>
       
     
   </small>
@@ -800,10 +947,11 @@
 
 
 
-              
-            </article>
-            
-          </div>
+                
+              </article>
+            </div>
+          
+          
         </div>
         
           <a href="#" class="md-top md-icon" data-md-component="top" hidden>
@@ -874,7 +1022,7 @@
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.2ab50757.min.js"></script>
+      <script src="../../assets/javascripts/bundle.48f2be22.min.js"></script>
       
     
   </body>
