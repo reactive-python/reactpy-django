@@ -27,7 +27,7 @@ def view_to_component(
     request: HttpRequest | None = None,
     args: Iterable = (),
     kwargs: Dict | None = None,
-) -> VdomDict | None :
+) -> VdomDict | None:
     """Converts a Django view to an IDOM component.
 
     Args:
