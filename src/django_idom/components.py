@@ -88,21 +88,20 @@ def view_to_component(
 
         # Render Check 3: Async class view
         elif getattr(view, "view_is_async", False):
-            async_cbv = view.as_view()
-            async_view = await async_cbv(request_obj, *args, **kwargs)
-            if getattr(async_view, "render", None):
-                render = await async_view.render()
-            else:
-                render = async_view
+            view_or_template_view = await view.as_view()(request_obj, *args, **kwargs)
+            if getattr(view_or_template_view, "render", None):  # TemplateView
+                render = await view_or_template_view.render()
+            else:  # View
+                render = view_or_template_view
 
         # Render Check 4: Sync class view
         elif getattr(view, "as_view", None):
             async_cbv = database_sync_to_async(view.as_view())
-            async_view = await async_cbv(request_obj, *args, **kwargs)
-            if getattr(async_view, "render", None):
-                render = await database_sync_to_async(async_view.render)()
-            else:
-                render = async_view
+            view_or_template_view = await async_cbv(request_obj, *args, **kwargs)
+            if getattr(view_or_template_view, "render", None):  # TemplateView
+                render = await database_sync_to_async(view_or_template_view.render)()
+            else:  # View
+                render = view_or_template_view
 
         # Render Check 5: Sync function view
         else:
