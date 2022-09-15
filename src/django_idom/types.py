@@ -48,6 +48,6 @@ class Mutation(Generic[_Params]):
 
 @dataclass
 class ViewComponentIframe:
-    view: Union[View, Callable]
+    view: View | Callable
     args: Iterable
     kwargs: dict

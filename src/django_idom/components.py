@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import os
 from inspect import iscoroutinefunction
-from typing import Any, Callable, Dict, Iterable, Union
+from typing import Any, Callable, Dict, Iterable
 
 from channels.db import database_sync_to_async
 from django.contrib.staticfiles.finders import find
@@ -18,14 +20,14 @@ from django_idom.types import ViewComponentIframe
 # Form events will probably be accomplished through the upcoming DjangoForm.
 @component
 def view_to_component(
-    view: Union[Callable, View],
+    view: Callable | View,
     compatibility: bool = False,
     transforms: Iterable[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-    request: Union[HttpRequest, None] = None,
+    request: HttpRequest | None = None,
     args: Iterable = (),
-    kwargs: Union[Dict, None] = None,
-) -> Union[VdomDict, None]:
+    kwargs: Dict | None = None,
+) -> VdomDict | None :
     """Converts a Django view to an IDOM component.
 
     Args:
