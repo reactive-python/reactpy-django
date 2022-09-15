@@ -31,16 +31,9 @@ def auth_required(
 
             if getattr(websocket.scope["user"], auth_attribute):
                 return component(*args, **kwargs)
-
-            if callable(fallback):
-                return fallback(*args, **kwargs)
-            return fallback
+            return fallback(*args, **kwargs) if callable(fallback) else fallback
 
         return _wrapped_func
 
-    # Return for @authenticated(...)
-    if component is None:
-        return decorator
-
-    # Return for @authenticated
-    return decorator(component)
+    # Return for @authenticated(...) and @authenticated respectively
+    return decorator if component is None else decorator(component)
