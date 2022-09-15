@@ -45,23 +45,51 @@ def view_to_component(
         kwargs: The keyword arguments to pass to the view.
     """
     kwargs = kwargs or {}
-
-    # Return the view if it's been rendered via the `async_renderer`
     rendered_view, set_rendered_view = hooks.use_state(None)
-    if rendered_view:
-        return utils.html_to_vdom(
-            rendered_view.content.decode("utf-8").strip(),
-            *transforms,
-            strict=strict_parsing,
-        )
 
-    # Create a synthetic request object.
-    request_obj = request
-    if not request:
-        request_obj = HttpRequest()
-        request_obj.method = "GET"
+    # Asynchronous view rendering via hooks
+    @hooks.use_effect
+    async def async_renderer():
+        """Render the view in an async hook to avoid blocking the main thread."""
+        # Avoid re-rendering the view
+        if rendered_view or compatibility:
+            return
 
-    # Render Check 1: Compatibility mode
+        # Create a synthetic request object.
+        request_obj = request
+        if not request:
+            request_obj = HttpRequest()
+            request_obj.method = "GET"
+
+        # Render Check 1: Async function view
+        if iscoroutinefunction(view):
+            render = await view(request_obj, *args, **kwargs)
+
+        # Render Check 2: Async class view
+        elif getattr(view, "view_is_async", False):
+            async_cbv = view.as_view()
+            async_view = await async_cbv(request_obj, *args, **kwargs)
+            if getattr(async_view, "render", None):
+                render = await async_view.render()
+            else:
+                render = async_view
+
+        # Render Check 3: Sync class view
+        elif getattr(view, "as_view", None):
+            async_cbv = database_sync_to_async(view.as_view())
+            async_view = await async_cbv(request_obj, *args, **kwargs)
+            if getattr(async_view, "render", None):
+                render = await database_sync_to_async(async_view.render)()
+            else:
+                render = async_view
+
+        # Render Check 4: Sync function view
+        else:
+            render = await database_sync_to_async(view)(request_obj, *args, **kwargs)
+
+        set_rendered_view(render)
+
+    # Render Check 5: Compatibility mode
     if compatibility:
         dotted_path = f"{view.__module__}.{view.__name__}"  # type: ignore
         dotted_path = dotted_path.replace("<", "").replace(">", "")
@@ -78,41 +106,15 @@ def view_to_component(
             }
         )
 
-    # Asynchronous view rendering via hooks
-    @hooks.use_effect(dependencies=[rendered_view])
-    async def async_renderer():
-        """Render the view in an async hook to avoid blocking the main thread."""
-        if rendered_view:
-            return
+    # Return the view if it's been rendered via the `async_renderer` hook
+    if rendered_view:
+        return utils.html_to_vdom(
+            rendered_view.content.decode("utf-8").strip(),
+            *transforms,
+            strict=strict_parsing,
+        )
 
-        # Render Check 2: Async function view
-        if iscoroutinefunction(view):
-            render = await view(request_obj, *args, **kwargs)
-
-        # Render Check 3: Async class view
-        elif getattr(view, "view_is_async", False):
-            async_cbv = view.as_view()
-            async_view = await async_cbv(request_obj, *args, **kwargs)
-            if getattr(async_view, "render", None):
-                render = await async_view.render()
-            else:
-                render = async_view
-
-        # Render Check 4: Sync class view
-        elif getattr(view, "as_view", None):
-            async_cbv = database_sync_to_async(view.as_view())
-            async_view = await async_cbv(request_obj, *args, **kwargs)
-            if getattr(async_view, "render", None):
-                render = await database_sync_to_async(async_view.render)()
-            else:
-                render = async_view
-
-        # Render Check 5: Sync function view
-        else:
-            render = await database_sync_to_async(view)(request_obj, *args, **kwargs)
-
-        set_rendered_view(render)
-
+    # No view has been rendered by the `async_renderer` hook yet
     return None
 
 
