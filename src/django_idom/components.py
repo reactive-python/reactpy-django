@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 from inspect import iscoroutinefunction
 from typing import Any, Callable, Dict, Iterable
@@ -46,20 +47,23 @@ def view_to_component(
     """
     kwargs = kwargs or {}
     rendered_view, set_rendered_view = hooks.use_state(None)
+    request_obj = request
+    if not request:
+        request_obj = HttpRequest()
+        request_obj.method = "GET"
 
-    # Asynchronous view rendering via hooks
-    @hooks.use_effect(dependencies=[request, args, kwargs])
+    # Render the view render within a hook
+    @hooks.use_effect(
+        dependencies=[
+            json.dumps(vars(request_obj), default=lambda _: None),
+            json.dumps([args, kwargs], default=lambda _: None),
+        ]
+    )
     async def async_renderer():
         """Render the view in an async hook to avoid blocking the main thread."""
         # Avoid re-rendering the view
         if rendered_view or compatibility:
             return
-
-        # Create a synthetic request object.
-        request_obj = request
-        if not request:
-            request_obj = HttpRequest()
-            request_obj.method = "GET"
 
         # Render Check 1: Async function view
         if iscoroutinefunction(view):
