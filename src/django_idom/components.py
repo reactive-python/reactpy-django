@@ -114,7 +114,7 @@ def view_to_component(
         )
 
     # Return the view if it's been rendered via the `async_renderer` hook
-    return rendered_view or None
+    return rendered_view
 
 
 @component
