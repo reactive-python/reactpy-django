@@ -16,7 +16,7 @@
     "rollup-plugin-replace": "^2.2.0"
   },
   "dependencies": {
-    "idom-client-react": "^0.37.2",
+    "idom-client-react": "^0.40.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   }

@@ -1,6 +1,8 @@
 import idom
+from test_app.models import TodoItem
 
 import django_idom
+from django_idom.hooks import use_mutation, use_query
 
 
 @idom.component
@@ -127,4 +129,97 @@ def authorized_user():
         {"id": "authorized-user"},
         "authorized_user: Success",
         idom.html.hr(),
+    )
+
+
+def get_items_query():
+    return TodoItem.objects.all()
+
+
+def add_item_mutation(text: str):
+    existing = TodoItem.objects.filter(text=text).first()
+    if existing:
+        if existing.done:
+            existing.done = False
+            existing.save()
+        else:
+            return False
+    else:
+        TodoItem(text=text, done=False).save()
+
+
+def toggle_item_mutation(item: TodoItem):
+    item.done = not item.done
+    item.save()
+
+
+@idom.component
+def todo_list():
+    input_value, set_input_value = idom.use_state("")
+    items = use_query(get_items_query)
+    toggle_item = use_mutation(toggle_item_mutation, refetch=get_items_query)
+
+    if items.error:
+        rendered_items = idom.html.h2(f"Error when loading - {items.error}")
+    elif items.data is None:
+        rendered_items = idom.html.h2("Loading...")
+    else:
+        rendered_items = idom.html._(
+            idom.html.h3("Not Done"),
+            _render_items([i for i in items.data if not i.done], toggle_item),
+            idom.html.h3("Done"),
+            _render_items([i for i in items.data if i.done], toggle_item),
+        )
+
+    add_item = use_mutation(add_item_mutation, refetch=get_items_query)
+
+    if add_item.loading:
+        mutation_status = idom.html.h2("Working...")
+    elif add_item.error:
+        mutation_status = idom.html.h2(f"Error when adding - {add_item.error}")
+    else:
+        mutation_status = ""
+
+    def on_submit(event):
+        if event["key"] == "Enter":
+            add_item.execute(text=event["target"]["value"])
+            set_input_value("")
+
+    def on_change(event):
+        set_input_value(event["target"]["value"])
+
+    return idom.html.div(
+        idom.html.label("Add an item:"),
+        idom.html.input(
+            {
+                "type": "text",
+                "id": "todo-input",
+                "value": input_value,
+                "onKeyPress": on_submit,
+                "onChange": on_change,
+            }
+        ),
+        mutation_status,
+        rendered_items,
+    )
+
+
+def _render_items(items, toggle_item):
+    return idom.html.ul(
+        [
+            idom.html.li(
+                {"id": f"todo-item-{item.text}"},
+                item.text,
+                idom.html.input(
+                    {
+                        "id": f"todo-item-{item.text}-checkbox",
+                        "type": "checkbox",
+                        "checked": item.done,
+                        "onChange": lambda event, i=item: toggle_item.execute(i),
+                    }
+                ),
+                key=item.text,
+            )
+            for item in items
+        ]
     )

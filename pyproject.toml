@@ -12,7 +12,7 @@ line_length = 88
 lines_after_imports = 2
 
 [tool.mypy]
-ignore_missing_imports = "True"
-warn_unused_configs = "True"
-warn_redundant_casts = "True"
-warn_unused_ignores = "True"
+ignore_missing_imports = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
