@@ -65,7 +65,7 @@ def view_to_component(
         """Render the view in an async hook to avoid blocking the main thread."""
         # Render Check 1: Compatibility mode
         if compatibility:
-            dotted_path = f"{view.__module__}.{view.__name__}"  # type: ignore
+            dotted_path = f"{view.__module__}.{view.__name__}"
             dotted_path = dotted_path.replace("<", "").replace(">", "")
             IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
                 view, args, kwargs
