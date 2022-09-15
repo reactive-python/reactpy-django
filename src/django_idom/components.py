@@ -48,7 +48,7 @@ def view_to_component(
     rendered_view, set_rendered_view = hooks.use_state(None)
 
     # Asynchronous view rendering via hooks
-    @hooks.use_effect
+    @hooks.use_effect(dependencies=[request, args, kwargs])
     async def async_renderer():
         """Render the view in an async hook to avoid blocking the main thread."""
         # Avoid re-rendering the view
@@ -87,7 +87,14 @@ def view_to_component(
         else:
             render = await database_sync_to_async(view)(request_obj, *args, **kwargs)
 
-        set_rendered_view(render)
+        # Signal that the view has been rendered
+        set_rendered_view(
+            utils.html_to_vdom(
+                render.content.decode("utf-8").strip(),
+                *transforms,
+                strict=strict_parsing,
+            )
+        )
 
     # Render Check 5: Compatibility mode
     if compatibility:
@@ -107,15 +114,7 @@ def view_to_component(
         )
 
     # Return the view if it's been rendered via the `async_renderer` hook
-    if rendered_view:
-        return utils.html_to_vdom(
-            rendered_view.content.decode("utf-8").strip(),
-            *transforms,
-            strict=strict_parsing,
-        )
-
-    # No view has been rendered by the `async_renderer` hook yet
-    return None
+    return rendered_view or None
 
 
 @component
