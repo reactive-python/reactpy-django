@@ -3,15 +3,10 @@ import sys
 from unittest import SkipTest
 
 from channels.testing import ChannelsLiveServerTestCase
-from django.test import TransactionTestCase
 from playwright.sync_api import TimeoutError, sync_playwright
 
 
-class TestIdomCapabilities(
-    ChannelsLiveServerTestCase,
-    # using the normal TestCase caused the database to lock up after tests
-    TransactionTestCase,
-):
+class TestIdomCapabilities(ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         if sys.platform == "win32":
