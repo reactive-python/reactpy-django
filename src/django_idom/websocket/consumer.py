@@ -5,6 +5,7 @@ import logging
 from typing import Any
 from urllib.parse import parse_qsl
 
+from channels.auth import login
 from channels.db import database_sync_to_async as convert_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from idom.core.layout import Layout, LayoutEvent
@@ -22,9 +23,6 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
     """Communicates with the browser to perform actions on-demand."""
 
     async def connect(self) -> None:
-        # this triggers AppRegistryNotReady exception in manage.py if at root level
-        from channels.auth import login
-
         await super().connect()
 
         user = self.scope.get("user")
