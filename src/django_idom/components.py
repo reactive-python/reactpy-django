@@ -15,6 +15,7 @@ from idom.types import VdomDict
 
 from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
 from django_idom.types import ViewComponentIframe
+from django_idom.utils import _generate_obj_name
 
 
 # TODO: Might want to intercept href clicks and form submit events.
@@ -55,8 +56,8 @@ def view_to_component(
     # Render the view render within a hook
     @hooks.use_effect(
         dependencies=[
-            json.dumps(vars(request_obj), default=lambda _: None),
-            json.dumps([args, kwargs], default=lambda _: None),
+            json.dumps(vars(request_obj), default=lambda x: _generate_obj_name(x)),
+            json.dumps([args, kwargs], default=lambda x: _generate_obj_name(x)),
         ]
     )
     async def async_renderer():
