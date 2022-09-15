@@ -141,6 +141,27 @@ def authorized_user():
     )
 
 
+def get_items_query():
+    return TodoItem.objects.all()
+
+
+def add_item_mutation(text: str):
+    existing = TodoItem.objects.filter(text=text).first()
+    if existing:
+        if existing.done:
+            existing.done = False
+            existing.save()
+        else:
+            return False
+    else:
+        TodoItem(text=text, done=False).save()
+
+
+def toggle_item_mutation(item: TodoItem):
+    item.done = not item.done
+    item.save()
+
+
 @component
 def todo_list():
     input_value, set_input_value = hooks.use_state("")
@@ -212,27 +233,6 @@ def _render_items(items, toggle_item):
             for item in items
         ]
     )
-
-
-def get_items_query():
-    return TodoItem.objects.all()
-
-
-def add_item_mutation(text: str):
-    existing = TodoItem.objects.filter(text=text).first()
-    if existing:
-        if existing.done:
-            existing.done = False
-            existing.save()
-        else:
-            return False
-    else:
-        TodoItem(text=text, done=False).save()
-
-
-def toggle_item_mutation(item: TodoItem):
-    item.done = not item.done
-    item.save()
 
 
 @component
