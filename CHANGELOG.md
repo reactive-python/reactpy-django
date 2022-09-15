@@ -29,6 +29,10 @@ Using the following categories, list your changes in this order:
 -   `use_mutation` hook for modifying database values.
 -   `view_to_component` utility to convert legacy Django views to IDOM components.
 
+### Changed
+
+-   Bumped the minimum IDOM version to 0.40.2
+
 ## [1.1.0] - 2022-07-01
 
 ### Added
