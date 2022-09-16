@@ -6,7 +6,7 @@ import os
 import re
 from fnmatch import fnmatch
 from importlib import import_module
-from typing import Any, Callable
+from typing import Callable
 
 from django.template import engines
 from django.utils.encoding import smart_str
