@@ -13,7 +13,9 @@ from django.utils.encoding import smart_str
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
 
 
-COMPONENT_REGEX = re.compile(r"{% *component +((\"[^\"']*\")|('[^\"']*'))(.*?)%}")
+COMPONENT_REGEX = re.compile(
+    r"{%\s*component\s*((\"[^\"']*\")|('[^\"']*'))\s*((.*?|\s*?)*)\s*%}"
+)
 _logger = logging.getLogger(__name__)
 
 

@@ -13,6 +13,14 @@ class RegexTests(TestCase):
             r"{% component 'my.component' %}",
             r'{% component "my.component" class="my_thing" %}',
             r'{% component "my.component" class="my_thing" attr="attribute" %}',
+            r"""{%
+
+                component   
+                "my.component"  
+                class="my_thing"  
+                attr="attribute"  
+
+            %}""",  # noqa: W291
         }:
             self.assertRegex(component, COMPONENT_REGEX)
 
