@@ -30,7 +30,7 @@ Using the following categories, list your changes in this order:
 
 ### Fixed
 
--   IDOM template tag parser is no longer sensitive to whitespace.
+-   IDOM preloader is no longer sensitive to whitespace within template tags.
 
 ## [1.1.0] - 2022-07-01
 
