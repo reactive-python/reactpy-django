@@ -133,13 +133,3 @@ class ComponentPreloader:
                     "\033[0m",
                     component,
                 )
-
-
-def _generate_obj_name(object: Any) -> str | None:
-    """Makes a best effort to create a name for an object."""
-    if hasattr(object, "__module__"):
-        if hasattr(object, "__name__"):
-            return f"{object.__module__}.{object.__name__}"
-        if hasattr(object, "__class__"):
-            return f"{object.__module__}.{object.__class__.__name__}"
-    return None
