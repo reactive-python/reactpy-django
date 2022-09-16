@@ -1,5 +1,7 @@
+import asyncio
 import inspect
 
+from django.http import HttpRequest
 from idom import component, hooks, html, web
 from test_app.models import TodoItem
 
@@ -318,3 +320,41 @@ def view_to_component_template_view_class_compatibility():
 @component
 def view_to_component_script():
     return view_to_component(views.view_to_component_script)
+
+
+@component
+def view_to_component_request():
+    request, set_request = hooks.use_state(None)
+
+    @hooks.use_effect
+    async def change_request():
+        await asyncio.sleep(3)
+        post_request = HttpRequest()
+        post_request.method = "POST"
+        set_request(post_request)
+
+    return view_to_component(views.view_to_component_request, request=request)
+
+
+@component
+def view_to_component_args():
+    params, set_params = hooks.use_state("false")
+
+    @hooks.use_effect
+    async def change_args():
+        await asyncio.sleep(3)
+        set_params("")
+
+    return view_to_component(views.view_to_component_args, args=[params])
+
+
+@component
+def view_to_component_kwargs():
+    params, set_params = hooks.use_state("false")
+
+    @hooks.use_effect
+    async def change_kwargs():
+        await asyncio.sleep(3)
+        set_params("")
+
+    return view_to_component(views.view_to_component_kwargs, kwargs={"success": params})

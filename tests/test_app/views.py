@@ -101,3 +101,38 @@ def view_to_component_script(request):
             "status": "false",
         },
     )
+
+
+def view_to_component_request(request):
+    if request.method == "POST":
+        return render(
+            request,
+            "view_to_component.html",
+            {"test_name": inspect.currentframe().f_code.co_name},
+        )
+
+    return render(
+        request,
+        "view_to_component.html",
+        {
+            "test_name": inspect.currentframe().f_code.co_name,
+            "status": "false",
+            "success": "false",
+        },
+    )
+
+
+def view_to_component_args(request, success):
+    return render(
+        request,
+        "view_to_component.html",
+        {"test_name": inspect.currentframe().f_code.co_name, "status": success},
+    )
+
+
+def view_to_component_kwargs(request, success="false"):
+    return render(
+        request,
+        "view_to_component.html",
+        {"test_name": inspect.currentframe().f_code.co_name, "status": success},
+    )

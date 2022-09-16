@@ -128,6 +128,15 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
     def test_view_to_component_script(self):
         self.page.locator("#view_to_component_script[data-success=true]").wait_for()
 
+    def test_view_to_component_request(self):
+        self.page.locator("#view_to_component_request[data-success=true]").wait_for()
+
+    def test_view_to_component_args(self):
+        self.page.locator("#view_to_component_args[data-success=true]").wait_for()
+
+    def test_view_to_component_kwargs(self):
+        self.page.locator("#view_to_component_kwargs[data-success=true]").wait_for()
+
     def test_view_to_component_sync_func_compatibility(self):
         self.page.frame_locator(
             "#view_to_component_sync_func_compatibility > iframe"
