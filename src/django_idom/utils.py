@@ -15,8 +15,8 @@ from django_idom.config import IDOM_REGISTERED_COMPONENTS
 
 _logger = logging.getLogger(__name__)
 _component_tag = r"component"
-_component_path = r"((\"[^\"']*\")|('[^\"']*'))"
-_component_kwargs = r"((.*?|\s*?)*)"
+_component_path = r"(?P<path>(\"[^\"'\s]*\")|('[^\"'\s]*'))"
+_component_kwargs = r"(?P<kwargs>(.*?|\s*?)*)"
 COMPONENT_REGEX = re.compile(
     r"{%\s*"
     + _component_tag
@@ -113,11 +113,14 @@ class ComponentPreloader:
         for template in templates:
             with contextlib.suppress(Exception):
                 with open(template, "r", encoding="utf-8") as template_file:
-                    match = COMPONENT_REGEX.findall(template_file.read())
-                    if not match:
+                    regex_iterable = COMPONENT_REGEX.finditer(template_file.read())
+                    if not regex_iterable:
                         continue
                     components.update(
-                        [group[0].replace('"', "").replace("'", "") for group in match]
+                        [
+                            match.groupdict()["path"].replace('"', "").replace("'", "")
+                            for match in regex_iterable
+                        ]
                     )
         if not components:
             _logger.warning(

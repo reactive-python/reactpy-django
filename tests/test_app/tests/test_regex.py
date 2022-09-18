@@ -34,5 +34,8 @@ class RegexTests(TestCase):
             r"{%%}",
             r" ",
             r"",
+            r'{% component " my.component " %}',
+            r"""{% component "my.component
+                        " %}""",
         }:
             self.assertNotRegex(fake_component, COMPONENT_REGEX)
