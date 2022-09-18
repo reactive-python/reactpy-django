@@ -15,7 +15,7 @@ from django_idom.config import IDOM_REGISTERED_COMPONENTS
 
 _logger = logging.getLogger(__name__)
 _component_tag = r"(?P<tag>component)"
-_component_path = r"(?P<path>(\"[^\"'\s]*\")|('[^\"'\s]*'))"
+_component_path = r"(?P<path>(\"[^\"'\s]+\")|('[^\"'\s]+'))"
 _component_kwargs = r"(?P<kwargs>(.*?|\s*?)*)"
 COMPONENT_REGEX = re.compile(
     r"{%\s*"
