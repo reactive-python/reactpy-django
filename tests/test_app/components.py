@@ -326,35 +326,47 @@ def view_to_component_script():
 def view_to_component_request():
     request, set_request = hooks.use_state(None)
 
-    @hooks.use_effect
-    async def change_request():
-        await asyncio.sleep(3)
+    def on_click(_):
         post_request = HttpRequest()
         post_request.method = "POST"
         set_request(post_request)
 
-    return view_to_component(views.view_to_component_request, request=request)
+    return html._(
+        html.button(
+            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},
+            "Click me",
+        ),
+        view_to_component(views.view_to_component_request, request=request),
+    )
 
 
 @component
 def view_to_component_args():
     params, set_params = hooks.use_state("false")
 
-    @hooks.use_effect
-    async def change_args():
-        await asyncio.sleep(3)
+    def on_click(_):
         set_params("")
 
-    return view_to_component(views.view_to_component_args, args=[params])
+    return html._(
+        html.button(
+            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},
+            "Click me",
+        ),
+        view_to_component(views.view_to_component_args, args=[params]),
+    )
 
 
 @component
 def view_to_component_kwargs():
     params, set_params = hooks.use_state("false")
 
-    @hooks.use_effect
-    async def change_kwargs():
-        await asyncio.sleep(3)
+    def on_click(_):
         set_params("")
 
-    return view_to_component(views.view_to_component_kwargs, kwargs={"success": params})
+    return html._(
+        html.button(
+            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},
+            "Click me",
+        ),
+        view_to_component(views.view_to_component_kwargs, kwargs={"success": params}),
+    )

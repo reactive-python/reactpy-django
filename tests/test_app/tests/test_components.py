@@ -125,17 +125,23 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
             "#ViewToComponentTemplateViewClass[data-success=true]"
         ).wait_for()
 
+    def _click_btn_and_check_success(self, name):
+        self.page.locator(f"#{name}:not([data-success=true])").wait_for()
+        btn = self.page.locator(f"#{name}_btn").wait_for()
+        btn.click()
+        self.page.locator(f"#{name}[data-success=true]").wait_for()
+
     def test_view_to_component_script(self):
-        self.page.locator("#view_to_component_script[data-success=true]").wait_for()
+        self._click_btn_and_check_success("view_to_component_script")
 
     def test_view_to_component_request(self):
-        self.page.locator("#view_to_component_request[data-success=true]").wait_for()
+        self._click_btn_and_check_success("view_to_component_request")
 
     def test_view_to_component_args(self):
-        self.page.locator("#view_to_component_args[data-success=true]").wait_for()
+        self._click_btn_and_check_success("view_to_component_args")
 
     def test_view_to_component_kwargs(self):
-        self.page.locator("#view_to_component_kwargs[data-success=true]").wait_for()
+        self._click_btn_and_check_success("view_to_component_kwargs")
 
     def test_view_to_component_sync_func_compatibility(self):
         self.page.frame_locator(
