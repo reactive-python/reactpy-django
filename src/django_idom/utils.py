@@ -114,14 +114,11 @@ class ComponentPreloader:
             with contextlib.suppress(Exception):
                 with open(template, "r", encoding="utf-8") as template_file:
                     regex_iterable = COMPONENT_REGEX.finditer(template_file.read())
-                    if not regex_iterable:
-                        continue
-                    components.update(
-                        [
-                            match.groupdict()["path"].replace('"', "").replace("'", "")
-                            for match in regex_iterable
-                        ]
-                    )
+                    component_paths = [
+                        match.group("path").replace('"', "").replace("'", "")
+                        for match in regex_iterable
+                    ]
+                    components.update(component_paths)
         if not components:
             _logger.warning(
                 "\033[93m"
