@@ -13,8 +13,19 @@ from django.utils.encoding import smart_str
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
 
 
-COMPONENT_REGEX = re.compile(r"{% *component +((\"[^\"']*\")|('[^\"']*'))(.*?)%}")
 _logger = logging.getLogger(__name__)
+_component_tag = r"(?P<tag>component)"
+_component_path = r"(?P<path>(\"[^\"'\s]+\")|('[^\"'\s]+'))"
+_component_kwargs = r"(?P<kwargs>(.*?|\s*?)*)"
+COMPONENT_REGEX = re.compile(
+    r"{%\s*"
+    + _component_tag
+    + r"\s*"
+    + _component_path
+    + r"\s*"
+    + _component_kwargs
+    + r"\s*%}"
+)
 
 
 def _register_component(full_component_name: str) -> None:
@@ -102,12 +113,12 @@ class ComponentPreloader:
         for template in templates:
             with contextlib.suppress(Exception):
                 with open(template, "r", encoding="utf-8") as template_file:
-                    match = COMPONENT_REGEX.findall(template_file.read())
-                    if not match:
-                        continue
-                    components.update(
-                        [group[0].replace('"', "").replace("'", "") for group in match]
-                    )
+                    regex_iterable = COMPONENT_REGEX.finditer(template_file.read())
+                    component_paths = [
+                        match.group("path").replace('"', "").replace("'", "")
+                        for match in regex_iterable
+                    ]
+                    components.update(component_paths)
         if not components:
             _logger.warning(
                 "\033[93m"

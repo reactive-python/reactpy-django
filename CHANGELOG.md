@@ -28,6 +28,10 @@ Using the following categories, list your changes in this order:
 -   `use_query` hook for fetching database values.
 -   `use_mutation` hook for modifying database values.
 
+### Fixed
+
+-   IDOM preloader is no longer sensitive to whitespace within template tags.
+
 ## [1.1.0] - 2022-07-01
 
 ### Added
