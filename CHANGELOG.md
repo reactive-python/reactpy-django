@@ -33,6 +33,10 @@ Using the following categories, list your changes in this order:
 
 -   Bumped the minimum IDOM version to 0.40.2
 
+### Fixed
+
+-   IDOM preloader is no longer sensitive to whitespace within template tags.
+
 ## [1.1.0] - 2022-07-01
 
 ### Added
