@@ -1,4 +1,3 @@
-import asyncio
 import inspect
 
 from django.http import HttpRequest
