@@ -243,7 +243,7 @@
   
     <li class="md-tabs__item">
       <a href="../../features/components/" class="md-tabs__link">
-        Exclusive Features
+        Usage
       </a>
     </li>
   
@@ -476,14 +476,14 @@
       
       
         <label class="md-nav__link" for="__nav_4">
-          Exclusive Features
+          Usage
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Exclusive Features" data-md-level="1">
+      <nav class="md-nav" aria-label="Usage" data-md-level="1">
         <label class="md-nav__title" for="__nav_4">
           <span class="md-nav__icon md-icon"></span>
-          Exclusive Features
+          Usage
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -689,16 +689,20 @@
 <p>This repo uses <a href="https://nox.thea.codes/en/stable/">Nox</a> to run scripts which can be found in <code>noxfile.py</code>. For a full test of available scripts run <code>nox -l</code>. To run the full test suite simple execute:</p>
 <div class="highlight"><pre><span></span><code>nox -s test
 </code></pre></div>
-<p>If you want to run the tests in the background (headless):</p>
-<div class="highlight"><pre><span></span><code>nox -s test -- --headless
+<p>If you do not want to run the tests in the background:</p>
+<div class="highlight"><pre><span></span><code>nox -s test -- --headed
 </code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Most tests will not run on Windows</p>
+<p>Due to <a href="https://github.com/django/channels/issues/1207">bugs within Django Channels</a>, functional tests are not run on Windows. In order for Windows users to test Django-IDOM functionality, you will need to run tests via <a href="https://code.visualstudio.com/docs/remote/wsl">Windows Subsystem for Linux</a>.</p>
+</div>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">May 31, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 20, 2022</span>
       
     
   </small>

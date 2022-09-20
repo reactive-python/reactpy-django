@@ -248,7 +248,7 @@
   
     <li class="md-tabs__item">
       <a href="../features/components/" class="md-tabs__link">
-        Exclusive Features
+        Usage
       </a>
     </li>
   
@@ -483,14 +483,14 @@
       
       
         <label class="md-nav__link" for="__nav_4">
-          Exclusive Features
+          Usage
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Exclusive Features" data-md-level="1">
+      <nav class="md-nav" aria-label="Usage" data-md-level="1">
         <label class="md-nav__title" for="__nav_4">
           <span class="md-nav__icon md-icon"></span>
-          Exclusive Features
+          Usage
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -699,6 +699,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#fixed" class="md-nav__link">
     Fixed
   </a>
@@ -726,7 +733,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#changed" class="md-nav__link">
+  <a href="#changed_1" class="md-nav__link">
     Changed
   </a>
   
@@ -753,7 +760,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#changed_1" class="md-nav__link">
+  <a href="#changed_2" class="md-nav__link">
     Changed
   </a>
   
@@ -780,7 +787,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#changed_2" class="md-nav__link">
+  <a href="#changed_3" class="md-nav__link">
     Changed
   </a>
   
@@ -807,7 +814,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#changed_3" class="md-nav__link">
+  <a href="#changed_4" class="md-nav__link">
     Changed
   </a>
   
@@ -827,7 +834,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#changed_4" class="md-nav__link">
+  <a href="#changed_5" class="md-nav__link">
     Changed
   </a>
   
@@ -854,7 +861,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#changed_5" class="md-nav__link">
+  <a href="#changed_6" class="md-nav__link">
     Changed
   </a>
   
@@ -937,19 +944,24 @@
   <h1>Changelog</h1>
 
 <div class="admonition note">
-<p class="admonition-title">Attribution<!-- BEGIN INCLUDE ../../CHANGELOG.md '&lt;!--attr-start--&gt;' '&lt;!--attr-end--&gt;' -->
+<p class="admonition-title">Attribution<!-- BEGIN INCLUDE ../../../CHANGELOG.md '&lt;!--attr-start--&gt;' '&lt;!--attr-end--&gt;' -->
 <p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>, and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
 <!-- END INCLUDE -->
 </p>
 </div>
-<!-- BEGIN INCLUDE ../../CHANGELOG.md '&lt;!--changelog-start--&gt;' '' -->
+<!-- BEGIN INCLUDE ../../../CHANGELOG.md '&lt;!--changelog-start--&gt;' '' -->
 
 <h2 id="unreleased"><a href="https://github.com/idom-team/django-idom/compare/1.0.0...HEAD">Unreleased</a><a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
 <h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>auth_required</code> decorator to prevent your components from rendered to unauthenticated users.</li>
+<li><code>auth_required</code> decorator to prevent your components from rendering to unauthenticated users.</li>
 <li><code>use_query</code> hook for fetching database values.</li>
 <li><code>use_mutation</code> hook for modifying database values.</li>
+<li><code>view_to_component</code> utility to convert legacy Django views to IDOM components.</li>
+</ul>
+<h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Bumped the minimum IDOM version to 0.40.2</li>
 </ul>
 <h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
 <ul>
@@ -960,7 +972,7 @@
 <ul>
 <li><code>django_css</code> and <code>django_js</code> components to defer loading CSS &amp; JS files until needed.</li>
 </ul>
-<h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
+<h3 id="changed_1">Changed<a class="headerlink" href="#changed_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Bumped the minimum IDOM version to 0.39.0</li>
 </ul>
@@ -971,7 +983,7 @@
 <li>Documentation has been placed into a formal docs webpage.</li>
 <li>Logging for when a component fails to import, or if no components were found within Django.</li>
 </ul>
-<h3 id="changed_1">Changed<a class="headerlink" href="#changed_1" title="Permanent link">&para;</a></h3>
+<h3 id="changed_2">Changed<a class="headerlink" href="#changed_2" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>idom_component</code> template tag has been renamed to <code>component</code></li>
 <li>Bumped the minimum IDOM version to 0.38.0</li>
@@ -981,7 +993,7 @@
 <li><code>websocket</code> parameter for components has been removed. Functionally, it is replaced with <code>django_idom.hooks.use_websocket</code>.</li>
 </ul>
 <h2 id="005-2022-04-04"><a href="https://github.com/idom-team/django-idom/compare/0.0.4...0.0.5">0.0.5</a> - 2022-04-04<a class="headerlink" href="#005-2022-04-04" title="Permanent link">&para;</a></h2>
-<h3 id="changed_2">Changed<a class="headerlink" href="#changed_2" title="Permanent link">&para;</a></h3>
+<h3 id="changed_3">Changed<a class="headerlink" href="#changed_3" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Bumped the minimum IDOM version to 0.37.2</li>
 </ul>
@@ -990,12 +1002,12 @@
 <li>ModuleNotFoundError: No module named <code>idom.core.proto</code> caused by IDOM 0.37.2</li>
 </ul>
 <h2 id="004-2022-03-05"><a href="https://github.com/idom-team/django-idom/compare/0.0.3...0.0.4">0.0.4</a> - 2022-03-05<a class="headerlink" href="#004-2022-03-05" title="Permanent link">&para;</a></h2>
-<h3 id="changed_3">Changed<a class="headerlink" href="#changed_3" title="Permanent link">&para;</a></h3>
+<h3 id="changed_4">Changed<a class="headerlink" href="#changed_4" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Bumped the minimum IDOM version to 0.37.1</li>
 </ul>
 <h2 id="003-2022-02-19"><a href="https://github.com/idom-team/django-idom/compare/0.0.2...0.0.3">0.0.3</a> - 2022-02-19<a class="headerlink" href="#003-2022-02-19" title="Permanent link">&para;</a></h2>
-<h3 id="changed_4">Changed<a class="headerlink" href="#changed_4" title="Permanent link">&para;</a></h3>
+<h3 id="changed_5">Changed<a class="headerlink" href="#changed_5" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Bumped the minimum IDOM version to 0.36.3</li>
 </ul>
@@ -1008,7 +1020,7 @@
 <li>Automatic pre-population of the IDOM component registry</li>
 <li>Type hinting for <code>IdomWebsocket</code></li>
 </ul>
-<h3 id="changed_5">Changed<a class="headerlink" href="#changed_5" title="Permanent link">&para;</a></h3>
+<h3 id="changed_6">Changed<a class="headerlink" href="#changed_6" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Fetching web modules from disk and/or cache is now fully async</li>
 <li>Static files are now contained within a <code>django_idom/</code> parent folder</li>
@@ -1043,7 +1055,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">May 31, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 20, 2022</span>
       
     
   </small>
