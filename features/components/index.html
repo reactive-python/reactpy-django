@@ -783,7 +783,7 @@
 <tr>
 <td>compatibility</td>
 <td><code>bool</code></td>
-<td>If True, the component will be rendered in an iframe. Strict parsing does not apply to compatibility mode.</td>
+<td>If True, the component will be rendered in an iframe. When using compatibility mode <code>tranforms</code>, <code>strict_parsing</code>, and <code>request</code> arguments will be ignored.</td>
 <td><code>False</code></td>
 </tr>
 <tr>
@@ -801,7 +801,7 @@
 <tr>
 <td>request</td>
 <td><code>HttpRequest | None</code></td>
-<td>Request object to provide to the view. Custom request objects cannot be used in compatibility mode.</td>
+<td>Request object to provide to the view.</td>
 <td><code>None</code></td>
 </tr>
 <tr>
@@ -905,7 +905,7 @@
 <details class="question">
 <summary>What is <code>compatibility</code> mode?</summary>
 <p>For views that rely on HTTP responses other than <code>GET</code> (such as <code>PUT</code>, <code>POST</code>, <code>PATCH</code>, etc), you should consider using compatibility mode to render your view within an iframe.</p>
-<p>Any view can be rendered within compatibility mode. However, the <code>strict_parsing</code> argument does not apply to compatibility mode.</p>
+<p>Any view can be rendered within compatibility mode. However, the <code>transforms</code>, <code>strict_parsing</code>, and <code>request</code> arguments do not apply to compatibility mode.</p>
 <p>Please note that by default the iframe is unstyled, and thus won't look pretty until you add some CSS.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">components.py</label><label for="__tabbed_4_2">views.py</label></div>
 <div class="tabbed-content">
