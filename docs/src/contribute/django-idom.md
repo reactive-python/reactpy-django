@@ -7,7 +7,6 @@ If you plan to make code changes to this repository, you'll need to install the 
 -   [Python 3.8+](https://www.python.org/downloads/)
 -   [Git](https://git-scm.com/downloads)
 -   [NPM](https://docs.npmjs.com/try-the-latest-stable-version-of-npm) for installing and managing Javascript
--   [ChromeDriver](https://chromedriver.chromium.org/downloads) for testing with [Selenium](https://www.seleniumhq.org/)
 
 Once done, you should clone this repository:
 

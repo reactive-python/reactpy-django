@@ -27,10 +27,10 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
     | view | `Callable | View` | The view function or class to convert. | N/A |
-    | compatibility | `bool` | If True, the component will be rendered in an iframe. Strict parsing does not apply to compatibility mode. | `False` |
+    | compatibility | `bool` | If True, the component will be rendered in an iframe. When using compatibility mode `tranforms`, `strict_parsing`, and `request` arguments will be ignored. | `False` |
     | transforms | `Iterable[Callable[[VdomDict], Any]]` | A list of functions that transforms the newly generated VDOM. The functions will be called on each VDOM node. | `tuple` |
     | strict_parsing | `bool` | If True, an exception will be generated if the HTML does not perfectly adhere to HTML5. | `True` |
-    | request | `HttpRequest | None` | Request object to provide to the view. Custom request objects cannot be used in compatibility mode. | `None` |
+    | request | `HttpRequest | None` | Request object to provide to the view. | `None` |
     | args | `Iterable` | The positional arguments to pass to the view. | `tuple` |
     | kwargs | `Dict | None` | The keyword arguments to pass to the view. | `None` |
 
@@ -93,7 +93,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
     For views that rely on HTTP responses other than `GET` (such as `PUT`, `POST`, `PATCH`, etc), you should consider using compatibility mode to render your view within an iframe.
 
-    Any view can be rendered within compatibility mode. However, the `strict_parsing` argument does not apply to compatibility mode.
+    Any view can be rendered within compatibility mode. However, the `transforms`, `strict_parsing`, and `request` arguments do not apply to compatibility mode.
 
     Please note that by default the iframe is unstyled, and thus won't look pretty until you add some CSS.
 
