@@ -1,0 +1,16 @@
+{% extends "view_to_component.html" %}
+
+{% block top %}
+<button id="{{ test_name }}_btn">Click me</button>
+{% endblock %}
+
+{% block bottom %}
+<script>
+    let el = document.body.querySelector("#view_to_component_script_btn");
+    el.addEventListener("click", function () {
+        let el = document.body.querySelector("#view_to_component_script");
+        el.textContent = "view_to_component_script: Success";
+        el.dataset.success = "true"
+    });
+</script>
+{% endblock %}

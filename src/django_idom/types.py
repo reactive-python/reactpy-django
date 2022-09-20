@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Awaitable, Callable, Generic, Optional, TypeVar, Union
+from typing import Any, Awaitable, Callable, Generic, Iterable, Optional, TypeVar, Union
 
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
+from django.views.generic import View
 from typing_extensions import ParamSpec
 
 
@@ -43,3 +44,10 @@ class Mutation(Generic[_Params]):
     loading: bool
     error: Exception | None
     reset: Callable[[], None]
+
+
+@dataclass
+class ViewComponentIframe:
+    view: View | Callable
+    args: Iterable
+    kwargs: dict

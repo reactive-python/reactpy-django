@@ -24,9 +24,14 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
--   `auth_required` decorator to prevent your components from rendered to unauthenticated users.
+-   `auth_required` decorator to prevent your components from rendering to unauthenticated users.
 -   `use_query` hook for fetching database values.
 -   `use_mutation` hook for modifying database values.
+-   `view_to_component` utility to convert legacy Django views to IDOM components.
+
+### Changed
+
+-   Bumped the minimum IDOM version to 0.40.2
 
 ### Fixed
 

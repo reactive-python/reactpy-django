@@ -6,6 +6,7 @@ import os
 import re
 from fnmatch import fnmatch
 from importlib import import_module
+from typing import Callable
 
 from django.template import engines
 from django.utils.encoding import smart_str
@@ -28,11 +29,17 @@ COMPONENT_REGEX = re.compile(
 )
 
 
-def _register_component(full_component_name: str) -> None:
-    if full_component_name in IDOM_REGISTERED_COMPONENTS:
+def _register_component(dotted_path: str) -> None:
+    if dotted_path in IDOM_REGISTERED_COMPONENTS:
         return
 
-    module_name, component_name = full_component_name.rsplit(".", 1)
+    IDOM_REGISTERED_COMPONENTS[dotted_path] = _import_dotted_path(dotted_path)
+    _logger.debug("IDOM has registered component %s", dotted_path)
+
+
+def _import_dotted_path(dotted_path: str) -> Callable:
+    """Imports a dotted path and returns the callable."""
+    module_name, component_name = dotted_path.rsplit(".", 1)
 
     try:
         module = import_module(module_name)
@@ -41,15 +48,7 @@ def _register_component(full_component_name: str) -> None:
             f"Failed to import {module_name!r} while loading {component_name!r}"
         ) from error
 
-    try:
-        component = getattr(module, component_name)
-    except AttributeError as error:
-        raise RuntimeError(
-            f"Module {module_name!r} has no component named {component_name!r}"
-        ) from error
-
-    IDOM_REGISTERED_COMPONENTS[full_component_name] = component
-    _logger.debug("IDOM has registered component %s", full_component_name)
+    return getattr(module, component_name)
 
 
 class ComponentPreloader:

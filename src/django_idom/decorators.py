@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from functools import wraps
-from typing import Callable, Union
+from typing import Callable
 
 from idom.core.types import ComponentType, VdomDict
 
@@ -7,9 +9,9 @@ from django_idom.hooks import use_websocket
 
 
 def auth_required(
-    component: Union[Callable, None] = None,
+    component: Callable | None = None,
     auth_attribute: str = "is_active",
-    fallback: Union[ComponentType, VdomDict, None] = None,
+    fallback: ComponentType | VdomDict | None = None,
 ) -> Callable:
     """If the user passes authentication criteria, the decorated component will be rendered.
     Otherwise, the fallback component will be rendered.
@@ -29,16 +31,9 @@ def auth_required(
 
             if getattr(websocket.scope["user"], auth_attribute):
                 return component(*args, **kwargs)
-
-            if callable(fallback):
-                return fallback(*args, **kwargs)
-            return fallback
+            return fallback(*args, **kwargs) if callable(fallback) else fallback
 
         return _wrapped_func
 
-    # Return for @authenticated(...)
-    if component is None:
-        return decorator
-
-    # Return for @authenticated
-    return decorator(component)
+    # Return for @authenticated(...) and @authenticated respectively
+    return decorator if component is None else decorator(component)

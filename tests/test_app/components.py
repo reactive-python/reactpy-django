@@ -1,134 +1,144 @@
-import idom
+import inspect
+
+from django.http import HttpRequest
+from idom import component, hooks, html, web
 from test_app.models import TodoItem
 
 import django_idom
+from django_idom.components import view_to_component
 from django_idom.hooks import use_mutation, use_query
 
+from . import views
 
-@idom.component
+
+@component
 def hello_world():
-    return idom.html.h1({"id": "hello-world"}, "Hello World!")
+    return html._(html.h1({"id": "hello-world"}, "Hello World!"), html.hr())
 
 
-@idom.component
+@component
 def button():
-    count, set_count = idom.hooks.use_state(0)
-    return idom.html.div(
-        idom.html.button(
-            {"id": "counter-inc", "onClick": lambda event: set_count(count + 1)},
-            "Click me!",
+    count, set_count = hooks.use_state(0)
+    return html._(
+        html.div(
+            html.button(
+                {"id": "counter-inc", "onClick": lambda event: set_count(count + 1)},
+                "Click me!",
+            ),
+            html.p(
+                {"id": "counter-num", "data-count": count},
+                f"Current count is: {count}",
+            ),
         ),
-        idom.html.p(
-            {"id": "counter-num", "data-count": count},
-            f"Current count is: {count}",
-        ),
+        html.hr(),
     )
 
 
-@idom.component
+@component
 def parameterized_component(x, y):
     total = x + y
-    return idom.html.h1({"id": "parametrized-component", "data-value": total}, total)
-
-
-victory = idom.web.module_from_template("react", "victory-bar", fallback="...")
-VictoryBar = idom.web.export(victory, "VictoryBar")
-
-
-@idom.component
-def simple_bar_chart():
-    return VictoryBar()
-
-
-@idom.component
-def use_websocket():
-    ws = django_idom.hooks.use_websocket()
-    ws.scope = "..."
-    success = bool(ws.scope and ws.close and ws.disconnect and ws.view_id)
-    return idom.html.div(
-        {"id": "use-websocket", "data-success": success},
-        idom.html.hr(),
-        f"use_websocket: {ws}",
-        idom.html.hr(),
+    return html._(
+        html.h1({"id": "parametrized-component", "data-value": total}, total),
+        html.hr(),
     )
 
 
-@idom.component
+victory = web.module_from_template("react", "victory-bar", fallback="...")
+VictoryBar = web.export(victory, "VictoryBar")
+
+
+@component
+def simple_bar_chart():
+    return html._(VictoryBar(), html.hr())
+
+
+@component
+def use_websocket():
+    ws = django_idom.hooks.use_websocket()
+    success = bool(ws.scope and ws.close and ws.disconnect and ws.view_id)
+    return html.div(
+        {"id": "use-websocket", "data-success": success},
+        f"use_websocket: {ws}",
+        html.hr(),
+    )
+
+
+@component
 def use_scope():
     scope = django_idom.hooks.use_scope()
     success = len(scope) >= 10 and scope["type"] == "websocket"
-    return idom.html.div(
+    return html.div(
         {"id": "use-scope", "data-success": success},
         f"use_scope: {scope}",
-        idom.html.hr(),
+        html.hr(),
     )
 
 
-@idom.component
+@component
 def use_location():
     location = django_idom.hooks.use_location()
     success = bool(location)
-    return idom.html.div(
+    return html.div(
         {"id": "use-location", "data-success": success},
         f"use_location: {location}",
-        idom.html.hr(),
+        html.hr(),
     )
 
 
-@idom.component
+@component
 def django_css():
-    return idom.html.div(
+    return html.div(
         {"id": "django-css"},
         django_idom.components.django_css("django-css-test.css"),
-        idom.html.div({"style": {"display": "inline"}}, "django_css: "),
-        idom.html.button("This text should be blue."),
-        idom.html.hr(),
+        html.div({"style": {"display": "inline"}}, "django_css: "),
+        html.button("This text should be blue."),
+        html.hr(),
     )
 
 
-@idom.component
+@component
 def django_js():
     success = False
-    return idom.html._(
-        idom.html.div(
+    return html._(
+        html.div(
             {"id": "django-js", "data-success": success},
             f"django_js: {success}",
             django_idom.components.django_js("django-js-test.js"),
         ),
-        idom.html.hr(),
+        html.hr(),
     )
 
 
-@idom.component
+@component
 @django_idom.decorators.auth_required(
-    fallback=idom.html.div(
+    fallback=html.div(
         {"id": "unauthorized-user-fallback"},
         "unauthorized_user: Success",
-        idom.html.hr(),
+        html.hr(),
     )
 )
 def unauthorized_user():
-    return idom.html.div(
+    return html.div(
         {"id": "unauthorized-user"},
         "unauthorized_user: Fail",
-        idom.html.hr(),
+        html.hr(),
     )
 
 
-@idom.component
+@component
 @django_idom.decorators.auth_required(
     auth_attribute="is_anonymous",
-    fallback=idom.html.div(
+    fallback=html.div(
         {"id": "authorized-user-fallback"},
         "authorized_user: Fail",
-        idom.html.hr(),
+        html.hr(),
     ),
 )
 def authorized_user():
-    return idom.html.div(
+    return html.div(
         {"id": "authorized-user"},
         "authorized_user: Success",
-        idom.html.hr(),
+        html.hr(),
     )
 
 
@@ -153,30 +163,30 @@ def toggle_item_mutation(item: TodoItem):
     item.save()
 
 
-@idom.component
+@component
 def todo_list():
-    input_value, set_input_value = idom.use_state("")
+    input_value, set_input_value = hooks.use_state("")
     items = use_query(get_items_query)
     toggle_item = use_mutation(toggle_item_mutation, refetch=get_items_query)
 
     if items.error:
-        rendered_items = idom.html.h2(f"Error when loading - {items.error}")
+        rendered_items = html.h2(f"Error when loading - {items.error}")
     elif items.data is None:
-        rendered_items = idom.html.h2("Loading...")
+        rendered_items = html.h2("Loading...")
     else:
-        rendered_items = idom.html._(
-            idom.html.h3("Not Done"),
+        rendered_items = html._(
+            html.h3("Not Done"),
             _render_items([i for i in items.data if not i.done], toggle_item),
-            idom.html.h3("Done"),
+            html.h3("Done"),
             _render_items([i for i in items.data if i.done], toggle_item),
         )
 
     add_item = use_mutation(add_item_mutation, refetch=get_items_query)
 
     if add_item.loading:
-        mutation_status = idom.html.h2("Working...")
+        mutation_status = html.h2("Working...")
     elif add_item.error:
-        mutation_status = idom.html.h2(f"Error when adding - {add_item.error}")
+        mutation_status = html.h2(f"Error when adding - {add_item.error}")
     else:
         mutation_status = ""
 
@@ -188,9 +198,9 @@ def todo_list():
     def on_change(event):
         set_input_value(event["target"]["value"])
 
-    return idom.html.div(
-        idom.html.label("Add an item:"),
-        idom.html.input(
+    return html.div(
+        html.label("Add an item:"),
+        html.input(
             {
                 "type": "text",
                 "id": "todo-input",
@@ -201,16 +211,17 @@ def todo_list():
         ),
         mutation_status,
         rendered_items,
+        html.hr(),
     )
 
 
 def _render_items(items, toggle_item):
-    return idom.html.ul(
+    return html.ul(
         [
-            idom.html.li(
+            html.li(
                 {"id": f"todo-item-{item.text}"},
                 item.text,
-                idom.html.input(
+                html.input(
                     {
                         "id": f"todo-item-{item.text}-checkbox",
                         "type": "checkbox",
@@ -222,4 +233,139 @@ def _render_items(items, toggle_item):
             )
             for item in items
         ]
+    )
+
+
+@component
+def view_to_component_sync_func():
+    return view_to_component(views.view_to_component_sync_func)
+
+
+@component
+def view_to_component_async_func():
+    return view_to_component(views.view_to_component_async_func)
+
+
+@component
+def view_to_component_sync_class():
+    return view_to_component(views.ViewToComponentSyncClass)
+
+
+@component
+def view_to_component_async_class():
+    return view_to_component(views.ViewToComponentAsyncClass)
+
+
+@component
+def view_to_component_template_view_class():
+    return view_to_component(views.ViewToComponentTemplateViewClass)
+
+
+@component
+def view_to_component_sync_func_compatibility():
+    return html.div(
+        {"id": inspect.currentframe().f_code.co_name},
+        view_to_component(
+            views.view_to_component_sync_func_compatibility, compatibility=True
+        ),
+        html.hr(),
+    )
+
+
+@component
+def view_to_component_async_func_compatibility():
+    return html.div(
+        {"id": inspect.currentframe().f_code.co_name},
+        view_to_component(
+            views.view_to_component_async_func_compatibility, compatibility=True
+        ),
+        html.hr(),
+    )
+
+
+@component
+def view_to_component_sync_class_compatibility():
+    return html.div(
+        {"id": inspect.currentframe().f_code.co_name},
+        view_to_component(
+            views.ViewToComponentSyncClassCompatibility, compatibility=True
+        ),
+        html.hr(),
+    )
+
+
+@component
+def view_to_component_async_class_compatibility():
+    return html.div(
+        {"id": inspect.currentframe().f_code.co_name},
+        view_to_component(
+            views.ViewToComponentAsyncClassCompatibility, compatibility=True
+        ),
+        html.hr(),
+    )
+
+
+@component
+def view_to_component_template_view_class_compatibility():
+    return html.div(
+        {"id": inspect.currentframe().f_code.co_name},
+        view_to_component(
+            views.ViewToComponentTemplateViewClassCompatibility, compatibility=True
+        ),
+        html.hr(),
+    )
+
+
+@component
+def view_to_component_script():
+    return view_to_component(views.view_to_component_script)
+
+
+@component
+def view_to_component_request():
+    request, set_request = hooks.use_state(None)
+
+    def on_click(_):
+        post_request = HttpRequest()
+        post_request.method = "POST"
+        set_request(post_request)
+
+    return html._(
+        html.button(
+            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},
+            "Click me",
+        ),
+        view_to_component(views.view_to_component_request, request=request),
+    )
+
+
+@component
+def view_to_component_args():
+    params, set_params = hooks.use_state("false")
+
+    def on_click(_):
+        set_params("")
+
+    return html._(
+        html.button(
+            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},
+            "Click me",
+        ),
+        view_to_component(views.view_to_component_args, args=[params]),
+    )
+
+
+@component
+def view_to_component_kwargs():
+    params, set_params = hooks.use_state("false")
+
+    def on_click(_):
+        set_params("")
+
+    return html._(
+        html.button(
+            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},
+            "Click me",
+        ),
+        view_to_component(views.view_to_component_kwargs, kwargs={"success": params}),
     )

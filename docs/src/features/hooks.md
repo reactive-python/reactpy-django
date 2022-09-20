@@ -1,6 +1,6 @@
 ???+ tip "Looking for more hooks?"
 
-    Check out the [IDOM Core docs](https://idom-docs.herokuapp.com/docs/reference/hooks-api.html?highlight=hooks) on hooks!
+    Check out the [IDOM Core docs](https://idom-docs.herokuapp.com/docs/reference/hooks-api.html#basic-hooks) on hooks!
 
 ## Use Query
 
