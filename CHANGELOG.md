@@ -24,6 +24,12 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
+-   Nothing (Yet)
+
+## [1.2.0] - 2022-09-19
+
+### Added
+
 -   `auth_required` decorator to prevent your components from rendering to unauthenticated users.
 -   `use_query` hook for fetching database values.
 -   `use_mutation` hook for modifying database values.
@@ -125,7 +131,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/idom-team/django-idom/compare/1.0.0...HEAD
+[unreleased]: https://github.com/idom-team/django-idom/compare/1.2.0...HEAD
+[1.1.0]: https://github.com/idom-team/django-idom/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/idom-team/django-idom/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/idom-team/django-idom/compare/0.0.5...1.0.0
 [0.0.5]: https://github.com/idom-team/django-idom/compare/0.0.4...0.0.5
