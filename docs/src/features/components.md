@@ -93,7 +93,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
     For views that rely on HTTP responses other than `GET` (such as `PUT`, `POST`, `PATCH`, etc), you should consider using compatibility mode to render your view within an iframe.
 
-    Any view can be rendered within compatibility mode. However, the `strict_parsing` argument does not apply to compatibility mode.
+    Any view can be rendered within compatibility mode. However, the `transforms`, `strict_parsing`, and `request` arguments do not apply to compatibility mode.
 
     Please note that by default the iframe is unstyled, and thus won't look pretty until you add some CSS.
 
