@@ -36,6 +36,7 @@ Using the following categories, list your changes in this order:
 ### Changed
 
 -   Bumped the minimum IDOM version to 0.40.2
+-   Testing suite now uses `playwright` instead of `selenium`
 
 ### Fixed
 
