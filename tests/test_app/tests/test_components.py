@@ -5,6 +5,9 @@ from unittest import SkipTest
 from channels.testing import ChannelsLiveServerTestCase
 from playwright.sync_api import TimeoutError, sync_playwright
 
+from django_idom.components import view_to_component
+from django_idom.config import IDOM_VIEW_COMPONENT_IFRAMES
+
 
 class TestIdomCapabilities(ChannelsLiveServerTestCase):
     @classmethod
@@ -176,3 +179,9 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
         ).locator(
             "#ViewToComponentTemplateViewClassCompatibility[data-success=true]"
         ).wait_for()
+
+    def test_view_to_component_iframe_registration(self):
+        view_to_component(lambda x: None, compatibility=True)
+        self.assertIn(
+            "test_app.tests.test_components.lambda", IDOM_VIEW_COMPONENT_IFRAMES
+        )
