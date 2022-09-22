@@ -51,7 +51,7 @@ def view_to_component(
         request_obj = HttpRequest()
         request_obj.method = "GET"
     if compatibility:
-        dotted_path = _generate_obj_name(view, raises=True)
+        dotted_path = f"{view.__module__}.{view.__name__}"  # type: ignore[union-attr]
         dotted_path = dotted_path.replace("<", "").replace(">", "")
         IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
             view, args, kwargs
@@ -192,7 +192,7 @@ def _cached_static_contents(static_path: str):
     return file_contents
 
 
-def _generate_obj_name(object: Any, raises: bool = False) -> str | None:
+def _generate_obj_name(object: Any) -> str | None:
     """Makes a best effort to create a name for an object.
     Useful for JSON serialization of Python objects."""
     if hasattr(object, "__module__"):
@@ -201,7 +201,4 @@ def _generate_obj_name(object: Any, raises: bool = False) -> str | None:
         if hasattr(object, "__class__"):
             return f"{object.__module__}.{object.__class__.__name__}"
 
-    if not raises:
-        return None
-
-    raise (TypeError(f"Could not generate name for object {object}"))
+    return None
