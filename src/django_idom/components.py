@@ -11,6 +11,7 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.views import View
 from idom import component, hooks, html, utils
+from idom.core.component import Component
 from idom.types import VdomDict
 
 from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
@@ -27,7 +28,7 @@ def view_to_component(
     request: HttpRequest | None = None,
     args: Iterable = (),
     kwargs: Dict | None = None,
-) -> VdomDict | None:
+) -> Component:
     """Converts a Django view to an IDOM component.
 
     Args:
@@ -58,15 +59,7 @@ def view_to_component(
         )
 
     @component
-    def new_component(
-        view: Callable | View,
-        compatibility: bool = False,
-        transforms: Iterable[Callable[[VdomDict], Any]] = (),
-        strict_parsing: bool = True,
-        request: HttpRequest | None = None,
-        args: Iterable = (),
-        kwargs: Dict | None = None,
-    ):
+    def new_component():
         converted_view, set_converted_view = hooks.use_state(None)
 
         # Render the view render within a hook
@@ -135,15 +128,7 @@ def view_to_component(
         # Return the view if it's been rendered via the `async_renderer` hook
         return converted_view
 
-    return new_component(
-        view=view,
-        compatibility=compatibility,
-        transforms=transforms,
-        strict_parsing=strict_parsing,
-        request=request,
-        args=args,
-        kwargs=kwargs,
-    )
+    return new_component()
 
 
 @component
