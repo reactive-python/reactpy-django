@@ -14,7 +14,7 @@ from idom import component, hooks, html, utils
 from idom.types import VdomDict
 
 from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
-from django_idom.types import ViewComponentIframe
+from django_idom.types import TableConfig, ViewComponentIframe
 
 
 # TODO: Might want to intercept href clicks and form submit events.
@@ -117,6 +117,15 @@ def view_to_component(
 
     # Return the view if it's been rendered via the `async_renderer` hook
     return rendered_view
+
+
+def django_table(table_config: TableConfig):
+    @component
+    def new_component():
+        print(table_config)
+        return None
+
+    return new_component()
 
 
 @component

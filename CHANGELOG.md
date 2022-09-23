@@ -22,7 +22,9 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (Yet)
+### Added
+
+-   `django_table` component to generate HTML tables.
 
 ## [1.2.0] - 2022-09-19
 

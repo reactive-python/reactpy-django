@@ -86,6 +86,13 @@ def use_location():
 
 
 @component
+def django_table():
+    return django_idom.components.django_table(
+        table_config=django_idom.types.TableConfig(fields=["id", "text"])
+    )
+
+
+@component
 def django_css():
     return html.div(
         {"id": "django-css"},
