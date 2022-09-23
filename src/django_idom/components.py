@@ -131,7 +131,6 @@ def view_to_component(
     return new_component()
 
 
-@component
 def django_css(static_path: str):
     """Fetches a CSS static file for use within IDOM. This allows for deferred CSS loading.
 
@@ -139,10 +138,14 @@ def django_css(static_path: str):
         static_path: The path to the static file. This path is identical to what you would
         use on a `static` template tag.
     """
-    return html.style(_cached_static_contents(static_path))
+
+    @component
+    def new_component():
+        return html.style(_cached_static_contents(static_path))
+
+    return new_component()
 
 
-@component
 def django_js(static_path: str):
     """Fetches a JS static file for use within IDOM. This allows for deferred JS loading.
 
@@ -150,7 +153,12 @@ def django_js(static_path: str):
         static_path: The path to the static file. This path is identical to what you would
         use on a `static` template tag.
     """
-    return html.script(_cached_static_contents(static_path))
+
+    @component
+    def new_component():
+        return html.script(_cached_static_contents(static_path))
+
+    return new_component()
 
 
 def _cached_static_contents(static_path: str):
