@@ -185,5 +185,4 @@ def _generate_obj_name(object: Any) -> str | None:
             return f"{object.__module__}.{object.__name__}"
         if hasattr(object, "__class__"):
             return f"{object.__module__}.{object.__class__.__name__}"
-
     return None
