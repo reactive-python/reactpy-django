@@ -29,7 +29,7 @@ Using the following categories, list your changes in this order:
 ### Fixed
 
 -   URLs are now pre-registered when using `view_to_component` with `compatibility=True`.
--   `view_to_component` type hints will now display like normal utility functions.
+-   `view_to_component` type hints will now display like normal functions.
 
 ## [1.2.0] - 2022-09-19
 
