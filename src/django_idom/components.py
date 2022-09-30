@@ -18,6 +18,78 @@ from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
 from django_idom.types import ViewComponentIframe
 
 
+@component
+def _view_to_component(
+    view: Callable | View,
+    compatibility: bool = False,
+    transforms: Iterable[Callable[[VdomDict], Any]] = (),
+    strict_parsing: bool = True,
+    request: HttpRequest | None = None,
+    args: Iterable = (),
+    kwargs: Dict | None = None,
+    dotted_path: str | None = None,
+):
+    converted_view, set_converted_view = hooks.use_state(None)
+
+    # Render the view render within a hook
+    @hooks.use_effect(
+        dependencies=[
+            json.dumps(vars(request), default=lambda x: _generate_obj_name(x)),
+            json.dumps([args, kwargs], default=lambda x: _generate_obj_name(x)),
+        ]
+    )
+    async def async_renderer():
+        """Render the view in an async hook to avoid blocking the main thread."""
+        # Render Check 1: Compatibility mode
+        if compatibility:
+            set_converted_view(
+                html.iframe(
+                    {
+                        "src": reverse("idom:view_to_component", args=[dotted_path]),
+                        "loading": "lazy",
+                    }
+                )
+            )
+            return
+
+        # Render Check 2: Async function view
+        elif iscoroutinefunction(view):
+            view_html = await view(request, *args, **kwargs)
+
+        # Render Check 3: Async class view
+        elif getattr(view, "view_is_async", False):
+            view_or_template_view = await view.as_view()(request, *args, **kwargs)
+            if getattr(view_or_template_view, "render", None):  # TemplateView
+                view_html = await view_or_template_view.render()
+            else:  # View
+                view_html = view_or_template_view
+
+        # Render Check 4: Sync class view
+        elif getattr(view, "as_view", None):
+            async_cbv = database_sync_to_async(view.as_view())
+            view_or_template_view = await async_cbv(request, *args, **kwargs)
+            if getattr(view_or_template_view, "render", None):  # TemplateView
+                view_html = await database_sync_to_async(view_or_template_view.render)()
+            else:  # View
+                view_html = view_or_template_view
+
+        # Render Check 5: Sync function view
+        else:
+            view_html = await database_sync_to_async(view)(request, *args, **kwargs)
+
+        # Signal that the view has been rendered
+        set_converted_view(
+            utils.html_to_vdom(
+                view_html.content.decode("utf-8").strip(),
+                *transforms,
+                strict=strict_parsing,
+            )
+        )
+
+    # Return the view if it's been rendered via the `async_renderer` hook
+    return converted_view
+
+
 # TODO: Might want to intercept href clicks and form submit events.
 # Form events will probably be accomplished through the upcoming DjangoForm.
 def view_to_component(
@@ -48,7 +120,7 @@ def view_to_component(
     """
     kwargs = kwargs or {}
     request_obj = request
-    if not request:
+    if not request_obj:
         request_obj = HttpRequest()
         request_obj.method = "GET"
     if compatibility:
@@ -57,78 +129,24 @@ def view_to_component(
         IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
             view, args, kwargs
         )
+    else:
+        dotted_path = None
 
-    @component
-    def new_component():
-        converted_view, set_converted_view = hooks.use_state(None)
+    return _view_to_component(
+        view=view,
+        compatibility=compatibility,
+        transforms=transforms,
+        strict_parsing=strict_parsing,
+        request=request_obj,
+        args=args,
+        kwargs=kwargs,
+        dotted_path=dotted_path,
+    )
 
-        # Render the view render within a hook
-        @hooks.use_effect(
-            dependencies=[
-                json.dumps(vars(request_obj), default=lambda x: _generate_obj_name(x)),
-                json.dumps([args, kwargs], default=lambda x: _generate_obj_name(x)),
-            ]
-        )
-        async def async_renderer():
-            """Render the view in an async hook to avoid blocking the main thread."""
-            # Render Check 1: Compatibility mode
-            if compatibility:
-                set_converted_view(
-                    html.iframe(
-                        {
-                            "src": reverse(
-                                "idom:view_to_component", args=[dotted_path]
-                            ),
-                            "loading": "lazy",
-                        }
-                    )
-                )
-                return
 
-            # Render Check 2: Async function view
-            elif iscoroutinefunction(view):
-                view_html = await view(request_obj, *args, **kwargs)
-
-            # Render Check 3: Async class view
-            elif getattr(view, "view_is_async", False):
-                view_or_template_view = await view.as_view()(
-                    request_obj, *args, **kwargs
-                )
-                if getattr(view_or_template_view, "render", None):  # TemplateView
-                    view_html = await view_or_template_view.render()
-                else:  # View
-                    view_html = view_or_template_view
-
-            # Render Check 4: Sync class view
-            elif getattr(view, "as_view", None):
-                async_cbv = database_sync_to_async(view.as_view())
-                view_or_template_view = await async_cbv(request_obj, *args, **kwargs)
-                if getattr(view_or_template_view, "render", None):  # TemplateView
-                    view_html = await database_sync_to_async(
-                        view_or_template_view.render
-                    )()
-                else:  # View
-                    view_html = view_or_template_view
-
-            # Render Check 5: Sync function view
-            else:
-                view_html = await database_sync_to_async(view)(
-                    request_obj, *args, **kwargs
-                )
-
-            # Signal that the view has been rendered
-            set_converted_view(
-                utils.html_to_vdom(
-                    view_html.content.decode("utf-8").strip(),
-                    *transforms,
-                    strict=strict_parsing,
-                )
-            )
-
-        # Return the view if it's been rendered via the `async_renderer` hook
-        return converted_view
-
-    return new_component()
+@component
+def _django_css(static_path: str):
+    return html.style(_cached_static_contents(static_path))
 
 
 def django_css(static_path: str):
@@ -139,11 +157,12 @@ def django_css(static_path: str):
         use on a `static` template tag.
     """
 
-    @component
-    def new_component():
-        return html.style(_cached_static_contents(static_path))
+    return _django_css(static_path=static_path)
 
-    return new_component()
+
+@component
+def _django_js(static_path: str):
+    return html.script(_cached_static_contents(static_path))
 
 
 def django_js(static_path: str):
@@ -154,11 +173,7 @@ def django_js(static_path: str):
         use on a `static` template tag.
     """
 
-    @component
-    def new_component():
-        return html.script(_cached_static_contents(static_path))
-
-    return new_component()
+    return _django_js(static_path=static_path)
 
 
 def _cached_static_contents(static_path: str):
