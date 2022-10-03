@@ -14,7 +14,8 @@ from idom import component, hooks, html, utils
 from idom.types import VdomDict
 
 from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
-from django_idom.types import TableConfig, ViewComponentIframe
+from django_idom.tables import TableConfig
+from django_idom.types import ViewComponentIframe
 
 
 # TODO: Might want to intercept href clicks and form submit events.

@@ -9,7 +9,7 @@ from django.db.models.base import Model
 try:
     from django_filters import FilterSet
 except ImportError:
-    FilterSet = TypeVar("FilterSet")
+    FilterSet = TypeVar("FilterSet")  # type: ignore
 
 
 __all__ = ["FilterSet", "TableConfig", "bs_table_column_attrs", "bs_table_row_attrs"]
@@ -31,11 +31,11 @@ class TableConfig:
 
     # https://django-tables2.readthedocs.io/en/latest/pages/column-attributes.html#id1
     # Probably want a callable API similar to  this `func(value:Any, node_type:str)``
-    column_attrs: dict[Callable] | None = None
+    column_attrs: dict[str, Callable | str] | None = None
 
     # https://django-tables2.readthedocs.io/en/latest/pages/column-attributes.html#row-attributes
     # Probably want a callable API similar to  this `func(record:Model, node_type:str)``
-    row_attrs: dict[Callable] | None = None
+    row_attrs: dict[str, Callable | str] | None = None
 
     # https://sparkbyexamples.com/pandas/pandas-sort-dataframe-by-multiple-columns/
     order_by: Iterable[str] | None = None
@@ -51,5 +51,5 @@ class TableConfig:
     renderer: Callable | None = None
 
 
-bs_table_column_attrs = {}
-bs_table_row_attrs = {}
+bs_table_column_attrs: dict[str, Callable | str] = {}
+bs_table_row_attrs: dict[str, Callable | str] = {}
