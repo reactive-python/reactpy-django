@@ -38,7 +38,7 @@ def _view_to_component(
             json.dumps([args, kwargs], default=lambda x: _generate_obj_name(x)),
         ]
     )
-    async def async_renderer():
+    async def async_render():
         """Render the view in an async hook to avoid blocking the main thread."""
         # Render Check 1: Compatibility mode
         if compatibility:
@@ -86,7 +86,7 @@ def _view_to_component(
             )
         )
 
-    # Return the view if it's been rendered via the `async_renderer` hook
+    # Return the view if it's been rendered via the `async_render` hook
     return converted_view
 
 
