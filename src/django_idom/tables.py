@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable, Iterable, Mapping, TypeVar
+from typing import Any, Callable, Iterable, Mapping, TypeVar
 
 from django.db.models.base import Model
+from django.db.models.query import QuerySet
 
 
 try:
@@ -17,11 +18,13 @@ __all__ = ["FilterSet", "TableConfig", "bs_table_column_attrs", "bs_table_row_at
 
 @dataclass
 class TableConfig:
-    # Will check if value exists in either the model or TableConfig class
+    # Typically fields are contained within `data`, but they also can be defined as properties within a TableConfig subclass
     # Automatically tries to get all model and TableConfig fields if `None`
     fields: Iterable[str] | None = None
 
-    model: Model | None = None
+    # Data can be a model, QuerySet, or list of dictionaries
+    # If no data is provided, only fields declared within the user's TableConfig will be used
+    data: Model | QuerySet | Iterable[dict[str, Any]] | None = None
 
     # Allows for renaming columns in the form {old_name: new_name}
     column_names: Mapping[str, str] | None = None
