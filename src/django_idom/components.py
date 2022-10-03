@@ -119,13 +119,10 @@ def view_to_component(
     return rendered_view
 
 
+@component
 def django_table(table_config: TableConfig):
-    @component
-    def new_component():
-        print(table_config)
-        return None
-
-    return new_component()
+    print(table_config)
+    return None
 
 
 @component
