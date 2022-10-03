@@ -181,14 +181,6 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
             return HttpResponse("<div id='hello-world'> Hello World! <div>")
         ```
 
-??? warning "Limitations"
-
-    Does not currently utilize any HTML contained with a `<head>` tag
-
-    Does not automatically route HTTP requests beyond `GET`
-
-    Does not intercept `<a href='example/'>` clicks work work as a SPA
-
 ## Django CSS
 
 Allows you to defer loading a CSS stylesheet until a component begins rendering. This stylesheet must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).
