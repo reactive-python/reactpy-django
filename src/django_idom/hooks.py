@@ -97,7 +97,7 @@ def use_query(
 
 def use_mutation(
     mutate: Callable[_Params, bool | None],
-    refetch: Callable[..., Any] | Sequence[Callable[..., Any]],
+    refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
 ) -> Mutation[_Params]:
     loading, set_loading = use_state(False)
     error, set_error = use_state(cast(Union[Exception, None], None))
@@ -117,6 +117,8 @@ def use_mutation(
                 set_loading(False)
                 set_error(None)
                 if should_refetch is not False:
+                    if not refetch:
+                        return
                     for query in (refetch,) if callable(refetch) else refetch:
                         for callback in _REFETCH_CALLBACKS.get(query) or ():
                             callback()
