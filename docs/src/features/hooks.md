@@ -235,12 +235,6 @@ def my_component():
 
 ## Use Location
 
-??? info "This hook's behavior will be changed in a future update"
-
-    This hook will be updated to return the browser's currently active path. This change will come in alongside IDOM URL routing support.
-
-    Check out [idom-team/idom-router#2](https://github.com/idom-team/idom-router/issues/2) for more information.
-
 This is a shortcut that returns the Websocket's `path`. You can expect this hook to provide strings such as `/idom/my_path`.
 
 ```python title="components.py"
@@ -253,6 +247,11 @@ def my_component():
     return html.div(my_location)
 ```
 
+??? info "This hook's behavior will be changed in a future update"
+
+    This hook will be updated to return the browser's currently active path. This change will come in alongside IDOM URL routing support.
+
+    Check out [idom-team/idom-router#2](https://github.com/idom-team/idom-router/issues/2) for more information.
 ## Use Origin
 
 This is a shortcut that returns the Websocket's `origin`. You can expect this hook to provide strings such as `http://example.com`.

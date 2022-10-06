@@ -8,15 +8,11 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
 
     Our pre-processor relies on the template tag containing a string.
 
-    **Do not** use a Django context variable for the path string. Failure to follow this warning will result in a performance penalty and also jankiness when using the Django autoreloader.
+    **Do not** use a Django context variable for the path string. Failure to follow this warning will result in unexpected behavior.
 
     For example, **do not** do the following:
 
-    ```python title="views.py"
-    def example_view():
-        context_vars = {"dont_do_this": "example_project.my_app.components.hello_world"}
-        return render(request, "my-template.html", context_vars)
-    ```
+    === "my-template.html"
 
     ```jinja title="my-template.html"
     <!-- This is bad -->
@@ -25,6 +21,14 @@ Integrated within Django IDOM, we bundle a template tag. Within this tag, you ca
     <!-- This is good -->
     {% component "example_project.my_app.components.hello_world" recipient="World" %}
     ```
+
+    === "views.py"
+
+        ```python
+        def example_view():
+            context_vars = {"dont_do_this": "example_project.my_app.components.hello_world"}
+            return render(request, "my-template.html", context_vars)
+        ```
 
 <!--context-end-->
 <!--kwarg-start-->
