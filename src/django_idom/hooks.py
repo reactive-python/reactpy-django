@@ -103,7 +103,9 @@ def use_query(
             set_data(None)
             set_loading(False)
             set_error(e)
-            _logger.exception("Error executing query", exc_info=True, stack_info=True)
+            _logger.exception(
+                f"Error executing query: {query}", exc_info=True, stack_info=True
+            )
             return
         finally:
             set_should_execute(False)
@@ -134,7 +136,9 @@ def use_mutation(
                 set_loading(False)
                 set_error(e)
                 _logger.exception(
-                    "Error executing mutation", exc_info=True, stack_info=True
+                    f"Error executing mutation: {mutate}",
+                    exc_info=True,
+                    stack_info=True,
                 )
             else:
                 set_loading(False)
