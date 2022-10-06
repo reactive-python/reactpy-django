@@ -12,7 +12,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
 === "components.py"
 
-    ```python
+    ```python linenums="1"
     from example_project.my_app.models import TodoItem
     from idom import component, html
     from django_idom.hooks import use_query
@@ -36,7 +36,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
 === "models.py"
 
-    ```python
+    ```python linenums="1"
     from django.db import models
 
     class TodoItem(models.Model):
@@ -69,7 +69,7 @@ The function you provide into this hook will have no return value.
 
 === "components.py"
 
-    ```python
+    ```python linenums="1"
     from example_project.my_app.models import TodoItem
     from idom import component, html
     from django_idom.hooks import use_mutation
@@ -112,7 +112,7 @@ The function you provide into this hook will have no return value.
 
     === "components.py"
 
-        ```python
+        ```python linenums="1"
         from example_project.my_app.models import TodoItem
         from idom import component, html
         from django_idom.hooks import use_mutation
@@ -165,7 +165,7 @@ The function you provide into this hook will have no return value.
 
     === "components.py"
 
-        ```python
+        ```python linenums="1"
         from example_project.my_app.models import TodoItem
         from idom import component, html
         from django_idom.hooks import use_mutation
@@ -219,29 +219,33 @@ The function you provide into this hook will have no return value.
 
 You can fetch the Django Channels [websocket](https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer) at any time by using `use_websocket`.
 
-```python title="components.py"
-from idom import component, html
-from django_idom.hooks import use_websocket
+=== "components.py"
 
-@component
-def my_component():
-    my_websocket = use_websocket()
-    return html.div(my_websocket)
-```
+    ```python linenums="1"
+    from idom import component, html
+    from django_idom.hooks import use_websocket
+
+    @component
+    def my_component():
+        my_websocket = use_websocket()
+        return html.div(my_websocket)
+    ```
 
 ## Use Scope
 
 This is a shortcut that returns the Websocket's [`scope`](https://channels.readthedocs.io/en/stable/topics/consumers.html#scope).
 
-```python title="components.py"
-from idom import component, html
-from django_idom.hooks import use_scope
+=== "components.py"
 
-@component
-def my_component():
-    my_scope = use_scope()
-    return html.div(my_scope)
-```
+    ```python linenums="1"
+    from idom import component, html
+    from django_idom.hooks import use_scope
+
+    @component
+    def my_component():
+        my_scope = use_scope()
+        return html.div(my_scope)
+    ```
 
 ## Use Location
 
@@ -249,33 +253,38 @@ This is a shortcut that returns the Websocket's `path`.
 
 You can expect this hook to provide strings such as `/idom/my_path`.
 
-```python title="components.py"
-from idom import component, html
-from django_idom.hooks import use_location
+=== "components.py"
 
-@component
-def my_component():
-    my_location = use_location()
-    return html.div(my_location)
-```
+    ```python linenums="1"
+    from idom import component, html
+    from django_idom.hooks import use_location
+
+    @component
+    def my_component():
+        my_location = use_location()
+        return html.div(my_location)
+    ```
 
 ??? info "This hook's behavior will be changed in a future update"
 
     This hook will be updated to return the browser's currently active path. This change will come in alongside IDOM URL routing support.
 
     Check out [idom-team/idom-router#2](https://github.com/idom-team/idom-router/issues/2) for more information.
+
 ## Use Origin
 
 This is a shortcut that returns the Websocket's `origin`.
 
 You can expect this hook to provide strings such as `http://example.com`.
 
-```python title="components.py"
-from idom import component, html
-from django_idom.hooks import use_origin
+=== "components.py"
 
-@component
-def my_component():
-    my_origin = use_origin()
-    return html.div(my_origin)
-```
+    ```python linenums="1"
+    from idom import component, html
+    from django_idom.hooks import use_origin
+
+    @component
+    def my_component():
+        my_origin = use_origin()
+        return html.div(my_origin)
+    ```

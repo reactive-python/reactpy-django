@@ -4,7 +4,7 @@ Here are the configurable variables that are available.
 
 <!--settings-start-->
 
-```python title="settings.py"
+```python linenums="1"
 # If "idom" cache is not configured, then we'll use "default" instead
 CACHES = {
 "idom": {"BACKEND": ...},
