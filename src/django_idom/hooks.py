@@ -31,17 +31,21 @@ def use_location() -> Location:
     return Location(scope["path"], f"?{search}" if search else "")
 
 
-def use_origin() -> str:
-    """Get the current origin as a string"""
+def use_origin() -> str | None:
+    """Get the current origin as a string. If the browser did not send an origin header,
+    this will be None."""
     scope = use_scope()
-    return next(
-        (
-            header[1].decode("utf-8")
-            for header in scope["headers"]
-            if header[0] == b"origin"
-        ),
-        "",
-    )
+    try:
+        return next(
+            (
+                header[1].decode("utf-8")
+                for header in scope["headers"]
+                if header[0] == b"origin"
+            ),
+            None,
+        )
+    except Exception:
+        return None
 
 
 def use_scope() -> dict[str, Any]:
