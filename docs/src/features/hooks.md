@@ -67,18 +67,17 @@ The `use_mutation` hook is used to modify Django ORM objects.
 
     @component
     def todo_list():
-        item_mutation = use_mutation(add_item)
+        def submit_event(event):
+            if event["key"] == "Enter":
+                item_mutation.execute(text=event["target"]["value"])
 
+        item_mutation = use_mutation(add_item)
         if item_mutation.loading:
             mutation_status = html.h2("Adding...")
         elif item_mutation.error:
             mutation_status = html.h2("Error when adding!")
         else:
             mutation_status = ""
-
-        def submit_event(event):
-            if event["key"] == "Enter":
-                item_mutation.execute(text=event["target"]["value"])
 
         return html.div(
             html.label("Add an item:"),
@@ -89,61 +88,106 @@ The `use_mutation` hook is used to modify Django ORM objects.
 
 === "models.py"
 
-    ```python
-    from django.db import models
-
-    class TodoItem(models.Model):
-        text = models.CharField(max_length=255)
-    ```
+    {% include-markdown "../../includes/examples.md" start="<!--todo-model-start-->" end="<!--todo-model-end-->" %}
 
 ??? question "Can `use_mutation` trigger a refetch of `use_query`?"
 
     Yes, `use_mutation` can queue a refetch of a `use_query` via the `refetch=...` argument.
 
     The example below is a merge of the `use_query` and `use_mutation` examples above with the addition of a `refetch` argument on `use_mutation`.
-    
+
     Please note that any `use_query` hooks that use `get_items` will be refetched upon a successful mutation.
 
-    ```python title="components.py"
-    from example_project.my_app.models import TodoItem
-    from idom import component, html
-    from django_idom.hooks import use_mutation
+    === "components.py"
 
-    def get_items():
-        return TodoItem.objects.all()
+        ```python
+        from example_project.my_app.models import TodoItem
+        from idom import component, html
+        from django_idom.hooks import use_mutation
 
-    def add_item(text: str):
-        TodoItem(text=text).save()
+        def get_items():
+            return TodoItem.objects.all()
 
-    @component
-    def todo_list():
-        item_query = use_query(get_items)
-        if item_query.loading:
-            rendered_items = html.h2("Loading...")
-        elif item_query.error:
-            rendered_items = html.h2("Error when loading!")
-        else:
-            rendered_items = html.ul(html.li(item, key=item) for item in item_query.data)
+        def add_item(text: str):
+            TodoItem(text=text).save()
 
-        item_mutation = use_mutation(add_item, refetch=get_items)
-        if item_mutation.loading:
-            mutation_status = html.h2("Adding...")
-        elif item_mutation.error:
-            mutation_status = html.h2("Error when adding!")
-        else:
-            mutation_status = ""
+        @component
+        def todo_list():
+            def submit_event(event):
+                if event["key"] == "Enter":
+                    item_mutation.execute(text=event["target"]["value"])
 
-        def submit_event(event):
-            if event["key"] == "Enter":
-                item_mutation.execute(text=event["target"]["value"])
+            item_query = use_query(get_items)
+            if item_query.loading:
+                rendered_items = html.h2("Loading...")
+            elif item_query.error:
+                rendered_items = html.h2("Error when loading!")
+            else:
+                rendered_items = html.ul(html.li(item, key=item) for item in item_query.data)
 
-        return html.div(
-            html.label("Add an item:"),
-            html.input({"type": "text", "onKeyDown": submit_event}),
-            mutation_status,
-            rendered_items,
-        )
-    ```
+            item_mutation = use_mutation(add_item, refetch=get_items)
+            if item_mutation.loading:
+                mutation_status = html.h2("Adding...")
+            elif item_mutation.error:
+                mutation_status = html.h2("Error when adding!")
+            else:
+                mutation_status = ""
+
+            return html.div(
+                html.label("Add an item:"),
+                html.input({"type": "text", "onKeyDown": submit_event}),
+                mutation_status,
+                rendered_items,
+            )
+        ```
+
+    === "models.py"
+
+        {% include-markdown "../../includes/examples.md" start="<!--todo-model-start-->" end="<!--todo-model-end-->" %}
+
+??? question "Can I make a failed `use_mutation` try again?"
+
+    Yes, a `use_mutation` can be re-performed by calling `reset()` on your `use_mutation` instance.
+
+    For example, take a look at `reset_event` below.
+
+    === "components.py"
+
+        ```python
+        from example_project.my_app.models import TodoItem
+        from idom import component, html
+        from django_idom.hooks import use_mutation
+
+        def add_item(text: str):
+            TodoItem(text=text).save()
+
+        @component
+        def todo_list():
+            def reset_event(event):
+                item_mutation.reset()
+
+            def submit_event(event):
+                if event["key"] == "Enter":
+                    item_mutation.execute(text=event["target"]["value"])
+
+            item_mutation = use_mutation(add_item)
+            if item_mutation.loading:
+                mutation_status = html.h2("Adding...")
+            elif item_mutation.error:
+                mutation_status = html.button({"onClick": reset_event}, "Error: Try again!")
+            else:
+                mutation_status = ""
+
+            return html.div(
+                html.label("Add an item:"),
+                html.input({"type": "text", "onKeyDown": submit_event}),
+                mutation_status,
+            )
+        ```
+
+    === "models.py"
+
+        {% include-markdown "../../includes/examples.md" start="<!--todo-model-start-->" end="<!--todo-model-end-->" %}
 
 ??? question "Can I make ORM calls without hooks?"
 
