@@ -24,11 +24,24 @@ _REFETCH_CALLBACKS: DefaultDict[
 
 
 def use_location() -> Location:
-    """Get the current route as a string"""
+    """Get the current route as a `Location` object"""
     # TODO: Use the browser's current page, rather than the WS route
     scope = use_scope()
     search = scope["query_string"].decode()
     return Location(scope["path"], f"?{search}" if search else "")
+
+
+def use_origin() -> str:
+    """Get the current origin as a string"""
+    scope = use_scope()
+    return next(
+        (
+            header[1].decode("utf-8")
+            for header in scope["headers"]
+            if header[0] == b"origin"
+        ),
+        "",
+    )
 
 
 def use_scope() -> dict[str, Any]:

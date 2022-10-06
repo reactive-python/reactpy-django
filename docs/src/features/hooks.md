@@ -1,6 +1,8 @@
 ???+ tip "Looking for more hooks?"
 
-    Check out the [IDOM Core docs](https://idom-docs.herokuapp.com/docs/reference/hooks-api.html#basic-hooks) on hooks!
+    Standard ReactJS hooks are contained within [`idom-team/idom`](https://github.com/idom-team/idom). Please note that `idom` is installed by default alongside `django-idom`.
+
+    Check out the [IDOM Core docs](https://idom-docs.herokuapp.com/docs/reference/hooks-api.html#basic-hooks) to see these hooks!
 
 ## Use Query
 
@@ -205,7 +207,7 @@ The `use_mutation` hook is used to modify Django ORM objects.
 
 ## Use Websocket
 
-You can fetch the Django Channels websocket at any time by using `use_websocket`.
+You can fetch the Django Channels [websocket](https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer) at any time by using `use_websocket`.
 
 ```python title="components.py"
 from idom import component, html
@@ -219,7 +221,7 @@ def my_component():
 
 ## Use Scope
 
-This is a shortcut that returns the Websocket's `scope`.
+This is a shortcut that returns the Websocket's [`scope`](https://channels.readthedocs.io/en/stable/topics/consumers.html#scope).
 
 ```python title="components.py"
 from idom import component, html
@@ -235,11 +237,11 @@ def my_component():
 
 ??? info "This hook's behavior will be changed in a future update"
 
-    This hook will be updated to return the browser's current URL. This change will come in alongside IDOM URL routing support.
+    This hook will be updated to return the browser's currently active path. This change will come in alongside IDOM URL routing support.
 
-    Check out [idom-team/idom#569](https://github.com/idom-team/idom/issues/569) for more information.
+    Check out [idom-team/idom-router#2](https://github.com/idom-team/idom-router/issues/2) for more information.
 
-This is a shortcut that returns the Websocket's `path`.
+This is a shortcut that returns the Websocket's `path`. You can expect this hook to provide strings such as `/idom/my_path`.
 
 ```python title="components.py"
 from idom import component, html
@@ -249,4 +251,18 @@ from django_idom.hooks import use_location
 def my_component():
     my_location = use_location()
     return html.div(my_location)
+```
+
+## Use Origin
+
+This is a shortcut that returns the Websocket's `origin`. You can expect this hook to provide strings such as `http://example.com`.
+
+```python title="components.py"
+from idom import component, html
+from django_idom.hooks import use_origin
+
+@component
+def my_component():
+    my_origin = use_origin()
+    return html.div(my_origin)
 ```
