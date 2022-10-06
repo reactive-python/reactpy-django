@@ -97,7 +97,7 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
         item_ids = list(range(5))
 
         for i in item_ids:
-            todo_input.type(f"sample-{i}", delay=10)
+            todo_input.type(f"sample-{i}")
             todo_input.press("Enter")
             self.page.wait_for_selector(f"#todo-item-sample-{i}")
             self.page.wait_for_selector(f"#todo-item-sample-{i}-checkbox").click()
