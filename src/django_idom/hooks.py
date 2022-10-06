@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from typing import Any, Awaitable, Callable, DefaultDict, Sequence, Union, cast
 
 from channels.db import database_sync_to_async as _database_sync_to_async
@@ -13,6 +14,7 @@ from idom.core.hooks import Context, create_context, use_context, use_effect, us
 from django_idom.types import IdomWebsocket, Mutation, Query, _Params, _Result
 
 
+_logger = logging.getLogger(__name__)
 database_sync_to_async = cast(
     Callable[..., Callable[..., Awaitable[Any]]],
     _database_sync_to_async,
@@ -101,6 +103,7 @@ def use_query(
             set_data(None)
             set_loading(False)
             set_error(e)
+            _logger.exception("Error executing query", exc_info=True, stack_info=True)
             return
         finally:
             set_should_execute(False)
@@ -130,6 +133,9 @@ def use_mutation(
             except Exception as e:
                 set_loading(False)
                 set_error(e)
+                _logger.exception(
+                    "Error executing mutation", exc_info=True, stack_info=True
+                )
             else:
                 set_loading(False)
                 set_error(None)
