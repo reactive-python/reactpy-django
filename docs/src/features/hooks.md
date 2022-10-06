@@ -8,6 +8,8 @@
 
 The `use_query` hook is used fetch Django ORM queries.
 
+The function you provide into this hook must return either a `Model` or `QuerySet`.
+
 === "components.py"
 
     ```python
@@ -47,6 +49,12 @@ The `use_query` hook is used fetch Django ORM queries.
 
     This may be resolved in a future version of Django with a natively asynchronous ORM.
 
+??? question "Why does the example `get_items` function return a `Model` or `QuerySet`?"
+
+    This was a technical design decision to [based on Apollo](https://www.apollographql.com/docs/react/data/mutations/#usemutation-api), but ultimately helps avoid Django's `SynchronousOnlyOperation` exceptions.
+
+    The `use_query` hook ensures the provided `Model` or `QuerySet` executes all [deferred](https://docs.djangoproject.com/en/dev/ref/models/instances/#django.db.models.Model.get_deferred_fields)/[lazy queries](https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy) safely prior to reaching your components.
+
 ??? question "What is an "ORM"?"
 
     A Python **Object Relational Mapper** is an API for your code to access a database.
@@ -55,7 +63,9 @@ The `use_query` hook is used fetch Django ORM queries.
 
 ## Use Mutation
 
-The `use_mutation` hook is used to modify Django ORM objects.
+The `use_mutation` hook is used to create, update, or delete Django ORM objects.
+
+The function you provide into this hook will have no return value.
 
 === "components.py"
 
@@ -235,7 +245,9 @@ def my_component():
 
 ## Use Location
 
-This is a shortcut that returns the Websocket's `path`. You can expect this hook to provide strings such as `/idom/my_path`.
+This is a shortcut that returns the Websocket's `path`.
+
+You can expect this hook to provide strings such as `/idom/my_path`.
 
 ```python title="components.py"
 from idom import component, html
@@ -254,7 +266,9 @@ def my_component():
     Check out [idom-team/idom-router#2](https://github.com/idom-team/idom-router/issues/2) for more information.
 ## Use Origin
 
-This is a shortcut that returns the Websocket's `origin`. You can expect this hook to provide strings such as `http://example.com`.
+This is a shortcut that returns the Websocket's `origin`.
+
+You can expect this hook to provide strings such as `http://example.com`.
 
 ```python title="components.py"
 from idom import component, html
