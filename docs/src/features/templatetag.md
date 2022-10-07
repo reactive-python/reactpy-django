@@ -1,4 +1,8 @@
-Integrated within Django IDOM, we bundle a template tag. Within this tag, you can pass in keyword arguments directly into your component.
+???+ summary
+
+    Template tags can be used within your Django templates such as `my-template.html` to import IDOM features.
+
+## Component
 
 === "my-template.html"
 

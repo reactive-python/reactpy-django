@@ -1,6 +1,8 @@
-Django IDOM uses your **Django project's** `settings.py` file to modify some behaviors of IDOM.
+???+ summary
 
-Here are the configurable variables that are available.
+    Django IDOM uses your **Django project's** `settings.py` file to modify the behavior of IDOM.
+
+## Primary `settings.py` Configuration
 
 <!--settings-start-->
 

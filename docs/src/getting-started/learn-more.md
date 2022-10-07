@@ -8,4 +8,4 @@ Additionally, the vast majority of tutorials/guides you find for React can be ap
 
 | Learn More |
 | --- |
-| [Django-IDOM Exclusive Features](../features/hooks.md){ .md-button } [IDOM Hooks, Events, and More](https://idom-docs.herokuapp.com/docs/guides/creating-interfaces/index.html){ .md-button } [Ask Questions on GitHub Discussions](https://github.com/idom-team/idom/discussions){ .md-button .md-button--primary } |
+| [Django-IDOM Advanced Usage](../features/components.md){ .md-button } [IDOM Hooks, Events, and More](https://idom-docs.herokuapp.com/docs/guides/creating-interfaces/index.html){ .md-button } [Ask Questions on GitHub Discussions](https://github.com/idom-team/idom/discussions){ .md-button .md-button--primary } |

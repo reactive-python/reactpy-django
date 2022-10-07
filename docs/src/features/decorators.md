@@ -1,10 +1,14 @@
+???+ summary
+
+    Decorator utilities can be used within your `components.py` to help simplify development.
+
 ## Auth Required
 
 You can limit access to a component to users with a specific `auth_attribute` by using this decorator.
 
 By default, this decorator checks if the user is logged in, and his/her account has not been deactivated.
 
-Common uses of this decorator are to hide components from [`AnonymousUser`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.AnonymousUser), or render a component only if the user [`is_staff`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_staff) or [`is_superuser`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_superuser).
+Common uses of this decorator are to only render a component if the user [`is_staff`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_staff) or [`is_superuser`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_superuser).
 
 This decorator can be used with or without parentheses.
 

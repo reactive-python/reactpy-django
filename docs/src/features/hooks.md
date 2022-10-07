@@ -1,8 +1,12 @@
-???+ tip "Looking for more hooks?"
+???+ summary
 
-    Standard ReactJS hooks are contained within [`idom-team/idom`](https://github.com/idom-team/idom). Please note that `idom` is installed by default alongside `django-idom`.
+    Prefabricated hooks can be used within your `components.py` to help simplify development.
 
-    Check out the [IDOM Core docs](https://idom-docs.herokuapp.com/docs/reference/hooks-api.html#basic-hooks) to see these hooks!
+??? tip "Looking for standard ReactJS hooks?"
+
+    Standard ReactJS hooks are contained within [`idom-team/idom`](https://github.com/idom-team/idom). Since `idom` is installed by default alongside `django-idom`, you can import them at any time.
+
+    Check out the [IDOM Core docs](https://idom-docs.herokuapp.com/docs/reference/hooks-api.html#basic-hooks) to see what hooks are available!
 
 ## Use Query
 
