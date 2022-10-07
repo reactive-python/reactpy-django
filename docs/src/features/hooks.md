@@ -47,6 +47,22 @@ The function you provide into this hook must return either a `Model` or `QuerySe
         text = models.CharField(max_length=255)
     ```
 
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    | Name | Type | Description | Default |
+    | --- | --- | --- | --- |
+    | query | `Callable[_Params, _Result | None]` | A callable that returns a Django `Model` or `QuerySet`. | N/A |
+    | *args | `_Params.args` | Positional arguments to pass into `query`. | N/A |
+    | **kwargs | `_Params.kwargs` | Keyword arguments to pass into `query`. | N/A |
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `Query[_Result | None]` | A dataclass containing `loading`/`error` states, your `data` (if the query has successfully executed), and a `refetch` callable that can be used to re-run the query. |
+
 ??? question "Can I make ORM calls without hooks?"
 
     Due to Django's ORM design, database queries must be deferred using hooks. Otherwise, you will see a `SynchronousOnlyOperation` exception.
@@ -105,6 +121,21 @@ The function you provide into this hook will have no return value.
 === "models.py"
 
     {% include-markdown "../../includes/examples.md" start="<!--todo-model-start-->" end="<!--todo-model-end-->" %}
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    | Name | Type | Description | Default |
+    | --- | --- | --- | --- |
+    | mutate | `Callable[_Params, bool | None]` | A callable that performs Django ORM create, update, or delete functionality. If this function returns `False`, then your `refetch` function will not be used. | N/A |
+    | refetch | `Callable[..., Any] | Sequence[Callable[..., Any]] | None` | A callable or sequence of callables that will be called if the mutation succeeds. This is useful for refetching data after a mutation has been performed. | `None` |
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `Mutation[_Params]` | A dataclass containing `loading`/`error` states, a `reset` callable that will set `loading`/`error` states to defaults, and a `execute` callable that will run the query. |
 
 ??? question "Can `use_mutation` trigger a refetch of `use_query`?"
 
@@ -235,6 +266,18 @@ You can fetch the Django Channels [websocket](https://channels.readthedocs.io/en
         return html.div(my_websocket)
     ```
 
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    `None`
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `IdomWebsocket` | The component's websocket. |
+
 ## Use Scope
 
 This is a shortcut that returns the Websocket's [`scope`](https://channels.readthedocs.io/en/stable/topics/consumers.html#scope).
@@ -250,6 +293,18 @@ This is a shortcut that returns the Websocket's [`scope`](https://channels.readt
         my_scope = use_scope()
         return html.div(my_scope)
     ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    `None`
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `dict[str, Any]` | The websocket's `scope`. |
 
 ## Use Location
 
@@ -275,6 +330,18 @@ You can expect this hook to provide strings such as `/idom/my_path`.
 
     Check out [idom-team/idom-router#2](https://github.com/idom-team/idom-router/issues/2) for more information.
 
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    `None`
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `Location` | A object containing the current URL's `pathname` and `search` query. |
+
 ## Use Origin
 
 This is a shortcut that returns the Websocket's `origin`.
@@ -292,3 +359,15 @@ You can expect this hook to provide strings such as `http://example.com`.
         my_origin = use_origin()
         return html.div(my_origin)
     ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    `None`
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `str | None` | A string containing the browser's current origin, obtained from websocket headers (if available). |

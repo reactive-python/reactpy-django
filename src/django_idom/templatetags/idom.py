@@ -1,4 +1,5 @@
 import json
+from typing import Any
 from urllib.parse import urlencode
 from uuid import uuid4
 
@@ -14,13 +15,16 @@ register = template.Library()
 
 
 @register.inclusion_tag("idom/component.html")
-def component(_component_id_, **kwargs):
-    """
-    This tag is used to embed an existing IDOM component into your HTML template.
+def component(dotted_path: str, **kwargs: Any):
+    """This tag is used to embed an existing IDOM component into your HTML template.
 
-    The first argument within this tag is your dotted path to the component function.
+    Args:
+        dotted_path: The dotted path to the component to render.
 
-    Subsequent values are keyworded arguments are passed into your component::
+    Keyword Args:
+        **kwargs: The keyword arguments to pass to the component.
+
+    Example ::
 
         {% load idom %}
         <!DOCTYPE html>
@@ -30,7 +34,7 @@ def component(_component_id_, **kwargs):
         </body>
         </html>
     """
-    _register_component(_component_id_)
+    _register_component(dotted_path)
 
     class_ = kwargs.pop("class", "")
     json_kwargs = json.dumps(kwargs, separators=(",", ":"))
@@ -41,6 +45,6 @@ def component(_component_id_, **kwargs):
         "idom_web_modules_url": IDOM_WEB_MODULES_URL,
         "idom_ws_max_reconnect_timeout": IDOM_WS_MAX_RECONNECT_TIMEOUT,
         "idom_mount_uuid": uuid4().hex,
-        "idom_component_id": _component_id_,
+        "idom_component_id": dotted_path,
         "idom_component_params": urlencode({"kwargs": json_kwargs}),
     }

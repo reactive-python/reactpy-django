@@ -55,6 +55,22 @@
         ```
 
 <!--kwarg-end-->
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    | Name | Type | Description | Default |
+    | --- | --- | --- | --- |
+    | dotted_path | `str` | The dotted path to the component to render. | N/A |
+    | **kwargs | `Any` | The keyword arguments to pass to the component. | N/A |
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `Component` | An IDOM component. |
+
 <!--multiple-components-start-->
 
 ??? question "Can I use multiple components on one page?"

@@ -68,6 +68,14 @@ def use_query(
     *args: _Params.args,
     **kwargs: _Params.kwargs,
 ) -> Query[_Result | None]:
+    """Hook to fetch a Django ORM query.
+
+    Args:
+        query: A callable that returns a Django `Model` or `QuerySet`.
+        *args: Positional arguments to pass into `query`.
+
+    Keyword Args:
+        **kwargs: Keyword arguments to pass into `query`."""
     query_ref = use_ref(query)
     if query_ref.current is not query:
         raise ValueError(f"Query function changed from {query_ref.current} to {query}.")
@@ -121,6 +129,17 @@ def use_mutation(
     mutate: Callable[_Params, bool | None],
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
 ) -> Mutation[_Params]:
+    """Hook to create, update, or delete Django ORM objects.
+
+    Args:
+        mutate: A callable that performs Django ORM create, update, or delete
+            functionality. If this function returns `False`, then your `refetch`
+            function will not be used.
+        refetch: A callable or sequence of callables that will be called if the
+            mutation succeeds. This is useful for refetching data after a mutation
+            has been performed.
+    """
+
     loading, set_loading = use_state(False)
     error, set_error = use_state(cast(Union[Exception, None], None))
 
@@ -143,9 +162,10 @@ def use_mutation(
             else:
                 set_loading(False)
                 set_error(None)
-                if should_refetch is not False:
-                    if not refetch:
-                        return
+
+                # `refetch` will execute unless explicitly told not to
+                # or if `refetch` was not defined.
+                if should_refetch is not False and refetch:
                     for query in (refetch,) if callable(refetch) else refetch:
                         for callback in _REFETCH_CALLBACKS.get(query) or ():
                             callback()

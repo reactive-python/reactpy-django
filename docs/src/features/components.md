@@ -203,6 +203,20 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
         )
     ```
 
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    | Name | Type | Description | Default |
+    | --- | --- | --- | --- |
+    | static_path | `str` | The path to the static file. This path is identical to what you would use on a `static` template tag. | N/A |
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `Component` | An IDOM component. |
+
 ??? question "Should I put `django_css` at the top of my component?"
 
     Yes, if the stylesheet contains styling for your component.
@@ -265,6 +279,20 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
             django_js("js/scripts.js"),
         )
     ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    | Name | Type | Description | Default |
+    | --- | --- | --- | --- |
+    | static_path | `str` | The path to the static file. This path is identical to what you would use on a `static` template tag. | N/A |
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `Component` | An IDOM component. |
 
 ??? question "Should I put `django_js` at the bottom of my component?"
 
