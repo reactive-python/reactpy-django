@@ -12,6 +12,7 @@ from idom.backend.types import Location
 from idom.core.hooks import Context, create_context, use_context, use_effect, use_state
 
 from django_idom.types import IdomWebsocket, Mutation, Query, _Params, _Result
+from django_idom.utils import _generate_obj_name
 
 
 _logger = logging.getLogger(__name__)
@@ -112,7 +113,7 @@ def use_query(
             set_loading(False)
             set_error(e)
             _logger.exception(
-                f"Error executing query: {query}", exc_info=True, stack_info=True
+                f"Failed to execute query: {_generate_obj_name(query) or query}"
             )
             return
         finally:
@@ -155,9 +156,7 @@ def use_mutation(
                 set_loading(False)
                 set_error(e)
                 _logger.exception(
-                    f"Error executing mutation: {mutate}",
-                    exc_info=True,
-                    stack_info=True,
+                    f"Failed to execute mutation: {_generate_obj_name(mutate) or mutate}"
                 )
             else:
                 set_loading(False)
