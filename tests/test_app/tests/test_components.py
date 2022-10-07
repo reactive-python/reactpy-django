@@ -65,6 +65,9 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
     def test_use_location(self):
         self.page.locator("#use-location[data-success=true]").wait_for()
 
+    def test_use_origin(self):
+        self.page.locator("#use-origin[data-success=true]").wait_for()
+
     def test_static_css(self):
         self.assertEqual(
             self.page.wait_for_selector("#django-css button").evaluate(

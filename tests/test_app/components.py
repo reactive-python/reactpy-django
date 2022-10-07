@@ -86,6 +86,17 @@ def use_location():
 
 
 @component
+def use_origin():
+    location = django_idom.hooks.use_origin()
+    success = bool(location)
+    return html.div(
+        {"id": "use-origin", "data-success": success},
+        f"use_origin: {location}",
+        html.hr(),
+    )
+
+
+@component
 def django_css():
     return html.div(
         {"id": "django-css"},
