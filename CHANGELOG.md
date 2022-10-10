@@ -33,6 +33,7 @@ Using the following categories, list your changes in this order:
 ### Fixed
 
 -   Allow `use_mutation` to have `refetch=None`, as the docs suggest is possible.
+-   `use_query` will now fetch all fields to prevent `SynchronousOnlyOperation` exceptions.
 
 ## [1.2.0] - 2022-09-19
 
