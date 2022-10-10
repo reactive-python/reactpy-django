@@ -107,7 +107,7 @@ def use_query(
 
         try:
             new_data = query(*args, **kwargs)
-            _fetch_deferred(new_data)
+            _fetch_lazy_fields(new_data)
         except Exception as e:
             set_data(None)
             set_loading(False)
@@ -179,19 +179,20 @@ def use_mutation(
     return Mutation(call, loading, error, reset)
 
 
-def _fetch_deferred(data: Any) -> None:
+def _fetch_lazy_fields(data: Any) -> None:
+    """Fetch all fields within a `Model` or `QuerySet` to ensure they are not performed lazily."""
+
+    # `QuerySet`, which is effectively a list of `Model` instances
     # https://github.com/typeddjango/django-stubs/issues/704
     if isinstance(data, QuerySet):  # type: ignore[misc]
         for model in data:
-            _fetch_deferred_model_fields(model)
+            _fetch_lazy_fields(model)
+
+    # `Model` instances
     elif isinstance(data, Model):
-        _fetch_deferred_model_fields(data)
+        for field in data._meta.fields:
+            getattr(data, field.name)
+
+    # Unrecognized type
     else:
         raise ValueError(f"Expected a Model or QuerySet, got {data!r}")
-
-
-def _fetch_deferred_model_fields(model: Any) -> None:
-    for field in model.get_deferred_fields():
-        value = getattr(model, field)
-        if isinstance(value, Model):
-            _fetch_deferred_model_fields(value)

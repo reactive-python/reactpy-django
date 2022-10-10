@@ -178,7 +178,7 @@ def toggle_item_mutation(item: TodoItem):
 def todo_list():
     input_value, set_input_value = hooks.use_state("")
     items = use_query(get_items_query)
-    toggle_item = use_mutation(toggle_item_mutation, refetch=get_items_query)
+    toggle_item = use_mutation(toggle_item_mutation)
 
     if items.error:
         rendered_items = html.h2(f"Error when loading - {items.error}")
