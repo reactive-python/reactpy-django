@@ -87,11 +87,11 @@ def use_location():
 
 @component
 def use_origin():
-    location = django_idom.hooks.use_origin()
-    success = bool(location)
+    origin = django_idom.hooks.use_origin()
+    success = bool(origin)
     return html.div(
         {"id": "use-origin", "data-success": success},
-        f"use_origin: {location}",
+        f"use_origin: {origin}",
         html.hr(),
     )
 
