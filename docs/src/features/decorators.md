@@ -8,7 +8,7 @@ You can limit access to a component to users with a specific `auth_attribute` by
 
 By default, this decorator checks if the user is logged in, and his/her account has not been deactivated.
 
-Common uses of this decorator are to only render a component if the user [`is_staff`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_staff) or [`is_superuser`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_superuser).
+This decorator is commonly used to selectively render a component only if a user [`is_staff`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_staff) or [`is_superuser`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_superuser).
 
 This decorator can be used with or without parentheses.
 

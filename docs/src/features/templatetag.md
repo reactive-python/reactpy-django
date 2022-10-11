@@ -14,7 +14,7 @@
 
     Our pre-processor relies on the template tag containing a string.
 
-    **Do not** use a Django context variable for the path string. Failure to follow this warning will result in unexpected behavior.
+    **Do not** use Django template/context variables for the component path. Failure to follow this warning will result in unexpected behavior.
 
     For example, **do not** do the following:
 
