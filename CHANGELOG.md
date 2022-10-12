@@ -22,14 +22,13 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (Yet)
-
-## [1.2.1] - 2022-09-21
-
 ### Fixed
 
--   URLs are now pre-registered when using `view_to_component` with `compatibility=True`.
 -   `view_to_component`, `django_css`, and `django_js` type hints will now display like normal functions.
+
+### Changed
+
+-   `view_to_component` now returns a `Callable`, instead of directly returning a `Component`. Check the docs for new usage info.
 
 ## [1.2.0] - 2022-09-19
 
@@ -137,8 +136,7 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/idom-team/django-idom/compare/1.2.1...HEAD
-[1.2.1]: https://github.com/idom-team/django-idom/compare/1.2.0...1.2.1
+[unreleased]: https://github.com/idom-team/django-idom/compare/1.2.0...HEAD
 [1.2.0]: https://github.com/idom-team/django-idom/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/idom-team/django-idom/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/idom-team/django-idom/compare/0.0.5...1.0.0
