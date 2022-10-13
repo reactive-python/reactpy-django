@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Awaitable, Callable, Generic, Iterable, Optional, TypeVar, Union
+from typing import Any, Awaitable, Callable, Generic, Optional, Sequence, TypeVar, Union
 
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
@@ -49,5 +49,5 @@ class Mutation(Generic[_Params]):
 @dataclass
 class ViewComponentIframe:
     view: View | Callable
-    args: Iterable
+    args: Sequence
     kwargs: dict
