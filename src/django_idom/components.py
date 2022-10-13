@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 from inspect import iscoroutinefunction
-from typing import Any, Callable, Dict, Sequence
+from typing import Any, Callable, Mapping, Sequence
 
 from channels.db import database_sync_to_async
 from django.contrib.staticfiles.finders import find
@@ -26,7 +26,7 @@ def _view_to_component(
     strict_parsing: bool,
     request: HttpRequest | None,
     args: Sequence | None,
-    kwargs: Dict | None,
+    kwargs: Mapping | None,
 ):
     converted_view, set_converted_view = hooks.use_state(None)
     args = args or ()
@@ -110,7 +110,7 @@ def view_to_component(
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-) -> Callable[[HttpRequest | None, Sequence | None, Dict | None], Component]:
+) -> Callable[[HttpRequest | None, Sequence | None, Mapping | None], Component]:
     """Converts a Django view to an IDOM component.
 
     Keyword Args:
@@ -135,7 +135,7 @@ def view_to_component(
         def wrapper(
             request: HttpRequest | None = None,
             args: Sequence | None = None,
-            kwargs: Dict | None = None,
+            kwargs: Mapping | None = None,
         ):
             return _view_to_component(
                 view=view,

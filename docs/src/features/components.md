@@ -35,7 +35,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
     | Type | Description |
     | --- | --- |
-    | `Callable[[HttpRequest | None, Sequence | None, Dict | None], Component]` | A function that takes a `request=...`, `args=...`, and `kwargs=...` and returns an IDOM component. |
+    | `Callable[[HttpRequest | None, Sequence | None, Mapping | None], Component]` | A function that takes a `request=...`, `args=...`, and `kwargs=...` and returns an IDOM component. |
 
 ??? warning "Existing limitations"
 
