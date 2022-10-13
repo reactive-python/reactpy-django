@@ -5,9 +5,6 @@ from unittest import SkipTest
 from channels.testing import ChannelsLiveServerTestCase
 from playwright.sync_api import TimeoutError, sync_playwright
 
-from django_idom.components import view_to_component
-from django_idom.config import IDOM_VIEW_COMPONENT_IFRAMES
-
 
 class TestIdomCapabilities(ChannelsLiveServerTestCase):
     @classmethod
