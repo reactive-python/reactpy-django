@@ -185,3 +185,11 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
         self.assertIn(
             "test_app.tests.test_components.lambda", IDOM_VIEW_COMPONENT_IFRAMES
         )
+
+    def test_view_to_component_decorator(self):
+        self.page.locator("#view_to_component_decorator[data-success=true]").wait_for()
+
+    def test_view_to_component_decorator_args(self):
+        self.page.locator(
+            "#view_to_component_decorator_args[data-success=true]"
+        ).wait_for()

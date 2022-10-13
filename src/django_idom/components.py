@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 from inspect import iscoroutinefunction
-from typing import Any, Callable, Dict, Iterable
+from typing import Any, Callable, Dict, Sequence
 
 from channels.db import database_sync_to_async
 from django.contrib.staticfiles.finders import find
@@ -21,20 +21,33 @@ from django_idom.types import ViewComponentIframe
 @component
 def _view_to_component(
     view: Callable | View,
-    compatibility: bool = False,
-    transforms: Iterable[Callable[[VdomDict], Any]] = (),
-    strict_parsing: bool = True,
-    request: HttpRequest | None = None,
-    args: Iterable = (),
-    kwargs: Dict | None = None,
-    dotted_path: str | None = None,
+    compatibility: bool,
+    transforms: Sequence[Callable[[VdomDict], Any]],
+    strict_parsing: bool,
+    request: HttpRequest | None,
+    args: Sequence | None,
+    kwargs: Dict | None,
 ):
     converted_view, set_converted_view = hooks.use_state(None)
+    args = args or ()
+    kwargs = kwargs or {}
+    request_obj = request
+    if not request_obj:
+        request_obj = HttpRequest()
+        request_obj.method = "GET"
+    if compatibility:
+        dotted_path = f"{view.__module__}.{view.__name__}"  # type: ignore[union-attr]
+        dotted_path = dotted_path.replace("<", "").replace(">", "")
+        IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
+            view, args, kwargs
+        )
+    else:
+        dotted_path = None
 
     # Render the view render within a hook
     @hooks.use_effect(
         dependencies=[
-            json.dumps(vars(request), default=lambda x: _generate_obj_name(x)),
+            json.dumps(vars(request_obj), default=lambda x: _generate_obj_name(x)),
             json.dumps([args, kwargs], default=lambda x: _generate_obj_name(x)),
         ]
     )
@@ -54,11 +67,11 @@ def _view_to_component(
 
         # Render Check 2: Async function view
         elif iscoroutinefunction(view):
-            view_html = await view(request, *args, **kwargs)
+            view_html = await view(request_obj, *args, **kwargs)
 
         # Render Check 3: Async class view
         elif getattr(view, "view_is_async", False):
-            view_or_template_view = await view.as_view()(request, *args, **kwargs)
+            view_or_template_view = await view.as_view()(request_obj, *args, **kwargs)
             if getattr(view_or_template_view, "render", None):  # TemplateView
                 view_html = await view_or_template_view.render()
             else:  # View
@@ -67,7 +80,7 @@ def _view_to_component(
         # Render Check 4: Sync class view
         elif getattr(view, "as_view", None):
             async_cbv = database_sync_to_async(view.as_view())
-            view_or_template_view = await async_cbv(request, *args, **kwargs)
+            view_or_template_view = await async_cbv(request_obj, *args, **kwargs)
             if getattr(view_or_template_view, "render", None):  # TemplateView
                 view_html = await database_sync_to_async(view_or_template_view.render)()
             else:  # View
@@ -75,7 +88,7 @@ def _view_to_component(
 
         # Render Check 5: Sync function view
         else:
-            view_html = await database_sync_to_async(view)(request, *args, **kwargs)
+            view_html = await database_sync_to_async(view)(request_obj, *args, **kwargs)
 
         # Signal that the view has been rendered
         set_converted_view(
@@ -93,20 +106,15 @@ def _view_to_component(
 # TODO: Might want to intercept href clicks and form submit events.
 # Form events will probably be accomplished through the upcoming DjangoForm.
 def view_to_component(
-    view: Callable | View,
+    view: Callable | View = None,  # type: ignore[assignment]
     compatibility: bool = False,
-    transforms: Iterable[Callable[[VdomDict], Any]] = (),
+    transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-    request: HttpRequest | None = None,
-    args: Iterable = (),
-    kwargs: Dict | None = None,
-) -> Component:
+) -> Callable[[HttpRequest | None, Sequence | None, Dict | None], Component]:
     """Converts a Django view to an IDOM component.
 
-    Args:
-        view: The view function or class to convert.
-
     Keyword Args:
+        view: The view function or class to convert.
         compatibility: If True, the component will be rendered in an iframe.
             When using compatibility mode `tranforms`, `strict_parsing`, and `request`
             arguments will be ignored.
@@ -114,34 +122,34 @@ def view_to_component(
             The functions will be called on each VDOM node.
         strict_parsing: If True, an exception will be generated if the HTML does not
             perfectly adhere to HTML5.
-        request: Request object to provide to the view.
-        args: The positional arguments to pass to the view.
-        kwargs: The keyword arguments to pass to the view.
-    """
-    kwargs = kwargs or {}
-    request_obj = request
-    if not request_obj:
-        request_obj = HttpRequest()
-        request_obj.method = "GET"
-    if compatibility:
-        dotted_path = f"{view.__module__}.{view.__name__}"  # type: ignore[union-attr]
-        dotted_path = dotted_path.replace("<", "").replace(">", "")
-        IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
-            view, args, kwargs
-        )
-    else:
-        dotted_path = None
 
-    return _view_to_component(
-        view=view,
-        compatibility=compatibility,
-        transforms=transforms,
-        strict_parsing=strict_parsing,
-        request=request_obj,
-        args=args,
-        kwargs=kwargs,
-        dotted_path=dotted_path,
-    )
+    Returns:
+        Callable: A function that takes a request, args, and kwargs and returns an IDOM
+            component.
+    """
+
+    def decorator(view: Callable | View):
+        if not view:
+            raise ValueError("A view must be provided to `view_to_component`")
+
+        def wrapper(
+            request: HttpRequest | None = None,
+            args: Sequence | None = None,
+            kwargs: Dict | None = None,
+        ):
+            return _view_to_component(
+                view=view,
+                compatibility=compatibility,
+                transforms=transforms,
+                strict_parsing=strict_parsing,
+                request=request,
+                args=args,
+                kwargs=kwargs,
+            )
+
+        return wrapper
+
+    return decorator(view) if view else decorator
 
 
 @component
