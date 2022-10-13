@@ -116,8 +116,8 @@ def view_to_component(
     Keyword Args:
         view: The view function or class to convert.
         compatibility: If True, the component will be rendered in an iframe.
-            When using compatibility mode `tranforms`, `strict_parsing`, and `request`
-            arguments will be ignored.
+            When using compatibility mode `tranforms`, `strict_parsing`, `request`,
+            `args, and `kwargs` arguments will be ignored.
         transforms: A list of functions that transforms the newly generated VDOM.
             The functions will be called on each VDOM node.
         strict_parsing: If True, an exception will be generated if the HTML does not
