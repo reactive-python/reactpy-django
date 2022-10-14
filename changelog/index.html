@@ -992,12 +992,14 @@
 </ul>
 <h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
+<li><code>view_to_component</code> now returns a <code>Callable</code>, instead of directly returning a <code>Component</code>. Check the docs for new usage info.</li>
 <li><code>use_mutation</code> and <code>use_query</code> will now log any query failures.</li>
 </ul>
 <h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Allow <code>use_mutation</code> to have <code>refetch=None</code>, as the docs suggest is possible.</li>
 <li><code>use_query</code> will now prefetch all fields to prevent <code>SynchronousOnlyOperation</code> exceptions.</li>
+<li><code>view_to_component</code>, <code>django_css</code>, and <code>django_js</code> type hints will now display like normal functions.</li>
 </ul>
 <h2 id="120-2022-09-19"><a href="https://github.com/idom-team/django-idom/compare/1.1.0...1.2.0">1.2.0</a> - 2022-09-19<a class="headerlink" href="#120-2022-09-19" title="Permanent link">&para;</a></h2>
 <h3 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">&para;</a></h3>

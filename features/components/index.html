@@ -740,39 +740,35 @@
 </details>
 <h2 id="view-to-component">View To Component<a class="headerlink" href="#view-to-component" title="Permanent link">&para;</a></h2>
 <p>Convert any Django view into a IDOM component by usng this decorator. Compatible with sync/async <a href="https://docs.djangoproject.com/en/dev/topics/http/views/">Function Based Views</a> and <a href="https://docs.djangoproject.com/en/dev/topics/class-based-views/">Class Based Views</a>.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">components.py</label><label for="__tabbed_1_2">views.py</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">components.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span>
-<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
 <span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
-<span class="kn">from</span> <span class="nn">.views</span> <span class="kn">import</span> <span class="n">hello_world_view</span>
+
+<span class="nd">@view_to_component</span>
+<span class="k">def</span> <span class="nf">hello_world_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
 
 <span class="nd">@component</span>
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
-        <span class="n">view_to_component</span><span class="p">(</span><span class="n">hello_world_view</span><span class="p">),</span>
+        <span class="n">hello_world_view</span><span class="p">(),</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-</div>
-<div class="tabbed-block">
-<!-- BEGIN INCLUDE ../../includes/examples.md '&lt;!--hello-world-view-start--&gt;' '&lt;!--hello-world-view-end--&gt;' -->
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
-
-<span class="k">def</span> <span class="nf">hello_world_view</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-<!-- END INCLUDE -->
 </div>
 </div>
 </div>
@@ -798,12 +794,12 @@
 <tr>
 <td>compatibility</td>
 <td><code>bool</code></td>
-<td>If True, the component will be rendered in an iframe. When using compatibility mode <code>tranforms</code>, <code>strict_parsing</code>, and <code>request</code> arguments will be ignored.</td>
+<td>If True, the component will be rendered in an iframe. When using compatibility mode <code>tranforms</code>, <code>strict_parsing</code>, <code>request</code>, <code>args</code>, and <code>kwargs</code> arguments will be ignored.</td>
 <td><code>False</code></td>
 </tr>
 <tr>
 <td>transforms</td>
-<td><code>Iterable[Callable[[VdomDict], Any]]</code></td>
+<td><code>Sequence[Callable[[VdomDict], Any]]</code></td>
 <td>A list of functions that transforms the newly generated VDOM. The functions will be called on each VDOM node.</td>
 <td><code>tuple</code></td>
 </tr>
@@ -812,24 +808,6 @@
 <td><code>bool</code></td>
 <td>If True, an exception will be generated if the HTML does not perfectly adhere to HTML5.</td>
 <td><code>True</code></td>
-</tr>
-<tr>
-<td>request</td>
-<td><code>HttpRequest | None</code></td>
-<td>Request object to provide to the view.</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td>args</td>
-<td><code>Iterable</code></td>
-<td>The positional arguments to pass to the view.</td>
-<td><code>tuple</code></td>
-</tr>
-<tr>
-<td>kwargs</td>
-<td><code>Dict | None</code></td>
-<td>The keyword arguments to pass to the view.</td>
-<td><code>None</code></td>
 </tr>
 </tbody>
 </table>
@@ -843,64 +821,26 @@
 </thead>
 <tbody>
 <tr>
-<td><code>Component</code></td>
-<td>An IDOM component.</td>
-</tr>
-<tr>
-<td><code>None</code></td>
-<td>No component render.</td>
+<td><code>_ViewComponentConstructor</code></td>
+<td>A function that takes <code>request: HttpRequest | None, *args: Any, **kwargs: Any</code> and returns an IDOM component.</td>
 </tr>
 </tbody>
 </table>
 </details>
-<details class="question">
-<summary>How do I use this for Class Based Views?</summary>
-<p>You can simply pass your Class Based View directly into this function.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">components.py</label><label for="__tabbed_2_2">views.py</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span>
-<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
-<span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
-<span class="kn">from</span> <span class="nn">.views</span> <span class="kn">import</span> <span class="n">HelloWorldView</span>
-
-<span class="nd">@component</span>
-<span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
-        <span class="n">view_to_component</span><span class="p">(</span><span class="n">HelloWorldView</span><span class="p">),</span>
-    <span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-</div>
-<div class="tabbed-block">
-<!-- BEGIN INCLUDE ../../includes/examples.md '&lt;!--hello-world-cbv-start--&gt;' '&lt;!--hello-world-cbv-end--&gt;' -->
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
-<span class="kn">from</span> <span class="nn">django.views</span> <span class="kn">import</span> <span class="n">View</span>
-
-<span class="k">class</span> <span class="nc">HelloWorldView</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-<!-- END INCLUDE -->
-</div>
-</div>
-</div>
+<details class="warning">
+<summary>Existing limitations</summary>
+<p>There are currently several limitations of using <code>view_to_component</code> that may be resolved in a future version of <code>django_idom</code>.</p>
+<ul>
+<li>Requires manual intervention to change request methods beyond <code>GET</code>.</li>
+<li>Does not currently load any HTML contained with a <code>&lt;head&gt;</code> tag</li>
+<li>Has no option to automatically intercept local anchor link (ex. <code class="highlight"><span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#39;example/&#39;</span><span class="p">&gt;&lt;/</span><span class="nt">a</span><span class="p">&gt;</span></code>) click events</li>
+</ul>
+<p><em>Please note these limitations do not exist when using <code>compatibility</code> mode.</em></p>
 </details>
 <details class="question">
-<summary>How do I pass arguments into the view?</summary>
-<p>You can use the <code>args</code> and <code>kwargs</code> parameters to pass arguments to the view.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">components.py</label><label for="__tabbed_3_2">views.py</label></div>
+<summary>How do I use this for Class Based Views?</summary>
+<p>You can simply pass your Class Based View directly into <code>view_to_component</code>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">components.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
@@ -915,127 +855,66 @@
 <span class="normal">10</span>
 <span class="normal">11</span>
 <span class="normal">12</span>
-<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span> <span class="nn">django.views</span> <span class="kn">import</span> <span class="n">View</span>
 <span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
-<span class="kn">from</span> <span class="nn">.views</span> <span class="kn">import</span> <span class="n">hello_world_view</span>
+
+<span class="nd">@view_to_component</span>
+<span class="k">class</span> <span class="nc">HelloWorldView</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
 
 <span class="nd">@component</span>
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
-        <span class="n">view_to_component</span><span class="p">(</span>
-            <span class="n">hello_world_view</span><span class="p">,</span>
-            <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;value_1&quot;</span><span class="p">,</span> <span class="s2">&quot;value_2&quot;</span><span class="p">],</span>
-            <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;key_1&quot;</span><span class="p">:</span> <span class="s2">&quot;value_1&quot;</span><span class="p">,</span> <span class="s2">&quot;key_2&quot;</span><span class="p">:</span> <span class="s2">&quot;value_2&quot;</span><span class="p">},</span>
-        <span class="p">),</span>
+        <span class="n">HelloWorldView</span><span class="p">(),</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-</div>
-<div class="tabbed-block">
-<!-- BEGIN INCLUDE ../../includes/examples.md '&lt;!--hello-world-view-start--&gt;' '&lt;!--hello-world-view-end--&gt;' -->
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
-
-<span class="k">def</span> <span class="nf">hello_world_view</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-<!-- END INCLUDE -->
 </div>
 </div>
 </div>
 </details>
 <details class="question">
-<summary>What is <code>compatibility</code> mode?</summary>
-<p>For views that rely on HTTP responses other than <code>GET</code> (such as <code>PUT</code>, <code>POST</code>, <code>PATCH</code>, etc), you should consider using compatibility mode to render your view within an iframe.</p>
-<p>Any view can be rendered within compatibility mode. However, the <code>transforms</code>, <code>strict_parsing</code>, and <code>request</code> arguments do not apply to compatibility mode.</p>
-<p>Please note that by default the iframe is unstyled, and thus won't look pretty until you add some CSS.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">components.py</label><label for="__tabbed_4_2">views.py</label></div>
+<summary>How do I transform views from external libraries?</summary>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">components.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span>
-<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<p>In order to convert external views, you can utilize <code>view_to_component</code> as a function, rather than a decorator.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
 <span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
-<span class="kn">from</span> <span class="nn">.views</span> <span class="kn">import</span> <span class="n">hello_world_view</span>
+<span class="kn">from</span> <span class="nn">some_library.views</span> <span class="kn">import</span> <span class="n">example_view</span>
+
+<span class="n">converted_view</span> <span class="o">=</span> <span class="n">view_to_component</span><span class="p">(</span><span class="n">example_view</span><span class="p">)</span>
 
 <span class="nd">@component</span>
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
-        <span class="n">view_to_component</span><span class="p">(</span><span class="n">hello_world_view</span><span class="p">,</span> <span class="n">compatibility</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">converted_view</span><span class="p">(),</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-</div>
-<div class="tabbed-block">
-<!-- BEGIN INCLUDE ../../includes/examples.md '&lt;!--hello-world-view-start--&gt;' '&lt;!--hello-world-view-end--&gt;' -->
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
-
-<span class="k">def</span> <span class="nf">hello_world_view</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-<!-- END INCLUDE -->
 </div>
 </div>
 </div>
 </details>
 <details class="question">
-<summary>What is <code>strict_parsing</code>?</summary>
-<p>By default, an exception will be generated if your view's HTML does not perfectly adhere to HTML5.</p>
-<p>However, there are some circumstances where you may not have control over the original HTML, so you may be unable to fix it. Or you may be relying on non-standard HTML tags such as <code class="highlight"><span class="p">&lt;</span><span class="nt">my-tag</span><span class="p">&gt;</span> Hello World <span class="p">&lt;/</span><span class="nt">my-tag</span><span class="p">&gt;</span></code>.</p>
-<p>In these scenarios, you may want to rely on best-fit parsing by setting the <code>strict_parsing</code> parameter to <code>False</code>.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">components.py</label><label for="__tabbed_5_2">views.py</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span>
-<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
-<span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
-<span class="kn">from</span> <span class="nn">.views</span> <span class="kn">import</span> <span class="n">hello_world_view</span>
-
-<span class="nd">@component</span>
-<span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
-        <span class="n">view_to_component</span><span class="p">(</span><span class="n">hello_world_view</span><span class="p">,</span> <span class="n">strict_parsing</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-    <span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-</div>
-<div class="tabbed-block">
-<!-- BEGIN INCLUDE ../../includes/examples.md '&lt;!--hello-world-view-start--&gt;' '&lt;!--hello-world-view-end--&gt;' -->
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
-
-<span class="k">def</span> <span class="nf">hello_world_view</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-<!-- END INCLUDE -->
-</div>
-</div>
-</div>
-<p>Note that best-fit parsing is very similar to how web browsers will handle broken HTML.</p>
-</details>
-<details class="question">
-<summary>What is <code>transforms</code>?</summary>
-<p>After your view has been turned into <a href="https://idom-docs.herokuapp.com/docs/reference/specifications.html#vdom">VDOM</a> (python dictionaries), <code>view_to_component</code> will call your <code>transforms</code> functions on every VDOM node.</p>
-<p>This allows you to modify your view prior to rendering.</p>
-<p>For example, if you are trying to modify the text of a node with a certain <code>id</code>, you can create a transform like such:</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="6:2"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">components.py</label><label for="__tabbed_6_2">views.py</label></div>
+<summary>How do I provide <code>args</code> and <code>kwargs</code> to a view?</summary>
+<p>You can use the <code>args</code> and <code>kwargs</code> parameters to provide positional and keyworded arguments to a view.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:1"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">components.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
@@ -1054,31 +933,192 @@
 <span class="normal">14</span>
 <span class="normal">15</span>
 <span class="normal">16</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
 <span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
-<span class="kn">from</span> <span class="nn">.views</span> <span class="kn">import</span> <span class="n">hello_world_view</span>
 
-<span class="k">def</span> <span class="nf">example_transform</span><span class="p">(</span><span class="n">vdom</span><span class="p">):</span>
-    <span class="n">attributes</span> <span class="o">=</span> <span class="n">vdom</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;attributes&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">attributes</span> <span class="ow">and</span> <span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;hello-world&quot;</span><span class="p">:</span>
-        <span class="n">vdom</span><span class="p">[</span><span class="s2">&quot;children&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Good Bye World!&quot;</span>
+<span class="nd">@view_to_component</span>
+<span class="k">def</span> <span class="nf">hello_world_view</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">key1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">key2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hello World! </span><span class="si">{</span><span class="n">arg1</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">arg2</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">key1</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">key2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="nd">@component</span>
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">view_to_component</span><span class="p">(</span>
-        <span class="n">hello_world_view</span><span class="p">,</span>
-        <span class="n">transforms</span><span class="o">=</span><span class="p">[</span><span class="n">example_transform</span><span class="p">],</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
+        <span class="n">hello_world_view</span><span class="p">(</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;value_1&quot;</span><span class="p">,</span> <span class="s2">&quot;value_2&quot;</span><span class="p">],</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;key1&quot;</span><span class="p">:</span> <span class="s2">&quot;abc&quot;</span><span class="p">,</span> <span class="s2">&quot;key2&quot;</span><span class="p">:</span> <span class="s2">&quot;123&quot;</span><span class="p">},</span>
+        <span class="p">),</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
 </div>
+</div>
+</div>
+</details>
+<details class="question">
+<summary>How do I provide a custom <code>request</code> object to a view?</summary>
+<p>You can use the <code>request</code> parameter to provide the view a custom request object.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:1"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">components.py</label></div>
+<div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">HttpRequest</span>
+<span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
 
-<span class="k">def</span> <span class="nf">hello_world_view</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="n">example_request</span> <span class="o">=</span> <span class="n">HttpRequest</span><span class="p">()</span>
+<span class="n">example_request</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;PUT&quot;</span>
+
+<span class="nd">@view_to_component</span>
+<span class="k">def</span> <span class="nf">hello_world_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hello World! </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nd">@component</span>
+<span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
+        <span class="n">hello_world_view</span><span class="p">(</span>
+            <span class="n">request</span><span class="o">=</span><span class="n">example_request</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+</details>
+<details class="question">
+<summary>What is <code>compatibility</code> mode?</summary>
+<p>For views that rely on HTTP responses other than <code>GET</code> (such as <code>PUT</code>, <code>POST</code>, <code>PATCH</code>, etc), you should consider using compatibility mode to render your view within an iframe.</p>
+<p>Any view can be rendered within compatibility mode. However, the <code>transforms</code>, <code>strict_parsing</code>, <code>request</code>, <code>args</code>, and <code>kwargs</code> arguments do not apply to compatibility mode.</p>
+<p>Please note that by default the iframe is unstyled, and thus won't look pretty until you add some CSS.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="6:1"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">components.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
+
+<span class="nd">@view_to_component</span><span class="p">(</span><span class="n">compatibility</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello_world_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
+
+<span class="nd">@component</span>
+<span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
+        <span class="n">hello_world_view</span><span class="p">(),</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+</details>
+<details class="question">
+<summary>What is <code>strict_parsing</code>?</summary>
+<p>By default, an exception will be generated if your view's HTML does not perfectly adhere to HTML5.</p>
+<p>However, there are some circumstances where you may not have control over the original HTML, so you may be unable to fix it. Or you may be relying on non-standard HTML tags such as <code class="highlight"><span class="p">&lt;</span><span class="nt">my-tag</span><span class="p">&gt;</span> Hello World <span class="p">&lt;/</span><span class="nt">my-tag</span><span class="p">&gt;</span></code>.</p>
+<p>In these scenarios, you may want to rely on best-fit parsing by setting the <code>strict_parsing</code> parameter to <code>False</code>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="7:1"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">components.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
+
+<span class="nd">@view_to_component</span><span class="p">(</span><span class="n">strict_parsing</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello_world_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;&lt;my-tag&gt; Hello World &lt;/my-tag&gt;&quot;</span><span class="p">)</span>
+
+<span class="nd">@component</span>
+<span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
+        <span class="n">hello_world_view</span><span class="p">(),</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+<p>Note that best-fit parsing is very similar to how web browsers will handle broken HTML.</p>
+</details>
+<details class="question">
+<summary>What is <code>transforms</code>?</summary>
+<p>After your view has been turned into <a href="https://idom-docs.herokuapp.com/docs/reference/specifications.html#vdom">VDOM</a> (python dictionaries), <code>view_to_component</code> will call your <code>transforms</code> functions on every VDOM node.</p>
+<p>This allows you to modify your view prior to rendering.</p>
+<p>For example, if you are trying to modify the text of a node with a certain <code>id</code>, you can create a transform like such:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="8:1"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><div class="tabbed-labels"><label for="__tabbed_8_1">components.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
+
+<span class="k">def</span> <span class="nf">example_transform</span><span class="p">(</span><span class="n">vdom</span><span class="p">):</span>
+    <span class="n">attributes</span> <span class="o">=</span> <span class="n">vdom</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;attributes&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">attributes</span> <span class="ow">and</span> <span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;hello-world&quot;</span><span class="p">:</span>
+        <span class="n">vdom</span><span class="p">[</span><span class="s2">&quot;children&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Good Bye World!&quot;</span>
+
+<span class="nd">@view_to_component</span><span class="p">(</span><span class="n">transforms</span><span class="o">=</span><span class="p">[</span><span class="n">example_transform</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">hello_world_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;&lt;div id=&#39;hello-world&#39;&gt; Hello World! &lt;div&gt;&quot;</span><span class="p">)</span>
+
+<span class="nd">@component</span>
+<span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
+        <span class="n">hello_world_view</span><span class="p">(),</span>
+    <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
 </div>
 </div>
@@ -1086,7 +1126,7 @@
 </details>
 <h2 id="django-css">Django CSS<a class="headerlink" href="#django-css" title="Permanent link">&para;</a></h2>
 <p>Allows you to defer loading a CSS stylesheet until a component begins rendering. This stylesheet must be stored within <a href="https://docs.djangoproject.com/en/dev/howto/static-files/">Django's static files</a>.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="7:1"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">components.py</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="9:1"><input checked="checked" id="__tabbed_9_1" name="__tabbed_9" type="radio" /><div class="tabbed-labels"><label for="__tabbed_9_1">components.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
@@ -1202,7 +1242,7 @@
 </details>
 <h2 id="django-js">Django JS<a class="headerlink" href="#django-js" title="Permanent link">&para;</a></h2>
 <p>Allows you to defer loading JavaScript until a component begins rendering. This JavaScript must be stored within <a href="https://docs.djangoproject.com/en/dev/howto/static-files/">Django's static files</a>.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="8:1"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><div class="tabbed-labels"><label for="__tabbed_8_1">components.py</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="10:1"><input checked="checked" id="__tabbed_10_1" name="__tabbed_10" type="radio" /><div class="tabbed-labels"><label for="__tabbed_10_1">components.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
