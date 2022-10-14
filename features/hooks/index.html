@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://idom-team.github.io/django-idom/features/hooks/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.5.2">
+      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.6">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.9f9400aa.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.20d9efc8.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -265,7 +265,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../contribute/django-idom/" class="md-tabs__link">
+      <a href="../../contribute/code/" class="md-tabs__link">
         Contribute
       </a>
     </li>
@@ -578,6 +578,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#use-origin" class="md-nav__link">
+    Use Origin
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -669,7 +676,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../contribute/django-idom/" class="md-nav__link">
+      <a href="../../contribute/code/" class="md-nav__link">
         Code
       </a>
     </li>
@@ -748,16 +755,40 @@
 
   <h1>Hooks</h1>
 
-<details class="tip" open="open">
-<summary>Looking for more hooks?</summary>
-<p>Check out the <a href="https://idom-docs.herokuapp.com/docs/reference/hooks-api.html#basic-hooks">IDOM Core docs</a> on hooks!</p>
+<details class="summary" open="open">
+<summary>Summary</summary>
+<p>Prefabricated hooks can be used within your <code>components.py</code> to help simplify development.</p>
+</details>
+<details class="tip">
+<summary>Looking for standard ReactJS hooks?</summary>
+<p>Standard ReactJS hooks are contained within <a href="https://github.com/idom-team/idom"><code>idom-team/idom</code></a>. Since <code>idom</code> is installed by default alongside <code>django-idom</code>, you can import them at any time.</p>
+<p>Check out the <a href="https://idom-docs.herokuapp.com/docs/reference/hooks-api.html#basic-hooks">IDOM Core docs</a> to see what hooks are available!</p>
 </details>
 <h2 id="use-query">Use Query<a class="headerlink" href="#use-query" title="Permanent link">&para;</a></h2>
 <p>The <code>use_query</code> hook is used fetch Django ORM queries.</p>
+<p>The function you provide into this hook must return either a <code>Model</code> or <code>QuerySet</code>.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">components.py</label><label for="__tabbed_1_2">models.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">example_project.my_app.models</span> <span class="kn">import</span> <span class="n">TodoItem</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">example_project.my_app.models</span> <span class="kn">import</span> <span class="n">TodoItem</span>
 <span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_query</span>
 
@@ -776,21 +807,78 @@
         <span class="n">rendered_items</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">ul</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">li</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">item_query</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">rendered_items</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
 
 <span class="k">class</span> <span class="nc">TodoItem</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">text</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 </div>
 </div>
 </div>
+<details class="example">
+<summary>See Interface</summary>
+<p><font size="4"><strong>Parameters</strong></font></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>query</td>
+<td><code>Callable[_Params, _Result | None]</code></td>
+<td>A callable that returns a Django <code>Model</code> or <code>QuerySet</code>.</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>*args</td>
+<td><code>_Params.args</code></td>
+<td>Positional arguments to pass into <code>query</code>.</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>**kwargs</td>
+<td><code>_Params.kwargs</code></td>
+<td>Keyword arguments to pass into <code>query</code>.</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<p><font size="4"><strong>Returns</strong></font></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Query[_Result | None]</code></td>
+<td>A dataclass containing <code>loading</code>/<code>error</code> states, your <code>data</code> (if the query has successfully executed), and a <code>refetch</code> callable that can be used to re-run the query.</td>
+</tr>
+</tbody>
+</table>
+</details>
 <details class="question">
 <summary>Can I make ORM calls without hooks?</summary>
 <p>Due to Django's ORM design, database queries must be deferred using hooks. Otherwise, you will see a <code>SynchronousOnlyOperation</code> exception.</p>
 <p>This may be resolved in a future version of Django with a natively asynchronous ORM.</p>
+</details>
+<details class="question">
+<summary>Why does the example <code>get_items</code> function return a <code>Model</code> or <code>QuerySet</code>?</summary>
+<p>This was a technical design decision to <a href="https://www.apollographql.com/docs/react/data/mutations/#usemutation-api">based on Apollo</a>, but ultimately helps avoid Django's <code>SynchronousOnlyOperation</code> exceptions.</p>
+<p>The <code>use_query</code> hook ensures the provided <code>Model</code> or <code>QuerySet</code> executes all <a href="https://docs.djangoproject.com/en/dev/ref/models/instances/#django.db.models.Model.get_deferred_fields">deferred</a>/<a href="https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy">lazy queries</a> safely prior to reaching your components.</p>
 </details>
 <details class="question">
 <summary>What is an "ORM"?</summary>
@@ -798,11 +886,37 @@
 <p>See the <a href="https://docs.djangoproject.com/en/dev/topics/db/queries/">Django ORM documentation</a> for more information.</p>
 </details>
 <h2 id="use-mutation">Use Mutation<a class="headerlink" href="#use-mutation" title="Permanent link">&para;</a></h2>
-<p>The <code>use_mutation</code> hook is used to modify Django ORM objects.</p>
+<p>The <code>use_mutation</code> hook is used to create, update, or delete Django ORM objects.</p>
+<p>The function you provide into this hook will have no return value.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">components.py</label><label for="__tabbed_2_2">models.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">example_project.my_app.models</span> <span class="kn">import</span> <span class="n">TodoItem</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">example_project.my_app.models</span> <span class="kn">import</span> <span class="n">TodoItem</span>
 <span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_mutation</span>
 
@@ -811,8 +925,11 @@
 
 <span class="nd">@component</span>
 <span class="k">def</span> <span class="nf">todo_list</span><span class="p">():</span>
-    <span class="n">item_mutation</span> <span class="o">=</span> <span class="n">use_mutation</span><span class="p">(</span><span class="n">add_item</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">submit_event</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Enter&quot;</span><span class="p">:</span>
+            <span class="n">item_mutation</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
 
+    <span class="n">item_mutation</span> <span class="o">=</span> <span class="n">use_mutation</span><span class="p">(</span><span class="n">add_item</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">item_mutation</span><span class="o">.</span><span class="n">loading</span><span class="p">:</span>
         <span class="n">mutation_status</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">h2</span><span class="p">(</span><span class="s2">&quot;Adding...&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">item_mutation</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
@@ -820,32 +937,116 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">mutation_status</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">submit_event</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">event</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Enter&quot;</span><span class="p">:</span>
-            <span class="n">item_mutation</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
-
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
         <span class="n">html</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s2">&quot;Add an item:&quot;</span><span class="p">),</span>
         <span class="n">html</span><span class="o">.</span><span class="n">input</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;onKeyDown&quot;</span><span class="p">:</span> <span class="n">submit_event</span><span class="p">}),</span>
         <span class="n">mutation_status</span><span class="p">,</span>
     <span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<!-- BEGIN INCLUDE ../../includes/examples.md '&lt;!--todo-model-start--&gt;' '&lt;!--todo-model-end--&gt;' -->
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
 
 <span class="k">class</span> <span class="nc">TodoItem</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">text</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+<!-- END INCLUDE -->
 </div>
 </div>
 </div>
+<details class="example">
+<summary>See Interface</summary>
+<p><font size="4"><strong>Parameters</strong></font></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mutate</td>
+<td><code>Callable[_Params, bool | None]</code></td>
+<td>A callable that performs Django ORM create, update, or delete functionality. If this function returns <code>False</code>, then your <code>refetch</code> function will not be used.</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>refetch</td>
+<td><code>Callable[..., Any] | Sequence[Callable[..., Any]] | None</code></td>
+<td>A <code>query</code> function (used by the <code>use_query</code> hook) or a sequence of <code>query</code> functions that will be called if the mutation succeeds. This is useful for refetching data after a mutation has been performed.</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+<p><font size="4"><strong>Returns</strong></font></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Mutation[_Params]</code></td>
+<td>A dataclass containing <code>loading</code>/<code>error</code> states, a <code>reset</code> callable that will set <code>loading</code>/<code>error</code> states to defaults, and a <code>execute</code> callable that will run the query.</td>
+</tr>
+</tbody>
+</table>
+</details>
 <details class="question">
 <summary>Can <code>use_mutation</code> trigger a refetch of <code>use_query</code>?</summary>
 <p>Yes, <code>use_mutation</code> can queue a refetch of a <code>use_query</code> via the <code>refetch=...</code> argument.</p>
 <p>The example below is a merge of the <code>use_query</code> and <code>use_mutation</code> examples above with the addition of a <code>refetch</code> argument on <code>use_mutation</code>.</p>
 <p>Please note that any <code>use_query</code> hooks that use <code>get_items</code> will be refetched upon a successful mutation.</p>
-<div class="highlight"><span class="filename">components.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">example_project.my_app.models</span> <span class="kn">import</span> <span class="n">TodoItem</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">components.py</label><label for="__tabbed_3_2">models.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">example_project.my_app.models</span> <span class="kn">import</span> <span class="n">TodoItem</span>
 <span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_mutation</span>
 
@@ -857,6 +1058,10 @@
 
 <span class="nd">@component</span>
 <span class="k">def</span> <span class="nf">todo_list</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">submit_event</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Enter&quot;</span><span class="p">:</span>
+            <span class="n">item_mutation</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+
     <span class="n">item_query</span> <span class="o">=</span> <span class="n">use_query</span><span class="p">(</span><span class="n">get_items</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">item_query</span><span class="o">.</span><span class="n">loading</span><span class="p">:</span>
         <span class="n">rendered_items</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">h2</span><span class="p">(</span><span class="s2">&quot;Loading...&quot;</span><span class="p">)</span>
@@ -873,17 +1078,109 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">mutation_status</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">submit_event</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">event</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Enter&quot;</span><span class="p">:</span>
-            <span class="n">item_mutation</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
-
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
         <span class="n">html</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s2">&quot;Add an item:&quot;</span><span class="p">),</span>
         <span class="n">html</span><span class="o">.</span><span class="n">input</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;onKeyDown&quot;</span><span class="p">:</span> <span class="n">submit_event</span><span class="p">}),</span>
         <span class="n">mutation_status</span><span class="p">,</span>
         <span class="n">rendered_items</span><span class="p">,</span>
     <span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+<div class="tabbed-block">
+<!-- BEGIN INCLUDE ../../includes/examples.md '&lt;!--todo-model-start--&gt;' '&lt;!--todo-model-end--&gt;' -->
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="k">class</span> <span class="nc">TodoItem</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<!-- END INCLUDE -->
+</div>
+</div>
+</div>
+</details>
+<details class="question">
+<summary>Can I make a failed <code>use_mutation</code> try again?</summary>
+<p>Yes, a <code>use_mutation</code> can be re-performed by calling <code>reset()</code> on your <code>use_mutation</code> instance.</p>
+<p>For example, take a look at <code>reset_event</code> below.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">components.py</label><label for="__tabbed_4_2">models.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">example_project.my_app.models</span> <span class="kn">import</span> <span class="n">TodoItem</span>
+<span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_mutation</span>
+
+<span class="k">def</span> <span class="nf">add_item</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">TodoItem</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<span class="nd">@component</span>
+<span class="k">def</span> <span class="nf">todo_list</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">reset_event</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="n">item_mutation</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">submit_event</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Enter&quot;</span><span class="p">:</span>
+            <span class="n">item_mutation</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+
+    <span class="n">item_mutation</span> <span class="o">=</span> <span class="n">use_mutation</span><span class="p">(</span><span class="n">add_item</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">item_mutation</span><span class="o">.</span><span class="n">loading</span><span class="p">:</span>
+        <span class="n">mutation_status</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">h2</span><span class="p">(</span><span class="s2">&quot;Adding...&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">item_mutation</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+        <span class="n">mutation_status</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">button</span><span class="p">({</span><span class="s2">&quot;onClick&quot;</span><span class="p">:</span> <span class="n">reset_event</span><span class="p">},</span> <span class="s2">&quot;Error: Try again!&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mutation_status</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s2">&quot;Add an item:&quot;</span><span class="p">),</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">input</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;onKeyDown&quot;</span><span class="p">:</span> <span class="n">submit_event</span><span class="p">}),</span>
+        <span class="n">mutation_status</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+</div>
+<div class="tabbed-block">
+<!-- BEGIN INCLUDE ../../includes/examples.md '&lt;!--todo-model-start--&gt;' '&lt;!--todo-model-end--&gt;' -->
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="k">class</span> <span class="nc">TodoItem</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<!-- END INCLUDE -->
+</div>
+</div>
+</div>
 </details>
 <details class="question">
 <summary>Can I make ORM calls without hooks?</summary>
@@ -897,47 +1194,187 @@
 <p>See the <a href="https://docs.djangoproject.com/en/dev/topics/db/queries/">Django ORM documentation</a> for more information.</p>
 </details>
 <h2 id="use-websocket">Use Websocket<a class="headerlink" href="#use-websocket" title="Permanent link">&para;</a></h2>
-<p>You can fetch the Django Channels websocket at any time by using <code>use_websocket</code>.</p>
-<div class="highlight"><span class="filename">components.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<p>You can fetch the Django Channels <a href="https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer">websocket</a> at any time by using <code>use_websocket</code>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:1"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">components.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_websocket</span>
 
 <span class="nd">@component</span>
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
     <span class="n">my_websocket</span> <span class="o">=</span> <span class="n">use_websocket</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">my_websocket</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+<details class="example">
+<summary>See Interface</summary>
+<p><font size="4"><strong>Parameters</strong></font></p>
+<p><code>None</code></p>
+<p><font size="4"><strong>Returns</strong></font></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IdomWebsocket</code></td>
+<td>The component's websocket.</td>
+</tr>
+</tbody>
+</table>
+</details>
 <h2 id="use-scope">Use Scope<a class="headerlink" href="#use-scope" title="Permanent link">&para;</a></h2>
-<p>This is a shortcut that returns the Websocket's <code>scope</code>.</p>
-<div class="highlight"><span class="filename">components.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<p>This is a shortcut that returns the Websocket's <a href="https://channels.readthedocs.io/en/stable/topics/consumers.html#scope"><code>scope</code></a>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="6:1"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">components.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_scope</span>
 
 <span class="nd">@component</span>
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
     <span class="n">my_scope</span> <span class="o">=</span> <span class="n">use_scope</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">my_scope</span><span class="p">)</span>
-</code></pre></div>
-<h2 id="use-location">Use Location<a class="headerlink" href="#use-location" title="Permanent link">&para;</a></h2>
-<details class="info">
-<summary>This hook's behavior will be changed in a future update</summary>
-<p>This hook will be updated to return the browser's current URL. This change will come in alongside IDOM URL routing support.</p>
-<p>Check out <a href="https://github.com/idom-team/idom/issues/569">idom-team/idom#569</a> for more information.</p>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+<details class="example">
+<summary>See Interface</summary>
+<p><font size="4"><strong>Parameters</strong></font></p>
+<p><code>None</code></p>
+<p><font size="4"><strong>Returns</strong></font></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dict[str, Any]</code></td>
+<td>The websocket's <code>scope</code>.</td>
+</tr>
+</tbody>
+</table>
 </details>
+<h2 id="use-location">Use Location<a class="headerlink" href="#use-location" title="Permanent link">&para;</a></h2>
 <p>This is a shortcut that returns the Websocket's <code>path</code>.</p>
-<div class="highlight"><span class="filename">components.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<p>You can expect this hook to provide strings such as <code>/idom/my_path</code>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="7:1"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">components.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_location</span>
 
 <span class="nd">@component</span>
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
     <span class="n">my_location</span> <span class="o">=</span> <span class="n">use_location</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">my_location</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+<details class="info">
+<summary>This hook's behavior will be changed in a future update</summary>
+<p>This hook will be updated to return the browser's currently active path. This change will come in alongside IDOM URL routing support.</p>
+<p>Check out <a href="https://github.com/idom-team/idom-router/issues/2">idom-team/idom-router#2</a> for more information.</p>
+</details>
+<details class="example">
+<summary>See Interface</summary>
+<p><font size="4"><strong>Parameters</strong></font></p>
+<p><code>None</code></p>
+<p><font size="4"><strong>Returns</strong></font></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Location</code></td>
+<td>A object containing the current URL's <code>pathname</code> and <code>search</code> query.</td>
+</tr>
+</tbody>
+</table>
+</details>
+<h2 id="use-origin">Use Origin<a class="headerlink" href="#use-origin" title="Permanent link">&para;</a></h2>
+<p>This is a shortcut that returns the Websocket's <code>origin</code>.</p>
+<p>You can expect this hook to provide strings such as <code>http://example.com</code>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="8:1"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><div class="tabbed-labels"><label for="__tabbed_8_1">components.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_origin</span>
+
+<span class="nd">@component</span>
+<span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
+    <span class="n">my_origin</span> <span class="o">=</span> <span class="n">use_origin</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">my_origin</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+<details class="example">
+<summary>See Interface</summary>
+<p><font size="4"><strong>Parameters</strong></font></p>
+<p><code>None</code></p>
+<p><font size="4"><strong>Returns</strong></font></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>str | None</code></td>
+<td>A string containing the browser's current origin, obtained from websocket headers (if available).</td>
+</tr>
+</tbody>
+</table>
+</details>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 20, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">October 14, 2022</span>
       
     
   </small>
@@ -1019,10 +1456,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.39f04ddb.min.js"></script>
+      <script src="../../assets/javascripts/bundle.078830c0.min.js"></script>
       
     
   </body>

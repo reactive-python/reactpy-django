@@ -10,3 +10,8 @@
 .md-typeset :is(.admonition, details) {
 	margin: 0.55em 0;
 }
+
+.md-typeset .tabbed-labels > label {
+	padding-top: 0;
+	padding-bottom: 0.35em;
+}

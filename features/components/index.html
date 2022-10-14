@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://idom-team.github.io/django-idom/features/components/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.5.2">
+      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.6">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.9f9400aa.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.20d9efc8.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -265,7 +265,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../contribute/django-idom/" class="md-tabs__link">
+      <a href="../../contribute/code/" class="md-tabs__link">
         Contribute
       </a>
     </li>
@@ -655,7 +655,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../contribute/django-idom/" class="md-nav__link">
+      <a href="../../contribute/code/" class="md-nav__link">
         Code
       </a>
     </li>
@@ -734,12 +734,24 @@
 
   <h1>Components</h1>
 
+<details class="summary" open="open">
+<summary>Summary</summary>
+<p>Prefabricated components can be used within your <code>components.py</code> to help simplify development.</p>
+</details>
 <h2 id="view-to-component">View To Component<a class="headerlink" href="#view-to-component" title="Permanent link">&para;</a></h2>
 <p>Convert any Django view into a IDOM component by usng this decorator. Compatible with sync/async <a href="https://docs.djangoproject.com/en/dev/topics/http/views/">Function Based Views</a> and <a href="https://docs.djangoproject.com/en/dev/topics/class-based-views/">Class Based Views</a>.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">components.py</label><label for="__tabbed_1_2">views.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
 <span class="kn">from</span> <span class="nn">.views</span> <span class="kn">import</span> <span class="n">hello_world_view</span>
 
@@ -748,15 +760,18 @@
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
         <span class="n">view_to_component</span><span class="p">(</span><span class="n">hello_world_view</span><span class="p">),</span>
     <span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
 <!-- BEGIN INCLUDE ../../includes/examples.md '&lt;!--hello-world-view-start--&gt;' '&lt;!--hello-world-view-end--&gt;' -->
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
 
 <span class="k">def</span> <span class="nf">hello_world_view</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 <!-- END INCLUDE -->
 </div>
 </div>
@@ -844,7 +859,15 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">components.py</label><label for="__tabbed_2_2">views.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
 <span class="kn">from</span> <span class="nn">.views</span> <span class="kn">import</span> <span class="n">HelloWorldView</span>
 
@@ -853,17 +876,22 @@
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
         <span class="n">view_to_component</span><span class="p">(</span><span class="n">HelloWorldView</span><span class="p">),</span>
     <span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
 <!-- BEGIN INCLUDE ../../includes/examples.md '&lt;!--hello-world-cbv-start--&gt;' '&lt;!--hello-world-cbv-end--&gt;' -->
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
 <span class="kn">from</span> <span class="nn">django.views</span> <span class="kn">import</span> <span class="n">View</span>
 
 <span class="k">class</span> <span class="nc">HelloWorldView</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 <!-- END INCLUDE -->
 </div>
 </div>
@@ -875,7 +903,19 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">components.py</label><label for="__tabbed_3_2">views.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
 <span class="kn">from</span> <span class="nn">.views</span> <span class="kn">import</span> <span class="n">hello_world_view</span>
 
@@ -888,15 +928,18 @@
             <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;key_1&quot;</span><span class="p">:</span> <span class="s2">&quot;value_1&quot;</span><span class="p">,</span> <span class="s2">&quot;key_2&quot;</span><span class="p">:</span> <span class="s2">&quot;value_2&quot;</span><span class="p">},</span>
         <span class="p">),</span>
     <span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
 <!-- BEGIN INCLUDE ../../includes/examples.md '&lt;!--hello-world-view-start--&gt;' '&lt;!--hello-world-view-end--&gt;' -->
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
 
 <span class="k">def</span> <span class="nf">hello_world_view</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 <!-- END INCLUDE -->
 </div>
 </div>
@@ -910,7 +953,15 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">components.py</label><label for="__tabbed_4_2">views.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
 <span class="kn">from</span> <span class="nn">.views</span> <span class="kn">import</span> <span class="n">hello_world_view</span>
 
@@ -919,15 +970,18 @@
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
         <span class="n">view_to_component</span><span class="p">(</span><span class="n">hello_world_view</span><span class="p">,</span> <span class="n">compatibility</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
     <span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
 <!-- BEGIN INCLUDE ../../includes/examples.md '&lt;!--hello-world-view-start--&gt;' '&lt;!--hello-world-view-end--&gt;' -->
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
 
 <span class="k">def</span> <span class="nf">hello_world_view</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 <!-- END INCLUDE -->
 </div>
 </div>
@@ -941,7 +995,15 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">components.py</label><label for="__tabbed_5_2">views.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
 <span class="kn">from</span> <span class="nn">.views</span> <span class="kn">import</span> <span class="n">hello_world_view</span>
 
@@ -950,15 +1012,18 @@
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
         <span class="n">view_to_component</span><span class="p">(</span><span class="n">hello_world_view</span><span class="p">,</span> <span class="n">strict_parsing</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
     <span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
 <!-- BEGIN INCLUDE ../../includes/examples.md '&lt;!--hello-world-view-start--&gt;' '&lt;!--hello-world-view-end--&gt;' -->
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
 
 <span class="k">def</span> <span class="nf">hello_world_view</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello World!&quot;</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 <!-- END INCLUDE -->
 </div>
 </div>
@@ -973,7 +1038,22 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="6:2"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">components.py</label><label for="__tabbed_6_2">views.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
 <span class="kn">from</span> <span class="nn">.views</span> <span class="kn">import</span> <span class="n">hello_world_view</span>
 
@@ -989,21 +1069,35 @@
         <span class="n">hello_world_view</span><span class="p">,</span>
         <span class="n">transforms</span><span class="o">=</span><span class="p">[</span><span class="n">example_transform</span><span class="p">],</span>
     <span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
 
 <span class="k">def</span> <span class="nf">hello_world_view</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;&lt;div id=&#39;hello-world&#39;&gt; Hello World! &lt;div&gt;&quot;</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 </div>
 </div>
 </div>
 </details>
 <h2 id="django-css">Django CSS<a class="headerlink" href="#django-css" title="Permanent link">&para;</a></h2>
 <p>Allows you to defer loading a CSS stylesheet until a component begins rendering. This stylesheet must be stored within <a href="https://docs.djangoproject.com/en/dev/howto/static-files/">Django's static files</a>.</p>
-<div class="highlight"><span class="filename">components.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="7:1"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">components.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">django_css</span>
 
 <span class="nd">@component</span>
@@ -1012,7 +1106,47 @@
         <span class="n">django_css</span><span class="p">(</span><span class="s2">&quot;css/buttons.css&quot;</span><span class="p">),</span>
         <span class="n">html</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;My Button!&quot;</span><span class="p">),</span>
     <span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+<details class="example">
+<summary>See Interface</summary>
+<p><font size="4"><strong>Parameters</strong></font></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>static_path</td>
+<td><code>str</code></td>
+<td>The path to the static file. This path is identical to what you would use on a <code>static</code> template tag.</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<p><font size="4"><strong>Returns</strong></font></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Component</code></td>
+<td>An IDOM component.</td>
+</tr>
+</tbody>
+</table>
+</details>
 <details class="question">
 <summary>Should I put <code>django_css</code> at the top of my component?</summary>
 <p>Yes, if the stylesheet contains styling for your component.</p>
@@ -1021,7 +1155,15 @@
 <summary>Can I load static CSS using <code>html.link</code> instead?</summary>
 <p>While you can load stylesheets with <code>html.link</code>, keep in mind that loading this way <strong>does not</strong> ensure load order. Thus, your stylesheet will be loaded after your component is displayed. This would likely cause some visual jankiness, so use this at your own discretion.</p>
 <p>Here's an example on what you should avoid doing for Django static files:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django.templatetags.static</span> <span class="kn">import</span> <span class="n">static</span>
 
 <span class="nd">@component</span>
@@ -1030,13 +1172,20 @@
         <span class="n">html</span><span class="o">.</span><span class="n">link</span><span class="p">({</span><span class="s2">&quot;rel&quot;</span><span class="p">:</span> <span class="s2">&quot;stylesheet&quot;</span><span class="p">,</span> <span class="s2">&quot;href&quot;</span><span class="p">:</span> <span class="n">static</span><span class="p">(</span><span class="s2">&quot;css/buttons.css&quot;</span><span class="p">)}),</span>
         <span class="n">html</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;My Button!&quot;</span><span class="p">),</span>
     <span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 </details>
 <details class="question">
 <summary>How do I load external CSS?</summary>
 <p><code>django_css</code> can only be used with local static files.</p>
 <p>For external CSS, substitute <code>django_css</code> with <code>html.link</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 
 <span class="nd">@component</span>
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
@@ -1044,7 +1193,7 @@
         <span class="n">html</span><span class="o">.</span><span class="n">link</span><span class="p">({</span><span class="s2">&quot;rel&quot;</span><span class="p">:</span> <span class="s2">&quot;stylesheet&quot;</span><span class="p">,</span> <span class="s2">&quot;href&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com/external-styles.css&quot;</span><span class="p">}),</span>
         <span class="n">html</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;My Button!&quot;</span><span class="p">),</span>
     <span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 </details>
 <details class="question">
 <summary>Why not load my CSS in <code class="highlight"><span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span></code>?</summary>
@@ -1053,7 +1202,18 @@
 </details>
 <h2 id="django-js">Django JS<a class="headerlink" href="#django-js" title="Permanent link">&para;</a></h2>
 <p>Allows you to defer loading JavaScript until a component begins rendering. This JavaScript must be stored within <a href="https://docs.djangoproject.com/en/dev/howto/static-files/">Django's static files</a>.</p>
-<div class="highlight"><span class="filename">components.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="8:1"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><div class="tabbed-labels"><label for="__tabbed_8_1">components.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">django_js</span>
 
 <span class="nd">@component</span>
@@ -1062,7 +1222,47 @@
         <span class="n">html</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;My Button!&quot;</span><span class="p">),</span>
         <span class="n">django_js</span><span class="p">(</span><span class="s2">&quot;js/scripts.js&quot;</span><span class="p">),</span>
     <span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+<details class="example">
+<summary>See Interface</summary>
+<p><font size="4"><strong>Parameters</strong></font></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>static_path</td>
+<td><code>str</code></td>
+<td>The path to the static file. This path is identical to what you would use on a <code>static</code> template tag.</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<p><font size="4"><strong>Returns</strong></font></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Component</code></td>
+<td>An IDOM component.</td>
+</tr>
+</tbody>
+</table>
+</details>
 <details class="question">
 <summary>Should I put <code>django_js</code> at the bottom of my component?</summary>
 <p>Yes, if your scripts are reliant on the contents of the component.</p>
@@ -1071,7 +1271,15 @@
 <summary>Can I load static JavaScript using <code>html.script</code> instead?</summary>
 <p>While you can load JavaScript with <code>html.script</code>, keep in mind that loading this way <strong>does not</strong> ensure load order. Thus, your JavaScript will likely be loaded at an arbitrary time after your component is displayed.</p>
 <p>Here's an example on what you should avoid doing for Django static files:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django.templatetags.static</span> <span class="kn">import</span> <span class="n">static</span>
 
 <span class="nd">@component</span>
@@ -1080,13 +1288,20 @@
         <span class="n">html</span><span class="o">.</span><span class="n">script</span><span class="p">({</span><span class="s2">&quot;src&quot;</span><span class="p">:</span> <span class="n">static</span><span class="p">(</span><span class="s2">&quot;js/scripts.js&quot;</span><span class="p">)}),</span>
         <span class="n">html</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;My Button!&quot;</span><span class="p">),</span>
     <span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 </details>
 <details class="question">
 <summary>How do I load external JS?</summary>
 <p><code>django_js</code> can only be used with local static files.</p>
 <p>For external JavaScript, substitute <code>django_js</code> with <code>html.script</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 
 <span class="nd">@component</span>
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
@@ -1094,7 +1309,7 @@
         <span class="n">html</span><span class="o">.</span><span class="n">script</span><span class="p">({</span><span class="s2">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com/external-scripts.js&quot;</span><span class="p">}),</span>
         <span class="n">html</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;My Button!&quot;</span><span class="p">),</span>
     <span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 </details>
 <details class="question">
 <summary>Why not load my JS in <code class="highlight"><span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span></code>?</summary>
@@ -1107,7 +1322,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 20, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">October 14, 2022</span>
       
     
   </small>
@@ -1189,10 +1404,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.39f04ddb.min.js"></script>
+      <script src="../../assets/javascripts/bundle.078830c0.min.js"></script>
       
     
   </body>

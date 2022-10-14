@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://idom-team.github.io/django-idom/features/templatetag/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.5.2">
+      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.6">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.9f9400aa.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.20d9efc8.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -72,6 +72,11 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#component" class="md-skip">
+          Skip to content
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -260,7 +265,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../contribute/django-idom/" class="md-tabs__link">
+      <a href="../../contribute/code/" class="md-tabs__link">
         Contribute
       </a>
     </li>
@@ -544,9 +549,38 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Template Tag
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Template Tag
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#component" class="md-nav__link">
+    Component
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -607,7 +641,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../contribute/django-idom/" class="md-nav__link">
+      <a href="../../contribute/code/" class="md-nav__link">
         Code
       </a>
     </li>
@@ -686,36 +720,64 @@
 
   <h1>Template Tag</h1>
 
-<p>Integrated within Django IDOM, we bundle a template tag. Within this tag, you can pass in keyword arguments directly into your component.</p>
+<details class="summary" open="open">
+<summary>Summary</summary>
+<p>Template tags can be used within your Django templates such as <code>my-template.html</code> to import IDOM features.</p>
+</details>
+<h2 id="component">Component<a class="headerlink" href="#component" title="Permanent link">&para;</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">my-template.html</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <!-- BEGIN INCLUDE ../../../README.md '&lt;!--html-code-start--&gt;' '&lt;!--html-code-end--&gt;' -->
-
-<div class="highlight"><span class="filename">my-template.html</span><pre><span></span><code><span class="cp">{%</span> <span class="k">load</span> <span class="nv">idom</span> <span class="cp">%}</span><span class="x"></span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="cp">{%</span> <span class="k">load</span> <span class="nv">idom</span> <span class="cp">%}</span><span class="x"></span>
 <span class="x">&lt;!DOCTYPE html&gt;</span>
 <span class="x">&lt;html&gt;</span>
 <span class="x">  &lt;body&gt;</span>
 <span class="x">    </span><span class="cp">{%</span> <span class="k">component</span> <span class="s2">&quot;example_project.my_app.components.hello_world&quot;</span> <span class="nv">recipient</span><span class="o">=</span><span class="s2">&quot;World&quot;</span> <span class="cp">%}</span><span class="x"></span>
 <span class="x">  &lt;/body&gt;</span>
 <span class="x">&lt;/html&gt;</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 <!-- END INCLUDE -->
-
+</div>
+</div>
+</div>
 <!--context-start-->
 
 <details class="warning">
 <summary>Do not use context variables for the IDOM component name</summary>
 <p>Our pre-processor relies on the template tag containing a string.</p>
-<p><strong>Do not</strong> use a Django context variable for the path string. Failure to follow this warning will result in a performance penalty and also jankiness when using the Django autoreloader.</p>
+<p><strong>Do not</strong> use Django template/context variables for the component path. Failure to follow this warning will result in unexpected behavior.</p>
 <p>For example, <strong>do not</strong> do the following:</p>
-<div class="highlight"><span class="filename">views.py</span><pre><span></span><code><span class="k">def</span> <span class="nf">example_view</span><span class="p">():</span>
-    <span class="n">context_vars</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;dont_do_this&quot;</span><span class="p">:</span> <span class="s2">&quot;example_project.my_app.components.hello_world&quot;</span><span class="p">}</span>
-    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;my-template.html&quot;</span><span class="p">,</span> <span class="n">context_vars</span><span class="p">)</span>
-</code></pre></div>
-<div class="highlight"><span class="filename">my-template.html</span><pre><span></span><code><span class="x">&lt;!-- This is bad --&gt;</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">my-template.html</label><label for="__tabbed_2_2">views.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="x">&lt;!-- This is bad --&gt;</span>
 <span class="cp">{%</span> <span class="k">component</span> <span class="nv">dont_do_this</span> <span class="nv">recipient</span><span class="o">=</span><span class="s2">&quot;World&quot;</span> <span class="cp">%}</span><span class="x"></span>
 
 <span class="x">&lt;!-- This is good --&gt;</span>
 <span class="cp">{%</span> <span class="k">component</span> <span class="s2">&quot;example_project.my_app.components.hello_world&quot;</span> <span class="nv">recipient</span><span class="o">=</span><span class="s2">&quot;World&quot;</span> <span class="cp">%}</span><span class="x"></span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">example_view</span><span class="p">():</span>
+    <span class="n">context_vars</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;dont_do_this&quot;</span><span class="p">:</span> <span class="s2">&quot;example_project.my_app.components.hello_world&quot;</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;my-template.html&quot;</span><span class="p">,</span> <span class="n">context_vars</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
 </details>
 <!--context-end-->
 <!--kwarg-start-->
@@ -727,18 +789,81 @@
 <li><code>class</code> allows you to apply a HTML class to the top-level component div. This is useful for styling purposes.</li>
 <li><code>key</code> allows you to force the component to use a <a href="https://idom-docs.herokuapp.com/docs/guides/understanding-idom/why-idom-needs-keys.html?highlight=key">specific key value</a>. You typically won't need to set this.</li>
 </ul>
-<div class="highlight"><span class="filename">my-template.html</span><pre><span></span><code><span class="x">...</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">my-template.html</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="x">...</span>
 <span class="cp">{%</span> <span class="k">component</span> <span class="s2">&quot;example.components.my_component&quot;</span> <span class="nv">class</span><span class="o">=</span><span class="s2">&quot;my-html-class&quot;</span> <span class="nv">key</span><span class="o">=</span><span class="m">123</span> <span class="cp">%}</span><span class="x"></span>
 <span class="x">...</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
 </details>
 <!--kwarg-end-->
+
+<details class="example">
+<summary>See Interface</summary>
+<p><font size="4"><strong>Parameters</strong></font></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dotted_path</td>
+<td><code>str</code></td>
+<td>The dotted path to the component to render.</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>**kwargs</td>
+<td><code>Any</code></td>
+<td>The keyword arguments to pass to the component.</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
+<p><font size="4"><strong>Returns</strong></font></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Component</code></td>
+<td>An IDOM component.</td>
+</tr>
+</tbody>
+</table>
+</details>
 <!--multiple-components-start-->
 
 <details class="question">
 <summary>Can I use multiple components on one page?</summary>
 <p>You can add as many components to a webpage as needed by using the template tag multiple times. Retrofitting legacy sites to use IDOM will typically involve many components on one page.</p>
-<div class="highlight"><pre><span></span><code><span class="cp">{%</span> <span class="k">load</span> <span class="nv">idom</span> <span class="cp">%}</span><span class="x"></span>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:1"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">my-template.html</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="cp">{%</span> <span class="k">load</span> <span class="nv">idom</span> <span class="cp">%}</span><span class="x"></span>
 <span class="x">&lt;!DOCTYPE html&gt;</span>
 <span class="x">&lt;html&gt;</span>
 <span class="x">    &lt;body&gt;</span>
@@ -747,7 +872,10 @@
 <span class="x">    &lt;div&gt;</span><span class="cp">{%</span> <span class="k">component</span> <span class="s2">&quot;example_project.my_app_3.components.simple_component&quot;</span> <span class="cp">%}</span><span class="x">&lt;/div&gt;</span>
 <span class="x">    &lt;/body&gt;</span>
 <span class="x">&lt;/html&gt;</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
 <p>But keep in mind, in scenarios where you are trying to create a Single Page Application (SPA) within Django, you will only have one central component within your <code class="highlight"><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span></code> tag.</p>
 <p>Additionally, the components in the example above will not be able to interact with each other, except through database queries.</p>
 </details>
@@ -765,16 +893,28 @@
 <summary>What is a "template tag"?</summary>
 <p>You can think of template tags as Django's way of allowing you to run Python code within your HTML. Django IDOM uses a <code class="highlight"><span class="cp">{%</span> <span class="k">component</span> <span class="p">...</span> <span class="cp">%}</span><span class="x"></span></code> template tag to perform it's magic.</p>
 <p>Keep in mind, in order to use the <code class="highlight"><span class="cp">{%</span> <span class="k">component</span> <span class="p">...</span> <span class="cp">%}</span><span class="x"></span></code> tag, you'll need to first call <code class="highlight"><span class="cp">{%</span> <span class="k">load</span> <span class="nv">idom</span> <span class="cp">%}</span><span class="x"></span></code> to gain access to it.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:1"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">my-template.html</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <!-- BEGIN INCLUDE ../../../README.md '&lt;!--html-code-start--&gt;' '&lt;!--html-code-end--&gt;' -->
-<div class="highlight"><span class="filename">my-template.html</span><pre><span></span><code><span class="cp">{%</span> <span class="k">load</span> <span class="nv">idom</span> <span class="cp">%}</span><span class="x"></span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="cp">{%</span> <span class="k">load</span> <span class="nv">idom</span> <span class="cp">%}</span><span class="x"></span>
 <span class="x">&lt;!DOCTYPE html&gt;</span>
 <span class="x">&lt;html&gt;</span>
 <span class="x">  &lt;body&gt;</span>
 <span class="x">    </span><span class="cp">{%</span> <span class="k">component</span> <span class="s2">&quot;example_project.my_app.components.hello_world&quot;</span> <span class="nv">recipient</span><span class="o">=</span><span class="s2">&quot;World&quot;</span> <span class="cp">%}</span><span class="x"></span>
 <span class="x">  &lt;/body&gt;</span>
 <span class="x">&lt;/html&gt;</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
 <!-- END INCLUDE -->
+</div>
+</div>
+</div>
 </details>
 <!--tags-end-->
 
@@ -783,7 +923,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 20, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">October 14, 2022</span>
       
     
   </small>
@@ -865,10 +1005,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.39f04ddb.min.js"></script>
+      <script src="../../assets/javascripts/bundle.078830c0.min.js"></script>
       
     
   </body>

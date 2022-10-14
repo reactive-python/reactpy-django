@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://idom-team.github.io/django-idom/installation/">
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.5.2">
+      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.6">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.9f9400aa.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.20d9efc8.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.cbb835fc.min.css">
@@ -265,7 +265,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../contribute/django-idom/" class="md-tabs__link">
+      <a href="../contribute/code/" class="md-tabs__link">
         Contribute
       </a>
     </li>
@@ -660,7 +660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../contribute/django-idom/" class="md-nav__link">
+      <a href="../contribute/code/" class="md-nav__link">
         Code
       </a>
     </li>
@@ -750,55 +750,109 @@
 <hr />
 <h2 id="configure-settingspy">Configure <a href="https://docs.djangoproject.com/en/dev/topics/settings/"><code>settings.py</code></a><a class="headerlink" href="#configure-settingspy" title="Permanent link">&para;</a></h2>
 <p>In your settings you'll need to add <code>django_idom</code> to <a href="https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS"><code>INSTALLED_APPS</code></a>.</p>
-<div class="highlight"><span class="filename">settings.py</span><pre><span></span><code><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">settings.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;django_idom&quot;</span><span class="p">,</span>
     <span class="o">...</span>
 <span class="p">]</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
 <details class="warning">
 <summary>Enable Django ASGI (Required)</summary>
 <p>Django-IDOM requires ASGI in order to use Websockets.</p>
 <p>If you haven't enabled ASGI on your <strong>Django project</strong> yet, you'll need to add <code>channels</code> to <code>INSTALLED_APPS</code> and set your <code>ASGI_APPLICATION</code> variable.</p>
 <p>Read the <a href="https://channels.readthedocs.io/en/stable/installation.html">Django Channels Docs</a> for more info.</p>
-<div class="highlight"><span class="filename">settings.py</span><pre><span></span><code><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">settings.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;channels&quot;</span><span class="p">,</span>
     <span class="o">...</span>
 <span class="p">]</span>
 <span class="n">ASGI_APPLICATION</span> <span class="o">=</span> <span class="s2">&quot;example_project.asgi.application&quot;</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
 </details>
 <details class="note">
 <summary>Configure IDOM settings (Optional)</summary>
 <p>Below are a handful of values you can change within <code>settings.py</code> to modify the behavior of IDOM.</p>
 <!-- BEGIN INCLUDE ../features/settings.md '&lt;!--settings-start--&gt;' '&lt;!--settings-end--&gt;' -->
-<div class="highlight"><span class="filename">settings.py</span><pre><span></span><code><span class="c1"># If &quot;idom&quot; cache is not configured, then we&#39;ll use &quot;default&quot; instead</span>
-<span class="n">CACHES</span> <span class="o">=</span> <span class="p">{</span>
-<span class="s2">&quot;idom&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;BACKEND&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">},</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code>```python linenums=&quot;1&quot;
+# If &quot;idom&quot; cache is not configured, then we&#39;ll use &quot;default&quot; instead
+CACHES = {
+&quot;idom&quot;: {&quot;BACKEND&quot;: ...},
+}
 
-<span class="c1"># Maximum seconds between two reconnection attempts that would cause the client give up.</span>
-<span class="c1"># 0 will disable reconnection.</span>
-<span class="n">IDOM_WS_MAX_RECONNECT_TIMEOUT</span> <span class="o">=</span> <span class="mi">604800</span>
+# Maximum seconds between two reconnection attempts that would cause the client give up.
+# 0 will disable reconnection.
+IDOM_WS_MAX_RECONNECT_TIMEOUT = 604800
 
-<span class="c1"># The URL for IDOM to serve websockets</span>
-<span class="n">IDOM_WEBSOCKET_URL</span> <span class="o">=</span> <span class="s2">&quot;idom/&quot;</span>
+# The URL for IDOM to serve websockets
+IDOM_WEBSOCKET_URL = &quot;idom/&quot;
+```
 </code></pre></div>
 <!-- END INCLUDE -->
 </details>
 <hr />
 <h2 id="configure-urlspy">Configure <a href="https://docs.djangoproject.com/en/dev/topics/http/urls/"><code>urls.py</code></a><a class="headerlink" href="#configure-urlspy" title="Permanent link">&para;</a></h2>
 <p>Add IDOM HTTP paths to your <code>urlpatterns</code>.</p>
-<div class="highlight"><span class="filename">urls.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">include</span><span class="p">,</span> <span class="n">path</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">urls.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">include</span><span class="p">,</span> <span class="n">path</span>
 
 <span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">path</span><span class="p">(</span><span class="s2">&quot;idom/&quot;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s2">&quot;django_idom.http.urls&quot;</span><span class="p">)),</span>
     <span class="o">...</span>
 <span class="p">]</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
 <hr />
 <h2 id="configure-asgipy">Configure <a href="https://docs.djangoproject.com/en/dev/howto/deployment/asgi/"><code>asgi.py</code></a><a class="headerlink" href="#configure-asgipy" title="Permanent link">&para;</a></h2>
 <p>Register IDOM's Websocket using <code>IDOM_WEBSOCKET_PATH</code>.</p>
-<div class="highlight"><span class="filename">asgi.py</span><pre><span></span><code><span class="kn">import</span> <span class="nn">os</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:1"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">asgi.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">django.core.asgi</span> <span class="kn">import</span> <span class="n">get_asgi_application</span>
 
 <span class="c1"># Ensure DJANGO_SETTINGS_MODULE is set properly based on your project name!</span>
@@ -818,7 +872,10 @@
         <span class="p">),</span>
     <span class="p">}</span>
 <span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
 <details class="question">
 <summary>Where is my asgi.py?</summary>
 <p>If you do not have an <code>asgi.py</code>, follow the <a href="https://channels.readthedocs.io/en/stable/installation.html"><code>channels</code> installation guide</a>.</p>
@@ -829,7 +886,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 20, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">October 14, 2022</span>
       
     
   </small>
@@ -911,10 +968,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.39f04ddb.min.js"></script>
+      <script src="../assets/javascripts/bundle.078830c0.min.js"></script>
       
     
   </body>

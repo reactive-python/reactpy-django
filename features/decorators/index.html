@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://idom-team.github.io/django-idom/features/decorators/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.5.2">
+      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.6">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.9f9400aa.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.20d9efc8.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -265,7 +265,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../contribute/django-idom/" class="md-tabs__link">
+      <a href="../../contribute/code/" class="md-tabs__link">
         Contribute
       </a>
     </li>
@@ -641,7 +641,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../contribute/django-idom/" class="md-nav__link">
+      <a href="../../contribute/code/" class="md-nav__link">
         Code
       </a>
     </li>
@@ -720,12 +720,26 @@
 
   <h1>Decorators</h1>
 
+<details class="summary" open="open">
+<summary>Summary</summary>
+<p>Decorator utilities can be used within your <code>components.py</code> to help simplify development.</p>
+</details>
 <h2 id="auth-required">Auth Required<a class="headerlink" href="#auth-required" title="Permanent link">&para;</a></h2>
 <p>You can limit access to a component to users with a specific <code>auth_attribute</code> by using this decorator.</p>
 <p>By default, this decorator checks if the user is logged in, and his/her account has not been deactivated.</p>
-<p>Common uses of this decorator are to hide components from <a href="https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.AnonymousUser"><code>AnonymousUser</code></a>, or render a component only if the user <a href="https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_staff"><code>is_staff</code></a> or <a href="https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_superuser"><code>is_superuser</code></a>.</p>
+<p>This decorator is commonly used to selectively render a component only if a user <a href="https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_staff"><code>is_staff</code></a> or <a href="https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_superuser"><code>is_superuser</code></a>.</p>
 <p>This decorator can be used with or without parentheses.</p>
-<div class="highlight"><span class="filename">components.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">django_idom.decorators</span> <span class="kn">import</span> <span class="n">auth_required</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">components.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django_idom.decorators</span> <span class="kn">import</span> <span class="n">auth_required</span>
 <span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_websocket</span>
 <span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 
@@ -733,7 +747,10 @@
 <span class="nd">@auth_required</span>
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="s2">&quot;I am logged in!&quot;</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
 <details class="example">
 <summary>See Interface</summary>
 <p><font size="4"><strong>Parameters</strong></font></p>
@@ -788,7 +805,20 @@
 <details class="question">
 <summary>How do I render a different component if authentication fails?</summary>
 <p>You can use a component with the <code>fallback</code> argument, as seen below.</p>
-<div class="highlight"><span class="filename">components.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">django_idom.decorators</span> <span class="kn">import</span> <span class="n">auth_required</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">components.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django_idom.decorators</span> <span class="kn">import</span> <span class="n">auth_required</span>
 <span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 
 <span class="nd">@component</span>
@@ -799,12 +829,25 @@
 <span class="nd">@auth_required</span><span class="p">(</span><span class="n">fallback</span><span class="o">=</span><span class="n">my_component_fallback</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="s2">&quot;I am logged in!&quot;</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
 </details>
 <details class="question">
 <summary>How do I render a simple <code>idom.html</code> snippet if authentication fails?</summary>
 <p>You can use a <code>idom.html</code> snippet with the <code>fallback</code> argument, as seen below.</p>
-<div class="highlight"><span class="filename">components.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">django_idom.decorators</span> <span class="kn">import</span> <span class="n">auth_required</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">components.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django_idom.decorators</span> <span class="kn">import</span> <span class="n">auth_required</span>
 <span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_websocket</span>
 <span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 
@@ -812,12 +855,26 @@
 <span class="nd">@auth_required</span><span class="p">(</span><span class="n">fallback</span><span class="o">=</span><span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="s2">&quot;I am NOT logged in!&quot;</span><span class="p">))</span>
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="s2">&quot;I am logged in!&quot;</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
 </details>
 <details class="question">
 <summary>How can I check if a user <code>is_staff</code>?</summary>
 <p>You can set the <code>auth_attribute</code> to <code>is_staff</code>, as seen blow.</p>
-<div class="highlight"><span class="filename">components.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">django_idom.decorators</span> <span class="kn">import</span> <span class="n">auth_required</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:1"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">components.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django_idom.decorators</span> <span class="kn">import</span> <span class="n">auth_required</span>
 <span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_websocket</span>
 <span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 
@@ -826,21 +883,45 @@
 <span class="nd">@auth_required</span><span class="p">(</span><span class="n">auth_attribute</span><span class="o">=</span><span class="s2">&quot;is_staff&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="s2">&quot;I am logged in!&quot;</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
 </details>
 <details class="question">
 <summary>How can I check for a custom attribute?</summary>
 <p>You will need to be using a <a href="https://docs.djangoproject.com/en/dev/topics/auth/customizing/#specifying-a-custom-user-model">custom user model</a> within your Django instance.</p>
 <p>For example, if your user model has the field <code>is_really_cool</code> ...</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">AbstractBaseUser</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:1"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">models.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">AbstractBaseUser</span>
 
 <span class="k">class</span> <span class="nc">CustomUserModel</span><span class="p">(</span><span class="n">AbstractBaseUser</span><span class="p">):</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_really_cool</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">True</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
 <p>... then you would do the following within your decorator:</p>
-<div class="highlight"><span class="filename">components.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">django_idom.decorators</span> <span class="kn">import</span> <span class="n">auth_required</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="6:1"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">components.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django_idom.decorators</span> <span class="kn">import</span> <span class="n">auth_required</span>
 <span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_websocket</span>
 <span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 
@@ -848,7 +929,10 @@
 <span class="nd">@auth_required</span><span class="p">(</span><span class="n">auth_attribute</span><span class="o">=</span><span class="s2">&quot;is_really_cool&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="s2">&quot;I am logged in!&quot;</span><span class="p">)</span>
-</code></pre></div>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
 </details>
 
   <hr>
@@ -856,7 +940,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 20, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">October 14, 2022</span>
       
     
   </small>
@@ -938,10 +1022,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.39f04ddb.min.js"></script>
+      <script src="../../assets/javascripts/bundle.078830c0.min.js"></script>
       
     
   </body>
