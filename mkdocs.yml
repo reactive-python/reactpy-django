@@ -15,7 +15,7 @@ nav:
           - Template Tag: features/templatetag.md
           - Settings: features/settings.md
     - Contribute:
-          - Code: contribute/django-idom.md
+          - Code: contribute/code.md
           - Docs: contribute/docs.md
           - Running Tests: contribute/running-tests.md
     - Changelog: changelog/index.md

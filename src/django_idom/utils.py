@@ -6,7 +6,7 @@ import os
 import re
 from fnmatch import fnmatch
 from importlib import import_module
-from typing import Callable
+from typing import Any, Callable
 
 from django.template import engines
 from django.utils.encoding import smart_str
@@ -144,3 +144,14 @@ class ComponentPreloader:
                     "\033[0m",
                     component,
                 )
+
+
+def _generate_obj_name(object: Any) -> str | None:
+    """Makes a best effort to create a name for an object.
+    Useful for JSON serialization of Python objects."""
+    if hasattr(object, "__module__"):
+        if hasattr(object, "__name__"):
+            return f"{object.__module__}.{object.__name__}"
+        if hasattr(object, "__class__"):
+            return f"{object.__module__}.{object.__class__.__name__}"
+    return None

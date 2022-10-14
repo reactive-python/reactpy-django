@@ -16,12 +16,14 @@ You'll also need to modify a few files in your **Django project**...
 
 In your settings you'll need to add `django_idom` to [`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS).
 
-```python title="settings.py"
-INSTALLED_APPS = [
-    "django_idom",
-    ...
-]
-```
+=== "settings.py"
+
+    ```python linenums="1"
+    INSTALLED_APPS = [
+        "django_idom",
+        ...
+    ]
+    ```
 
 ??? warning "Enable Django ASGI (Required)"
 
@@ -31,13 +33,15 @@ INSTALLED_APPS = [
 
     Read the [Django Channels Docs](https://channels.readthedocs.io/en/stable/installation.html) for more info.
 
-    ```python title="settings.py"
-    INSTALLED_APPS = [
-        "channels",
-        ...
-    ]
-    ASGI_APPLICATION = "example_project.asgi.application"
-    ```
+    === "settings.py"
+
+        ```python linenums="1"
+        INSTALLED_APPS = [
+            "channels",
+            ...
+        ]
+        ASGI_APPLICATION = "example_project.asgi.application"
+        ```
 
 ??? note "Configure IDOM settings (Optional)"
 
@@ -51,14 +55,16 @@ INSTALLED_APPS = [
 
 Add IDOM HTTP paths to your `urlpatterns`.
 
-```python title="urls.py"
-from django.urls import include, path
+=== "urls.py"
 
-urlpatterns = [
-    path("idom/", include("django_idom.http.urls")),
-    ...
-]
-```
+    ```python linenums="1"
+    from django.urls import include, path
+
+    urlpatterns = [
+        path("idom/", include("django_idom.http.urls")),
+        ...
+    ]
+    ```
 
 ---
 
@@ -66,28 +72,30 @@ urlpatterns = [
 
 Register IDOM's Websocket using `IDOM_WEBSOCKET_PATH`.
 
-```python title="asgi.py"
-import os
-from django.core.asgi import get_asgi_application
+=== "asgi.py"
 
-# Ensure DJANGO_SETTINGS_MODULE is set properly based on your project name!
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "example_project.settings")
-django_asgi_app = get_asgi_application()
+    ```python linenums="1"
+    import os
+    from django.core.asgi import get_asgi_application
 
-from channels.auth import AuthMiddlewareStack
-from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.sessions import SessionMiddlewareStack
-from django_idom import IDOM_WEBSOCKET_PATH
+    # Ensure DJANGO_SETTINGS_MODULE is set properly based on your project name!
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "example_project.settings")
+    django_asgi_app = get_asgi_application()
 
-application = ProtocolTypeRouter(
-    {
-        "http": django_asgi_app,
-        "websocket": SessionMiddlewareStack(
-            AuthMiddlewareStack(URLRouter([IDOM_WEBSOCKET_PATH]))
-        ),
-    }
-)
-```
+    from channels.auth import AuthMiddlewareStack
+    from channels.routing import ProtocolTypeRouter, URLRouter
+    from channels.sessions import SessionMiddlewareStack
+    from django_idom import IDOM_WEBSOCKET_PATH
+
+    application = ProtocolTypeRouter(
+        {
+            "http": django_asgi_app,
+            "websocket": SessionMiddlewareStack(
+                AuthMiddlewareStack(URLRouter([IDOM_WEBSOCKET_PATH]))
+            ),
+        }
+    )
+    ```
 
 ??? question "Where is my asgi.py?"
 

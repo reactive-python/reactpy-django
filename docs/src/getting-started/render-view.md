@@ -10,23 +10,27 @@ Within your **Django app**'s `views.py` file, you'll need to create a function t
 
 In this example, we will create a view that renders `my-template.html` (_from the previous step_).
 
-```python title="views.py"
-from django.shortcuts import render
+=== "views.py"
 
-def index(request):
-    return render(request, "my-template.html")
-```
+    ```python linenums="1"
+    from django.shortcuts import render
+
+    def index(request):
+        return render(request, "my-template.html")
+    ```
 
 We will add this new view into your [`urls.py`](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view).
 
-```python title="urls.py"
-from django.urls import path
-from example_project.my_app import views
+=== "urls.py"
 
-urlpatterns = [
-    path("example/", views.index),
-]
-```
+    ```python linenums="1"
+    from django.urls import path
+    from example_project.my_app import views
+
+    urlpatterns = [
+        path("example/", views.index),
+    ]
+    ```
 
 Now, navigate to `http://127.0.0.1:8000/example/`. If you copy-pasted the component from the previous example, you will now see your component display "Hello World".
 

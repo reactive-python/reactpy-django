@@ -1,24 +1,28 @@
-Django IDOM uses your **Django project's** `settings.py` file to modify some behaviors of IDOM.
+???+ summary
 
-Here are the configurable variables that are available.
+    Django IDOM uses your **Django project's** `settings.py` file to modify the behavior of IDOM.
 
-<!--settings-start-->
+## Primary Configuration
 
-```python title="settings.py"
-# If "idom" cache is not configured, then we'll use "default" instead
-CACHES = {
-"idom": {"BACKEND": ...},
-}
+=== "settings.py"
 
-# Maximum seconds between two reconnection attempts that would cause the client give up.
-# 0 will disable reconnection.
-IDOM_WS_MAX_RECONNECT_TIMEOUT = 604800
+    <!--settings-start-->
 
-# The URL for IDOM to serve websockets
-IDOM_WEBSOCKET_URL = "idom/"
-```
+    ```python linenums="1"
+    # If "idom" cache is not configured, then we'll use "default" instead
+    CACHES = {
+    "idom": {"BACKEND": ...},
+    }
 
-<!--settings-end-->
+    # Maximum seconds between two reconnection attempts that would cause the client give up.
+    # 0 will disable reconnection.
+    IDOM_WS_MAX_RECONNECT_TIMEOUT = 604800
+
+    # The URL for IDOM to serve websockets
+    IDOM_WEBSOCKET_URL = "idom/"
+    ```
+
+    <!--settings-end-->
 
 ??? question "Do I need to modify my settings?"
 

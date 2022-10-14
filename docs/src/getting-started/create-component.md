@@ -6,7 +6,9 @@
 
 {% include-markdown "../../../README.md" start="<!--py-header-start-->" end="<!--py-header-end-->" %}
 
-{% include-markdown "../../../README.md" start="<!--py-code-start-->" end="<!--py-code-end-->" %}
+=== "components.py"
+
+      {% include-markdown "../../../README.md" start="<!--py-code-start-->" end="<!--py-code-end-->" %}
 
 ??? question "What should I name my IDOM files and functions?"
 
