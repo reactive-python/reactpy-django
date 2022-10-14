@@ -129,7 +129,7 @@ The function you provide into this hook will have no return value.
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
     | mutate | `Callable[_Params, bool | None]` | A callable that performs Django ORM create, update, or delete functionality. If this function returns `False`, then your `refetch` function will not be used. | N/A |
-    | refetch | `Callable[..., Any] | Sequence[Callable[..., Any]] | None` | A callable or sequence of callables that will be called if the mutation succeeds. This is useful for refetching data after a mutation has been performed. | `None` |
+    | refetch | `Callable[..., Any] | Sequence[Callable[..., Any]] | None` | A `query` function (used by the `use_query` hook) or a sequence of `query` functions that will be called if the mutation succeeds. This is useful for refetching data after a mutation has been performed. | `None` |
 
     <font size="4">**Returns**</font>
 

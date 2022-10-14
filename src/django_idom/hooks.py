@@ -136,9 +136,9 @@ def use_mutation(
         mutate: A callable that performs Django ORM create, update, or delete
             functionality. If this function returns `False`, then your `refetch`
             function will not be used.
-        refetch: A callable or sequence of callables that will be called if the
-            mutation succeeds. This is useful for refetching data after a mutation
-            has been performed.
+        refetch: A `query` function (used by the `use_query` hook) or a sequence of `query`
+            functions that will be called if the mutation succeeds. This is useful for
+            refetching data after a mutation has been performed.
     """
 
     loading, set_loading = use_state(False)
