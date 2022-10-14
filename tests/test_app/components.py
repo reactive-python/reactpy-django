@@ -330,33 +330,33 @@ def view_to_component_request():
 
 @component
 def view_to_component_args():
-    params, set_params = hooks.use_state("false")
+    success, set_success = hooks.use_state("false")
 
     def on_click(_):
-        set_params("")
+        set_success("")
 
     return html._(
         html.button(
             {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},
             "Click me",
         ),
-        _view_to_component_args(args=[params]),
+        _view_to_component_args(None, success),
     )
 
 
 @component
 def view_to_component_kwargs():
-    params, set_params = hooks.use_state("false")
+    success, set_success = hooks.use_state("false")
 
     def on_click(_):
-        set_params("")
+        set_success("")
 
     return html._(
         html.button(
             {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},
             "Click me",
         ),
-        _view_to_component_kwargs(kwargs={"success": params}),
+        _view_to_component_kwargs(success=success),
     )
 
 

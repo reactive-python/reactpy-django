@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 from inspect import iscoroutinefunction
-from typing import Any, Callable, Dict, Sequence
+from typing import Any, Callable, Dict, Protocol, Sequence
 
 from channels.db import database_sync_to_async
 from django.contrib.staticfiles.finders import find
@@ -11,11 +11,17 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.views import View
 from idom import component, hooks, html, utils
-from idom.core.component import Component
-from idom.types import VdomDict
+from idom.types import ComponentType, VdomDict
 
 from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
 from django_idom.types import ViewComponentIframe
+
+
+class _ViewComponentConstructor(Protocol):
+    def __call__(
+        self, request: HttpRequest | None, *args: Any, **kwargs: Any
+    ) -> ComponentType:
+        ...
 
 
 @component
@@ -110,7 +116,7 @@ def view_to_component(
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-) -> Callable[[HttpRequest | None, Sequence | None, Dict | None], Component]:
+) -> _ViewComponentConstructor:
     """Converts a Django view to an IDOM component.
 
     Keyword Args:
@@ -124,8 +130,8 @@ def view_to_component(
             perfectly adhere to HTML5.
 
     Returns:
-        Callable: A function that takes a request, args, and kwargs and returns an IDOM
-            component.
+        Callable: A function that takes `request: HttpRequest | None, *args: Any, **kwargs: Any`
+            and returns an IDOM component.
     """
 
     def decorator(view: Callable | View):
@@ -134,8 +140,8 @@ def view_to_component(
 
         def wrapper(
             request: HttpRequest | None = None,
-            args: Sequence | None = None,
-            kwargs: Dict | None = None,
+            *args: Any,
+            **kwargs: Any,
         ):
             return _view_to_component(
                 view=view,
