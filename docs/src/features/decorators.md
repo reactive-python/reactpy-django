@@ -1,23 +1,29 @@
+???+ summary
+
+    Decorator utilities can be used within your `components.py` to help simplify development.
+
 ## Auth Required
 
 You can limit access to a component to users with a specific `auth_attribute` by using this decorator.
 
 By default, this decorator checks if the user is logged in, and his/her account has not been deactivated.
 
-Common uses of this decorator are to hide components from [`AnonymousUser`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.AnonymousUser), or render a component only if the user [`is_staff`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_staff) or [`is_superuser`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_superuser).
+This decorator is commonly used to selectively render a component only if a user [`is_staff`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_staff) or [`is_superuser`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_superuser).
 
 This decorator can be used with or without parentheses.
 
-```python title="components.py"
-from django_idom.decorators import auth_required
-from django_idom.hooks import use_websocket
-from idom import component, html
+=== "components.py"
 
-@component
-@auth_required
-def my_component():
-    return html.div("I am logged in!")
-```
+    ```python linenums="1"
+    from django_idom.decorators import auth_required
+    from django_idom.hooks import use_websocket
+    from idom import component, html
+
+    @component
+    @auth_required
+    def my_component():
+        return html.div("I am logged in!")
+    ```
 
 ??? example "See Interface"
 
@@ -40,50 +46,56 @@ def my_component():
 
     You can use a component with the `fallback` argument, as seen below.
 
-    ```python title="components.py"
-    from django_idom.decorators import auth_required
-    from idom import component, html
+    === "components.py"
 
-    @component
-    def my_component_fallback():
-        return html.div("I am NOT logged in!")
+        ```python linenums="1"
+        from django_idom.decorators import auth_required
+        from idom import component, html
 
-    @component
-    @auth_required(fallback=my_component_fallback)
-    def my_component():
-        return html.div("I am logged in!")
-    ```
+        @component
+        def my_component_fallback():
+            return html.div("I am NOT logged in!")
+
+        @component
+        @auth_required(fallback=my_component_fallback)
+        def my_component():
+            return html.div("I am logged in!")
+        ```
 
 ??? question "How do I render a simple `idom.html` snippet if authentication fails?"
 
     You can use a `idom.html` snippet with the `fallback` argument, as seen below.
 
-    ```python title="components.py"
-    from django_idom.decorators import auth_required
-    from django_idom.hooks import use_websocket
-    from idom import component, html
+    === "components.py"
 
-    @component
-    @auth_required(fallback=html.div("I am NOT logged in!"))
-    def my_component():
-        return html.div("I am logged in!")
-    ```
+        ```python linenums="1"
+        from django_idom.decorators import auth_required
+        from django_idom.hooks import use_websocket
+        from idom import component, html
+
+        @component
+        @auth_required(fallback=html.div("I am NOT logged in!"))
+        def my_component():
+            return html.div("I am logged in!")
+        ```
 
 ??? question "How can I check if a user `is_staff`?"
 
     You can set the `auth_attribute` to `is_staff`, as seen blow.
 
-    ```python title="components.py"
-    from django_idom.decorators import auth_required
-    from django_idom.hooks import use_websocket
-    from idom import component, html
+    === "components.py"
+
+        ```python linenums="1"
+        from django_idom.decorators import auth_required
+        from django_idom.hooks import use_websocket
+        from idom import component, html
 
 
-    @component
-    @auth_required(auth_attribute="is_staff")
-    def my_component():
-        return html.div("I am logged in!")
-    ```
+        @component
+        @auth_required(auth_attribute="is_staff")
+        def my_component():
+            return html.div("I am logged in!")
+        ```
 
 ??? question "How can I check for a custom attribute?"
 
@@ -91,24 +103,28 @@ def my_component():
 
     For example, if your user model has the field `is_really_cool` ...
 
-    ```python
-    from django.contrib.auth.models import AbstractBaseUser
+    === "models.py"
 
-    class CustomUserModel(AbstractBaseUser):
-        @property
-        def is_really_cool(self):
-            return True
-    ```
+        ```python linenums="1"
+        from django.contrib.auth.models import AbstractBaseUser
+
+        class CustomUserModel(AbstractBaseUser):
+            @property
+            def is_really_cool(self):
+                return True
+        ```
 
     ... then you would do the following within your decorator:
 
-    ```python title="components.py"
-    from django_idom.decorators import auth_required
-    from django_idom.hooks import use_websocket
-    from idom import component, html
+    === "components.py"
 
-    @component
-    @auth_required(auth_attribute="is_really_cool")
-    def my_component():
-        return html.div("I am logged in!")
-    ```
+        ```python linenums="1"
+        from django_idom.decorators import auth_required
+        from django_idom.hooks import use_websocket
+        from idom import component, html
+
+        @component
+        @auth_required(auth_attribute="is_really_cool")
+        def my_component():
+            return html.div("I am logged in!")
+        ```

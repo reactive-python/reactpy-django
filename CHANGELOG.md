@@ -22,7 +22,18 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (Yet)
+### Added
+
+-   `use_origin` hook to return the browser's `location.origin`.
+
+### Changed
+
+-   `use_mutation` and `use_query` will now log any query failures.
+
+### Fixed
+
+-   Allow `use_mutation` to have `refetch=None`, as the docs suggest is possible.
+-   `use_query` will now prefetch all fields to prevent `SynchronousOnlyOperation` exceptions.
 
 ## [1.2.0] - 2022-09-19
 

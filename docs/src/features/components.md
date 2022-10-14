@@ -1,10 +1,14 @@
+???+ summary
+
+    Prefabricated components can be used within your `components.py` to help simplify development.
+
 ## View To Component
 
 Convert any Django view into a IDOM component by usng this decorator. Compatible with sync/async [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/).
 
 === "components.py"
 
-    ```python
+    ```python linenums="1"
     from idom import component, html
     from django_idom.components import view_to_component
     from .views import hello_world_view
@@ -47,7 +51,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
     === "components.py"
 
-        ```python
+        ```python linenums="1"
         from idom import component, html
         from django_idom.components import view_to_component
         from .views import HelloWorldView
@@ -69,7 +73,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
     === "components.py"
 
-        ```python
+        ```python linenums="1"
         from idom import component, html
         from django_idom.components import view_to_component
         from .views import hello_world_view
@@ -99,7 +103,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
     === "components.py"
 
-        ```python
+        ```python linenums="1"
         from idom import component, html
         from django_idom.components import view_to_component
         from .views import hello_world_view
@@ -125,7 +129,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
     === "components.py"
 
-        ```python
+        ```python linenums="1"
         from idom import component, html
         from django_idom.components import view_to_component
         from .views import hello_world_view
@@ -153,7 +157,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
     === "components.py"
 
-        ```python
+        ```python linenums="1"
         from idom import component, html
         from django_idom.components import view_to_component
         from .views import hello_world_view
@@ -174,7 +178,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
     === "views.py"
 
-        ```python
+        ```python linenums="1"
         from django.http import HttpResponse
 
         def hello_world_view(request, *args, **kwargs):
@@ -185,17 +189,33 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
 Allows you to defer loading a CSS stylesheet until a component begins rendering. This stylesheet must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).
 
-```python title="components.py"
-from idom import component, html
-from django_idom.components import django_css
+=== "components.py"
 
-@component
-def my_component():
-    return html.div(
-        django_css("css/buttons.css"),
-        html.button("My Button!"),
-    )
-```
+    ```python linenums="1"
+    from idom import component, html
+    from django_idom.components import django_css
+
+    @component
+    def my_component():
+        return html.div(
+            django_css("css/buttons.css"),
+            html.button("My Button!"),
+        )
+    ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    | Name | Type | Description | Default |
+    | --- | --- | --- | --- |
+    | static_path | `str` | The path to the static file. This path is identical to what you would use on a `static` template tag. | N/A |
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `Component` | An IDOM component. |
 
 ??? question "Should I put `django_css` at the top of my component?"
 
@@ -207,7 +227,7 @@ def my_component():
 
     Here's an example on what you should avoid doing for Django static files:
 
-    ```python
+    ```python linenums="1"
     from idom import component, html
     from django.templatetags.static import static
 
@@ -225,7 +245,7 @@ def my_component():
 
     For external CSS, substitute `django_css` with `html.link`.
 
-    ```python
+    ```python linenums="1"
     from idom import component, html
 
     @component
@@ -246,17 +266,33 @@ def my_component():
 
 Allows you to defer loading JavaScript until a component begins rendering. This JavaScript must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).
 
-```python title="components.py"
-from idom import component, html
-from django_idom.components import django_js
+=== "components.py"
 
-@component
-def my_component():
-    return html.div(
-        html.button("My Button!"),
-        django_js("js/scripts.js"),
-    )
-```
+    ```python linenums="1"
+    from idom import component, html
+    from django_idom.components import django_js
+
+    @component
+    def my_component():
+        return html.div(
+            html.button("My Button!"),
+            django_js("js/scripts.js"),
+        )
+    ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    | Name | Type | Description | Default |
+    | --- | --- | --- | --- |
+    | static_path | `str` | The path to the static file. This path is identical to what you would use on a `static` template tag. | N/A |
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `Component` | An IDOM component. |
 
 ??? question "Should I put `django_js` at the bottom of my component?"
 
@@ -268,7 +304,7 @@ def my_component():
 
     Here's an example on what you should avoid doing for Django static files:
 
-    ```python
+    ```python linenums="1"
     from idom import component, html
     from django.templatetags.static import static
 
@@ -286,7 +322,7 @@ def my_component():
 
     For external JavaScript, substitute `django_js` with `html.script`.
 
-    ```python
+    ```python linenums="1"
     from idom import component, html
 
     @component

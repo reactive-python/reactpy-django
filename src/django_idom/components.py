@@ -15,6 +15,7 @@ from idom.types import VdomDict
 
 from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
 from django_idom.types import ViewComponentIframe
+from django_idom.utils import _generate_obj_name
 
 
 # TODO: Might want to intercept href clicks and form submit events.
@@ -163,14 +164,3 @@ def _cached_static_contents(static_path: str):
         )
 
     return file_contents
-
-
-def _generate_obj_name(object: Any) -> str | None:
-    """Makes a best effort to create a name for an object.
-    Useful for JSON serialization of Python objects."""
-    if hasattr(object, "__module__"):
-        if hasattr(object, "__name__"):
-            return f"{object.__module__}.{object.__name__}"
-        if hasattr(object, "__class__"):
-            return f"{object.__module__}.{object.__class__.__name__}"
-    return None

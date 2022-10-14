@@ -6,6 +6,9 @@ from channels.testing import ChannelsLiveServerTestCase
 from playwright.sync_api import TimeoutError, sync_playwright
 
 
+CLICK_DELAY = 250  # Delay in miliseconds. Needed for GitHub Actions.
+
+
 class TestIdomCapabilities(ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
@@ -62,6 +65,9 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
     def test_use_location(self):
         self.page.locator("#use-location[data-success=true]").wait_for()
 
+    def test_use_origin(self):
+        self.page.locator("#use-origin[data-success=true]").wait_for()
+
     def test_static_css(self):
         self.assertEqual(
             self.page.wait_for_selector("#django-css button").evaluate(
@@ -97,8 +103,8 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
         item_ids = list(range(5))
 
         for i in item_ids:
-            todo_input.type(f"sample-{i}", delay=10)
-            todo_input.press("Enter")
+            todo_input.type(f"sample-{i}", delay=CLICK_DELAY)
+            todo_input.press("Enter", delay=CLICK_DELAY)
             self.page.wait_for_selector(f"#todo-item-sample-{i}")
             self.page.wait_for_selector(f"#todo-item-sample-{i}-checkbox").click()
             self.assertRaises(
