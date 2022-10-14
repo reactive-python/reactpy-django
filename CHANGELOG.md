@@ -148,7 +148,7 @@ Nothing (yet)
 -   Support for IDOM within the Django
 
 [unreleased]: https://github.com/idom-team/django-idom/compare/2.0.0...HEAD
-[1.2.0]: https://github.com/idom-team/django-idom/compare/1.2.0...2.0.0
+[2.0.0]: https://github.com/idom-team/django-idom/compare/1.2.0...2.0.0
 [1.2.0]: https://github.com/idom-team/django-idom/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/idom-team/django-idom/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/idom-team/django-idom/compare/0.0.5...1.0.0
