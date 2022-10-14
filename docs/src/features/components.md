@@ -115,8 +115,11 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
         def my_component():
             return html.div(
                 hello_world_view(
-                    args=["value_1", "value_2"],
-                    kwargs={"key1": "abc", "key2": "123"},
+                    None, # Your request object (optional)
+                    "value_1",
+                    "value_2",
+                    key1="abc",
+                    key2="123",
                 ),
             )
         ```
@@ -143,7 +146,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
         def my_component():
             return html.div(
                 hello_world_view(
-                    request=example_request,
+                    example_request,
                 ),
             )
         ```
