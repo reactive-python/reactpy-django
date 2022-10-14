@@ -1,6 +1,7 @@
 import inspect
 
 from django.http import HttpRequest
+from django.shortcuts import render
 from idom import component, hooks, html, web
 from test_app.models import TodoItem
 
@@ -247,38 +248,39 @@ def _render_items(items, toggle_item):
     )
 
 
-@component
-def view_to_component_sync_func():
-    return view_to_component(views.view_to_component_sync_func)
-
-
-@component
-def view_to_component_async_func():
-    return view_to_component(views.view_to_component_async_func)
-
-
-@component
-def view_to_component_sync_class():
-    return view_to_component(views.ViewToComponentSyncClass)
-
-
-@component
-def view_to_component_async_class():
-    return view_to_component(views.ViewToComponentAsyncClass)
-
-
-@component
-def view_to_component_template_view_class():
-    return view_to_component(views.ViewToComponentTemplateViewClass)
+view_to_component_sync_func = view_to_component(views.view_to_component_sync_func)
+view_to_component_async_func = view_to_component(views.view_to_component_async_func)
+view_to_component_sync_class = view_to_component(views.ViewToComponentSyncClass)
+view_to_component_async_class = view_to_component(views.ViewToComponentAsyncClass)
+view_to_component_template_view_class = view_to_component(
+    views.ViewToComponentTemplateViewClass
+)
+_view_to_component_sync_func_compatibility = view_to_component(
+    views.view_to_component_sync_func_compatibility, compatibility=True
+)
+_view_to_component_async_func_compatibility = view_to_component(
+    views.view_to_component_async_func_compatibility, compatibility=True
+)
+_view_to_component_sync_class_compatibility = view_to_component(
+    views.ViewToComponentSyncClassCompatibility, compatibility=True
+)
+_view_to_component_async_class_compatibility = view_to_component(
+    views.ViewToComponentAsyncClassCompatibility, compatibility=True
+)
+_view_to_component_template_view_class_compatibility = view_to_component(
+    views.ViewToComponentTemplateViewClassCompatibility, compatibility=True
+)
+view_to_component_script = view_to_component(views.view_to_component_script)
+_view_to_component_request = view_to_component(views.view_to_component_request)
+_view_to_component_args = view_to_component(views.view_to_component_args)
+_view_to_component_kwargs = view_to_component(views.view_to_component_kwargs)
 
 
 @component
 def view_to_component_sync_func_compatibility():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},
-        view_to_component(
-            views.view_to_component_sync_func_compatibility, compatibility=True
-        ),
+        _view_to_component_sync_func_compatibility(),
         html.hr(),
     )
 
@@ -287,9 +289,7 @@ def view_to_component_sync_func_compatibility():
 def view_to_component_async_func_compatibility():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},
-        view_to_component(
-            views.view_to_component_async_func_compatibility, compatibility=True
-        ),
+        _view_to_component_async_func_compatibility(),
         html.hr(),
     )
 
@@ -298,9 +298,7 @@ def view_to_component_async_func_compatibility():
 def view_to_component_sync_class_compatibility():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},
-        view_to_component(
-            views.ViewToComponentSyncClassCompatibility, compatibility=True
-        ),
+        _view_to_component_sync_class_compatibility(),
         html.hr(),
     )
 
@@ -309,9 +307,7 @@ def view_to_component_sync_class_compatibility():
 def view_to_component_async_class_compatibility():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},
-        view_to_component(
-            views.ViewToComponentAsyncClassCompatibility, compatibility=True
-        ),
+        _view_to_component_async_class_compatibility(),
         html.hr(),
     )
 
@@ -320,16 +316,9 @@ def view_to_component_async_class_compatibility():
 def view_to_component_template_view_class_compatibility():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},
-        view_to_component(
-            views.ViewToComponentTemplateViewClassCompatibility, compatibility=True
-        ),
+        _view_to_component_template_view_class_compatibility(),
         html.hr(),
     )
-
-
-@component
-def view_to_component_script():
-    return view_to_component(views.view_to_component_script)
 
 
 @component
@@ -346,37 +335,55 @@ def view_to_component_request():
             {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},
             "Click me",
         ),
-        view_to_component(views.view_to_component_request, request=request),
+        _view_to_component_request(request=request),
     )
 
 
 @component
 def view_to_component_args():
-    params, set_params = hooks.use_state("false")
+    success, set_success = hooks.use_state("false")
 
     def on_click(_):
-        set_params("")
+        set_success("")
 
     return html._(
         html.button(
             {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},
             "Click me",
         ),
-        view_to_component(views.view_to_component_args, args=[params]),
+        _view_to_component_args(None, success),
     )
 
 
 @component
 def view_to_component_kwargs():
-    params, set_params = hooks.use_state("false")
+    success, set_success = hooks.use_state("false")
 
     def on_click(_):
-        set_params("")
+        set_success("")
 
     return html._(
         html.button(
             {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},
             "Click me",
         ),
-        view_to_component(views.view_to_component_kwargs, kwargs={"success": params}),
+        _view_to_component_kwargs(success=success),
+    )
+
+
+@view_to_component
+def view_to_component_decorator(request):
+    return render(
+        request,
+        "view_to_component.html",
+        {"test_name": inspect.currentframe().f_code.co_name},
+    )
+
+
+@view_to_component(strict_parsing=False)
+def view_to_component_decorator_args(request):
+    return render(
+        request,
+        "view_to_component.html",
+        {"test_name": inspect.currentframe().f_code.co_name},
     )

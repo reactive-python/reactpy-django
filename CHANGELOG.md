@@ -28,12 +28,14 @@ Using the following categories, list your changes in this order:
 
 ### Changed
 
+-   `view_to_component` now returns a `Callable`, instead of directly returning a `Component`. Check the docs for new usage info.
 -   `use_mutation` and `use_query` will now log any query failures.
 
 ### Fixed
 
 -   Allow `use_mutation` to have `refetch=None`, as the docs suggest is possible.
 -   `use_query` will now prefetch all fields to prevent `SynchronousOnlyOperation` exceptions.
+-   `view_to_component`, `django_css`, and `django_js` type hints will now display like normal functions.
 
 ## [1.2.0] - 2022-09-19
 

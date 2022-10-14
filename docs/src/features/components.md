@@ -10,19 +10,19 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
     ```python linenums="1"
     from idom import component, html
+    from django.http import HttpResponse
     from django_idom.components import view_to_component
-    from .views import hello_world_view
+
+    @view_to_component
+    def hello_world_view(request):
+        return HttpResponse("Hello World!")
 
     @component
     def my_component():
         return html.div(
-            view_to_component(hello_world_view),
+            hello_world_view(),
         )
     ```
-
-=== "views.py"
-
-    {% include-markdown "../../includes/examples.md" start="<!--hello-world-view-start-->" end="<!--hello-world-view-end-->" %}
 
 ??? example "See Interface"
 
@@ -31,73 +31,128 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
     | view | `Callable | View` | The view function or class to convert. | N/A |
-    | compatibility | `bool` | If True, the component will be rendered in an iframe. When using compatibility mode `tranforms`, `strict_parsing`, and `request` arguments will be ignored. | `False` |
-    | transforms | `Iterable[Callable[[VdomDict], Any]]` | A list of functions that transforms the newly generated VDOM. The functions will be called on each VDOM node. | `tuple` |
+    | compatibility | `bool` | If True, the component will be rendered in an iframe. When using compatibility mode `tranforms`, `strict_parsing`, `request`, `args`, and `kwargs` arguments will be ignored. | `False` |
+    | transforms | `Sequence[Callable[[VdomDict], Any]]` | A list of functions that transforms the newly generated VDOM. The functions will be called on each VDOM node. | `tuple` |
     | strict_parsing | `bool` | If True, an exception will be generated if the HTML does not perfectly adhere to HTML5. | `True` |
-    | request | `HttpRequest | None` | Request object to provide to the view. | `None` |
-    | args | `Iterable` | The positional arguments to pass to the view. | `tuple` |
-    | kwargs | `Dict | None` | The keyword arguments to pass to the view. | `None` |
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
-    | `Component` | An IDOM component. |
-    | `None` | No component render. |
+    | `_ViewComponentConstructor` | A function that takes `request: HttpRequest | None, *args: Any, **kwargs: Any` and returns an IDOM component. |
+
+??? warning "Existing limitations"
+
+    There are currently several limitations of using `view_to_component` that may be resolved in a future version of `django_idom`.
+
+    - Requires manual intervention to change request methods beyond `GET`.
+    - Does not currently load any HTML contained with a `<head>` tag
+    - Has no option to automatically intercept local anchor link (ex. `#!html <a href='example/'></a>`) click events
+
+    _Please note these limitations do not exist when using `compatibility` mode._
 
 ??? question "How do I use this for Class Based Views?"
 
-    You can simply pass your Class Based View directly into this function.
+    You can simply pass your Class Based View directly into `view_to_component`.
 
     === "components.py"
 
         ```python linenums="1"
         from idom import component, html
+        from django.http import HttpResponse
+        from django.views import View
         from django_idom.components import view_to_component
-        from .views import HelloWorldView
+
+        @view_to_component
+        class HelloWorldView(View):
+            def get(self, request):
+                return HttpResponse("Hello World!")
 
         @component
         def my_component():
             return html.div(
-                view_to_component(HelloWorldView),
+                HelloWorldView(),
             )
         ```
 
-    === "views.py"
+??? question "How do I transform views from external libraries?"
 
-        {% include-markdown "../../includes/examples.md" start="<!--hello-world-cbv-start-->" end="<!--hello-world-cbv-end-->" %}
+    === "components.py"
 
-??? question "How do I pass arguments into the view?"
+        In order to convert external views, you can utilize `view_to_component` as a function, rather than a decorator.
 
-    You can use the `args` and `kwargs` parameters to pass arguments to the view.
+        ```python linenums="1"
+        from idom import component, html
+        from django.http import HttpResponse
+        from django_idom.components import view_to_component
+        from some_library.views import example_view
+
+        converted_view = view_to_component(example_view)
+
+        @component
+        def my_component():
+            return html.div(
+                converted_view(),
+            )
+        ```
+
+??? question "How do I provide `args` and `kwargs` to a view?"
+
+    You can use the `args` and `kwargs` parameters to provide positional and keyworded arguments to a view.
 
     === "components.py"
 
         ```python linenums="1"
         from idom import component, html
+        from django.http import HttpResponse
         from django_idom.components import view_to_component
-        from .views import hello_world_view
+
+        @view_to_component
+        def hello_world_view(request, arg1, arg2, key1=None, key2=None):
+            return HttpResponse(f"Hello World! {arg1} {arg2} {key1} {key2}")
 
         @component
         def my_component():
             return html.div(
-                view_to_component(
-                    hello_world_view,
+                hello_world_view(
                     args=["value_1", "value_2"],
-                    kwargs={"key_1": "value_1", "key_2": "value_2"},
+                    kwargs={"key1": "abc", "key2": "123"},
                 ),
             )
         ```
 
-    === "views.py"
+??? question "How do I provide a custom `request` object to a view?"
 
-        {% include-markdown "../../includes/examples.md" start="<!--hello-world-view-start-->" end="<!--hello-world-view-end-->" %}
+    You can use the `request` parameter to provide the view a custom request object.
+
+    === "components.py"
+
+        ```python linenums="1"
+        from idom import component, html
+        from django.http import HttpResponse, HttpRequest
+        from django_idom.components import view_to_component
+
+        example_request = HttpRequest()
+        example_request.method = "PUT"
+
+        @view_to_component
+        def hello_world_view(request):
+            return HttpResponse(f"Hello World! {request.method}")
+
+        @component
+        def my_component():
+            return html.div(
+                hello_world_view(
+                    request=example_request,
+                ),
+            )
+        ```
 
 ??? question "What is `compatibility` mode?"
 
     For views that rely on HTTP responses other than `GET` (such as `PUT`, `POST`, `PATCH`, etc), you should consider using compatibility mode to render your view within an iframe.
 
-    Any view can be rendered within compatibility mode. However, the `transforms`, `strict_parsing`, and `request` arguments do not apply to compatibility mode.
+    Any view can be rendered within compatibility mode. However, the `transforms`, `strict_parsing`, `request`, `args`, and `kwargs` arguments do not apply to compatibility mode.
 
     Please note that by default the iframe is unstyled, and thus won't look pretty until you add some CSS.
 
@@ -105,19 +160,19 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
         ```python linenums="1"
         from idom import component, html
+        from django.http import HttpResponse
         from django_idom.components import view_to_component
-        from .views import hello_world_view
+
+        @view_to_component(compatibility=True)
+        def hello_world_view(request):
+            return HttpResponse("Hello World!")
 
         @component
         def my_component():
             return html.div(
-                view_to_component(hello_world_view, compatibility=True),
+                hello_world_view(),
             )
         ```
-
-    === "views.py"
-
-        {% include-markdown "../../includes/examples.md" start="<!--hello-world-view-start-->" end="<!--hello-world-view-end-->" %}
 
 ??? question "What is `strict_parsing`?"
 
@@ -131,19 +186,19 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
         ```python linenums="1"
         from idom import component, html
+        from django.http import HttpResponse
         from django_idom.components import view_to_component
-        from .views import hello_world_view
+
+        @view_to_component(strict_parsing=False)
+        def hello_world_view(request):
+            return HttpResponse("<my-tag> Hello World </my-tag>")
 
         @component
         def my_component():
             return html.div(
-                view_to_component(hello_world_view, strict_parsing=False),
+                hello_world_view(),
             )
         ```
-
-    === "views.py"
-
-        {% include-markdown "../../includes/examples.md" start="<!--hello-world-view-start-->" end="<!--hello-world-view-end-->" %}
 
     Note that best-fit parsing is very similar to how web browsers will handle broken HTML.
 
@@ -159,30 +214,23 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
         ```python linenums="1"
         from idom import component, html
+        from django.http import HttpResponse
         from django_idom.components import view_to_component
-        from .views import hello_world_view
 
         def example_transform(vdom):
             attributes = vdom.get("attributes")
-
             if attributes and attributes.get("id") == "hello-world":
                 vdom["children"][0] = "Good Bye World!"
 
+        @view_to_component(transforms=[example_transform])
+        def hello_world_view(request):
+            return HttpResponse("<div id='hello-world'> Hello World! <div>")
+
         @component
         def my_component():
-            return view_to_component(
-                hello_world_view,
-                transforms=[example_transform],
+            return html.div(
+                hello_world_view(),
             )
-        ```
-
-    === "views.py"
-
-        ```python linenums="1"
-        from django.http import HttpResponse
-
-        def hello_world_view(request, *args, **kwargs):
-            return HttpResponse("<div id='hello-world'> Hello World! <div>")
         ```
 
 ## Django CSS
