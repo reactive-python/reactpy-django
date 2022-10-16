@@ -37,6 +37,7 @@ Using the following categories, list your changes in this order:
 -   `use_query` will now prefetch all fields to prevent `SynchronousOnlyOperation` exceptions.
 -   `view_to_component`, `django_css`, and `django_js` type hints will now display like normal functions.
 -   IDOM preloader no longer attempts to parse commented out IDOM components.
+-   Tests are now fully functional on Windows
 
 ## [1.2.0] - 2022-09-19
 
