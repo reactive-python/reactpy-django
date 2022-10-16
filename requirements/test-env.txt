@@ -1,4 +1,4 @@
 django
 playwright
 twisted
-daphne
+channels[daphne]>=4.0.0

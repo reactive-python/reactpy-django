@@ -1,6 +1,6 @@
+import asyncio
 import os
 import sys
-from unittest import SkipTest
 
 from channels.testing import ChannelsLiveServerTestCase
 from playwright.sync_api import TimeoutError, sync_playwright
@@ -13,13 +13,7 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         if sys.platform == "win32":
-            raise SkipTest("These tests are broken on Windows.")
-
-            # FIXME: The following lines will be needed once Django channels fixes Windows tests
-            # See: https://github.com/django/channels/issues/1207
-
-            # import asyncio
-            # asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+            asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
         # FIXME: This is required otherwise the tests will throw a `SynchronousOnlyOperation`
         # error when deleting the test datatabase. Potentially a Django bug.
