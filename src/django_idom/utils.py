@@ -18,6 +18,7 @@ _logger = logging.getLogger(__name__)
 _component_tag = r"(?P<tag>component)"
 _component_path = r"(?P<path>(\"[^\"'\s]+\")|('[^\"'\s]+'))"
 _component_kwargs = r"(?P<kwargs>(.*?|\s*?)*)"
+COMMENT_REGEX = re.compile(r"(<!--)(.|\s)*?(-->)")
 COMPONENT_REGEX = re.compile(
     r"{%\s*"
     + _component_tag
@@ -112,7 +113,8 @@ class ComponentPreloader:
         for template in templates:
             with contextlib.suppress(Exception):
                 with open(template, "r", encoding="utf-8") as template_file:
-                    regex_iterable = COMPONENT_REGEX.finditer(template_file.read())
+                    clean_template = COMMENT_REGEX.sub("", template_file.read())
+                    regex_iterable = COMPONENT_REGEX.finditer(clean_template)
                     component_paths = [
                         match.group("path").replace('"', "").replace("'", "")
                         for match in regex_iterable
