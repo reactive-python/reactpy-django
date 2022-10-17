@@ -78,8 +78,8 @@ class RegexTests(TestCase):
                 <!--
                 comment -->""",
         }:  # noqa: W291
-            comment = COMMENT_REGEX.sub("", embedded_comment)
-            if comment.strip() != '{% component "my.component" %}':
+            text = COMMENT_REGEX.sub("", embedded_comment)
+            if text.strip() != '{% component "my.component" %}':
                 raise self.failureException(
                     f"Regex pattern {COMMENT_REGEX.pattern} failed to remove comment from {embedded_comment}"
                 )
