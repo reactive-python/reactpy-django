@@ -22,7 +22,11 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
-Nothing (yet)
+## [2.0.1]- 2022-10-17
+
+### Fixed
+
+-   Ability to use `key=...` parameter on all prefabricated components
 
 ## [2.0.0]- 2022-10-17
 
