@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://idom-team.github.io/django-idom/changelog/">
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.6">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.5.6">
     
     
       
@@ -1000,6 +1000,8 @@
 <li>Allow <code>use_mutation</code> to have <code>refetch=None</code>, as the docs suggest is possible.</li>
 <li><code>use_query</code> will now prefetch all fields to prevent <code>SynchronousOnlyOperation</code> exceptions.</li>
 <li><code>view_to_component</code>, <code>django_css</code>, and <code>django_js</code> type hints will now display like normal functions.</li>
+<li>IDOM preloader no longer attempts to parse commented out IDOM components.</li>
+<li>Tests are now fully functional on Windows</li>
 </ul>
 <h2 id="120-2022-09-19"><a href="https://github.com/idom-team/django-idom/compare/1.1.0...1.2.0">1.2.0</a> - 2022-09-19<a class="headerlink" href="#120-2022-09-19" title="Permanent link">&para;</a></h2>
 <h3 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">&para;</a></h3>
