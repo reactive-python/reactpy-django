@@ -11,7 +11,7 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.views import View
 from idom import component, hooks, html, utils
-from idom.types import ComponentType, VdomDict
+from idom.types import ComponentType, Key, VdomDict
 
 from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
 from django_idom.types import ViewComponentIframe
@@ -131,7 +131,7 @@ def view_to_component(
             perfectly adhere to HTML5.
 
     Returns:
-        Callable: A function that takes `request: HttpRequest | None, *args: Any, **kwargs: Any`
+        Callable: A function that takes `request: HttpRequest | None, *args: Any, key: Key | None, **kwargs: Any`
             and returns an IDOM component.
     """
 
@@ -142,6 +142,7 @@ def view_to_component(
         def wrapper(
             request: HttpRequest | None = None,
             *args: Any,
+            key: Key | None = None,
             **kwargs: Any,
         ):
             return _view_to_component(
@@ -152,6 +153,7 @@ def view_to_component(
                 request=request,
                 args=args,
                 kwargs=kwargs,
+                key=key,
             )
 
         return wrapper
@@ -164,15 +166,17 @@ def _django_css(static_path: str):
     return html.style(_cached_static_contents(static_path))
 
 
-def django_css(static_path: str):
+def django_css(static_path: str, key: Key | None = None):
     """Fetches a CSS static file for use within IDOM. This allows for deferred CSS loading.
 
     Args:
         static_path: The path to the static file. This path is identical to what you would
-        use on a `static` template tag.
+            use on a `static` template tag.
+        key: A key to uniquely identify this component which is unique amongst a component's
+            immediate siblings
     """
 
-    return _django_css(static_path=static_path)
+    return _django_css(static_path=static_path, key=key)
 
 
 @component
@@ -180,15 +184,17 @@ def _django_js(static_path: str):
     return html.script(_cached_static_contents(static_path))
 
 
-def django_js(static_path: str):
+def django_js(static_path: str, key: Key | None = None):
     """Fetches a JS static file for use within IDOM. This allows for deferred JS loading.
 
     Args:
         static_path: The path to the static file. This path is identical to what you would
-        use on a `static` template tag.
+            use on a `static` template tag.
+        key: A key to uniquely identify this component which is unique amongst a component's
+            immediate siblings
     """
 
-    return _django_js(static_path=static_path)
+    return _django_js(static_path=static_path, key=key)
 
 
 def _cached_static_contents(static_path: str):

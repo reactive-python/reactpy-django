@@ -39,7 +39,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
     | Type | Description |
     | --- | --- |
-    | `_ViewComponentConstructor` | A function that takes `request: HttpRequest | None, *args: Any, **kwargs: Any` and returns an IDOM component. |
+    | `_ViewComponentConstructor` | A function that takes `request: HttpRequest | None, *args: Any, key: Key | None, **kwargs: Any` and returns an IDOM component. |
 
 ??? warning "Existing limitations"
 
@@ -261,6 +261,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
     | static_path | `str` | The path to the static file. This path is identical to what you would use on a `static` template tag. | N/A |
+    | key | `Key | None` | A key to uniquely identify this component which is unique amongst a component's immediate siblings | `None` |
 
     <font size="4">**Returns**</font>
 
@@ -338,6 +339,7 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
     | static_path | `str` | The path to the static file. This path is identical to what you would use on a `static` template tag. | N/A |
+    | key | `Key | None` | A key to uniquely identify this component which is unique amongst a component's immediate siblings | `None` |
 
     <font size="4">**Returns**</font>
 

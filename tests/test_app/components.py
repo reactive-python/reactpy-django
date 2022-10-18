@@ -101,7 +101,7 @@ def use_origin():
 def django_css():
     return html.div(
         {"id": "django-css"},
-        django_idom.components.django_css("django-css-test.css"),
+        django_idom.components.django_css("django-css-test.css", key="test"),
         html.div({"style": {"display": "inline"}}, "django_css: "),
         html.button("This text should be blue."),
         html.hr(),
@@ -115,7 +115,7 @@ def django_js():
         html.div(
             {"id": "django-js", "data-success": success},
             f"django_js: {success}",
-            django_idom.components.django_js("django-js-test.js"),
+            django_idom.components.django_js("django-js-test.js", key="test"),
         ),
         html.hr(),
     )
@@ -280,7 +280,7 @@ _view_to_component_kwargs = view_to_component(views.view_to_component_kwargs)
 def view_to_component_sync_func_compatibility():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},
-        _view_to_component_sync_func_compatibility(),
+        _view_to_component_sync_func_compatibility(key="test"),
         html.hr(),
     )
 

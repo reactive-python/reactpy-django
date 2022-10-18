@@ -3,7 +3,7 @@ from django_idom.types import IdomWebsocket
 from django_idom.websocket.paths import IDOM_WEBSOCKET_PATH
 
 
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 __all__ = [
     "IDOM_WEBSOCKET_PATH",
     "IdomWebsocket",
