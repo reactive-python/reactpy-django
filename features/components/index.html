@@ -932,7 +932,10 @@
 <span class="normal">13</span>
 <span class="normal">14</span>
 <span class="normal">15</span>
-<span class="normal">16</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
 <span class="kn">from</span> <span class="nn">django_idom.components</span> <span class="kn">import</span> <span class="n">view_to_component</span>
 
@@ -944,8 +947,11 @@
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
         <span class="n">hello_world_view</span><span class="p">(</span>
-            <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;value_1&quot;</span><span class="p">,</span> <span class="s2">&quot;value_2&quot;</span><span class="p">],</span>
-            <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;key1&quot;</span><span class="p">:</span> <span class="s2">&quot;abc&quot;</span><span class="p">,</span> <span class="s2">&quot;key2&quot;</span><span class="p">:</span> <span class="s2">&quot;123&quot;</span><span class="p">},</span>
+            <span class="kc">None</span><span class="p">,</span> <span class="c1"># Your request object (optional)</span>
+            <span class="s2">&quot;value_1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;value_2&quot;</span><span class="p">,</span>
+            <span class="n">key1</span><span class="o">=</span><span class="s2">&quot;abc&quot;</span><span class="p">,</span>
+            <span class="n">key2</span><span class="o">=</span><span class="s2">&quot;123&quot;</span><span class="p">,</span>
         <span class="p">),</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -991,7 +997,7 @@
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
         <span class="n">hello_world_view</span><span class="p">(</span>
-            <span class="n">request</span><span class="o">=</span><span class="n">example_request</span><span class="p">,</span>
+            <span class="n">example_request</span><span class="p">,</span>
         <span class="p">),</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -1362,7 +1368,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">October 14, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">October 18, 2022</span>
       
     
   </small>
