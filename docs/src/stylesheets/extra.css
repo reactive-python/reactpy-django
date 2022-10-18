@@ -15,3 +15,15 @@
 	padding-top: 0;
 	padding-bottom: 0.35em;
 }
+
+body[data-md-color-scheme="slate"]
+	.md-typeset
+	:is(.admonition, details):is(.question, .help, .faq) {
+	border-color: #366517;
+}
+
+body[data-md-color-scheme="slate"]
+	.md-typeset
+	:-webkit-any(.admonition, details):-webkit-any(.question, .help, .faq) {
+	border-color: #366517;
+}

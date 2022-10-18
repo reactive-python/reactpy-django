@@ -22,9 +22,13 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+Nothing (yet)
+
+## [2.0.0]- 2022-10-17
+
 ### Added
 
--   `use_origin` hook to return the browser's `location.origin`.
+-   `use_origin` hook for returning the browser's `location.origin`.
 
 ### Changed
 
@@ -145,7 +149,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/idom-team/django-idom/compare/1.2.0...HEAD
+[unreleased]: https://github.com/idom-team/django-idom/compare/2.0.0...HEAD
+[2.0.0]: https://github.com/idom-team/django-idom/compare/1.2.0...2.0.0
 [1.2.0]: https://github.com/idom-team/django-idom/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/idom-team/django-idom/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/idom-team/django-idom/compare/0.0.5...1.0.0
