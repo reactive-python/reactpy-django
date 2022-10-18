@@ -822,7 +822,7 @@
 <tbody>
 <tr>
 <td><code>_ViewComponentConstructor</code></td>
-<td>A function that takes <code>request: HttpRequest | None, *args: Any, **kwargs: Any</code> and returns an IDOM component.</td>
+<td>A function that takes <code>request: HttpRequest | None, *args: Any, key: Key | None, **kwargs: Any</code> and returns an IDOM component.</td>
 </tr>
 </tbody>
 </table>
@@ -1175,6 +1175,12 @@
 <td>The path to the static file. This path is identical to what you would use on a <code>static</code> template tag.</td>
 <td>N/A</td>
 </tr>
+<tr>
+<td>key</td>
+<td><code>Key | None</code></td>
+<td>A key to uniquely identify this component which is unique amongst a component's immediate siblings</td>
+<td><code>None</code></td>
+</tr>
 </tbody>
 </table>
 <p><font size="4"><strong>Returns</strong></font></p>
@@ -1290,6 +1296,12 @@
 <td><code>str</code></td>
 <td>The path to the static file. This path is identical to what you would use on a <code>static</code> template tag.</td>
 <td>N/A</td>
+</tr>
+<tr>
+<td>key</td>
+<td><code>Key | None</code></td>
+<td>A key to uniquely identify this component which is unique amongst a component's immediate siblings</td>
+<td><code>None</code></td>
 </tr>
 </tbody>
 </table>
