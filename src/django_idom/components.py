@@ -20,7 +20,7 @@ from django_idom.utils import _generate_obj_name
 
 class _ViewComponentConstructor(Protocol):
     def __call__(
-        self, request: HttpRequest | None, *args: Any, **kwargs: Any
+        self, request: HttpRequest | None = None, *args: Any, **kwargs: Any
     ) -> ComponentType:
         ...
 

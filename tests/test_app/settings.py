@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ["*"]
 
 # Application definition
 INSTALLED_APPS = [
+    "daphne",  # Overrides `runserver` command with an ASGI server
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
