@@ -11,7 +11,7 @@ from django_idom.hooks import use_websocket
 def auth_required(
     component: Callable | None = None,
     auth_attribute: str = "is_active",
-    fallback: ComponentType | VdomDict | None = None,
+    fallback: ComponentType | Callable | VdomDict | None = None,
 ) -> Callable:
     """If the user passes authentication criteria, the decorated component will be rendered.
     Otherwise, the fallback component will be rendered.

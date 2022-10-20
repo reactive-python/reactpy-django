@@ -1,2 +1,1 @@
 mypy
-django-stubs[compatible-mypy]

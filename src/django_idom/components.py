@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 from inspect import iscoroutinefunction
-from typing import Any, Callable, Dict, Protocol, Sequence
+from typing import Any, Callable, Protocol, Sequence
 
 from channels.db import database_sync_to_async
 from django.contrib.staticfiles.finders import find
@@ -33,11 +33,11 @@ def _view_to_component(
     strict_parsing: bool,
     request: HttpRequest | None,
     args: Sequence | None,
-    kwargs: Dict | None,
+    kwargs: dict | None,
 ):
     converted_view, set_converted_view = hooks.use_state(None)
-    args = args or ()
-    kwargs = kwargs or {}
+    _args: Sequence = args or ()
+    _kwargs: dict = kwargs or {}
     request_obj = request
     if not request_obj:
         request_obj = HttpRequest()
@@ -46,7 +46,7 @@ def _view_to_component(
         dotted_path = f"{view.__module__}.{view.__name__}"  # type: ignore[union-attr]
         dotted_path = dotted_path.replace("<", "").replace(">", "")
         IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
-            view, args, kwargs
+            view, _args, _kwargs
         )
     else:
         dotted_path = None
@@ -55,7 +55,7 @@ def _view_to_component(
     @hooks.use_effect(
         dependencies=[
             json.dumps(vars(request_obj), default=lambda x: _generate_obj_name(x)),
-            json.dumps([args, kwargs], default=lambda x: _generate_obj_name(x)),
+            json.dumps([_args, _kwargs], default=lambda x: _generate_obj_name(x)),
         ]
     )
     async def async_render():
@@ -68,17 +68,17 @@ def _view_to_component(
                         "src": reverse("idom:view_to_component", args=[dotted_path]),
                         "loading": "lazy",
                     }
-                )
+                )  # type: ignore
             )
             return
 
         # Render Check 2: Async function view
         elif iscoroutinefunction(view):
-            view_html = await view(request_obj, *args, **kwargs)
+            view_html = await view(request_obj, *_args, **_kwargs)  # type: ignore
 
         # Render Check 3: Async class view
         elif getattr(view, "view_is_async", False):
-            view_or_template_view = await view.as_view()(request_obj, *args, **kwargs)
+            view_or_template_view = await view.as_view()(request_obj, *_args, **_kwargs)  # type: ignore
             if getattr(view_or_template_view, "render", None):  # TemplateView
                 view_html = await view_or_template_view.render()
             else:  # View
@@ -86,8 +86,8 @@ def _view_to_component(
 
         # Render Check 4: Sync class view
         elif getattr(view, "as_view", None):
-            async_cbv = database_sync_to_async(view.as_view())
-            view_or_template_view = await async_cbv(request_obj, *args, **kwargs)
+            async_cbv = database_sync_to_async(view.as_view())  # type: ignore
+            view_or_template_view = await async_cbv(request_obj, *_args, **_kwargs)
             if getattr(view_or_template_view, "render", None):  # TemplateView
                 view_html = await database_sync_to_async(view_or_template_view.render)()
             else:  # View
@@ -95,7 +95,9 @@ def _view_to_component(
 
         # Render Check 5: Sync function view
         else:
-            view_html = await database_sync_to_async(view)(request_obj, *args, **kwargs)
+            view_html = await database_sync_to_async(view)(
+                request_obj, *_args, **_kwargs
+            )
 
         # Signal that the view has been rendered
         set_converted_view(
@@ -103,7 +105,7 @@ def _view_to_component(
                 view_html.content.decode("utf-8").strip(),
                 *transforms,
                 strict=strict_parsing,
-            )
+            )  # type: ignore
         )
 
     # Return the view if it's been rendered via the `async_render` hook

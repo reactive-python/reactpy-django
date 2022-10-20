@@ -70,7 +70,7 @@ class ComponentPreloader:
         for e in engines.all():
             if hasattr(e, "engine"):
                 template_source_loaders.extend(
-                    e.engine.get_template_loaders(e.engine.loaders)
+                    e.engine.get_template_loaders(e.engine.loaders)  # type: ignore
                 )
         loaders = []
         for loader in template_source_loaders:
