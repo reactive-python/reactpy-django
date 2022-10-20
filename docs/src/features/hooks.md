@@ -324,12 +324,6 @@ You can expect this hook to provide strings such as `/idom/my_path`.
         return html.div(my_location)
     ```
 
-??? info "This hook's behavior will be changed in a future update"
-
-    This hook will be updated to return the browser's currently active path. This change will come in alongside IDOM URL routing support.
-
-    Check out [idom-team/idom-router#2](https://github.com/idom-team/idom-router/issues/2) for more information.
-
 ??? example "See Interface"
 
     <font size="4">**Parameters**</font>
@@ -341,6 +335,12 @@ You can expect this hook to provide strings such as `/idom/my_path`.
     | Type | Description |
     | --- | --- |
     | `Location` | A object containing the current URL's `pathname` and `search` query. |
+
+??? info "This hook's behavior will be changed in a future update"
+
+    This hook will be updated to return the browser's currently active path. This change will come in alongside IDOM URL routing support.
+
+    Check out [idom-team/idom-router#2](https://github.com/idom-team/idom-router/issues/2) for more information.
 
 ## Use Origin
 

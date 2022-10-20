@@ -52,6 +52,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
     There are currently several limitations of using `view_to_component` that may be resolved in a future version of `django_idom`.
 
     - Requires manual intervention to change request methods beyond `GET`.
+    - IDOM events cannot conveniently be attached to converted view HTML.
     - Does not currently load any HTML contained with a `<head>` tag
     - Has no option to automatically intercept local anchor link (ex. `#!html <a href='example/'></a>`) click events
 
