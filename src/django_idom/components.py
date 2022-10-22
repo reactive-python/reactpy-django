@@ -112,8 +112,9 @@ def _view_to_component(
     return converted_view
 
 
-# Function definition of using view_to_component as a argless decorator,
-# or as a plain function call
+# Type hints for:
+#   example = view_to_component(my_view, ...)
+#   @view_to_component
 @overload
 def view_to_component(
     view: Callable | View,
@@ -124,7 +125,8 @@ def view_to_component(
     ...
 
 
-# Function definition when used as decorator with paranthesis arguments
+# Type hints for:
+#   @view_to_component(...)
 @overload
 def view_to_component(
     view: None = ...,
