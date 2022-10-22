@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 from inspect import iscoroutinefunction
-from typing import Any, Callable, Protocol, Sequence
+from typing import Any, Callable, Protocol, Sequence, overload
 
 from channels.db import database_sync_to_async
 from django.contrib.staticfiles.finders import find
@@ -112,14 +112,37 @@ def _view_to_component(
     return converted_view
 
 
-# TODO: Might want to intercept href clicks and form submit events.
-# Form events will probably be accomplished through the upcoming DjangoForm.
+# Function definition of using view_to_component as a argless decorator,
+# or as a plain function call
+@overload
 def view_to_component(
-    view: Callable | View = None,  # type: ignore[assignment]
+    view: Callable | View,
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
 ) -> _ViewComponentConstructor:
+    ...
+
+
+# Function definition when used as decorator with paranthesis arguments
+@overload
+def view_to_component(
+    view: None = ...,
+    compatibility: bool = False,
+    transforms: Sequence[Callable[[VdomDict], Any]] = (),
+    strict_parsing: bool = True,
+) -> Callable[[Callable], _ViewComponentConstructor]:
+    ...
+
+
+# TODO: Might want to intercept href clicks and form submit events.
+# Form events will probably be accomplished through the upcoming DjangoForm.
+def view_to_component(
+    view: Callable | View | None = None,
+    compatibility: bool = False,
+    transforms: Sequence[Callable[[VdomDict], Any]] = (),
+    strict_parsing: bool = True,
+) -> _ViewComponentConstructor | Callable[[Callable], _ViewComponentConstructor]:
     """Converts a Django view to an IDOM component.
 
     Keyword Args:
