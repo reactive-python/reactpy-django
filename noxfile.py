@@ -64,6 +64,7 @@ def test_types(session: Session) -> None:
     install_requirements_file(session, "check-types")
     install_requirements_file(session, "pkg-deps")
     session.run("mypy", "--show-error-codes", "src/django_idom")
+    session.run("mypy", "--show-error-codes", "tests/test_app")
 
 
 @nox.session

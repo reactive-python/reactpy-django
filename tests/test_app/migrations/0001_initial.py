@@ -7,16 +7,23 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []  # type: ignore
 
     operations = [
         migrations.CreateModel(
-            name='TodoItem',
+            name="TodoItem",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('done', models.BooleanField()),
-                ('text', models.CharField(max_length=1000)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("done", models.BooleanField()),
+                ("text", models.CharField(max_length=1000)),
             ],
         ),
     ]
