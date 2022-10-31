@@ -47,7 +47,7 @@ async def view_to_component_iframe(
         raise ValueError(f"No view registered for component {view_path}.")
 
     # Render Check 1: Async function view
-    if iscoroutinefunction(iframe.view):
+    if iscoroutinefunction(iframe.view) and callable(iframe.view):
         response = await iframe.view(request, *iframe.args, **iframe.kwargs)
 
     # Render Check 2: Async class view
