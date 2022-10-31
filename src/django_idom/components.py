@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 from inspect import iscoroutinefunction
-from typing import Any, Callable, Protocol, Sequence, overload
+from typing import Any, Callable, Protocol, Sequence, Union, cast, overload
 
 from channels.db import database_sync_to_async
 from django.contrib.staticfiles.finders import find
@@ -35,7 +35,10 @@ def _view_to_component(
     args: Sequence | None,
     kwargs: dict | None,
 ):
-    converted_view, set_converted_view = hooks.use_state(None)
+    converted_view, set_converted_view = hooks.use_state(
+        cast(Union[VdomDict, None], None)
+    )
+
     _args: Sequence = args or ()
     _kwargs: dict = kwargs or {}
     request_obj = request
@@ -68,16 +71,17 @@ def _view_to_component(
                         "src": reverse("idom:view_to_component", args=[dotted_path]),
                         "loading": "lazy",
                     }
-                )  # type: ignore
+                )
             )
             return
 
         # Render Check 2: Async function view
         elif iscoroutinefunction(view):
-            view_html = await view(request_obj, *_args, **_kwargs)  # type: ignore
+            view_html = await view(request_obj, *_args, **_kwargs)
 
         # Render Check 3: Async class view
         elif getattr(view, "view_is_async", False):
+            # django-stubs does not support async views yet, so we have to ignore types here
             view_or_template_view = await view.as_view()(request_obj, *_args, **_kwargs)  # type: ignore
             if getattr(view_or_template_view, "render", None):  # TemplateView
                 view_html = await view_or_template_view.render()
@@ -86,6 +90,8 @@ def _view_to_component(
 
         # Render Check 4: Sync class view
         elif getattr(view, "as_view", None):
+            # MyPy does not know how to properly interpret this as a `View` type
+            # And `isinstance(view, View)` does not work due to some weird Django internal shenanigans
             async_cbv = database_sync_to_async(view.as_view())  # type: ignore
             view_or_template_view = await async_cbv(request_obj, *_args, **_kwargs)
             if getattr(view_or_template_view, "render", None):  # TemplateView
@@ -105,7 +111,7 @@ def _view_to_component(
                 view_html.content.decode("utf-8").strip(),
                 *transforms,
                 strict=strict_parsing,
-            )  # type: ignore
+            )
         )
 
     # Return the view if it's been rendered via the `async_render` hook
