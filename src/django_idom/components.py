@@ -76,7 +76,7 @@ def _view_to_component(
             return
 
         # Render Check 2: Async function view
-        elif iscoroutinefunction(view):
+        elif iscoroutinefunction(view) and callable(view):
             view_html = await view(request_obj, *_args, **_kwargs)
 
         # Render Check 3: Async class view

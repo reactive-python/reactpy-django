@@ -48,7 +48,7 @@ async def view_to_component_iframe(
 
     # Render Check 1: Async function view
     if iscoroutinefunction(iframe.view):
-        response = await iframe.view(request, *iframe.args, **iframe.kwargs)  # type: ignore[operator]
+        response = await iframe.view(request, *iframe.args, **iframe.kwargs)
 
     # Render Check 2: Async class view
     elif getattr(iframe.view, "view_is_async", False):
