@@ -4,7 +4,7 @@
 
 ## View To Component
 
-Convert any Django view into a IDOM component by usng this decorator. Compatible with sync/async [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/).
+Convert any Django view into a IDOM component by usng this decorator. Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/). Views can be sync or async.
 
 === "components.py"
 
