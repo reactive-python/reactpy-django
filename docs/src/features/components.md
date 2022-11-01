@@ -108,7 +108,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
 ??? question "How do I transform views from external libraries?"
 
-        In order to convert external views, you can utilize `view_to_component` as a function, rather than a decorator.
+    In order to convert external views, you can utilize `view_to_component` as a function, rather than a decorator.
 
     === "components.py"
 
