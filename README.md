@@ -5,7 +5,7 @@
 <!--header-end-->
 <!--intro-start-->
 
-Django-IDOM connects your Python project to a ReactJS frontend, allowing you to create **interactive websites without needing JavaScript!**
+Django-IDOM connects your Python project to a ReactJS front-end, allowing you to create **interactive websites without needing JavaScript!**
 
 Following ReactJS styling, web elements are combined into [reusable "components"](https://idom-docs.herokuapp.com/docs/guides/creating-interfaces/your-first-components/index.html#parametrizing-components). These components can utilize [hooks](https://idom-docs.herokuapp.com/docs/reference/hooks-api.html) and [events](https://idom-docs.herokuapp.com/docs/guides/adding-interactivity/responding-to-events/index.html#async-event-handlers) to create infinitely complex web pages.
 
@@ -25,7 +25,7 @@ Any Python web framework with Websockets can support IDOM. See below for what fr
 
 <!--py-header-start-->
 
-You'll need a file to define your [IDOM](https://github.com/idom-team/idom) components. We recommend creating a `components.py` file within your chosen **Django app** to start out. Within this file, we will create a simple `hello_world` component.
+You will need a file to define your [IDOM](https://github.com/idom-team/idom) components. We recommend creating a `components.py` file within your chosen **Django app** to start out. Within this file, we will create a simple `hello_world` component.
 
 <!--py-header-end-->
 <!--py-code-start-->
@@ -46,7 +46,7 @@ def hello_world(recipient: str):
 
 In your **Django app**'s HTML template, you can now embed your IDOM component using the `component` template tag. Within this tag, you will need to type in your dotted path to the component function as the first argument.
 
-Additonally, you can pass in keyword arguments into your component function. For example, after reading the code below, pay attention to how the function definition for `hello_world` (_in the previous example_) accepts a `recipient` argument.
+Additionally, you can pass in keyword arguments into your component function. For example, after reading the code below, pay attention to how the function definition for `hello_world` (_in the previous example_) accepts a `recipient` argument.
 
 <!--html-header-end-->
 <!--html-code-start-->

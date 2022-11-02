@@ -1,6 +1,6 @@
-This repo uses [Nox](https://nox.thea.codes/en/stable/) to run tests. For a full test of available scripts run `nox -l`.
+This repository uses [Nox](https://nox.thea.codes/en/stable/) to run tests. For a full test of available scripts run `nox -l`.
 
-If you plan to run tests, you'll need to install the following dependencies first:
+If you plan to run tests, you will need to install the following dependencies first:
 
 -   [Python 3.8+](https://www.python.org/downloads/)
 -   [Git](https://git-scm.com/downloads)

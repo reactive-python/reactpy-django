@@ -1,4 +1,4 @@
-If you plan to make changes to this documentation, you'll need to install the following dependencies first:
+If you plan to make changes to this documentation, you will need to install the following dependencies first:
 
 -   [Python 3.8+](https://www.python.org/downloads/)
 -   [Git](https://git-scm.com/downloads)

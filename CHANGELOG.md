@@ -33,7 +33,7 @@ Using the following categories, list your changes in this order:
 ### Fixed
 
 -   Change type hint on `view_to_component` callable to have `request` argument be optional.
--   Change type hint on `view_to_component` to represent it as a decorator with paranthesis (ex `@view_to_component(compatibility=True)`)
+-   Change type hint on `view_to_component` to represent it as a decorator with parenthesis (ex `@view_to_component(compatibility=True)`)
 
 ## Security
 

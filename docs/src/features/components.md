@@ -45,7 +45,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
     When using `compatibility` mode, IDOM automatically exposes a URL to your view.
 
-    It is your responsibility to ensure priveledged information is not leaked via this method.
+    It is your responsibility to ensure privileged information is not leaked via this method.
 
     This can be done via directly writing conditionals into your view, or by adding decorators such as [user_passes_test](https://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test) to your views prior to using `view_to_component`.
 

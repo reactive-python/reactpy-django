@@ -2,7 +2,7 @@
 
     Everything within the `django-idom` repository must be specific to Django integration. Check out the [IDOM Core documentation](https://idom-docs.herokuapp.com/docs/about/contributor-guide.html) to contribute general features such as: components, hooks, events, and more.
 
-If you plan to make code changes to this repository, you'll need to install the following dependencies first:
+If you plan to make code changes to this repository, you will need to install the following dependencies first:
 
 -   [Python 3.8+](https://www.python.org/downloads/)
 -   [Git](https://git-scm.com/downloads)
