@@ -8,7 +8,7 @@
 pip install django-idom
 ```
 
-You'll also need to modify a few files in your **Django project**...
+You will also need to modify a few files in your **Django project**...
 
 ---
 
@@ -97,6 +97,6 @@ Register IDOM's Websocket using `IDOM_WEBSOCKET_PATH`.
     )
     ```
 
-??? question "Where is my asgi.py?"
+??? question "Where is my `asgi.py`?"
 
     If you do not have an `asgi.py`, follow the [`channels` installation guide](https://channels.readthedocs.io/en/stable/installation.html).

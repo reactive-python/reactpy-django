@@ -62,8 +62,8 @@
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | dotted_path | `str` | The dotted path to the component to render. | N/A |
-    | **kwargs | `Any` | The keyword arguments to pass to the component. | N/A |
+    | `dotted_path` | `str` | The dotted path to the component to render. | N/A |
+    | `**kwargs` | `Any` | The keyword arguments to pass to the component. | N/A |
 
     <font size="4">**Returns**</font>
 

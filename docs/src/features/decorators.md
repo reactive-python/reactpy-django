@@ -31,8 +31,8 @@ This decorator can be used with or without parentheses.
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | auth_attribute | `str` | The value to check within the user object. This is checked in the form of `UserModel.<auth_attribute>`. | `#!python "is_active"` |
-    | fallback | `ComponentType`, `VdomDict`, `None` | The `component` or `idom.html` snippet to render if the user is not authenticated. | `None` |
+    | `auth_attribute` | `str` | The value to check within the user object. This is checked in the form of `UserModel.<auth_attribute>`. | `#!python "is_active"` |
+    | `fallback` | `ComponentType`, `VdomDict`, `None` | The `component` or `idom.html` snippet to render if the user is not authenticated. | `None` |
 
     <font size="4">**Returns**</font>
 

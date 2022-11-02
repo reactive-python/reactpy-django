@@ -9,7 +9,7 @@
     <!--settings-start-->
 
     ```python linenums="1"
-    # If "idom" cache is not configured, then we'll use "default" instead
+    # If "idom" cache is not configured, then we will use "default" instead
     CACHES = {
     "idom": {"BACKEND": ...},
     }

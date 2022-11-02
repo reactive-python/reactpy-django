@@ -33,7 +33,7 @@ Using the following categories, list your changes in this order:
 ### Fixed
 
 -   Change type hint on `view_to_component` callable to have `request` argument be optional.
--   Change type hint on `view_to_component` to represent it as a decorator with parenthesis (ex `@view_to_component(compatibility=True)`)
+-   Change type hint on `view_to_component` to represent it as a decorator with parenthesis (such as `@view_to_component(compatibility=True)`)
 
 ### Security
 
@@ -137,7 +137,7 @@ Using the following categories, list your changes in this order:
 
 -   Ability to declare the HTML class of the top-level component `div`
 -   `name = ...` parameter to IDOM HTTP paths for use with `django.urls.reverse()`
--   Cache versioning to automatically invalidate old web module files from the cache backend
+-   Cache versioning to automatically invalidate old web module files from the cache back-end
 -   Automatic pre-population of the IDOM component registry
 -   Type hinting for `IdomWebsocket`
 
@@ -153,7 +153,7 @@ Using the following categories, list your changes in this order:
 
 -   `IDOM_WEB_MODULES_PATH` has been replaced with Django `include(...)`
 -   `IDOM_WS_MAX_RECONNECT_DELAY` has been renamed to `IDOM_WS_MAX_RECONNECT_TIMEOUT`
--   `idom_web_modules` cache backend has been renamed to `idom`
+-   `idom_web_modules` cache back-end has been renamed to `idom`
 
 ### Fixed
 
@@ -162,7 +162,7 @@ Using the following categories, list your changes in this order:
 
 ### Security
 
--   Fixed potential directory travesal attack on the IDOM web modules URL
+-   Fixed potential directory traversal attack on the IDOM web modules URL
 
 ## [0.0.1] - 2021-08-18
 

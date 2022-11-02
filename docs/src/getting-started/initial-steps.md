@@ -12,7 +12,7 @@ For the examples within this section, we will assume you have placed the files [
 
       Django-IDOM has no project structure requirements. Organize everything as you wish, just like any **Django project**.
 
-??? question "I've never used Django, what do I need to learn?"
+??? question "I have never used Django, what do I need to learn?"
 
       {% include-markdown "../installation/index.md" start="<!--dj-proj-start-->" end="<!--dj-proj-end-->" %}
 
