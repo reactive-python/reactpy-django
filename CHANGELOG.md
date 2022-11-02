@@ -26,7 +26,7 @@ Using the following categories, list your changes in this order:
 
 ## [2.1.0] - 2022-11-01
 
-## Changed
+### Changed
 
 -   Minimum `channels` version is now `4.0.0`.
 
@@ -35,7 +35,7 @@ Using the following categories, list your changes in this order:
 -   Change type hint on `view_to_component` callable to have `request` argument be optional.
 -   Change type hint on `view_to_component` to represent it as a decorator with parenthesis (ex `@view_to_component(compatibility=True)`)
 
-## Security
+### Security
 
 -   Add note to docs about potential information exposure via `view_to_component` when using `compatibility=True`.
 
