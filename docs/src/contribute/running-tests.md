@@ -1,15 +1,26 @@
-This repo uses [Nox](https://nox.thea.codes/en/stable/) to run scripts which can be found in `noxfile.py`. For a full test of available scripts run `nox -l`. To run the full test suite simple execute:
+This repo uses [Nox](https://nox.thea.codes/en/stable/) to run tests. For a full test of available scripts run `nox -l`.
+
+If you plan to run tests, you'll need to install the following dependencies first:
+
+-   [Python 3.8+](https://www.python.org/downloads/)
+-   [Git](https://git-scm.com/downloads)
+
+Once done, you should clone this repository:
+
+```bash
+git clone https://github.com/idom-team/django-idom.git
+cd django-idom
+pip install -r ./requirements/test-run.txt --upgrade
+```
+
+Then, by running the command below you can run the full test suite:
 
 ```
 nox -s test
 ```
 
-If you do not want to run the tests in the background:
+Or, if you want to run the tests in the foreground:
 
 ```
 nox -s test -- --headed
 ```
-
-!!! warning "Most tests will not run on Windows"
-
-    Due to [bugs within Django Channels](https://github.com/django/channels/issues/1207), functional tests are not run on Windows. In order for Windows users to test Django-IDOM functionality, you will need to run tests via [Windows Subsystem for Linux](https://code.visualstudio.com/docs/remote/wsl).

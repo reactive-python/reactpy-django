@@ -6,10 +6,14 @@ import os
 import re
 from fnmatch import fnmatch
 from importlib import import_module
-from typing import Any, Callable
+from inspect import iscoroutinefunction
+from typing import Any, Callable, Sequence
 
+from channels.db import database_sync_to_async
+from django.http import HttpRequest, HttpResponse
 from django.template import engines
 from django.utils.encoding import smart_str
+from django.views import View
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
 
@@ -28,6 +32,44 @@ COMPONENT_REGEX = re.compile(
     + _component_kwargs
     + r"\s*%}"
 )
+
+
+async def render_view(
+    view: Callable | View,
+    request: HttpRequest,
+    args: Sequence,
+    kwargs: dict,
+) -> HttpResponse:
+    """Ingests a Django view (class or function) and returns an HTTP response object."""
+    # Render Check 1: Async function view
+    if iscoroutinefunction(view) and callable(view):
+        response = await view(request, *args, **kwargs)
+
+    # Render Check 2: Async class view
+    elif getattr(view, "view_is_async", False):
+        # django-stubs does not support async views yet, so we have to ignore types here
+        view_or_template_view = await view.as_view()(request, *args, **kwargs)  # type: ignore
+        if getattr(view_or_template_view, "render", None):  # TemplateView
+            response = await view_or_template_view.render()
+        else:  # View
+            response = view_or_template_view
+
+    # Render Check 3: Sync class view
+    elif getattr(view, "as_view", None):
+        # MyPy does not know how to properly interpret this as a `View` type
+        # And `isinstance(view, View)` does not work due to some weird Django internal shenanigans
+        async_cbv = database_sync_to_async(view.as_view())  # type: ignore
+        view_or_template_view = await async_cbv(request, *args, **kwargs)
+        if getattr(view_or_template_view, "render", None):  # TemplateView
+            response = await database_sync_to_async(view_or_template_view.render)()
+        else:  # View
+            response = view_or_template_view
+
+    # Render Check 4: Sync function view
+    else:
+        response = await database_sync_to_async(view)(request, *args, **kwargs)
+
+    return response
 
 
 def _register_component(dotted_path: str) -> None:
@@ -70,7 +112,7 @@ class ComponentPreloader:
         for e in engines.all():
             if hasattr(e, "engine"):
                 template_source_loaders.extend(
-                    e.engine.get_template_loaders(e.engine.loaders)
+                    e.engine.get_template_loaders(e.engine.loaders)  # type: ignore
                 )
         loaders = []
         for loader in template_source_loaders:

@@ -29,7 +29,7 @@ In your settings you'll need to add `django_idom` to [`INSTALLED_APPS`](https://
 
     Django-IDOM requires ASGI in order to use Websockets.
 
-    If you haven't enabled ASGI on your **Django project** yet, you'll need to add `channels` to `INSTALLED_APPS` and set your `ASGI_APPLICATION` variable.
+    If you haven't enabled ASGI on your **Django project** yet, you'll need to install `channels[daphne]`, add `daphne` to `INSTALLED_APPS`, then set your `ASGI_APPLICATION` variable.
 
     Read the [Django Channels Docs](https://channels.readthedocs.io/en/stable/installation.html) for more info.
 
@@ -37,7 +37,7 @@ In your settings you'll need to add `django_idom` to [`INSTALLED_APPS`](https://
 
         ```python linenums="1"
         INSTALLED_APPS = [
-            "channels",
+            "daphne",
             ...
         ]
         ASGI_APPLICATION = "example_project.asgi.application"

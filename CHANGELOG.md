@@ -24,13 +24,28 @@ Using the following categories, list your changes in this order:
 
 -   Nothing (yet)
 
-## [2.0.1]- 2022-10-18
+## [2.1.0] - 2022-11-01
+
+## Changed
+
+-   Minimum `channels` version is now `4.0.0`.
 
 ### Fixed
 
--   Ability to use `key=...` parameter on all prefabricated components
+-   Change type hint on `view_to_component` callable to have `request` argument be optional.
+-   Change type hint on `view_to_component` to represent it as a decorator with paranthesis (ex `@view_to_component(compatibility=True)`)
 
-## [2.0.0]- 2022-10-17
+## Security
+
+-   Add note to docs about potential information exposure via `view_to_component` when using `compatibility=True`.
+
+## [2.0.1] - 2022-10-18
+
+### Fixed
+
+-   Ability to use `key=...` parameter on all prefabricated components.
+
+## [2.0.0] - 2022-10-17
 
 ### Added
 
@@ -155,7 +170,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/idom-team/django-idom/compare/2.0.1...HEAD
+[unreleased]: https://github.com/idom-team/django-idom/compare/2.1.0...HEAD
+[2.1.0]: https://github.com/idom-team/django-idom/compare/2.0.1...2.1.0
 [2.0.1]: https://github.com/idom-team/django-idom/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/idom-team/django-idom/compare/1.2.0...2.0.0
 [1.2.0]: https://github.com/idom-team/django-idom/compare/1.1.0...1.2.0

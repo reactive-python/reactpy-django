@@ -4,7 +4,7 @@
 
 ## View To Component
 
-Convert any Django view into a IDOM component by usng this decorator. Compatible with sync/async [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/).
+Convert any Django view into a IDOM component by usng this decorator. Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/). Views can be sync or async.
 
 === "components.py"
 
@@ -41,11 +41,42 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
     | --- | --- |
     | `_ViewComponentConstructor` | A function that takes `request: HttpRequest | None, *args: Any, key: Key | None, **kwargs: Any` and returns an IDOM component. |
 
-??? warning "Existing limitations"
+??? Warning "Potential information exposure when using `compatibility = True`"
+
+    When using `compatibility` mode, IDOM automatically exposes a URL to your view.
+
+    It is your responsibility to ensure priveledged information is not leaked via this method.
+
+    This can be done via directly writing conditionals into your view, or by adding decorators such as [user_passes_test](https://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test) to your views prior to using `view_to_component`.
+
+    === "Function Based View"
+
+        ```python
+        ...
+
+        @view_to_component(compatibility=True)
+        @user_passes_test(lambda u: u.is_superuser)
+        def example_view(request):
+            ...
+        ```
+
+    === "Class Based View"
+
+        ```python
+        ...
+
+        @view_to_component(compatibility=True)
+        @method_decorator(user_passes_test(lambda u: u.is_superuser), name="dispatch")
+        class ExampleView(TemplateView):
+            ...
+        ```
+
+??? info "Existing limitations"
 
     There are currently several limitations of using `view_to_component` that may be resolved in a future version of `django_idom`.
 
     - Requires manual intervention to change request methods beyond `GET`.
+    - IDOM events cannot conveniently be attached to converted view HTML.
     - Does not currently load any HTML contained with a `<head>` tag
     - Has no option to automatically intercept local anchor link (ex. `#!html <a href='example/'></a>`) click events
 
@@ -77,9 +108,9 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
 ??? question "How do I transform views from external libraries?"
 
-    === "components.py"
+    In order to convert external views, you can utilize `view_to_component` as a function, rather than a decorator.
 
-        In order to convert external views, you can utilize `view_to_component` as a function, rather than a decorator.
+    === "components.py"
 
         ```python linenums="1"
         from idom import component, html
@@ -87,16 +118,47 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
         from django_idom.components import view_to_component
         from some_library.views import example_view
 
-        converted_view = view_to_component(example_view)
+        example_vtc = view_to_component(example_view)
 
         @component
         def my_component():
             return html.div(
-                converted_view(),
+                example_vtc(),
             )
         ```
 
-??? question "How do I provide `args` and `kwargs` to a view?"
+??? question "How do I provide `request`, `args`, and `kwargs` to a view?"
+
+    <font size="4">**`Request`**</font>
+
+    You can use the `request` parameter to provide the view a custom request object.
+
+    === "components.py"
+
+        ```python linenums="1"
+        from idom import component, html
+        from django.http import HttpResponse, HttpRequest
+        from django_idom.components import view_to_component
+
+        example_request = HttpRequest()
+        example_request.method = "PUT"
+
+        @view_to_component
+        def hello_world_view(request):
+            return HttpResponse(f"Hello World! {request.method}")
+
+        @component
+        def my_component():
+            return html.div(
+                hello_world_view(
+                    example_request,
+                ),
+            )
+        ```
+
+    ---
+
+    <font size="4">**`args` and `kwargs`**</font>
 
     You can use the `args` and `kwargs` parameters to provide positional and keyworded arguments to a view.
 
@@ -124,34 +186,41 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
             )
         ```
 
-??? question "How do I provide a custom `request` object to a view?"
+??? question "How do I use `strict_parseing`, `compatibility`, and `transforms`?"
 
-    You can use the `request` parameter to provide the view a custom request object.
+    <font size="4">**`strict_parsing`**</font>
+
+    By default, an exception will be generated if your view's HTML does not perfectly adhere to HTML5.
+
+    However, there are some circumstances where you may not have control over the original HTML, so you may be unable to fix it. Or you may be relying on non-standard HTML tags such as `#!html <my-tag> Hello World </my-tag>`.
+
+    In these scenarios, you may want to rely on best-fit parsing by setting the `strict_parsing` parameter to `False`.
+
+    Note that best-fit parsing is designed to be similar to how web browsers would handle non-standard or broken HTML.
 
     === "components.py"
 
         ```python linenums="1"
         from idom import component, html
-        from django.http import HttpResponse, HttpRequest
+        from django.http import HttpResponse
         from django_idom.components import view_to_component
 
-        example_request = HttpRequest()
-        example_request.method = "PUT"
-
-        @view_to_component
+        @view_to_component(strict_parsing=False)
         def hello_world_view(request):
-            return HttpResponse(f"Hello World! {request.method}")
+            return HttpResponse("<my-tag> Hello World </my-tag>")
 
         @component
         def my_component():
             return html.div(
-                hello_world_view(
-                    example_request,
-                ),
+                hello_world_view(),
             )
         ```
 
-??? question "What is `compatibility` mode?"
+
+
+    ---
+
+    <font size="4">**`compatibility`**</font>
 
     For views that rely on HTTP responses other than `GET` (such as `PUT`, `POST`, `PATCH`, etc), you should consider using compatibility mode to render your view within an iframe.
 
@@ -177,35 +246,9 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
             )
         ```
 
-??? question "What is `strict_parsing`?"
+    ---
 
-    By default, an exception will be generated if your view's HTML does not perfectly adhere to HTML5.
-
-    However, there are some circumstances where you may not have control over the original HTML, so you may be unable to fix it. Or you may be relying on non-standard HTML tags such as `#!html <my-tag> Hello World </my-tag>`.
-
-    In these scenarios, you may want to rely on best-fit parsing by setting the `strict_parsing` parameter to `False`.
-
-    === "components.py"
-
-        ```python linenums="1"
-        from idom import component, html
-        from django.http import HttpResponse
-        from django_idom.components import view_to_component
-
-        @view_to_component(strict_parsing=False)
-        def hello_world_view(request):
-            return HttpResponse("<my-tag> Hello World </my-tag>")
-
-        @component
-        def my_component():
-            return html.div(
-                hello_world_view(),
-            )
-        ```
-
-    Note that best-fit parsing is very similar to how web browsers will handle broken HTML.
-
-??? question "What is `transforms`?"
+    <font size="4">**`transforms`**</font>
 
     After your view has been turned into [VDOM](https://idom-docs.herokuapp.com/docs/reference/specifications.html#vdom) (python dictionaries), `view_to_component` will call your `transforms` functions on every VDOM node.
 

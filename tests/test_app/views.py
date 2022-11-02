@@ -6,15 +6,14 @@ from django.views.generic import TemplateView, View
 
 
 def base_template(request):
-    context = {}
-    return render(request, "base.html", context)
+    return render(request, "base.html", {})
 
 
 def view_to_component_sync_func(request):
     return render(
         request,
         "view_to_component.html",
-        {"test_name": inspect.currentframe().f_code.co_name},
+        {"test_name": inspect.currentframe().f_code.co_name},  # type:ignore
     )
 
 
@@ -22,7 +21,7 @@ async def view_to_component_async_func(request):
     return render(
         request,
         "view_to_component.html",
-        {"test_name": inspect.currentframe().f_code.co_name},
+        {"test_name": inspect.currentframe().f_code.co_name},  # type:ignore
     )
 
 
@@ -55,7 +54,7 @@ def view_to_component_sync_func_compatibility(request):
     return render(
         request,
         "view_to_component.html",
-        {"test_name": inspect.currentframe().f_code.co_name},
+        {"test_name": inspect.currentframe().f_code.co_name},  # type:ignore
     )
 
 
@@ -63,7 +62,7 @@ async def view_to_component_async_func_compatibility(request):
     return await database_sync_to_async(render)(
         request,
         "view_to_component.html",
-        {"test_name": inspect.currentframe().f_code.co_name},
+        {"test_name": inspect.currentframe().f_code.co_name},  # type:ignore
     )
 
 
@@ -97,7 +96,7 @@ def view_to_component_script(request):
         request,
         "view_to_component_script.html",
         {
-            "test_name": inspect.currentframe().f_code.co_name,
+            "test_name": inspect.currentframe().f_code.co_name,  # type:ignore
             "status": "false",
         },
     )
@@ -108,14 +107,14 @@ def view_to_component_request(request):
         return render(
             request,
             "view_to_component.html",
-            {"test_name": inspect.currentframe().f_code.co_name},
+            {"test_name": inspect.currentframe().f_code.co_name},  # type:ignore
         )
 
     return render(
         request,
         "view_to_component.html",
         {
-            "test_name": inspect.currentframe().f_code.co_name,
+            "test_name": inspect.currentframe().f_code.co_name,  # type:ignore
             "status": "false",
             "success": "false",
         },
@@ -126,7 +125,10 @@ def view_to_component_args(request, success):
     return render(
         request,
         "view_to_component.html",
-        {"test_name": inspect.currentframe().f_code.co_name, "status": success},
+        {
+            "test_name": inspect.currentframe().f_code.co_name,  # type:ignore
+            "status": success,
+        },
     )
 
 
@@ -134,5 +136,8 @@ def view_to_component_kwargs(request, success="false"):
     return render(
         request,
         "view_to_component.html",
-        {"test_name": inspect.currentframe().f_code.co_name, "status": success},
+        {
+            "test_name": inspect.currentframe().f_code.co_name,  # type:ignore
+            "status": success,
+        },
     )

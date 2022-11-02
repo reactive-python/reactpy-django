@@ -1,6 +1,5 @@
 from django.contrib import admin
-
-from .models import TodoItem
+from test_app.models import TodoItem
 
 
 @admin.register(TodoItem)

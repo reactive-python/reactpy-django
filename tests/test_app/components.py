@@ -200,7 +200,7 @@ def todo_list():
     elif add_item.error:
         mutation_status = html.h2(f"Error when adding - {add_item.error}")
     else:
-        mutation_status = ""
+        mutation_status = ""  # type: ignore
 
     def on_submit(event):
         if event["key"] == "Enter":
@@ -279,7 +279,7 @@ _view_to_component_kwargs = view_to_component(views.view_to_component_kwargs)
 @component
 def view_to_component_sync_func_compatibility():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},
+        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         _view_to_component_sync_func_compatibility(key="test"),
         html.hr(),
     )
@@ -288,7 +288,7 @@ def view_to_component_sync_func_compatibility():
 @component
 def view_to_component_async_func_compatibility():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},
+        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         _view_to_component_async_func_compatibility(),
         html.hr(),
     )
@@ -297,7 +297,7 @@ def view_to_component_async_func_compatibility():
 @component
 def view_to_component_sync_class_compatibility():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},
+        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         _view_to_component_sync_class_compatibility(),
         html.hr(),
     )
@@ -306,7 +306,7 @@ def view_to_component_sync_class_compatibility():
 @component
 def view_to_component_async_class_compatibility():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},
+        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         _view_to_component_async_class_compatibility(),
         html.hr(),
     )
@@ -315,7 +315,7 @@ def view_to_component_async_class_compatibility():
 @component
 def view_to_component_template_view_class_compatibility():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},
+        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         _view_to_component_template_view_class_compatibility(),
         html.hr(),
     )
@@ -328,11 +328,11 @@ def view_to_component_request():
     def on_click(_):
         post_request = HttpRequest()
         post_request.method = "POST"
-        set_request(post_request)
+        set_request(post_request)  # type: ignore
 
     return html._(
         html.button(
-            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},
+            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},  # type: ignore
             "Click me",
         ),
         _view_to_component_request(request=request),
@@ -348,7 +348,7 @@ def view_to_component_args():
 
     return html._(
         html.button(
-            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},
+            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},  # type: ignore
             "Click me",
         ),
         _view_to_component_args(None, success),
@@ -364,7 +364,7 @@ def view_to_component_kwargs():
 
     return html._(
         html.button(
-            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},
+            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},  # type: ignore
             "Click me",
         ),
         _view_to_component_kwargs(success=success),
@@ -376,7 +376,7 @@ def view_to_component_decorator(request):
     return render(
         request,
         "view_to_component.html",
-        {"test_name": inspect.currentframe().f_code.co_name},
+        {"test_name": inspect.currentframe().f_code.co_name},  # type: ignore
     )
 
 
@@ -385,5 +385,5 @@ def view_to_component_decorator_args(request):
     return render(
         request,
         "view_to_component.html",
-        {"test_name": inspect.currentframe().f_code.co_name},
+        {"test_name": inspect.currentframe().f_code.co_name},  # type: ignore
     )

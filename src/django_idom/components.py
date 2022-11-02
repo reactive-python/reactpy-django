@@ -2,10 +2,8 @@ from __future__ import annotations
 
 import json
 import os
-from inspect import iscoroutinefunction
-from typing import Any, Callable, Dict, Protocol, Sequence
+from typing import Any, Callable, Protocol, Sequence, Union, cast, overload
 
-from channels.db import database_sync_to_async
 from django.contrib.staticfiles.finders import find
 from django.http import HttpRequest
 from django.urls import reverse
@@ -15,12 +13,12 @@ from idom.types import ComponentType, Key, VdomDict
 
 from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
 from django_idom.types import ViewComponentIframe
-from django_idom.utils import _generate_obj_name
+from django_idom.utils import _generate_obj_name, render_view
 
 
 class _ViewComponentConstructor(Protocol):
     def __call__(
-        self, request: HttpRequest | None, *args: Any, **kwargs: Any
+        self, request: HttpRequest | None = None, *args: Any, **kwargs: Any
     ) -> ComponentType:
         ...
 
@@ -33,91 +31,92 @@ def _view_to_component(
     strict_parsing: bool,
     request: HttpRequest | None,
     args: Sequence | None,
-    kwargs: Dict | None,
+    kwargs: dict | None,
 ):
-    converted_view, set_converted_view = hooks.use_state(None)
-    args = args or ()
-    kwargs = kwargs or {}
-    request_obj = request
-    if not request_obj:
-        request_obj = HttpRequest()
-        request_obj.method = "GET"
-    if compatibility:
-        dotted_path = f"{view.__module__}.{view.__name__}"  # type: ignore[union-attr]
-        dotted_path = dotted_path.replace("<", "").replace(">", "")
-        IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
-            view, args, kwargs
-        )
+    converted_view, set_converted_view = hooks.use_state(
+        cast(Union[VdomDict, None], None)
+    )
+    _args: Sequence = args or ()
+    _kwargs: dict = kwargs or {}
+    if request:
+        _request: HttpRequest = request
     else:
-        dotted_path = None
+        _request = HttpRequest()
+        _request.method = "GET"
 
     # Render the view render within a hook
     @hooks.use_effect(
         dependencies=[
-            json.dumps(vars(request_obj), default=lambda x: _generate_obj_name(x)),
-            json.dumps([args, kwargs], default=lambda x: _generate_obj_name(x)),
+            json.dumps(vars(_request), default=lambda x: _generate_obj_name(x)),
+            json.dumps([_args, _kwargs], default=lambda x: _generate_obj_name(x)),
         ]
     )
     async def async_render():
         """Render the view in an async hook to avoid blocking the main thread."""
-        # Render Check 1: Compatibility mode
+        # Compatibility mode doesn't require a traditional render
         if compatibility:
-            set_converted_view(
-                html.iframe(
-                    {
-                        "src": reverse("idom:view_to_component", args=[dotted_path]),
-                        "loading": "lazy",
-                    }
-                )
-            )
             return
 
-        # Render Check 2: Async function view
-        elif iscoroutinefunction(view):
-            view_html = await view(request_obj, *args, **kwargs)
-
-        # Render Check 3: Async class view
-        elif getattr(view, "view_is_async", False):
-            view_or_template_view = await view.as_view()(request_obj, *args, **kwargs)
-            if getattr(view_or_template_view, "render", None):  # TemplateView
-                view_html = await view_or_template_view.render()
-            else:  # View
-                view_html = view_or_template_view
-
-        # Render Check 4: Sync class view
-        elif getattr(view, "as_view", None):
-            async_cbv = database_sync_to_async(view.as_view())
-            view_or_template_view = await async_cbv(request_obj, *args, **kwargs)
-            if getattr(view_or_template_view, "render", None):  # TemplateView
-                view_html = await database_sync_to_async(view_or_template_view.render)()
-            else:  # View
-                view_html = view_or_template_view
-
-        # Render Check 5: Sync function view
-        else:
-            view_html = await database_sync_to_async(view)(request_obj, *args, **kwargs)
-
-        # Signal that the view has been rendered
+        # Render the view
+        response = await render_view(view, _request, _args, _kwargs)
         set_converted_view(
             utils.html_to_vdom(
-                view_html.content.decode("utf-8").strip(),
+                response.content.decode("utf-8").strip(),
                 *transforms,
                 strict=strict_parsing,
             )
+        )
+
+    # Render in compatibility mode, if needed
+    if compatibility:
+        dotted_path = f"{view.__module__}.{view.__name__}".replace("<", "").replace(">", "")  # type: ignore
+        IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
+            view, _args, _kwargs
+        )
+        return html.iframe(
+            {
+                "src": reverse("idom:view_to_component", args=[dotted_path]),
+                "loading": "lazy",
+            }
         )
 
     # Return the view if it's been rendered via the `async_render` hook
     return converted_view
 
 
-# TODO: Might want to intercept href clicks and form submit events.
-# Form events will probably be accomplished through the upcoming DjangoForm.
+# Type hints for:
+#   1. example = view_to_component(my_view, ...)
+#   2. @view_to_component
+@overload
 def view_to_component(
-    view: Callable | View = None,  # type: ignore[assignment]
+    view: Callable | View,
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
 ) -> _ViewComponentConstructor:
+    ...
+
+
+# Type hints for:
+#   1. @view_to_component(...)
+@overload
+def view_to_component(
+    view: None = ...,
+    compatibility: bool = False,
+    transforms: Sequence[Callable[[VdomDict], Any]] = (),
+    strict_parsing: bool = True,
+) -> Callable[[Callable], _ViewComponentConstructor]:
+    ...
+
+
+# TODO: Might want to intercept href clicks and form submit events.
+# Form events will probably be accomplished through the upcoming DjangoForm.
+def view_to_component(
+    view: Callable | View | None = None,
+    compatibility: bool = False,
+    transforms: Sequence[Callable[[VdomDict], Any]] = (),
+    strict_parsing: bool = True,
+) -> _ViewComponentConstructor | Callable[[Callable], _ViewComponentConstructor]:
     """Converts a Django view to an IDOM component.
 
     Keyword Args:

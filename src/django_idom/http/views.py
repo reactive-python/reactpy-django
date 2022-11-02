@@ -1,13 +1,12 @@
 import os
-from inspect import iscoroutinefunction
 
 from aiofile import async_open
-from channels.db import database_sync_to_async
 from django.core.exceptions import SuspiciousOperation
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
 from idom.config import IDOM_WED_MODULES_DIR
 
 from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
+from django_idom.utils import render_view
 
 
 async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
@@ -44,27 +43,10 @@ async def view_to_component_iframe(
     # Get the view from IDOM_REGISTERED_IFRAMES
     iframe = IDOM_VIEW_COMPONENT_IFRAMES.get(view_path)
     if not iframe:
-        raise ValueError(f"No view registered for component {view_path}.")
+        return HttpResponseNotFound()
 
-    # Render Check 1: Async function view
-    if iscoroutinefunction(iframe.view):
-        response = await iframe.view(request, *iframe.args, **iframe.kwargs)  # type: ignore[operator]
-
-    # Render Check 2: Async class view
-    elif getattr(iframe.view, "view_is_async", False):
-        response = await iframe.view.as_view()(request, *iframe.args, **iframe.kwargs)  # type: ignore[misc, union-attr]
-
-    # Render Check 3: Sync class view
-    elif getattr(iframe.view, "as_view", None):
-        response = await database_sync_to_async(iframe.view.as_view())(  # type: ignore[union-attr]
-            request, *iframe.args, **iframe.kwargs
-        )
-
-    # Render Check 4: Sync function view
-    else:
-        response = await database_sync_to_async(iframe.view)(
-            request, *iframe.args, **iframe.kwargs
-        )
+    # Render the view
+    response = await render_view(iframe.view, request, iframe.args, iframe.kwargs)
 
     # Ensure page can be rendered as an iframe
     response["X-Frame-Options"] = "SAMEORIGIN"
