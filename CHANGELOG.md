@@ -24,7 +24,7 @@ Using the following categories, list your changes in this order:
 
 -   Nothing (yet)
 
-## [2.1.0] - 2022-10-31
+## [2.1.0] - 2022-11-01
 
 ## Changed
 
