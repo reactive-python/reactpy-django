@@ -8,13 +8,13 @@
 pip install django-idom
 ```
 
-You'll also need to modify a few files in your **Django project**...
+You will also need to modify a few files in your **Django project**...
 
 ---
 
 ## Configure [`settings.py`](https://docs.djangoproject.com/en/dev/topics/settings/)
 
-In your settings you'll need to add `django_idom` to [`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS).
+In your settings you will need to add `django_idom` to [`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS).
 
 === "settings.py"
 
@@ -29,7 +29,7 @@ In your settings you'll need to add `django_idom` to [`INSTALLED_APPS`](https://
 
     Django-IDOM requires ASGI in order to use Websockets.
 
-    If you haven't enabled ASGI on your **Django project** yet, you'll need to install `channels[daphne]`, add `daphne` to `INSTALLED_APPS`, then set your `ASGI_APPLICATION` variable.
+    If you have not enabled ASGI on your **Django project** yet, you will need to install `channels[daphne]`, add `daphne` to `INSTALLED_APPS`, then set your `ASGI_APPLICATION` variable.
 
     Read the [Django Channels Docs](https://channels.readthedocs.io/en/stable/installation.html) for more info.
 
@@ -97,6 +97,6 @@ Register IDOM's Websocket using `IDOM_WEBSOCKET_PATH`.
     )
     ```
 
-??? question "Where is my asgi.py?"
+??? question "Where is my `asgi.py`?"
 
     If you do not have an `asgi.py`, follow the [`channels` installation guide](https://channels.readthedocs.io/en/stable/installation.html).

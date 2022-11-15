@@ -1,6 +1,6 @@
 # :confetti_ball: Congratulations :confetti_ball:
 
-If you followed the previous steps, you've now created a "Hello World" component!
+If you followed the previous steps, you have now created a "Hello World" component!
 
 The docs you are reading only covers our Django integration. To learn more about features, such as interactive events and hooks, check out the [IDOM Core Documentation](https://idom-docs.herokuapp.com/docs/guides/creating-interfaces/index.html)!
 

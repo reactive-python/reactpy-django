@@ -65,6 +65,10 @@ plugins:
     - include-markdown
     - git-revision-date-localized:
           fallback_to_build_date: true
+    - spellcheck:
+          known_words: dictionary.txt
+          allow_unicode: no
+          ignore_code: yes
 
 extra:
     generator: false

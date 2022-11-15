@@ -4,7 +4,7 @@
 
 ## View To Component
 
-Convert any Django view into a IDOM component by usng this decorator. Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/). Views can be sync or async.
+Convert any Django view into a IDOM component by using this decorator. Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/). Views can be sync or async.
 
 === "components.py"
 
@@ -30,10 +30,10 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | view | `Callable | View` | The view function or class to convert. | N/A |
-    | compatibility | `bool` | If True, the component will be rendered in an iframe. When using compatibility mode `tranforms`, `strict_parsing`, `request`, `args`, and `kwargs` arguments will be ignored. | `False` |
-    | transforms | `Sequence[Callable[[VdomDict], Any]]` | A list of functions that transforms the newly generated VDOM. The functions will be called on each VDOM node. | `tuple` |
-    | strict_parsing | `bool` | If True, an exception will be generated if the HTML does not perfectly adhere to HTML5. | `True` |
+    | `view` | `Callable | View` | The view function or class to convert. | N/A |
+    | `compatibility` | `bool` | If True, the component will be rendered in an iframe. When using compatibility mode `tranforms`, `strict_parsing`, `request`, `args`, and `kwargs` arguments will be ignored. | `False` |
+    | `transforms` | `Sequence[Callable[[VdomDict], Any]]` | A list of functions that transforms the newly generated VDOM. The functions will be called on each VDOM node. | `tuple` |
+    | `strict_parsing` | `bool` | If True, an exception will be generated if the HTML does not perfectly adhere to HTML5. | `True` |
 
     <font size="4">**Returns**</font>
 
@@ -45,9 +45,9 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
 
     When using `compatibility` mode, IDOM automatically exposes a URL to your view.
 
-    It is your responsibility to ensure priveledged information is not leaked via this method.
+    It is your responsibility to ensure privileged information is not leaked via this method.
 
-    This can be done via directly writing conditionals into your view, or by adding decorators such as [user_passes_test](https://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test) to your views prior to using `view_to_component`.
+    This can be done via directly writing conditionals into your view, or by adding decorators such as [`user_passes_test`](https://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test) to your views prior to using `view_to_component`.
 
     === "Function Based View"
 
@@ -78,7 +78,7 @@ Convert any Django view into a IDOM component by usng this decorator. Compatible
     - Requires manual intervention to change request methods beyond `GET`.
     - IDOM events cannot conveniently be attached to converted view HTML.
     - Does not currently load any HTML contained with a `<head>` tag
-    - Has no option to automatically intercept local anchor link (ex. `#!html <a href='example/'></a>`) click events
+    - Has no option to automatically intercept local anchor link (such as `#!html <a href='example/'></a>`) click events
 
     _Please note these limitations do not exist when using `compatibility` mode._
 
@@ -303,8 +303,8 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | static_path | `str` | The path to the static file. This path is identical to what you would use on a `static` template tag. | N/A |
-    | key | `Key | None` | A key to uniquely identify this component which is unique amongst a component's immediate siblings | `None` |
+    | `static_path` | `str` | The path to the static file. This path is identical to what you would use on a `static` template tag. | N/A |
+    | `key` | `Key | None` | A key to uniquely identify this component which is unique amongst a component's immediate siblings | `None` |
 
     <font size="4">**Returns**</font>
 
@@ -318,7 +318,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
 ??? question "Can I load static CSS using `html.link` instead?"
 
-    While you can load stylesheets with `html.link`, keep in mind that loading this way **does not** ensure load order. Thus, your stylesheet will be loaded after your component is displayed. This would likely cause some visual jankiness, so use this at your own discretion.
+    While you can load stylesheets with `html.link`, keep in mind that loading this way **does not** ensure load order. Thus, your stylesheet will be loaded after your component is displayed. This would likely cause unintended visual behavior, so use this at your own discretion.
 
     Here's an example on what you should avoid doing for Django static files:
 
@@ -381,8 +381,8 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | static_path | `str` | The path to the static file. This path is identical to what you would use on a `static` template tag. | N/A |
-    | key | `Key | None` | A key to uniquely identify this component which is unique amongst a component's immediate siblings | `None` |
+    | `static_path` | `str` | The path to the static file. This path is identical to what you would use on a `static` template tag. | N/A |
+    | `key` | `Key | None` | A key to uniquely identify this component which is unique amongst a component's immediate siblings | `None` |
 
     <font size="4">**Returns**</font>
 

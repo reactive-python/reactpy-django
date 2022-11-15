@@ -4,9 +4,9 @@
 
 ---
 
-We will assume you've [created a Django View](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view) before, but here's a simple example below.
+We will assume you have [created a Django View](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view) before, but here's a simple example below.
 
-Within your **Django app**'s `views.py` file, you'll need to create a function to render the HTML template containing your IDOM components.
+Within your **Django app**'s `views.py` file, you will need to create a function to render the HTML template containing your IDOM components.
 
 In this example, we will create a view that renders `my-template.html` (_from the previous step_).
 

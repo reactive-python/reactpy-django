@@ -53,21 +53,21 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | query | `Callable[_Params, _Result | None]` | A callable that returns a Django `Model` or `QuerySet`. | N/A |
-    | *args | `_Params.args` | Positional arguments to pass into `query`. | N/A |
-    | **kwargs | `_Params.kwargs` | Keyword arguments to pass into `query`. | N/A |
+    | `query` | `Callable[_Params, _Result | None]` | A callable that returns a Django `Model` or `QuerySet`. | N/A |
+    | `*args` | `_Params.args` | Positional arguments to pass into `query`. | N/A |
+    | `**kwargs` | `_Params.kwargs` | Keyword arguments to pass into `query`. | N/A |
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
-    | `Query[_Result | None]` | A dataclass containing `loading`/`error` states, your `data` (if the query has successfully executed), and a `refetch` callable that can be used to re-run the query. |
+    | `Query[_Result | None]` | An object containing `loading`/`error` states, your `data` (if the query has successfully executed), and a `refetch` callable that can be used to re-run the query. |
 
 ??? question "Can I make ORM calls without hooks?"
 
     Due to Django's ORM design, database queries must be deferred using hooks. Otherwise, you will see a `SynchronousOnlyOperation` exception.
 
-    This may be resolved in a future version of Django with a natively asynchronous ORM.
+    This may be resolved in a future version of Django containing an asynchronous ORM.
 
 ??? question "Why does the example `get_items` function return a `Model` or `QuerySet`?"
 
@@ -128,14 +128,14 @@ The function you provide into this hook will have no return value.
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | mutate | `Callable[_Params, bool | None]` | A callable that performs Django ORM create, update, or delete functionality. If this function returns `False`, then your `refetch` function will not be used. | N/A |
-    | refetch | `Callable[..., Any] | Sequence[Callable[..., Any]] | None` | A `query` function (used by the `use_query` hook) or a sequence of `query` functions that will be called if the mutation succeeds. This is useful for refetching data after a mutation has been performed. | `None` |
+    | `mutate` | `Callable[_Params, bool | None]` | A callable that performs Django ORM create, update, or delete functionality. If this function returns `False`, then your `refetch` function will not be used. | N/A |
+    | `refetch` | `Callable[..., Any] | Sequence[Callable[..., Any]] | None` | A `query` function (used by the `use_query` hook) or a sequence of `query` functions that will be called if the mutation succeeds. This is useful for refetching data after a mutation has been performed. | `None` |
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
-    | `Mutation[_Params]` | A dataclass containing `loading`/`error` states, a `reset` callable that will set `loading`/`error` states to defaults, and a `execute` callable that will run the query. |
+    | `Mutation[_Params]` | An object containing `loading`/`error` states, a `reset` callable that will set `loading`/`error` states to defaults, and a `execute` callable that will run the query. |
 
 ??? question "Can `use_mutation` trigger a refetch of `use_query`?"
 
@@ -240,7 +240,7 @@ The function you provide into this hook will have no return value.
 
     Due to Django's ORM design, database queries must be deferred using hooks. Otherwise, you will see a `SynchronousOnlyOperation` exception.
 
-    This may be resolved in a future version of Django with a natively asynchronous ORM.
+    This may be resolved in a future version of Django containing an asynchronous ORM.
 
     However, even when resolved it is best practice to perform ORM queries within the `use_query` in order to handle `loading` and `error` states.
 
