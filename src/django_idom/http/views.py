@@ -24,13 +24,13 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
     # Fetch the file from cache, if available
     last_modified_time = os.stat(path).st_mtime
     cache_key = f"django_idom:web_module:{str(path).lstrip(str(web_modules_dir))}"
-    response = await IDOM_CACHE.aget(cache_key, version=last_modified_time)  # type: ignore[attr-defined]
+    response = await IDOM_CACHE.aget(cache_key, version=int(last_modified_time))
     if response is None:
         async with async_open(path, "r") as fp:
             response = HttpResponse(await fp.read(), content_type="text/javascript")
-        await IDOM_CACHE.adelete(cache_key)  # type: ignore[attr-defined]
-        await IDOM_CACHE.aset(  # type: ignore[attr-defined]
-            cache_key, response, timeout=None, version=last_modified_time
+        await IDOM_CACHE.adelete(cache_key)
+        await IDOM_CACHE.aset(
+            cache_key, response, timeout=None, version=int(last_modified_time)
         )
     return response
 
