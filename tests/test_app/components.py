@@ -200,11 +200,11 @@ def relational_query():
     )
 
 
-def get_items_query():
+def get_todo_query():
     return TodoItem.objects.all()
 
 
-def add_item_mutation(text: str):
+def add_todo_mutation(text: str):
     existing = TodoItem.objects.filter(text=text).first()
     if existing:
         if existing.done:
@@ -216,7 +216,7 @@ def add_item_mutation(text: str):
         TodoItem(text=text, done=False).save()
 
 
-def toggle_item_mutation(item: TodoItem):
+def toggle_todo_mutation(item: TodoItem):
     item.done = not item.done
     item.save()
 
@@ -224,8 +224,8 @@ def toggle_item_mutation(item: TodoItem):
 @component
 def todo_list():
     input_value, set_input_value = hooks.use_state("")
-    items = use_query(get_items_query)
-    toggle_item = use_mutation(toggle_item_mutation)
+    items = use_query(get_todo_query)
+    toggle_item = use_mutation(toggle_todo_mutation)
 
     if items.error:
         rendered_items = html.h2(f"Error when loading - {items.error}")
@@ -234,12 +234,12 @@ def todo_list():
     else:
         rendered_items = html._(
             html.h3("Not Done"),
-            _render_items([i for i in items.data if not i.done], toggle_item),
+            _render_todo_items([i for i in items.data if not i.done], toggle_item),
             html.h3("Done"),
-            _render_items([i for i in items.data if i.done], toggle_item),
+            _render_todo_items([i for i in items.data if i.done], toggle_item),
         )
 
-    add_item = use_mutation(add_item_mutation, refetch=get_items_query)
+    add_item = use_mutation(add_todo_mutation, refetch=get_todo_query)
 
     if add_item.loading:
         mutation_status = html.h2("Working...")
@@ -273,7 +273,7 @@ def todo_list():
     )
 
 
-def _render_items(items, toggle_item):
+def _render_todo_items(items, toggle_item):
     return html.ul(
         [
             html.li(
