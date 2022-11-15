@@ -3,7 +3,7 @@ import inspect
 from django.http import HttpRequest
 from django.shortcuts import render
 from idom import component, hooks, html, web
-from test_app.models import TodoItem
+from test_app.models import ForiegnChild, RelationalChild, RelationalParent, TodoItem
 
 import django_idom
 from django_idom.components import view_to_component
@@ -151,6 +151,48 @@ def authorized_user():
         {"id": "authorized-user"},
         "authorized_user: Success",
         html.hr(),
+    )
+
+
+def get_relational_parent_query():
+    parent = RelationalParent.objects.first()
+    if not parent:
+        child_1 = RelationalChild.objects.create(text="ManyToMany Child 1")
+        child_2 = RelationalChild.objects.create(text="ManyToMany Child 2")
+        child_3 = RelationalChild.objects.create(text="ManyToMany Child 3")
+        child_4 = RelationalChild.objects.create(text="OneToOne Child")
+        parent = RelationalParent.objects.create(one_to_one=child_4)
+        parent.many_to_many.set((child_1, child_2, child_3))
+        parent.save()
+    return parent
+
+
+def get_foriegn_child_query():
+    child = ForiegnChild.objects.first()
+    if not child:
+        parent = RelationalParent.objects.first()
+        if not parent:
+            parent = get_relational_parent_query()
+        child = ForiegnChild.objects.create(parent=parent, text="Foriegn Child")
+        child.save()
+    return child
+
+
+@component
+def relational_query():
+    relational_parent = use_query(get_relational_parent_query)
+    foriegn_child = use_query(get_foriegn_child_query)
+
+    if not relational_parent.data or not foriegn_child.data:
+        return
+
+    return html.div(
+        {"id": "relational-obj-printout"},
+        html.div(
+            f"Relational Parent Many To Many: {relational_parent.data.many_to_many.all()}"
+        ),
+        html.div(f"Relational Parent One To One: {relational_parent.data.one_to_one}"),
+        html.div(f"Relational Child Foreign Key: {foriegn_child.data.parent}"),
     )
 
 

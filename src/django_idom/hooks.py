@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import logging
 from typing import Any, Awaitable, Callable, DefaultDict, Sequence, Union, cast
 
 from channels.db import database_sync_to_async as _database_sync_to_async
+from django.db.models import ManyToManyField
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
 from idom import use_callback, use_ref
@@ -190,8 +192,14 @@ def _fetch_lazy_fields(data: Any) -> None:
 
     # `Model` instances
     elif isinstance(data, Model):
-        for field in data._meta.fields:
-            getattr(data, field.name)
+        for field in data._meta.get_fields():
+            with contextlib.suppress(AttributeError):
+                getattr(data, field.name)
+
+            if isinstance(field, ManyToManyField):
+                mtm_field = getattr(data, field.name)
+                mtm_queryset = mtm_field.get_queryset()
+                _fetch_lazy_fields(mtm_queryset)
 
     # Unrecognized type
     else:
