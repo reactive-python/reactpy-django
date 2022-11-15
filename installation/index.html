@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://idom-team.github.io/django-idom/installation/">
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.7">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.20d9efc8.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.472b142f.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.08040f6c.min.css">
         
       
       
@@ -118,6 +118,7 @@
         
           
           
+          
           <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_2" hidden>
@@ -125,6 +126,7 @@
             </label>
           
         
+          
           
           
           <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
@@ -746,10 +748,10 @@
 <h2 id="install-from-pypi">Install from PyPI<a class="headerlink" href="#install-from-pypi" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>pip install django-idom
 </code></pre></div>
-<p>You'll also need to modify a few files in your <strong>Django project</strong>...</p>
+<p>You will also need to modify a few files in your <strong>Django project</strong>...</p>
 <hr />
 <h2 id="configure-settingspy">Configure <a href="https://docs.djangoproject.com/en/dev/topics/settings/"><code>settings.py</code></a><a class="headerlink" href="#configure-settingspy" title="Permanent link">&para;</a></h2>
-<p>In your settings you'll need to add <code>django_idom</code> to <a href="https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS"><code>INSTALLED_APPS</code></a>.</p>
+<p>In your settings you will need to add <code>django_idom</code> to <a href="https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS"><code>INSTALLED_APPS</code></a>.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">settings.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -767,7 +769,7 @@
 <details class="warning">
 <summary>Enable Django ASGI (Required)</summary>
 <p>Django-IDOM requires ASGI in order to use Websockets.</p>
-<p>If you haven't enabled ASGI on your <strong>Django project</strong> yet, you'll need to install <code>channels[daphne]</code>, add <code>daphne</code> to <code>INSTALLED_APPS</code>, then set your <code>ASGI_APPLICATION</code> variable.</p>
+<p>If you have not enabled ASGI on your <strong>Django project</strong> yet, you will need to install <code>channels[daphne]</code>, add <code>daphne</code> to <code>INSTALLED_APPS</code>, then set your <code>ASGI_APPLICATION</code> variable.</p>
 <p>Read the <a href="https://channels.readthedocs.io/en/stable/installation.html">Django Channels Docs</a> for more info.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">settings.py</label></div>
 <div class="tabbed-content">
@@ -791,7 +793,7 @@
 <p>Below are a handful of values you can change within <code>settings.py</code> to modify the behavior of IDOM.</p>
 <!-- BEGIN INCLUDE ../features/settings.md '&lt;!--settings-start--&gt;' '&lt;!--settings-end--&gt;' -->
 <div class="highlight"><pre><span></span><code>```python linenums=&quot;1&quot;
-# If &quot;idom&quot; cache is not configured, then we&#39;ll use &quot;default&quot; instead
+# If &quot;idom&quot; cache is not configured, then we will use &quot;default&quot; instead
 CACHES = {
 &quot;idom&quot;: {&quot;BACKEND&quot;: ...},
 }
@@ -877,7 +879,7 @@ IDOM_WEBSOCKET_URL = &quot;idom/&quot;
 </div>
 </div>
 <details class="question">
-<summary>Where is my asgi.py?</summary>
+<summary>Where is my <code>asgi.py</code>?</summary>
 <p>If you do not have an <code>asgi.py</code>, follow the <a href="https://channels.readthedocs.io/en/stable/installation.html"><code>channels</code> installation guide</a>.</p>
 </details>
 
@@ -886,7 +888,7 @@ IDOM_WEBSOCKET_URL = &quot;idom/&quot;
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 2, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 15, 2022</span>
       
     
   </small>
@@ -971,7 +973,7 @@ IDOM_WEBSOCKET_URL = &quot;idom/&quot;
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.8492ddcf.min.js"></script>
+      <script src="../assets/javascripts/bundle.d6c3db9e.min.js"></script>
       
     
   </body>

@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://idom-team.github.io/django-idom/features/hooks/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.7">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.20d9efc8.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.472b142f.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.08040f6c.min.css">
         
       
       
@@ -118,6 +118,7 @@
         
           
           
+          
           <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_2" hidden>
@@ -125,6 +126,7 @@
             </label>
           
         
+          
           
           
           <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
@@ -835,19 +837,19 @@
 </thead>
 <tbody>
 <tr>
-<td>query</td>
+<td><code>query</code></td>
 <td><code>Callable[_Params, _Result | None]</code></td>
 <td>A callable that returns a Django <code>Model</code> or <code>QuerySet</code>.</td>
 <td>N/A</td>
 </tr>
 <tr>
-<td>*args</td>
+<td><code>*args</code></td>
 <td><code>_Params.args</code></td>
 <td>Positional arguments to pass into <code>query</code>.</td>
 <td>N/A</td>
 </tr>
 <tr>
-<td>**kwargs</td>
+<td><code>**kwargs</code></td>
 <td><code>_Params.kwargs</code></td>
 <td>Keyword arguments to pass into <code>query</code>.</td>
 <td>N/A</td>
@@ -865,7 +867,7 @@
 <tbody>
 <tr>
 <td><code>Query[_Result | None]</code></td>
-<td>A dataclass containing <code>loading</code>/<code>error</code> states, your <code>data</code> (if the query has successfully executed), and a <code>refetch</code> callable that can be used to re-run the query.</td>
+<td>An object containing <code>loading</code>/<code>error</code> states, your <code>data</code> (if the query has successfully executed), and a <code>refetch</code> callable that can be used to re-run the query.</td>
 </tr>
 </tbody>
 </table>
@@ -873,7 +875,7 @@
 <details class="question">
 <summary>Can I make ORM calls without hooks?</summary>
 <p>Due to Django's ORM design, database queries must be deferred using hooks. Otherwise, you will see a <code>SynchronousOnlyOperation</code> exception.</p>
-<p>This may be resolved in a future version of Django with a natively asynchronous ORM.</p>
+<p>This may be resolved in a future version of Django containing an asynchronous ORM.</p>
 </details>
 <details class="question">
 <summary>Why does the example <code>get_items</code> function return a <code>Model</code> or <code>QuerySet</code>?</summary>
@@ -972,13 +974,13 @@
 </thead>
 <tbody>
 <tr>
-<td>mutate</td>
+<td><code>mutate</code></td>
 <td><code>Callable[_Params, bool | None]</code></td>
 <td>A callable that performs Django ORM create, update, or delete functionality. If this function returns <code>False</code>, then your <code>refetch</code> function will not be used.</td>
 <td>N/A</td>
 </tr>
 <tr>
-<td>refetch</td>
+<td><code>refetch</code></td>
 <td><code>Callable[..., Any] | Sequence[Callable[..., Any]] | None</code></td>
 <td>A <code>query</code> function (used by the <code>use_query</code> hook) or a sequence of <code>query</code> functions that will be called if the mutation succeeds. This is useful for refetching data after a mutation has been performed.</td>
 <td><code>None</code></td>
@@ -996,7 +998,7 @@
 <tbody>
 <tr>
 <td><code>Mutation[_Params]</code></td>
-<td>A dataclass containing <code>loading</code>/<code>error</code> states, a <code>reset</code> callable that will set <code>loading</code>/<code>error</code> states to defaults, and a <code>execute</code> callable that will run the query.</td>
+<td>An object containing <code>loading</code>/<code>error</code> states, a <code>reset</code> callable that will set <code>loading</code>/<code>error</code> states to defaults, and a <code>execute</code> callable that will run the query.</td>
 </tr>
 </tbody>
 </table>
@@ -1185,7 +1187,7 @@
 <details class="question">
 <summary>Can I make ORM calls without hooks?</summary>
 <p>Due to Django's ORM design, database queries must be deferred using hooks. Otherwise, you will see a <code>SynchronousOnlyOperation</code> exception.</p>
-<p>This may be resolved in a future version of Django with a natively asynchronous ORM.</p>
+<p>This may be resolved in a future version of Django containing an asynchronous ORM.</p>
 <p>However, even when resolved it is best practice to perform ORM queries within the <code>use_query</code> in order to handle <code>loading</code> and <code>error</code> states.</p>
 </details>
 <details class="question">
@@ -1374,7 +1376,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 2, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 15, 2022</span>
       
     
   </small>
@@ -1459,7 +1461,7 @@
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.8492ddcf.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d6c3db9e.min.js"></script>
       
     
   </body>

@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://idom-team.github.io/django-idom/changelog/">
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.7">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.20d9efc8.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.472b142f.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.08040f6c.min.css">
         
       
       
@@ -118,6 +118,7 @@
         
           
           
+          
           <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_2" hidden>
@@ -125,6 +126,7 @@
             </label>
           
         
+          
           
           
           <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
@@ -695,15 +697,15 @@
     2.1.0 - 2022-11-01
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
+    <nav class="md-nav" aria-label="2.1.0 - 2022-11-01">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#changed" class="md-nav__link">
     Changed
   </a>
   
-    <nav class="md-nav" aria-label="Changed">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
   <a href="#fixed" class="md-nav__link">
@@ -712,15 +714,15 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
+          <li class="md-nav__item">
   <a href="#security" class="md-nav__link">
     Security
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1051,16 +1053,16 @@
 <li>Nothing (yet)</li>
 </ul>
 <h2 id="210-2022-11-01"><a href="https://github.com/idom-team/django-idom/compare/2.0.1...2.1.0">2.1.0</a> - 2022-11-01<a class="headerlink" href="#210-2022-11-01" title="Permanent link">&para;</a></h2>
-<h2 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h2>
+<h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Minimum <code>channels</code> version is now <code>4.0.0</code>.</li>
 </ul>
 <h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Change type hint on <code>view_to_component</code> callable to have <code>request</code> argument be optional.</li>
-<li>Change type hint on <code>view_to_component</code> to represent it as a decorator with paranthesis (ex <code>@view_to_component(compatibility=True)</code>)</li>
+<li>Change type hint on <code>view_to_component</code> to represent it as a decorator with parenthesis (such as <code>@view_to_component(compatibility=True)</code>)</li>
 </ul>
-<h2 id="security">Security<a class="headerlink" href="#security" title="Permanent link">&para;</a></h2>
+<h3 id="security">Security<a class="headerlink" href="#security" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Add note to docs about potential information exposure via <code>view_to_component</code> when using <code>compatibility=True</code>.</li>
 </ul>
@@ -1153,7 +1155,7 @@
 <ul>
 <li>Ability to declare the HTML class of the top-level component <code>div</code></li>
 <li><code>name = ...</code> parameter to IDOM HTTP paths for use with <code>django.urls.reverse()</code></li>
-<li>Cache versioning to automatically invalidate old web module files from the cache backend</li>
+<li>Cache versioning to automatically invalidate old web module files from the cache back-end</li>
 <li>Automatic pre-population of the IDOM component registry</li>
 <li>Type hinting for <code>IdomWebsocket</code></li>
 </ul>
@@ -1169,7 +1171,7 @@
 <ul>
 <li><code>IDOM_WEB_MODULES_PATH</code> has been replaced with Django <code>include(...)</code></li>
 <li><code>IDOM_WS_MAX_RECONNECT_DELAY</code> has been renamed to <code>IDOM_WS_MAX_RECONNECT_TIMEOUT</code></li>
-<li><code>idom_web_modules</code> cache backend has been renamed to <code>idom</code></li>
+<li><code>idom_web_modules</code> cache back-end has been renamed to <code>idom</code></li>
 </ul>
 <h3 id="fixed_5">Fixed<a class="headerlink" href="#fixed_5" title="Permanent link">&para;</a></h3>
 <ul>
@@ -1178,7 +1180,7 @@
 </ul>
 <h3 id="security_1">Security<a class="headerlink" href="#security_1" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Fixed potential directory travesal attack on the IDOM web modules URL</li>
+<li>Fixed potential directory traversal attack on the IDOM web modules URL</li>
 </ul>
 <h2 id="001-2021-08-18"><a href="https://github.com/idom-team/django-idom/releases/tag/0.0.1">0.0.1</a> - 2021-08-18<a class="headerlink" href="#001-2021-08-18" title="Permanent link">&para;</a></h2>
 <h3 id="added_5">Added<a class="headerlink" href="#added_5" title="Permanent link">&para;</a></h3>
@@ -1266,7 +1268,7 @@
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.8492ddcf.min.js"></script>
+      <script src="../assets/javascripts/bundle.d6c3db9e.min.js"></script>
       
     
   </body>
