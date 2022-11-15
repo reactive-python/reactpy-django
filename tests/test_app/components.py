@@ -192,7 +192,11 @@ def relational_query():
             f"Relational Parent Many To Many: {relational_parent.data.many_to_many.all()}"
         ),
         html.div(f"Relational Parent One To One: {relational_parent.data.one_to_one}"),
+        html.div(
+            f"Relational Parent's Children: {relational_parent.data.foriegnchild_set.all()}"
+        ),
         html.div(f"Relational Child Foreign Key: {foriegn_child.data.parent}"),
+        html.hr(),
     )
 
 

@@ -6,8 +6,9 @@ import logging
 from typing import Any, Awaitable, Callable, DefaultDict, Sequence, Union, cast
 
 from channels.db import database_sync_to_async as _database_sync_to_async
-from django.db.models import ManyToManyField
+from django.db.models import ManyToManyField, prefetch_related_objects
 from django.db.models.base import Model
+from django.db.models.fields.reverse_related import ManyToOneRel
 from django.db.models.query import QuerySet
 from idom import use_callback, use_ref
 from idom.backend.types import Location
@@ -69,6 +70,8 @@ def use_websocket() -> IdomWebsocket:
 def use_query(
     query: Callable[_Params, _Result | None],
     *args: _Params.args,
+    many_to_many: bool = True,
+    many_to_one: bool = True,
     **kwargs: _Params.kwargs,
 ) -> Query[_Result | None]:
     """Hook to fetch a Django ORM query.
@@ -109,7 +112,7 @@ def use_query(
 
         try:
             new_data = query(*args, **kwargs)
-            _fetch_lazy_fields(new_data)
+            _fetch_lazy_fields(new_data, many_to_many, many_to_one)
         except Exception as e:
             set_data(None)
             set_loading(False)
@@ -181,25 +184,35 @@ def use_mutation(
     return Mutation(call, loading, error, reset)
 
 
-def _fetch_lazy_fields(data: Any) -> None:
+def _fetch_lazy_fields(data: Any, many_to_many, many_to_one) -> None:
     """Fetch all fields within a `Model` or `QuerySet` to ensure they are not performed lazily."""
 
     # `QuerySet`, which is effectively a list of `Model` instances
     # https://github.com/typeddjango/django-stubs/issues/704
     if isinstance(data, QuerySet):  # type: ignore[misc]
         for model in data:
-            _fetch_lazy_fields(model)
+            _fetch_lazy_fields(model, many_to_many, many_to_one)
 
     # `Model` instances
     elif isinstance(data, Model):
+        prefetch_fields = []
         for field in data._meta.get_fields():
+            # `ForeignKey` relationships will cause an `AttributeError`
+            # This is handled within the `ManyToOneRel` conditional below.
             with contextlib.suppress(AttributeError):
                 getattr(data, field.name)
 
-            if isinstance(field, ManyToManyField):
-                mtm_field = getattr(data, field.name)
-                mtm_queryset = mtm_field.get_queryset()
-                _fetch_lazy_fields(mtm_queryset)
+            if many_to_one and type(field) == ManyToOneRel:
+                prefetch_fields.append(f"{field.name}_set")
+
+            elif many_to_many and isinstance(field, ManyToManyField):
+                prefetch_fields.append(field.name)
+                _fetch_lazy_fields(
+                    getattr(data, field.name).get_queryset(), many_to_many, many_to_one
+                )
+
+        if prefetch_fields:
+            prefetch_related_objects([data], *prefetch_fields)
 
     # Unrecognized type
     else:
