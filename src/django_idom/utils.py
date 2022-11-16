@@ -207,7 +207,7 @@ def fetch_options(
     query_func: None = ...,
     evaluator: Callable[[OrmFetch], None] | None = None,
     **options,
-) -> Callable[[Callable[_Params, _Result]], Callable[_Params, _Result]]:
+) -> Callable[[Callable[_Params, _Result]], OrmFetch]:
     pass
 
 
@@ -216,7 +216,7 @@ def fetch_options(
     query_func: Callable[_Params, _Result],
     evaluator: Callable[[OrmFetch], None] | None = None,
     **options,
-) -> Callable[_Params, _Result]:
+) -> OrmFetch:
     ...
 
 
@@ -224,9 +224,7 @@ def fetch_options(
     query_func: Callable[_Params, _Result] | None = None,
     evaluator: Callable[[OrmFetch], None] | None = None,
     **options,
-) -> Callable[_Params, _Result] | Callable[
-    [Callable[_Params, _Result]], Callable[_Params, _Result]
-]:
+) -> OrmFetch | Callable[[Callable[_Params, _Result]], OrmFetch]:
     def decorator(query_func: Callable[_Params, _Result]):
         if not query_func:
             raise ValueError("A query function must be provided to `fetch_options`")
