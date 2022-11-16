@@ -14,7 +14,7 @@ from idom import use_callback, use_ref
 from idom.backend.types import Location
 from idom.core.hooks import Context, create_context, use_context, use_effect, use_state
 
-from django_idom.types import IdomWebsocket, Mutation, Query, _Params, _Result
+from django_idom.types import IdomWebsocket, Mutation, OrmFetch, Query, _Params, _Result
 from django_idom.utils import _generate_obj_name
 
 
@@ -68,10 +68,8 @@ def use_websocket() -> IdomWebsocket:
 
 
 def use_query(
-    query: Callable[_Params, _Result | None],
+    query: Callable[_Params, _Result | None] | OrmFetch,
     *args: _Params.args,
-    many_to_many: bool = True,
-    many_to_one: bool = True,
     **kwargs: _Params.kwargs,
 ) -> Query[_Result | None]:
     """Hook to fetch a Django ORM query.
@@ -90,6 +88,7 @@ def use_query(
     data, set_data = use_state(cast(Union[_Result, None], None))
     loading, set_loading = use_state(True)
     error, set_error = use_state(cast(Union[Exception, None], None))
+    fetch_cls = query if isinstance(query, OrmFetch) else OrmFetch(query)
 
     @use_callback
     def refetch() -> None:
@@ -101,8 +100,8 @@ def use_query(
     def add_refetch_callback() -> Callable[[], None]:
         # By tracking callbacks globally, any usage of the query function will be re-run
         # if the user has told a mutation to refetch it.
-        _REFETCH_CALLBACKS[query].add(refetch)
-        return lambda: _REFETCH_CALLBACKS[query].remove(refetch)
+        _REFETCH_CALLBACKS[fetch_cls.func].add(refetch)
+        return lambda: _REFETCH_CALLBACKS[fetch_cls.func].remove(refetch)
 
     @use_effect(dependencies=None)
     @database_sync_to_async
@@ -111,8 +110,16 @@ def use_query(
             return
 
         try:
-            new_data = query(*args, **kwargs)
-            _fetch_lazy_fields(new_data, many_to_many, many_to_one)
+            # Run the initial query
+            fetch_cls.data = fetch_cls.func(*args, **kwargs)
+
+            # Use a custom evaluator, if provided
+            if fetch_cls.evaluator:
+                fetch_cls.evaluator(fetch_cls)
+
+            # Evaluate lazy Django fields
+            else:
+                _evaluate_django_query(fetch_cls)
         except Exception as e:
             set_data(None)
             set_loading(False)
@@ -124,7 +131,7 @@ def use_query(
         finally:
             set_should_execute(False)
 
-        set_data(new_data)
+        set_data(fetch_cls.data)
         set_loading(False)
         set_error(None)
 
@@ -184,14 +191,23 @@ def use_mutation(
     return Mutation(call, loading, error, reset)
 
 
-def _fetch_lazy_fields(data: Any, many_to_many, many_to_one) -> None:
-    """Fetch all fields within a `Model` or `QuerySet` to ensure they are not performed lazily."""
+def _evaluate_django_query(fetch_cls: OrmFetch) -> None:
+    """Recursively fetch all fields within a `Model` or `QuerySet` to ensure they are not performed lazily.
+
+    Some behaviors can be modified through `OrmFetch` attributes."""
+    data = fetch_cls.data
 
     # `QuerySet`, which is effectively a list of `Model` instances
     # https://github.com/typeddjango/django-stubs/issues/704
     if isinstance(data, QuerySet):  # type: ignore[misc]
         for model in data:
-            _fetch_lazy_fields(model, many_to_many, many_to_one)
+            _evaluate_django_query(
+                OrmFetch(
+                    func=fetch_cls.func,
+                    data=model,
+                    options=fetch_cls.options,
+                )
+            )
 
     # `Model` instances
     elif isinstance(data, Model):
@@ -202,13 +218,22 @@ def _fetch_lazy_fields(data: Any, many_to_many, many_to_one) -> None:
             with contextlib.suppress(AttributeError):
                 getattr(data, field.name)
 
-            if many_to_one and type(field) == ManyToOneRel:
+            if (
+                fetch_cls.options.get("many_to_one", None)
+                and type(field) == ManyToOneRel
+            ):
                 prefetch_fields.append(f"{field.name}_set")
 
-            elif many_to_many and isinstance(field, ManyToManyField):
+            elif fetch_cls.options.get("many_to_many", None) and isinstance(
+                field, ManyToManyField
+            ):
                 prefetch_fields.append(field.name)
-                _fetch_lazy_fields(
-                    getattr(data, field.name).get_queryset(), many_to_many, many_to_one
+                _evaluate_django_query(
+                    OrmFetch(
+                        func=fetch_cls.func,
+                        data=getattr(data, field.name).get_queryset(),
+                        options=fetch_cls.options,
+                    )
                 )
 
         if prefetch_fields:

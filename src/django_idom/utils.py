@@ -7,7 +7,7 @@ import re
 from fnmatch import fnmatch
 from importlib import import_module
 from inspect import iscoroutinefunction
-from typing import Any, Callable, Sequence
+from typing import Any, Callable, Sequence, overload
 
 from channels.db import database_sync_to_async
 from django.http import HttpRequest, HttpResponse
@@ -16,6 +16,7 @@ from django.utils.encoding import smart_str
 from django.views import View
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
+from django_idom.types import OrmFetch, _Params, _Result
 
 
 _logger = logging.getLogger(__name__)
@@ -199,3 +200,40 @@ def _generate_obj_name(object: Any) -> str | None:
         if hasattr(object, "__class__"):
             return f"{object.__module__}.{object.__class__.__name__}"
     return None
+
+
+@overload
+def fetch_options(
+    query_func: None = ...,
+    evaluator: Callable[[OrmFetch], None] | None = None,
+    **options,
+) -> Callable[[Callable[_Params, _Result]], Callable[_Params, _Result]]:
+    pass
+
+
+@overload
+def fetch_options(
+    query_func: Callable[_Params, _Result],
+    evaluator: Callable[[OrmFetch], None] | None = None,
+    **options,
+) -> Callable[_Params, _Result]:
+    ...
+
+
+def fetch_options(
+    query_func: Callable[_Params, _Result] | None = None,
+    evaluator: Callable[[OrmFetch], None] | None = None,
+    **options,
+) -> Callable[_Params, _Result] | Callable[
+    [Callable[_Params, _Result]], Callable[_Params, _Result]
+]:
+    def decorator(query_func: Callable[_Params, _Result]):
+        if not query_func:
+            raise ValueError("A query function must be provided to `fetch_options`")
+
+        fetch_options = OrmFetch(func=query_func, evaluator=evaluator)
+        if options:
+            fetch_options.options.update(options)
+        return fetch_options
+
+    return decorator(query_func) if query_func else decorator

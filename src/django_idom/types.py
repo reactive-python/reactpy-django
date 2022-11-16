@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Awaitable, Callable, Generic, Optional, Sequence, TypeVar, Union
 
 from django.db.models.base import Model
@@ -51,3 +51,23 @@ class ViewComponentIframe:
     view: View | Callable
     args: Sequence
     kwargs: dict
+
+
+@dataclass
+class OrmFetch:
+    """A Django ORM fetch."""
+
+    func: Callable
+    """Callable that fetches ORM objects."""
+
+    data: Any | None = None
+    """The results of a fetch operation."""
+
+    options: dict[str, Any] = field(
+        default_factory=lambda: {"many_to_many": True, "many_to_one": True}
+    )
+    """Configuration values usable by the `fetch_handler`."""
+
+    evaluator: Callable[[OrmFetch], None] | None = None
+    """A post-processing callable that can read/modify the `OrmFetch` object. If unset, the default fetch
+    handler is used to prevent lazy loading of Django fields."""
