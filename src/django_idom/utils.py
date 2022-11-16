@@ -208,7 +208,7 @@ def fetch_options(
     evaluator: Callable[[OrmFetch], None] | None = None,
     **options,
 ) -> Callable[[Callable[_Params, _Result]], OrmFetch]:
-    pass
+    ...
 
 
 @overload
