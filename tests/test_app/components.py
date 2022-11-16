@@ -8,6 +8,7 @@ from test_app.models import ForiegnChild, RelationalChild, RelationalParent, Tod
 import django_idom
 from django_idom.components import view_to_component
 from django_idom.hooks import use_mutation, use_query
+from django_idom.utils import fetch_options
 
 from . import views
 
@@ -154,17 +155,19 @@ def authorized_user():
     )
 
 
-def get_relational_parent_query():
-    parent = RelationalParent.objects.first()
-    if not parent:
-        child_1 = RelationalChild.objects.create(text="ManyToMany Child 1")
-        child_2 = RelationalChild.objects.create(text="ManyToMany Child 2")
-        child_3 = RelationalChild.objects.create(text="ManyToMany Child 3")
-        child_4 = RelationalChild.objects.create(text="OneToOne Child")
-        parent = RelationalParent.objects.create(one_to_one=child_4)
-        parent.many_to_many.set((child_1, child_2, child_3))
-        parent.save()
+def create_relational_parent() -> RelationalParent:
+    child_1 = RelationalChild.objects.create(text="ManyToMany Child 1")
+    child_2 = RelationalChild.objects.create(text="ManyToMany Child 2")
+    child_3 = RelationalChild.objects.create(text="ManyToMany Child 3")
+    child_4 = RelationalChild.objects.create(text="OneToOne Child")
+    parent = RelationalParent.objects.create(one_to_one=child_4)
+    parent.many_to_many.set((child_1, child_2, child_3))
+    parent.save()
     return parent
+
+
+def get_relational_parent_query():
+    return RelationalParent.objects.first() or create_relational_parent()
 
 
 def get_foriegn_child_query():
@@ -186,17 +189,56 @@ def relational_query():
     if not relational_parent.data or not foriegn_child.data:
         return
 
+    mtm = relational_parent.data.many_to_many.all()
+    oto = relational_parent.data.one_to_one
+    mto = relational_parent.data.foriegnchild_set.all()
+    fk = foriegn_child.data.parent
+
     return html.div(
-        {"id": "relational-obj-printout"},
-        html.div(
-            f"Relational Parent Many To Many: {relational_parent.data.many_to_many.all()}"
-        ),
-        html.div(f"Relational Parent One To One: {relational_parent.data.one_to_one}"),
-        html.div(
-            f"Relational Parent's Children: {relational_parent.data.foriegnchild_set.all()}"
-        ),
-        html.div(f"Relational Child Foreign Key: {foriegn_child.data.parent}"),
+        {
+            "id": "relational-query",
+            "data-success": bool(mtm) and bool(oto) and bool(mto) and bool(fk),
+        },
+        html.div(f"Relational Parent Many To Many: {mtm}"),
+        html.div(f"Relational Parent One To One: {oto}"),
+        html.div(f"Relational Parent Many to One: {mto}"),
+        html.div(f"Relational Child Foreign Key: {fk}"),
         html.hr(),
+    )
+
+
+@fetch_options(many_to_many=False, many_to_one=False)
+def get_relational_parent_query_fail():
+    return RelationalParent.objects.first() or create_relational_parent()
+
+
+@component
+def relational_query_fail_mtm():
+    relational_parent = use_query(get_relational_parent_query_fail)
+
+    if not relational_parent.data:
+        return
+
+    return html.div(
+        {"id": "relational-query-fail-mtm"},
+        html.div(
+            f"Relational Parent Many To Many Fail: {relational_parent.data.many_to_many.all()}"
+        ),
+    )
+
+
+@component
+def relational_query_fail_mto():
+    relational_parent = use_query(get_relational_parent_query_fail)
+
+    if not relational_parent.data:
+        return
+
+    return html.div(
+        {"id": "relational-query-fail-mto"},
+        html.div(
+            f"Relational Parent Many to One: {relational_parent.data.foriegnchild_set.all()}"
+        ),
     )
 
 
