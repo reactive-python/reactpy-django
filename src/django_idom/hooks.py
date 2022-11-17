@@ -17,8 +17,8 @@ from idom.core.hooks import Context, create_context, use_context, use_effect, us
 from django_idom.types import (
     IdomWebsocket,
     Mutation,
-    QueryOptions,
     Query,
+    QueryOptions,
     _Params,
     _Result,
 )
@@ -203,7 +203,7 @@ def use_mutation(
 def _postprocess_django_query(fetch_cls: QueryOptions) -> None:
     """Recursively fetch all fields within a `Model` or `QuerySet` to ensure they are not performed lazily.
 
-    Some behaviors can be modified through `OrmFetch` attributes."""
+    Some behaviors can be modified through `query_options` attributes."""
     data = fetch_cls._data
 
     # `QuerySet`, which is effectively a list of `Model` instances

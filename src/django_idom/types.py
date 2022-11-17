@@ -57,6 +57,9 @@ class ViewComponentIframe:
 class QueryOptions:
     """A Django ORM query function, alongside some configuration values."""
 
+    def __call__(self, *args, **kwargs):
+        return self.func(*args, **kwargs)
+
     func: Callable
     """Callable that fetches ORM object(s)."""
 
@@ -65,10 +68,10 @@ class QueryOptions:
     This is only intended to be set automatically by the `use_query` hook."""
 
     postprocessor_options: dict[str, Any] = field(
-        default_factory=lambda: {"many_to_many": True, "many_to_one": True}
+        default_factory=lambda: {"many_to_many": False, "many_to_one": False}
     )
     """Configuration values usable by the `postprocessor`."""
 
     postprocessor: Callable[[QueryOptions], None] | None = None
-    """A post processing callable that can read/modify the `OrmFetch` object. If unset, the default fetch
+    """A post processing callable that can read/modify the `QueryOptions` object. If unset, the default fetch
     handler is used to prevent lazy loading of Django fields."""

@@ -166,10 +166,12 @@ def create_relational_parent() -> RelationalParent:
     return parent
 
 
+@query_options(many_to_many=True, many_to_one=True)
 def get_relational_parent_query():
     return RelationalParent.objects.first() or create_relational_parent()
 
 
+@query_options(many_to_many=True, many_to_one=True)
 def get_foriegn_child_query():
     child = ForiegnChild.objects.first()
     if not child:
@@ -204,41 +206,6 @@ def relational_query():
         html.div(f"Relational Parent Many to One: {mto}"),
         html.div(f"Relational Child Foreign Key: {fk}"),
         html.hr(),
-    )
-
-
-@query_options(many_to_many=False, many_to_one=False)
-def get_relational_parent_query_fail():
-    return RelationalParent.objects.first() or create_relational_parent()
-
-
-@component
-def relational_query_fail_mtm():
-    relational_parent = use_query(get_relational_parent_query_fail)
-
-    if not relational_parent.data:
-        return
-
-    return html.div(
-        {"id": "relational-query-fail-mtm"},
-        html.div(
-            f"Relational Parent Many To Many Fail: {relational_parent.data.many_to_many.all()}"
-        ),
-    )
-
-
-@component
-def relational_query_fail_mto():
-    relational_parent = use_query(get_relational_parent_query_fail)
-
-    if not relational_parent.data:
-        return
-
-    return html.div(
-        {"id": "relational-query-fail-mto"},
-        html.div(
-            f"Relational Parent Many to One: {relational_parent.data.foriegnchild_set.all()}"
-        ),
     )
 
 
