@@ -75,7 +75,7 @@ def use_websocket() -> IdomWebsocket:
 
 
 def use_query(
-    query: Callable[_Params, _Result | None] | QueryOptions,
+    query: Callable[_Params, _Result | None],
     *args: _Params.args,
     **kwargs: _Params.kwargs,
 ) -> Query[_Result | None]:
