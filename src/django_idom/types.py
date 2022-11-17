@@ -53,7 +53,7 @@ class ViewComponentIframe:
     kwargs: dict
 
 
-@dataclass(kw_only=True)
+@dataclass
 class QueryOptions:
     """A Django ORM query function, alongside some configuration values."""
 
