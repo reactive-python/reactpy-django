@@ -1,13 +1,13 @@
 ---
 nav:
     - Home: index.md
-    - Installation: installation/index.md
     - Getting Started:
-          - 1. Initial Steps: getting-started/initial-steps.md
-          - 2. Create a Component: getting-started/create-component.md
-          - 3. Use the Template Tag: getting-started/reference-component.md
-          - 4. Render Your View: getting-started/render-view.md
-          - 5. Learn More: getting-started/learn-more.md
+          - 1. Install Django-IDOM: getting-started/installation.md
+          - 2. Choose a Django App: getting-started/choose-django-app.md
+          - 3. Create a Component: getting-started/create-component.md
+          - 4. Use the Template Tag: getting-started/reference-component.md
+          - 5. Render Your View: getting-started/render-view.md
+          - 6. Learn More: getting-started/learn-more.md
     - Usage:
           - Components: features/components.md
           - Hooks: features/hooks.md
@@ -89,5 +89,5 @@ copyright: Copyright &copy; 2022 IDOM Team
 repo_url: https://github.com/idom-team/django-idom
 site_url: https://idom-team.github.io/django-idom
 repo_name: idom-team/django-idom
-edit_uri: edit/docs
+edit_uri: edit/main/docs/src
 docs_dir: docs/src
