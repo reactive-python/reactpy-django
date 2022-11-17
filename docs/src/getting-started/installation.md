@@ -1,18 +1,18 @@
-???+ tip "Learning Django first is recommended!"
+???+ summary
 
-    <!--dj-proj-start-->These docs assumes you have created [a basic **Django project**](https://docs.djangoproject.com/en/dev/intro/tutorial01/), which involves creating and installing at least one **Django app**. If not, check out this [9 minute YouTube tutorial](https://www.youtube.com/watch?v=ZsJRXS_vrw0) created by _IDG TECHtalk_.<!--dj-proj-end-->
+    Django-IDOM can be installed from PyPI to an existing **Django project** with minimal configuration.
 
-## Install from PyPI
+## Step 0: Set up a Django Project
+
+These docs assumes you have already created [a **Django project**](https://docs.djangoproject.com/en/dev/intro/tutorial01/), which involves creating and installing at least one **Django app**. If not, check out this [9 minute YouTube tutorial](https://www.youtube.com/watch?v=ZsJRXS_vrw0) created by _IDG TECHtalk_.
+
+## Step 1: Install from PyPI
 
 ```bash
 pip install django-idom
 ```
 
-You will also need to modify a few files in your **Django project**...
-
----
-
-## Configure [`settings.py`](https://docs.djangoproject.com/en/dev/topics/settings/)
+## Step 2: Configure [`settings.py`](https://docs.djangoproject.com/en/dev/topics/settings/)
 
 In your settings you will need to add `django_idom` to [`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS).
 
@@ -47,11 +47,9 @@ In your settings you will need to add `django_idom` to [`INSTALLED_APPS`](https:
 
     Below are a handful of values you can change within `settings.py` to modify the behavior of IDOM.
 
-    {% include-markdown "../features/settings.md" start="<!--settings-start-->" end="<!--settings-end-->" %}
+    {% include-markdown "../features/settings.md" start="<!--settings-start-->" end="<!--settings-end-->" preserve-includer-indent=false %}
 
----
-
-## Configure [`urls.py`](https://docs.djangoproject.com/en/dev/topics/http/urls/)
+## Step 3: Configure [`urls.py`](https://docs.djangoproject.com/en/dev/topics/http/urls/)
 
 Add IDOM HTTP paths to your `urlpatterns`.
 
@@ -66,9 +64,7 @@ Add IDOM HTTP paths to your `urlpatterns`.
     ]
     ```
 
----
-
-## Configure [`asgi.py`](https://docs.djangoproject.com/en/dev/howto/deployment/asgi/)
+## Step 4: Configure [`asgi.py`](https://docs.djangoproject.com/en/dev/howto/deployment/asgi/)
 
 Register IDOM's Websocket using `IDOM_WEBSOCKET_PATH`.
 

@@ -107,7 +107,7 @@
 
 ??? question "What is a "template tag"?"
 
-    You can think of template tags as Django's way of allowing you to run Python code within your HTML. Django IDOM uses a `#!jinja {% component ... %}` template tag to perform it's magic.
+    You can think of template tags as Django's way of allowing you to run Python code within your HTML. Django-IDOM uses a `#!jinja {% component ... %}` template tag to perform it's magic.
 
     Keep in mind, in order to use the `#!jinja {% component ... %}` tag, you will need to first call `#!jinja {% load idom %}` to gain access to it.
 
