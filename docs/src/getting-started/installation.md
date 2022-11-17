@@ -47,7 +47,7 @@ In your settings you will need to add `django_idom` to [`INSTALLED_APPS`](https:
 
     Below are a handful of values you can change within `settings.py` to modify the behavior of IDOM.
 
-    {% include-markdown "../features/settings.md" start="<!--settings-start-->" end="<!--settings-end-->" %}
+    {% include-markdown "../features/settings.md" start="<!--settings-start-->" end="<!--settings-end-->" preserve-includer-indent=false %}
 
 ## Step 3: Configure [`urls.py`](https://docs.djangoproject.com/en/dev/topics/http/urls/)
 
