@@ -53,21 +53,22 @@ class ViewComponentIframe:
     kwargs: dict
 
 
-@dataclass
-class OrmFetch:
-    """A Django ORM fetch."""
+@dataclass(kw_only=True)
+class QueryOptions:
+    """A Django ORM query function, alongside some configuration values."""
 
     func: Callable
-    """Callable that fetches ORM objects."""
+    """Callable that fetches ORM object(s)."""
 
-    data: Any | None = None
-    """The results of a fetch operation."""
+    _data: Any = None
+    """The results of a fetch operation.
+    This is only intended to be set automatically by the `use_query` hook."""
 
-    options: dict[str, Any] = field(
+    postprocessor_options: dict[str, Any] = field(
         default_factory=lambda: {"many_to_many": True, "many_to_one": True}
     )
-    """Configuration values usable by the `fetch_handler`."""
+    """Configuration values usable by the `postprocessor`."""
 
-    evaluator: Callable[[OrmFetch], None] | None = None
-    """A post-processing callable that can read/modify the `OrmFetch` object. If unset, the default fetch
+    postprocessor: Callable[[QueryOptions], None] | None = None
+    """A post processing callable that can read/modify the `OrmFetch` object. If unset, the default fetch
     handler is used to prevent lazy loading of Django fields."""

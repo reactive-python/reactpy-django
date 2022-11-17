@@ -8,7 +8,7 @@ from test_app.models import ForiegnChild, RelationalChild, RelationalParent, Tod
 import django_idom
 from django_idom.components import view_to_component
 from django_idom.hooks import use_mutation, use_query
-from django_idom.utils import fetch_options
+from django_idom.utils import query_options
 
 from . import views
 
@@ -207,7 +207,7 @@ def relational_query():
     )
 
 
-@fetch_options(many_to_many=False, many_to_one=False)
+@query_options(many_to_many=False, many_to_one=False)
 def get_relational_parent_query_fail():
     return RelationalParent.objects.first() or create_relational_parent()
 
