@@ -171,7 +171,6 @@ def get_relational_parent_query():
     return RelationalParent.objects.first() or create_relational_parent()
 
 
-@query_options(many_to_many=True, many_to_one=True)
 def get_foriegn_child_query():
     child = ForiegnChild.objects.first()
     if not child:
