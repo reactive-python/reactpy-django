@@ -120,7 +120,7 @@ def use_query(
 
         try:
             # Run the initial query
-            query_options._data = query_options.func(*args, **kwargs)
+            data = query_options.func(*args, **kwargs)
 
             # Use a custom postprocessor, if provided
             if query_options.postprocessor:
@@ -128,7 +128,7 @@ def use_query(
 
             # Use the default postprocessor
             else:
-                _postprocess_django_query(query_options)
+                _postprocess_django_query(data, query_options.postprocessor_options)
         except Exception as e:
             set_data(None)
             set_loading(False)
@@ -140,7 +140,7 @@ def use_query(
         finally:
             set_should_execute(False)
 
-        set_data(query_options._data)
+        set_data(data)
         set_loading(False)
         set_error(None)
 
@@ -200,49 +200,35 @@ def use_mutation(
     return Mutation(call, loading, error, reset)
 
 
-def _postprocess_django_query(fetch_cls: QueryOptions) -> None:
+def _postprocess_django_query(data: QuerySet | Model, options: dict[str, Any]) -> None:
     """Recursively fetch all fields within a `Model` or `QuerySet` to ensure they are not performed lazily.
 
     Some behaviors can be modified through `query_options` attributes."""
-    data = fetch_cls._data
 
-    # `QuerySet`, which is effectively a list of `Model` instances
+    # `QuerySet`, which is an iterable of `Model`/`QuerySet` instances
     # https://github.com/typeddjango/django-stubs/issues/704
     if isinstance(data, QuerySet):  # type: ignore[misc]
         for model in data:
-            _postprocess_django_query(
-                QueryOptions(
-                    func=fetch_cls.func,
-                    _data=model,
-                    postprocessor_options=fetch_cls.postprocessor_options,
-                )
-            )
+            _postprocess_django_query(model, options)
 
     # `Model` instances
     elif isinstance(data, Model):
-        prefetch_fields = []
+        prefetch_fields: list[str] = []
         for field in data._meta.get_fields():
             # `ForeignKey` relationships will cause an `AttributeError`
             # This is handled within the `ManyToOneRel` conditional below.
             with contextlib.suppress(AttributeError):
                 getattr(data, field.name)
 
-            if (
-                fetch_cls.postprocessor_options.get("many_to_one", None)
-                and type(field) == ManyToOneRel
-            ):
+            if options.get("many_to_one", None) and type(field) == ManyToOneRel:
                 prefetch_fields.append(f"{field.name}_set")
 
-            elif fetch_cls.postprocessor_options.get(
-                "many_to_many", None
-            ) and isinstance(field, ManyToManyField):
+            elif options.get("many_to_many", None) and isinstance(
+                field, ManyToManyField
+            ):
                 prefetch_fields.append(field.name)
                 _postprocess_django_query(
-                    QueryOptions(
-                        func=fetch_cls.func,
-                        _data=getattr(data, field.name).get_queryset(),
-                        postprocessor_options=fetch_cls.postprocessor_options,
-                    )
+                    getattr(data, field.name).get_queryset(), options
                 )
 
         if prefetch_fields:

@@ -63,10 +63,6 @@ class QueryOptions:
     func: Callable
     """Callable that fetches ORM object(s)."""
 
-    _data: Any = None
-    """The results of a fetch operation.
-    This is only intended to be set automatically by the `use_query` hook."""
-
     postprocessor_options: dict[str, Any] = field(
         default_factory=lambda: {"many_to_many": False, "many_to_one": False}
     )
