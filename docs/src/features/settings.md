@@ -1,6 +1,6 @@
 ???+ summary
 
-    Django IDOM uses your **Django project's** `settings.py` file to modify the behavior of IDOM.
+    Django-IDOM uses your **Django project's** `settings.py` file to modify the behavior of IDOM.
 
 ## Primary Configuration
 
