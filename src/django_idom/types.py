@@ -57,12 +57,6 @@ class ViewComponentIframe:
 class QueryOptions:
     """A Django ORM query function, alongside some configuration values."""
 
-    def __call__(self, *args, **kwargs):
-        return self.func(*args, **kwargs)
-
-    func: Callable
-    """Callable that fetches ORM object(s)."""
-
     postprocessor_options: dict[str, Any] = field(
         default_factory=lambda: {"many_to_many": False, "many_to_one": False}
     )

@@ -39,7 +39,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
     | Type | Description |
     | --- | --- |
-    | `_ViewComponentConstructor` | A function that takes `request: HttpRequest | None, *args: Any, key: Key | None, **kwargs: Any` and returns an IDOM component. |
+    | `_ViewComponentConstructor` | A function that takes `request, *args, key, **kwargs` and returns an IDOM component. All parameters are directly provided to your view, besides `key` which is used by IDOM. |
 
 ??? Warning "Potential information exposure when using `compatibility = True`"
 

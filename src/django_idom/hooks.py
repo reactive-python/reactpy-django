@@ -3,7 +3,16 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import logging
-from typing import Any, Awaitable, Callable, DefaultDict, Sequence, Union, cast
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    DefaultDict,
+    Sequence,
+    Union,
+    cast,
+    overload,
+)
 
 from channels.db import database_sync_to_async as _database_sync_to_async
 from django.db.models import ManyToManyField, prefetch_related_objects
@@ -74,10 +83,30 @@ def use_websocket() -> IdomWebsocket:
     return websocket
 
 
+@overload
 def use_query(
     query: Callable[_Params, _Result | None],
+    options: QueryOptions,
+    /,
     *args: _Params.args,
     **kwargs: _Params.kwargs,
+) -> Query[_Result | None]:
+    ...
+
+
+@overload
+def use_query(
+    query: Callable[_Params, _Result | None],
+    /,
+    *args: _Params.args,
+    **kwargs: _Params.kwargs,
+) -> Query[_Result | None]:
+    ...
+
+
+def use_query(
+    *args: Any,
+    **kwargs: Any,
 ) -> Query[_Result | None]:
     """Hook to fetch a Django ORM query.
 
@@ -87,6 +116,14 @@ def use_query(
 
     Keyword Args:
         **kwargs: Keyword arguments to pass into `query`."""
+    query = args[0]
+    if len(args) > 1 and isinstance(args[1], QueryOptions):
+        query_options = args[1]
+        args = args[2:]
+    else:
+        query_options = QueryOptions()
+        args = args[1:]
+
     query_ref = use_ref(query)
     if query_ref.current is not query:
         raise ValueError(f"Query function changed from {query_ref.current} to {query}.")
@@ -95,9 +132,6 @@ def use_query(
     data, set_data = use_state(cast(Union[_Result, None], None))
     loading, set_loading = use_state(True)
     error, set_error = use_state(cast(Union[Exception, None], None))
-    query_options = (
-        query if isinstance(query, QueryOptions) else QueryOptions(func=query)
-    )
 
     @use_callback
     def refetch() -> None:
@@ -109,8 +143,8 @@ def use_query(
     def add_refetch_callback() -> Callable[[], None]:
         # By tracking callbacks globally, any usage of the query function will be re-run
         # if the user has told a mutation to refetch it.
-        _REFETCH_CALLBACKS[query_options.func].add(refetch)
-        return lambda: _REFETCH_CALLBACKS[query_options.func].remove(refetch)
+        _REFETCH_CALLBACKS[query].add(refetch)
+        return lambda: _REFETCH_CALLBACKS[query].remove(refetch)
 
     @use_effect(dependencies=None)
     @database_sync_to_async
@@ -120,7 +154,7 @@ def use_query(
 
         try:
             # Run the initial query
-            data = query_options.func(*args, **kwargs)
+            data = query(*args, **kwargs)
 
             # Use a custom postprocessor, if provided
             if query_options.postprocessor:

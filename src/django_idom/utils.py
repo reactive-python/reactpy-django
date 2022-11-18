@@ -200,38 +200,3 @@ def _generate_obj_name(object: Any) -> str | None:
         if hasattr(object, "__class__"):
             return f"{object.__module__}.{object.__class__.__name__}"
     return None
-
-
-@overload
-def query_options(
-    query_func: None = ...,
-    evaluator: Callable[[QueryOptions], None] | None = None,
-    **options,
-) -> Callable[[Callable[_Params, _Result]], QueryOptions]:
-    ...
-
-
-@overload
-def query_options(
-    query_func: Callable[_Params, _Result],
-    evaluator: Callable[[QueryOptions], None] | None = None,
-    **options,
-) -> QueryOptions:
-    ...
-
-
-def query_options(
-    query_func: Callable[_Params, _Result] | None = None,
-    evaluator: Callable[[QueryOptions], None] | None = None,
-    **options,
-) -> QueryOptions | Callable[[Callable[_Params, _Result]], QueryOptions]:
-    def decorator(query_func: Callable[_Params, _Result]):
-        if not query_func:
-            raise ValueError("A query function must be provided to `query_options`")
-
-        query_options = QueryOptions(func=query_func, postprocessor=evaluator)
-        if options:
-            query_options.postprocessor_options.update(options)
-        return query_options
-
-    return decorator(query_func) if query_func else decorator
