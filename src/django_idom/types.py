@@ -55,7 +55,7 @@ class ViewComponentIframe:
 
 @dataclass
 class QueryOptions:
-    """A Django ORM query function, alongside some configuration values."""
+    """Configuration options that can be provided to `use_query`."""
 
     postprocessor_options: dict[str, Any] = field(
         default_factory=lambda: {"many_to_many": False, "many_to_one": False}

@@ -7,7 +7,7 @@ import re
 from fnmatch import fnmatch
 from importlib import import_module
 from inspect import iscoroutinefunction
-from typing import Any, Callable, Sequence, overload
+from typing import Any, Callable, Sequence
 
 from channels.db import database_sync_to_async
 from django.http import HttpRequest, HttpResponse
@@ -16,7 +16,6 @@ from django.utils.encoding import smart_str
 from django.views import View
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
-from django_idom.types import QueryOptions, _Params, _Result
 
 
 _logger = logging.getLogger(__name__)
