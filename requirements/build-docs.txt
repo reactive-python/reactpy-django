@@ -3,4 +3,4 @@ mkdocs-git-revision-date-localized-plugin
 mkdocs-material
 mkdocs-include-markdown-plugin
 linkcheckmd
-mkdocs-spellcheck
+mkdocs-spellcheck[all]
