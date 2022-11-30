@@ -112,6 +112,7 @@ def use_query(
 
     Args:
         query: A callable that returns a Django `Model` or `QuerySet`.
+        options: A `QueryOptions` object that can modify how the query is excuted.
         *args: Positional arguments to pass into `query`.
 
     Keyword Args:
@@ -158,7 +159,7 @@ def use_query(
 
             # Use a custom postprocessor, if provided
             if query_options.postprocessor:
-                query_options.postprocessor(query_options)
+                query_options.postprocessor(data, query_options)
 
             # Use the default postprocessor
             else:
