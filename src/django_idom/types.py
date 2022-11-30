@@ -63,5 +63,7 @@ class QueryOptions:
     """Configuration values usable by the `postprocessor`."""
 
     postprocessor: Callable[[_Data, QueryOptions], None] | None = None
-    """A post processing callable that can read/modify the `QueryOptions` object. If unset, the default fetch
-    handler is used to prevent lazy loading of Django fields."""
+    """A post processing callable that can read/modify the query `data` and the `QueryOptions` object.
+
+    If unset, the default handler is used. This handler can be configured via `postprocessor_options`
+    to recursively fetch all fields to ensure queries are not performed lazily."""
