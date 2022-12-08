@@ -159,11 +159,11 @@ def use_query(
 
             # Use a custom postprocessor, if provided
             if query_options.postprocessor:
-                query_options.postprocessor(data, query_options)
+                query_options.postprocessor(data, **query_options.postprocessor_options)
 
             # Use the default postprocessor
             else:
-                _postprocess_django_query(data, query_options.postprocessor_options)
+                _postprocess_django_query(data, **query_options.postprocessor_options)
         except Exception as e:
             set_data(None)
             set_loading(False)
@@ -235,7 +235,9 @@ def use_mutation(
     return Mutation(call, loading, error, reset)
 
 
-def _postprocess_django_query(data: QuerySet | Model, options: dict[str, Any]) -> None:
+def _postprocess_django_query(
+    data: QuerySet | Model, /, many_to_many: bool = False, many_to_one: bool = False
+) -> None:
     """Recursively fetch all fields within a `Model` or `QuerySet` to ensure they are not performed lazily.
 
     Some behaviors can be modified through `query_options` attributes."""
@@ -244,7 +246,11 @@ def _postprocess_django_query(data: QuerySet | Model, options: dict[str, Any]) -
     # https://github.com/typeddjango/django-stubs/issues/704
     if isinstance(data, QuerySet):  # type: ignore[misc]
         for model in data:
-            _postprocess_django_query(model, options)
+            _postprocess_django_query(
+                model,
+                many_to_many=many_to_many,
+                many_to_one=many_to_one,
+            )
 
     # `Model` instances
     elif isinstance(data, Model):
@@ -255,15 +261,15 @@ def _postprocess_django_query(data: QuerySet | Model, options: dict[str, Any]) -
             with contextlib.suppress(AttributeError):
                 getattr(data, field.name)
 
-            if options.get("many_to_one", False) and type(field) == ManyToOneRel:
+            if many_to_one and type(field) == ManyToOneRel:
                 prefetch_fields.append(f"{field.name}_set")
 
-            elif options.get("many_to_many", False) and isinstance(
-                field, ManyToManyField
-            ):
+            elif many_to_many and isinstance(field, ManyToManyField):
                 prefetch_fields.append(field.name)
                 _postprocess_django_query(
-                    getattr(data, field.name).get_queryset(), options
+                    getattr(data, field.name).get_queryset(),
+                    many_to_many=many_to_many,
+                    many_to_one=many_to_one,
                 )
 
         if prefetch_fields:
@@ -271,4 +277,10 @@ def _postprocess_django_query(data: QuerySet | Model, options: dict[str, Any]) -
 
     # Unrecognized type
     else:
-        raise ValueError(f"Expected a Model or QuerySet, got {data!r}")
+        raise TypeError(
+            f"Django query postprocessor expected a Model or QuerySet, got {data!r}.\n"
+            "One of the following may have occurred:\n"
+            "  - You are using a non-Django ORM.\n"
+            "  - You are attempting to use `use_query` to fetch a non-ORM data.\n\n"
+            "If these situations seem correct, you may want to consider disabling the postprocessor via `QueryOptions`."
+        )

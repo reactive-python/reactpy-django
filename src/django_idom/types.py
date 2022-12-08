@@ -1,7 +1,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Awaitable, Callable, Generic, Optional, Sequence, TypeVar, Union
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    Generic,
+    Optional,
+    Protocol,
+    Sequence,
+    TypeVar,
+    Union,
+)
 
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
@@ -53,6 +63,11 @@ class ViewComponentIframe:
     kwargs: dict
 
 
+class Postprocessor(Protocol):
+    def __call__(self, data: Any, **kwargs: Any) -> None:
+        ...
+
+
 @dataclass
 class QueryOptions:
     """Configuration options that can be provided to `use_query`."""
@@ -60,8 +75,13 @@ class QueryOptions:
     postprocessor_options: dict[str, Any] = field(default_factory=lambda: {})
     """Configuration values usable by the `postprocessor`."""
 
-    postprocessor: Callable[[_Data, QueryOptions], None] | None = None
-    """A post processing callable that can read/modify the query `data` and the `QueryOptions` object.
+    postprocessor: Postprocessor | None = None
+    """A post processing callable that can read/modify the query `data`.
 
-    If unset, the default handler is used. This handler can be configured via `postprocessor_options`
-    to recursively fetch all fields to ensure queries are not performed lazily."""
+    `postprocessor_options` are provided to this `postprocessor` as keyword arguments.
+
+    If `None`, the default postprocessor is used.
+
+    This default Django query postprocessor prevents Django's lazy query execution, and
+    additionally can be configured via `postprocessor_options` to recursively fetch
+    `many_to_many` and `many_to_one` fields."""
