@@ -57,9 +57,7 @@ class ViewComponentIframe:
 class QueryOptions:
     """Configuration options that can be provided to `use_query`."""
 
-    postprocessor_options: dict[str, Any] = field(
-        default_factory=lambda: {"many_to_many": False, "many_to_one": False}
-    )
+    postprocessor_options: dict[str, Any] = field(default_factory=lambda: {})
     """Configuration values usable by the `postprocessor`."""
 
     postprocessor: Callable[[_Data, QueryOptions], None] | None = None

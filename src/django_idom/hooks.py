@@ -255,10 +255,10 @@ def _postprocess_django_query(data: QuerySet | Model, options: dict[str, Any]) -
             with contextlib.suppress(AttributeError):
                 getattr(data, field.name)
 
-            if options.get("many_to_one", None) and type(field) == ManyToOneRel:
+            if options.get("many_to_one", False) and type(field) == ManyToOneRel:
                 prefetch_fields.append(f"{field.name}_set")
 
-            elif options.get("many_to_many", None) and isinstance(
+            elif options.get("many_to_many", False) and isinstance(
                 field, ManyToManyField
             ):
                 prefetch_fields.append(field.name)
