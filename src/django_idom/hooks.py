@@ -112,7 +112,7 @@ def use_query(
 
     Args:
         query: A callable that returns a Django `Model` or `QuerySet`.
-        options: A `QueryOptions` object that can modify how the query is excuted.
+        options: An optional `QueryOptions` object that can modify how the query is excuted.
         *args: Positional arguments to pass into `query`.
 
     Keyword Args:
