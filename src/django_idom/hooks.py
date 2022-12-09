@@ -281,6 +281,6 @@ def postprocess_django_query(
             f"Django query postprocessor expected a Model or QuerySet, got {data!r}.\n"
             "One of the following may have occurred:\n"
             "  - You are using a non-Django ORM.\n"
-            "  - You are attempting to use `use_query` to fetch a non-ORM data.\n\n"
+            "  - You are attempting to use `use_query` to fetch non-ORM data.\n\n"
             "If these situations seem correct, you may want to consider disabling the postprocessor via `QueryOptions`."
         )
