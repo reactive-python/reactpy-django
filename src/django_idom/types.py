@@ -72,16 +72,14 @@ class Postprocessor(Protocol):
 class QueryOptions:
     """Configuration options that can be provided to `use_query`."""
 
-    postprocessor_options: dict[str, Any] = field(default_factory=lambda: {})
-    """Configuration values usable by the `postprocessor`."""
-
     postprocessor: Postprocessor | None = None
     """A post processing callable that can read/modify the query `data`.
-
-    `postprocessor_options` are provided to this `postprocessor` as keyword arguments.
 
     If `None`, the default postprocessor is used.
 
     This default Django query postprocessor prevents Django's lazy query execution, and
-    additionally can be configured via `postprocessor_options` to recursively fetch
+    additionally can be configured via `postprocessor_kwargs` to recursively fetch
     `many_to_many` and `many_to_one` fields."""
+
+    postprocessor_kwargs: dict[str, Any] = field(default_factory=lambda: {})
+    """Keyworded arguments directly passed into the `postprocessor` for configuration."""

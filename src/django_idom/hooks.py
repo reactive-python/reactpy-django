@@ -112,7 +112,7 @@ def use_query(
 
     Args:
         query: A callable that returns a Django `Model` or `QuerySet`.
-        options: An optional `QueryOptions` object that can modify how the query is excuted.
+        options: An optional `QueryOptions` object that can modify how the query is executed.
         *args: Positional arguments to pass into `query`.
 
     Keyword Args:
@@ -159,11 +159,11 @@ def use_query(
 
             # Use a custom postprocessor, if provided
             if query_options.postprocessor:
-                query_options.postprocessor(data, **query_options.postprocessor_options)
+                query_options.postprocessor(data, **query_options.postprocessor_kwargs)
 
             # Use the default postprocessor
             else:
-                _postprocess_django_query(data, **query_options.postprocessor_options)
+                postprocess_django_query(data, **query_options.postprocessor_kwargs)
         except Exception as e:
             set_data(None)
             set_loading(False)
@@ -235,7 +235,7 @@ def use_mutation(
     return Mutation(call, loading, error, reset)
 
 
-def _postprocess_django_query(
+def postprocess_django_query(
     data: QuerySet | Model, /, many_to_many: bool = False, many_to_one: bool = False
 ) -> None:
     """Recursively fetch all fields within a `Model` or `QuerySet` to ensure they are not performed lazily.
@@ -246,7 +246,7 @@ def _postprocess_django_query(
     # https://github.com/typeddjango/django-stubs/issues/704
     if isinstance(data, QuerySet):  # type: ignore[misc]
         for model in data:
-            _postprocess_django_query(
+            postprocess_django_query(
                 model,
                 many_to_many=many_to_many,
                 many_to_one=many_to_one,
@@ -266,7 +266,7 @@ def _postprocess_django_query(
 
             elif many_to_many and isinstance(field, ManyToManyField):
                 prefetch_fields.append(field.name)
-                _postprocess_django_query(
+                postprocess_django_query(
                     getattr(data, field.name).get_queryset(),
                     many_to_many=many_to_many,
                     many_to_one=many_to_one,

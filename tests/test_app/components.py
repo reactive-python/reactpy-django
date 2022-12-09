@@ -185,7 +185,7 @@ def get_foriegn_child_query():
 def relational_query():
     relational_parent = use_query(
         get_relational_parent_query,
-        QueryOptions(postprocessor_options={"many_to_many": True, "many_to_one": True}),
+        QueryOptions(postprocessor_kwargs={"many_to_many": True, "many_to_one": True}),
     )
     foriegn_child = use_query(get_foriegn_child_query)
 

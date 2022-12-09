@@ -54,6 +54,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
     | `query` | `Callable[_Params, _Result | None]` | A callable that returns a Django `Model` or `QuerySet`. | N/A |
+    | `options` | `QueryOptions | None` | An optional `QueryOptions` object that can modify how the query is executed. | None |
     | `*args` | `_Params.args` | Positional arguments to pass into `query`. | N/A |
     | `**kwargs` | `_Params.kwargs` | Keyword arguments to pass into `query`. | N/A |
 
@@ -67,19 +68,83 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     Due to Django's ORM design, database queries must be deferred using hooks. Otherwise, you will see a `SynchronousOnlyOperation` exception.
 
-    This may be resolved in a future version of Django containing an asynchronous ORM.
+    This compatibility may be resolved in a future version of Django containing an asynchronous ORM. However, it is still best practice to always perform ORM calls in the background via `use_query`.
+
+??? question "Can this hook be used for things other than the Django ORM?"
+
+    If you...
+
+    1. Want to use this hook to defer IO intensive tasks to be computed in the background
+    2. Want to to utilize `use_query` with a different ORM
+
+    ... then you can disable all postprocessing behavior by modifying the `postprocessor` parameter in `QueryOptions`.
+
+    ```python
+    from django_idom.types import QueryOptions
+    from django_idom.hooks import use_query
+
+    def io_intensive_operation():
+        """This is an example function call that does something IO intensive, but can
+        potentially fail to execute."""
+        ...
+
+    @component
+    def todo_list():
+        query = use_query(
+            io_intensive_operation,
+            QueryOptions(
+                # By setting the postprocessor to a function that takes one argument
+                # and returns None, we can disable postprocessing behavior.
+                postprocessor=lambda data: None,
+            ),
+        )
+
+        if query.loading or query.error:
+            return None
+
+        return str(query.data)
+    ```
+
+??? question "Can this hook automatically fetch `ManyToMany` fields or `ForeignKey` relationships?"
+
+    By default, automatic recursive fetching of `ManyToMany` or `ForeignKey` fields is disabled for performance reasons.
+
+    If you wish you enable this feature, you can modify the `postprocessor_kwargs` parameter in `QueryOptions`.
+
+    ```python
+    from example_project.my_app.models import MyModel
+    from django_idom.types import QueryOptions
+    from django_idom.hooks import use_query
+
+    def model_with_relationships():
+        """This is an example function that gets `MyModel` that has a ManyToMany field, and
+        additionally other models that have formed a ForeignKey association to `MyModel`.
+
+        ManyToMany Field: `many_to_many_field`
+        ForeignKey Field: `foreign_key_field_set`
+        """
+        return MyModel.objects.get(id=1)
+
+    @component
+    def todo_list():
+        query = use_query(
+            io_intensive_operation,
+            QueryOptions(postprocessor_kwargs={"many_to_many": True, "many_to_one": True}),
+        )
+
+        if query.loading or query.error:
+            return None
+
+        return f"{query.data.many_to_many_field} {query.data.foriegn_key_field_set}"
+    ```
+
+    Please note that due Django's ORM design, the field name to access foreign keys is [always be postfixed with `_set`](https://docs.djangoproject.com/en/dev/topics/db/examples/many_to_one/).
 
 ??? question "Why does the example `get_items` function return a `Model` or `QuerySet`?"
 
     This was a technical design decision to [based on Apollo](https://www.apollographql.com/docs/react/data/mutations/#usemutation-api), but ultimately helps avoid Django's `SynchronousOnlyOperation` exceptions.
 
     The `use_query` hook ensures the provided `Model` or `QuerySet` executes all [deferred](https://docs.djangoproject.com/en/dev/ref/models/instances/#django.db.models.Model.get_deferred_fields)/[lazy queries](https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy) safely prior to reaching your components.
-
-??? question "What is an "ORM"?"
-
-    A Python **Object Relational Mapper** is an API for your code to access a database.
-
-    See the [Django ORM documentation](https://docs.djangoproject.com/en/dev/topics/db/queries/) for more information.
 
 ## Use Mutation
 
@@ -243,12 +308,6 @@ The function you provide into this hook will have no return value.
     This may be resolved in a future version of Django containing an asynchronous ORM.
 
     However, even when resolved it is best practice to perform ORM queries within the `use_query` in order to handle `loading` and `error` states.
-
-??? question "What is an "ORM"?"
-
-    A Python **Object Relational Mapper** is an API for your code to access a database.
-
-    See the [Django ORM documentation](https://docs.djangoproject.com/en/dev/topics/db/queries/) for more information.
 
 ## Use Websocket
 
