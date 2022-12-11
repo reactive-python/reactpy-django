@@ -6,6 +6,7 @@ changelog
 async
 pre
 prefetch
+prefetching
 preloader
 whitespace
 refetch

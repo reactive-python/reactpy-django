@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import contextlib
 import logging
 from typing import (
     Any,
@@ -15,10 +14,6 @@ from typing import (
 )
 
 from channels.db import database_sync_to_async as _database_sync_to_async
-from django.db.models import ManyToManyField, prefetch_related_objects
-from django.db.models.base import Model
-from django.db.models.fields.reverse_related import ManyToOneRel
-from django.db.models.query import QuerySet
 from idom import use_callback, use_ref
 from idom.backend.types import Location
 from idom.core.hooks import Context, create_context, use_context, use_effect, use_state
@@ -31,7 +26,7 @@ from django_idom.types import (
     _Params,
     _Result,
 )
-from django_idom.utils import _generate_obj_name
+from django_idom.utils import _generate_obj_name, django_query_postprocessor
 
 
 _logger = logging.getLogger(__name__)
@@ -163,7 +158,7 @@ def use_query(
 
             # Use the default postprocessor
             else:
-                postprocess_django_query(data, **query_options.postprocessor_kwargs)
+                django_query_postprocessor(data, **query_options.postprocessor_kwargs)
         except Exception as e:
             set_data(None)
             set_loading(False)
@@ -233,54 +228,3 @@ def use_mutation(
         set_error(None)
 
     return Mutation(call, loading, error, reset)
-
-
-def postprocess_django_query(
-    data: QuerySet | Model, /, many_to_many: bool = False, many_to_one: bool = False
-) -> None:
-    """Recursively fetch all fields within a `Model` or `QuerySet` to ensure they are not performed lazily.
-
-    Some behaviors can be modified through `query_options` attributes."""
-
-    # `QuerySet`, which is an iterable of `Model`/`QuerySet` instances
-    # https://github.com/typeddjango/django-stubs/issues/704
-    if isinstance(data, QuerySet):  # type: ignore[misc]
-        for model in data:
-            postprocess_django_query(
-                model,
-                many_to_many=many_to_many,
-                many_to_one=many_to_one,
-            )
-
-    # `Model` instances
-    elif isinstance(data, Model):
-        prefetch_fields: list[str] = []
-        for field in data._meta.get_fields():
-            # `ForeignKey` relationships will cause an `AttributeError`
-            # This is handled within the `ManyToOneRel` conditional below.
-            with contextlib.suppress(AttributeError):
-                getattr(data, field.name)
-
-            if many_to_one and type(field) == ManyToOneRel:
-                prefetch_fields.append(f"{field.name}_set")
-
-            elif many_to_many and isinstance(field, ManyToManyField):
-                prefetch_fields.append(field.name)
-                postprocess_django_query(
-                    getattr(data, field.name).get_queryset(),
-                    many_to_many=many_to_many,
-                    many_to_one=many_to_one,
-                )
-
-        if prefetch_fields:
-            prefetch_related_objects([data], *prefetch_fields)
-
-    # Unrecognized type
-    else:
-        raise TypeError(
-            f"Django query postprocessor expected a Model or QuerySet, got {data!r}.\n"
-            "One of the following may have occurred:\n"
-            "  - You are using a non-Django ORM.\n"
-            "  - You are attempting to use `use_query` to fetch non-ORM data.\n\n"
-            "If these situations seem correct, you may want to consider disabling the postprocessor via `QueryOptions`."
-        )
