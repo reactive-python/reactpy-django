@@ -70,7 +70,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     === "components.py"
 
-        ```python
+        ```python linenums="1"
         from idom import component
         from django_idom.hooks import use_query
 
@@ -107,7 +107,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     === "components.py"
 
-        ```python
+        ```python linenums="1"
         from idom import component
         from django_idom.types import QueryOptions
         from django_idom.hooks import use_query
@@ -141,7 +141,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     === "components.py"
 
-        ```python
+        ```python linenums="1"
         from example_project.my_app.models import MyModel
         from idom import component
         from django_idom.types import QueryOptions
@@ -239,7 +239,7 @@ The function you provide into this hook will have no return value.
 
     === "components.py"
 
-        ```python
+        ```python linenums="1"
         from idom import component
         from django_idom.hooks import use_mutation
 

@@ -51,7 +51,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
     === "Function Based View"
 
-        ```python
+        ```python linenums="1"
         ...
 
         @view_to_component(compatibility=True)
@@ -62,7 +62,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
     === "Class Based View"
 
-        ```python
+        ```python linenums="1"
         ...
 
         @view_to_component(compatibility=True)
