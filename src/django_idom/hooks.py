@@ -80,8 +80,8 @@ def use_websocket() -> IdomWebsocket:
 
 @overload
 def use_query(
-    query: Callable[_Params, _Result | None],
     options: QueryOptions,
+    query: Callable[_Params, _Result | None],
     /,
     *args: _Params.args,
     **kwargs: _Params.kwargs,
@@ -106,18 +106,21 @@ def use_query(
     """Hook to fetch a Django ORM query.
 
     Args:
-        query: A callable that returns a Django `Model` or `QuerySet`.
         options: An optional `QueryOptions` object that can modify how the query is executed.
+        query: A callable that returns a Django `Model` or `QuerySet`.
         *args: Positional arguments to pass into `query`.
 
     Keyword Args:
         **kwargs: Keyword arguments to pass into `query`."""
-    query = args[0]
-    if len(args) > 1 and isinstance(args[1], QueryOptions):
-        query_options = args[1]
+
+    if isinstance(args[0], QueryOptions):
+        query_options = args[0]
+        query = args[1]
         args = args[2:]
+
     else:
         query_options = QueryOptions()
+        query = args[0]
         args = args[1:]
 
     query_ref = use_ref(query)

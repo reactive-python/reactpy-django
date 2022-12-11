@@ -53,8 +53,8 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `query` | `Callable[_Params, _Result | None]` | A callable that returns a Django `Model` or `QuerySet`. | N/A |
     | `options` | `QueryOptions | None` | An optional `QueryOptions` object that can modify how the query is executed. | None |
+    | `query` | `Callable[_Params, _Result | None]` | A callable that returns a Django `Model` or `QuerySet`. | N/A |
     | `*args` | `_Params.args` | Positional arguments to pass into `query`. | N/A |
     | `**kwargs` | `_Params.kwargs` | Keyword arguments to pass into `query`. | N/A |
 
@@ -118,13 +118,11 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
         @component
         def todo_list():
+            # By setting the postprocessor to a function that takes one argument
+            # and returns None, we can disable postprocessing behavior.
             query = use_query(
+                QueryOptions(postprocessor=lambda data: None),
                 execute_io_intensive_operation,
-                QueryOptions(
-                    # By setting the postprocessor to a function that takes one argument
-                    # and returns None, we can disable postprocessing behavior.
-                    postprocessor=lambda data: None,
-                ),
             )
 
             if query.loading or query.error:
@@ -161,8 +159,8 @@ The function you provide into this hook must return either a `Model` or `QuerySe
         @component
         def todo_list():
             query = use_query(
-                get_model_with_relationships,
                 QueryOptions(postprocessor_kwargs={"many_to_many": False, "many_to_one": False}),
+                get_model_with_relationships,
             )
 
             if query.loading or query.error:
