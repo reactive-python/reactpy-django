@@ -14,7 +14,7 @@ This decorator can be used with or without parentheses.
 
 === "components.py"
 
-    ```python linenums="1"
+    ```python
     from django_idom.decorators import auth_required
     from django_idom.hooks import use_websocket
     from idom import component, html
@@ -48,7 +48,7 @@ This decorator can be used with or without parentheses.
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from django_idom.decorators import auth_required
         from idom import component, html
 
@@ -68,7 +68,7 @@ This decorator can be used with or without parentheses.
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from django_idom.decorators import auth_required
         from django_idom.hooks import use_websocket
         from idom import component, html
@@ -85,7 +85,7 @@ This decorator can be used with or without parentheses.
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from django_idom.decorators import auth_required
         from django_idom.hooks import use_websocket
         from idom import component, html
@@ -105,7 +105,7 @@ This decorator can be used with or without parentheses.
 
     === "models.py"
 
-        ```python linenums="1"
+        ```python
         from django.contrib.auth.models import AbstractBaseUser
 
         class CustomUserModel(AbstractBaseUser):
@@ -118,7 +118,7 @@ This decorator can be used with or without parentheses.
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from django_idom.decorators import auth_required
         from django_idom.hooks import use_websocket
         from idom import component, html

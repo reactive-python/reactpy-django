@@ -16,7 +16,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
 === "components.py"
 
-    ```python linenums="1"
+    ```python
     from example_project.my_app.models import TodoItem
     from idom import component, html
     from django_idom.hooks import use_query
@@ -40,7 +40,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
 === "models.py"
 
-    ```python linenums="1"
+    ```python
     from django.db import models
 
     class TodoItem(models.Model):
@@ -70,7 +70,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from idom import component
         from django_idom.hooks import use_query
 
@@ -107,7 +107,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from idom import component
         from django_idom.types import QueryOptions
         from django_idom.hooks import use_query
@@ -141,7 +141,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from example_project.my_app.models import MyModel
         from idom import component
         from django_idom.types import QueryOptions
@@ -185,7 +185,7 @@ The function you provide into this hook will have no return value.
 
 === "components.py"
 
-    ```python linenums="1"
+    ```python
     from example_project.my_app.models import TodoItem
     from idom import component, html
     from django_idom.hooks import use_mutation
@@ -239,7 +239,7 @@ The function you provide into this hook will have no return value.
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from idom import component
         from django_idom.hooks import use_mutation
 
@@ -265,7 +265,7 @@ The function you provide into this hook will have no return value.
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from example_project.my_app.models import TodoItem
         from idom import component, html
         from django_idom.hooks import use_mutation
@@ -321,7 +321,7 @@ The function you provide into this hook will have no return value.
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from example_project.my_app.models import TodoItem
         from idom import component, html
         from django_idom.hooks import use_mutation
@@ -368,7 +368,7 @@ You can fetch the Django Channels [websocket](https://channels.readthedocs.io/en
 
 === "components.py"
 
-    ```python linenums="1"
+    ```python
     from idom import component, html
     from django_idom.hooks import use_websocket
 
@@ -396,7 +396,7 @@ This is a shortcut that returns the Websocket's [`scope`](https://channels.readt
 
 === "components.py"
 
-    ```python linenums="1"
+    ```python
     from idom import component, html
     from django_idom.hooks import use_scope
 
@@ -426,7 +426,7 @@ You can expect this hook to provide strings such as `/idom/my_path`.
 
 === "components.py"
 
-    ```python linenums="1"
+    ```python
     from idom import component, html
     from django_idom.hooks import use_location
 
@@ -462,7 +462,7 @@ You can expect this hook to provide strings such as `http://example.com`.
 
 === "components.py"
 
-    ```python linenums="1"
+    ```python
     from idom import component, html
     from django_idom.hooks import use_origin
 

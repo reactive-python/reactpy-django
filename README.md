@@ -30,7 +30,7 @@ You will need a file to define your [IDOM](https://github.com/idom-team/idom) co
 <!--py-header-end-->
 <!--py-code-start-->
 
-```python linenums="1"
+```python
 from idom import component, html
 
 @component
@@ -51,7 +51,7 @@ Additionally, you can pass in keyword arguments into your component function. Fo
 <!--html-header-end-->
 <!--html-code-start-->
 
-```jinja linenums="1"
+```jinja
 {% load idom %}
 <!DOCTYPE html>
 <html>
