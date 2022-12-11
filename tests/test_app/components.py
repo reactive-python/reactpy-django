@@ -182,8 +182,8 @@ def get_foriegn_child_query():
 
 @component
 def relational_query():
-    relational_parent = use_query(get_relational_parent_query)
     foriegn_child = use_query(get_foriegn_child_query)
+    relational_parent = use_query(get_relational_parent_query)
 
     if not relational_parent.data or not foriegn_child.data:
         return
