@@ -153,15 +153,19 @@ def use_query(
 
         try:
             # Run the initial query
-            data = query(*args, **kwargs)
+            new_data = query(*args, **kwargs)
 
             # Use a custom postprocessor, if provided
             if query_options.postprocessor:
-                query_options.postprocessor(data, **query_options.postprocessor_kwargs)
+                query_options.postprocessor(
+                    new_data, **query_options.postprocessor_kwargs
+                )
 
             # Use the default postprocessor
             else:
-                django_query_postprocessor(data, **query_options.postprocessor_kwargs)
+                django_query_postprocessor(
+                    new_data, **query_options.postprocessor_kwargs
+                )
         except Exception as e:
             set_data(None)
             set_loading(False)
@@ -173,7 +177,7 @@ def use_query(
         finally:
             set_should_execute(False)
 
-        set_data(data)
+        set_data(new_data)
         set_loading(False)
         set_error(None)
 
