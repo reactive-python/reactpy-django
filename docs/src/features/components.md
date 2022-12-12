@@ -196,8 +196,6 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
     In these scenarios, you may want to rely on best-fit parsing by setting the `strict_parsing` parameter to `False`.
 
-    Note that best-fit parsing is designed to be similar to how web browsers would handle non-standard or broken HTML.
-
     === "components.py"
 
         ```python
@@ -216,7 +214,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
             )
         ```
 
-
+    _Note: Best-fit parsing is designed to be similar to how web browsers would handle non-standard or broken HTML._
 
     ---
 
@@ -226,7 +224,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
     Any view can be rendered within compatibility mode. However, the `transforms`, `strict_parsing`, `request`, `args`, and `kwargs` arguments do not apply to compatibility mode.
 
-    Please note that by default the iframe is unstyled, and thus won't look pretty until you add some CSS.
+
 
     === "components.py"
 
@@ -245,6 +243,8 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
                 hello_world_view(),
             )
         ```
+
+    _Note: By default the `compatibility` iframe is unstyled, and thus won't look pretty until you add some CSS._
 
     ---
 

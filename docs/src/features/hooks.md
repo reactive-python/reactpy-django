@@ -74,7 +74,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
         from idom import component
         from django_idom.hooks import use_query
 
-        def example_query(value:int, other_value:bool = False):
+        def example_query(value: int, other_value: bool = False):
             ...
 
         @component
@@ -103,7 +103,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
     1. Want to use this hook to defer IO intensive tasks to be computed in the background
     2. Want to to utilize `use_query` with a different ORM
 
-    ... then you can disable all postprocessing behavior by modifying the `QueryOptions.postprocessor` parameter. In the example below, we will set the `postprocessor` to a function that takes one argument and returns nothing.
+    ... then you can disable all postprocessing behavior by modifying the `QueryOptions.postprocessor` parameter. In the example below, we will set the `postprocessor` to a function that takes one argument and returns `None`.
 
     === "components.py"
 
@@ -135,7 +135,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     {% include-markdown "../../includes/orm.md" start="<!--orm-fetch-start-->" end="<!--orm-fetch-end-->" %}
 
-    However, if you have deep nested trees of relational data, this may not be a desirable behavior. You may prefer to manually fetch these relational fields using a second `use_query` hook.
+    However, if you have deep nested trees of relational data, this may not be a desirable behavior. In these scenarios, you may prefer to manually fetch these relational fields using a second `use_query` hook.
 
     You can disable the prefetching behavior of the default `postprocessor` (located at `django_idom.utils.django_query_postprocessor`) via the `QueryOptions.postprocessor_kwargs` parameter.
 
@@ -243,7 +243,7 @@ The function you provide into this hook will have no return value.
         from idom import component
         from django_idom.hooks import use_mutation
 
-        def example_mutation(value:int, other_value:bool = False):
+        def example_mutation(value: int, other_value: bool = False):
             ...
 
         @component
