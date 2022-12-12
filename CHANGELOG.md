@@ -22,7 +22,17 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)
+### Added
+
+-   Add `options: QueryOptions` parameter to `use_query` to allow for configuration of this hook.
+
+### Changed
+
+-   By default, `use_query` will recursively prefetch all many-to-many or many-to-one relationships to prevent `SynchronousOnlyOperation` exceptions.
+
+### Removed
+
+-   `django_idom.hooks._fetch_lazy_fields` has been deleted. The equivalent replacement is `django_idom.utils.django_query_postprocessor`.
 
 ## [2.1.0] - 2022-11-01
 
