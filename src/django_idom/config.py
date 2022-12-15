@@ -12,16 +12,19 @@ from django_idom.types import Postprocessor, ViewComponentIframe
 
 IDOM_REGISTERED_COMPONENTS: Dict[str, ComponentConstructor] = {}
 IDOM_VIEW_COMPONENT_IFRAMES: Dict[str, ViewComponentIframe] = {}
-
-IDOM_WEBSOCKET_URL = getattr(settings, "IDOM_WEBSOCKET_URL", "idom/")
-IDOM_WS_MAX_RECONNECT_TIMEOUT = getattr(
-    settings, "IDOM_WS_MAX_RECONNECT_TIMEOUT", 604800
+IDOM_WEBSOCKET_URL = getattr(
+    settings,
+    "IDOM_WEBSOCKET_URL",
+    "idom/",
 )
-IDOM_DEFAULT_QUERY_POSTPROCESSOR: Postprocessor | None = _DEFAULT_QUERY_POSTPROCESSOR
-
-# Determine if using Django caching or LRU cache
+IDOM_WS_MAX_RECONNECT_TIMEOUT = getattr(
+    settings,
+    "IDOM_WS_MAX_RECONNECT_TIMEOUT",
+    604800,
+)
 IDOM_CACHE: BaseCache = (
     caches["idom"]
     if "idom" in getattr(settings, "CACHES", {})
     else caches[DEFAULT_CACHE_ALIAS]
 )
+IDOM_DEFAULT_QUERY_POSTPROCESSOR: Postprocessor | None = _DEFAULT_QUERY_POSTPROCESSOR
