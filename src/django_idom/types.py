@@ -18,6 +18,8 @@ from django.db.models.query import QuerySet
 from django.views.generic import View
 from typing_extensions import ParamSpec
 
+from django_idom.defaults import _DEFAULT_QUERY_POSTPROCESSOR
+
 
 __all__ = ["_Result", "_Params", "_Data", "IdomWebsocket", "Query", "Mutation"]
 
@@ -64,7 +66,7 @@ class ViewComponentIframe:
 
 
 class Postprocessor(Protocol):
-    def __call__(self, data: Any, **kwargs: Any) -> None:
+    def __call__(self, data: Any) -> Any:
         ...
 
 
@@ -72,8 +74,12 @@ class Postprocessor(Protocol):
 class QueryOptions:
     """Configuration options that can be provided to `use_query`."""
 
-    postprocessor: Postprocessor | None = None
-    """A post processing callable that can read/modify the query `data`.
+    postprocessor: Postprocessor | None = _DEFAULT_QUERY_POSTPROCESSOR
+    """A callable that can modify the query `data` after the query has been executed.
+
+    The first argument of postprocessor must be the query `data`. All proceeding arguments
+    are optional `postprocessor_kwargs` (see below). This postprocessor function must return
+    the modified `data`.
 
     If `None`, the default postprocessor is used.
 

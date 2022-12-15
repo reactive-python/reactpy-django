@@ -26,7 +26,7 @@ from django_idom.types import (
     _Params,
     _Result,
 )
-from django_idom.utils import _generate_obj_name, django_query_postprocessor
+from django_idom.utils import _generate_obj_name
 
 
 _logger = logging.getLogger(__name__)
@@ -155,17 +155,11 @@ def use_query(
             # Run the initial query
             new_data = query(*args, **kwargs)
 
-            # Use a custom postprocessor, if provided
             if query_options.postprocessor:
-                query_options.postprocessor(
+                new_data = query_options.postprocessor(
                     new_data, **query_options.postprocessor_kwargs
                 )
 
-            # Use the default postprocessor
-            else:
-                django_query_postprocessor(
-                    new_data, **query_options.postprocessor_kwargs
-                )
         except Exception as e:
             set_data(None)
             set_loading(False)

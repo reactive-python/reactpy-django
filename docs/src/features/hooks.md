@@ -103,7 +103,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
     1. Want to use this hook to defer IO intensive tasks to be computed in the background
     2. Want to to utilize `use_query` with a different ORM
 
-    ... then you can disable all postprocessing behavior by modifying the `QueryOptions.postprocessor` parameter. In the example below, we will set the `postprocessor` to a function that takes one argument and returns `None`.
+    ... then you can disable all postprocessing behavior by modifying the `QueryOptions.postprocessor` parameter. In the example below, we will set the `postprocessor` to `None`.
 
     === "components.py"
 
@@ -118,10 +118,8 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
         @component
         def todo_list():
-            # By setting the postprocessor to a function that takes one argument
-            # and returns None, we can disable postprocessing behavior.
             query = use_query(
-                QueryOptions(postprocessor=lambda data: None),
+                QueryOptions(postprocessor=None),
                 execute_io_intensive_operation,
             )
 

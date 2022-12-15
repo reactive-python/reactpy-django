@@ -19,8 +19,6 @@ from django.template import engines
 from django.utils.encoding import smart_str
 from django.views import View
 
-from django_idom.config import IDOM_REGISTERED_COMPONENTS
-
 
 _logger = logging.getLogger(__name__)
 _component_tag = r"(?P<tag>component)"
@@ -77,6 +75,8 @@ async def render_view(
 
 
 def _register_component(dotted_path: str) -> None:
+    from django_idom.config import IDOM_REGISTERED_COMPONENTS
+
     if dotted_path in IDOM_REGISTERED_COMPONENTS:
         return
 
@@ -206,8 +206,8 @@ def _generate_obj_name(object: Any) -> str | None:
 
 
 def django_query_postprocessor(
-    data: QuerySet | Model, /, many_to_many: bool = True, many_to_one: bool = True
-) -> None:
+    data: QuerySet | Model, many_to_many: bool = True, many_to_one: bool = True
+) -> QuerySet | Model:
     """Recursively fetch all fields within a `Model` or `QuerySet` to ensure they are not performed lazily.
 
     Some behaviors can be modified through `query_options` attributes."""
@@ -254,3 +254,5 @@ def django_query_postprocessor(
             "  - You are attempting to use `use_query` to fetch non-ORM data.\n\n"
             "If these situations seem correct, you may want to consider disabling the postprocessor via `QueryOptions`."
         )
+
+    return data
