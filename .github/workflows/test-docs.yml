@@ -22,4 +22,4 @@ jobs:
                   python-version: 3.x
             - run: pip install -r requirements/build-docs.txt
             - run: linkcheckMarkdown docs/ -v -r
-            - run: mkdocs build --verbose --strict
+            - run: mkdocs build --strict

@@ -129,10 +129,10 @@ The function you provide into this hook must return either a `Model` or `QuerySe
             return str(query.data)
         ```
 
-    If you wish to create a custom postprocessor, you will need to create a callable.
+    If you wish to create a custom `postprocessor`, you will need to create a callable.
 
-    The first argument of postprocessor must be the query `data`. All proceeding arguments
-    are optional `postprocessor_kwargs` (see below). This postprocessor function must return
+    The first argument of `postprocessor` must be the query `data`. All proceeding arguments
+    are optional `postprocessor_kwargs` (see below). This `postprocessor` must return
     the modified `data`.
 
     === "components.py"
