@@ -103,7 +103,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
     1. Want to use this hook to defer IO intensive tasks to be computed in the background
     2. Want to to utilize `use_query` with a different ORM
 
-    ... then you can disable all postprocessing behavior by modifying the `QueryOptions.postprocessor` parameter. In the example below, we will set the `postprocessor` to `None`.
+    ... then you can disable all postprocessing behavior by modifying the `QueryOptions.postprocessor` parameter. In the example below, we will set the `postprocessor` to `None` to disable postprocessing behavior.
 
     === "components.py"
 
@@ -120,6 +120,45 @@ The function you provide into this hook must return either a `Model` or `QuerySe
         def todo_list():
             query = use_query(
                 QueryOptions(postprocessor=None),
+                execute_io_intensive_operation,
+            )
+
+            if query.loading or query.error:
+                return None
+
+            return str(query.data)
+        ```
+
+    If you wish to create a custom postprocessor, you will need to create a callable.
+
+    The first argument of postprocessor must be the query `data`. All proceeding arguments
+    are optional `postprocessor_kwargs` (see below). This postprocessor function must return
+    the modified `data`.
+
+    === "components.py"
+
+        ```python
+        from idom import component
+        from django_idom.types import QueryOptions
+        from django_idom.hooks import use_query
+
+        def my_postprocessor(data, example_kwarg=True):
+            if example_kwarg:
+                return data
+
+            return dict(data)
+
+        def execute_io_intensive_operation():
+            """This is an example query function that does something IO intensive."""
+            pass
+
+        @component
+        def todo_list():
+            query = use_query(
+                QueryOptions(
+                    postprocessor=my_postprocessor,
+                    postprocessor_kwargs={"example_kwarg": False},
+                ),
                 execute_io_intensive_operation,
             )
 
