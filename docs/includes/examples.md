@@ -1,6 +1,6 @@
 <!--todo-model-start-->
 
-```python linenums="1"
+```python
 from django.db import models
 
 class TodoItem(models.Model):

@@ -2,16 +2,30 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import Any, Awaitable, Callable, DefaultDict, Sequence, Union, cast
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    DefaultDict,
+    Sequence,
+    Union,
+    cast,
+    overload,
+)
 
 from channels.db import database_sync_to_async as _database_sync_to_async
-from django.db.models.base import Model
-from django.db.models.query import QuerySet
 from idom import use_callback, use_ref
 from idom.backend.types import Location
 from idom.core.hooks import Context, create_context, use_context, use_effect, use_state
 
-from django_idom.types import IdomWebsocket, Mutation, Query, _Params, _Result
+from django_idom.types import (
+    IdomWebsocket,
+    Mutation,
+    Query,
+    QueryOptions,
+    _Params,
+    _Result,
+)
 from django_idom.utils import _generate_obj_name
 
 
@@ -64,19 +78,51 @@ def use_websocket() -> IdomWebsocket:
     return websocket
 
 
+@overload
 def use_query(
+    options: QueryOptions,
     query: Callable[_Params, _Result | None],
+    /,
     *args: _Params.args,
     **kwargs: _Params.kwargs,
+) -> Query[_Result | None]:
+    ...
+
+
+@overload
+def use_query(
+    query: Callable[_Params, _Result | None],
+    /,
+    *args: _Params.args,
+    **kwargs: _Params.kwargs,
+) -> Query[_Result | None]:
+    ...
+
+
+def use_query(
+    *args: Any,
+    **kwargs: Any,
 ) -> Query[_Result | None]:
     """Hook to fetch a Django ORM query.
 
     Args:
+        options: An optional `QueryOptions` object that can modify how the query is executed.
         query: A callable that returns a Django `Model` or `QuerySet`.
         *args: Positional arguments to pass into `query`.
 
     Keyword Args:
         **kwargs: Keyword arguments to pass into `query`."""
+
+    if isinstance(args[0], QueryOptions):
+        query_options = args[0]
+        query = args[1]
+        args = args[2:]
+
+    else:
+        query_options = QueryOptions()
+        query = args[0]
+        args = args[1:]
+
     query_ref = use_ref(query)
     if query_ref.current is not query:
         raise ValueError(f"Query function changed from {query_ref.current} to {query}.")
@@ -106,8 +152,14 @@ def use_query(
             return
 
         try:
+            # Run the initial query
             new_data = query(*args, **kwargs)
-            _fetch_lazy_fields(new_data)
+
+            if query_options.postprocessor:
+                new_data = query_options.postprocessor(
+                    new_data, **query_options.postprocessor_kwargs
+                )
+
         except Exception as e:
             set_data(None)
             set_loading(False)
@@ -177,22 +229,3 @@ def use_mutation(
         set_error(None)
 
     return Mutation(call, loading, error, reset)
-
-
-def _fetch_lazy_fields(data: Any) -> None:
-    """Fetch all fields within a `Model` or `QuerySet` to ensure they are not performed lazily."""
-
-    # `QuerySet`, which is effectively a list of `Model` instances
-    # https://github.com/typeddjango/django-stubs/issues/704
-    if isinstance(data, QuerySet):  # type: ignore[misc]
-        for model in data:
-            _fetch_lazy_fields(model)
-
-    # `Model` instances
-    elif isinstance(data, Model):
-        for field in data._meta.fields:
-            getattr(data, field.name)
-
-    # Unrecognized type
-    else:
-        raise ValueError(f"Expected a Model or QuerySet, got {data!r}")

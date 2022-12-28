@@ -18,7 +18,7 @@ In your settings you will need to add `django_idom` to [`INSTALLED_APPS`](https:
 
 === "settings.py"
 
-    ```python linenums="1"
+    ```python
     INSTALLED_APPS = [
         "django_idom",
         ...
@@ -35,7 +35,7 @@ In your settings you will need to add `django_idom` to [`INSTALLED_APPS`](https:
 
     === "settings.py"
 
-        ```python linenums="1"
+        ```python
         INSTALLED_APPS = [
             "daphne",
             ...
@@ -55,7 +55,7 @@ Add IDOM HTTP paths to your `urlpatterns`.
 
 === "urls.py"
 
-    ```python linenums="1"
+    ```python
     from django.urls import include, path
 
     urlpatterns = [
@@ -70,7 +70,7 @@ Register IDOM's Websocket using `IDOM_WEBSOCKET_PATH`.
 
 === "asgi.py"
 
-    ```python linenums="1"
+    ```python
     import os
     from django.core.asgi import get_asgi_application
 

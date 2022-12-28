@@ -8,7 +8,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
 === "components.py"
 
-    ```python linenums="1"
+    ```python
     from idom import component, html
     from django.http import HttpResponse
     from django_idom.components import view_to_component
@@ -39,7 +39,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
     | Type | Description |
     | --- | --- |
-    | `_ViewComponentConstructor` | A function that takes `request: HttpRequest | None, *args: Any, key: Key | None, **kwargs: Any` and returns an IDOM component. |
+    | `_ViewComponentConstructor` | A function that takes `request, *args, key, **kwargs` and returns an IDOM component. All parameters are directly provided to your view, besides `key` which is used by IDOM. |
 
 ??? Warning "Potential information exposure when using `compatibility = True`"
 
@@ -88,7 +88,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from idom import component, html
         from django.http import HttpResponse
         from django.views import View
@@ -112,7 +112,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from idom import component, html
         from django.http import HttpResponse
         from django_idom.components import view_to_component
@@ -135,7 +135,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from idom import component, html
         from django.http import HttpResponse, HttpRequest
         from django_idom.components import view_to_component
@@ -164,7 +164,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from idom import component, html
         from django.http import HttpResponse
         from django_idom.components import view_to_component
@@ -196,11 +196,9 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
     In these scenarios, you may want to rely on best-fit parsing by setting the `strict_parsing` parameter to `False`.
 
-    Note that best-fit parsing is designed to be similar to how web browsers would handle non-standard or broken HTML.
-
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from idom import component, html
         from django.http import HttpResponse
         from django_idom.components import view_to_component
@@ -216,7 +214,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
             )
         ```
 
-
+    _Note: Best-fit parsing is designed to be similar to how web browsers would handle non-standard or broken HTML._
 
     ---
 
@@ -226,11 +224,11 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
     Any view can be rendered within compatibility mode. However, the `transforms`, `strict_parsing`, `request`, `args`, and `kwargs` arguments do not apply to compatibility mode.
 
-    Please note that by default the iframe is unstyled, and thus won't look pretty until you add some CSS.
+
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from idom import component, html
         from django.http import HttpResponse
         from django_idom.components import view_to_component
@@ -246,6 +244,8 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
             )
         ```
 
+    _Note: By default the `compatibility` iframe is unstyled, and thus won't look pretty until you add some CSS._
+
     ---
 
     <font size="4">**`transforms`**</font>
@@ -258,7 +258,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from idom import component, html
         from django.http import HttpResponse
         from django_idom.components import view_to_component
@@ -285,7 +285,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
 === "components.py"
 
-    ```python linenums="1"
+    ```python
     from idom import component, html
     from django_idom.components import django_css
 
@@ -322,7 +322,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
     Here's an example on what you should avoid doing for Django static files:
 
-    ```python linenums="1"
+    ```python
     from idom import component, html
     from django.templatetags.static import static
 
@@ -340,7 +340,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
     For external CSS, substitute `django_css` with `html.link`.
 
-    ```python linenums="1"
+    ```python
     from idom import component, html
 
     @component
@@ -363,7 +363,7 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
 
 === "components.py"
 
-    ```python linenums="1"
+    ```python
     from idom import component, html
     from django_idom.components import django_js
 
@@ -400,7 +400,7 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
 
     Here's an example on what you should avoid doing for Django static files:
 
-    ```python linenums="1"
+    ```python
     from idom import component, html
     from django.templatetags.static import static
 
@@ -418,7 +418,7 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
 
     For external JavaScript, substitute `django_js` with `html.script`.
 
-    ```python linenums="1"
+    ```python
     from idom import component, html
 
     @component

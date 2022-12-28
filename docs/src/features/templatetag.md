@@ -20,7 +20,7 @@
 
     === "my-template.html"
 
-        ```jinja linenums="1"
+        ```jinja
         <!-- This is bad -->
         {% component dont_do_this recipient="World" %}
 
@@ -30,7 +30,7 @@
 
     === "views.py"
 
-        ```python linenums="1"
+        ```python
         def example_view():
             context_vars = {"dont_do_this": "example_project.my_app.components.hello_world"}
             return render(request, "my-template.html", context_vars)
@@ -48,7 +48,7 @@
 
     === "my-template.html"
 
-        ```jinja linenums="1"
+        ```jinja
         ...
         {% component "example.components.my_component" class="my-html-class" key=123 %}
         ...
@@ -79,7 +79,7 @@
 
     === "my-template.html"
 
-        ```jinja linenums="1"
+        ```jinja
         {% load idom %}
         <!DOCTYPE html>
         <html>

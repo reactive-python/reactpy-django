@@ -8,7 +8,7 @@
 
     <!--settings-start-->
 
-    ```python linenums="1"
+    ```python
     # If "idom" cache is not configured, then we will use "default" instead
     CACHES = {
     "idom": {"BACKEND": ...},
@@ -20,6 +20,9 @@
 
     # The URL for IDOM to serve websockets
     IDOM_WEBSOCKET_URL = "idom/"
+
+    # Dotted path to the default postprocessor function, or `None`
+    IDOM_DEFAULT_QUERY_POSTPROCESSOR = "example_project.utils.my_postprocessor"
     ```
 
     <!--settings-end-->

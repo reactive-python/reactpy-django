@@ -12,7 +12,7 @@ In this example, we will create a view that renders `my-template.html` (_from th
 
 === "views.py"
 
-    ```python linenums="1"
+    ```python
     from django.shortcuts import render
 
     def index(request):
@@ -23,7 +23,7 @@ We will add this new view into your [`urls.py`](https://docs.djangoproject.com/e
 
 === "urls.py"
 
-    ```python linenums="1"
+    ```python
     from django.urls import path
     from example_project.my_app import views
 

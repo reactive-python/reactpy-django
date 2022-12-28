@@ -16,7 +16,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
 === "components.py"
 
-    ```python linenums="1"
+    ```python
     from example_project.my_app.models import TodoItem
     from idom import component, html
     from django_idom.hooks import use_query
@@ -40,7 +40,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
 === "models.py"
 
-    ```python linenums="1"
+    ```python
     from django.db import models
 
     class TodoItem(models.Model):
@@ -53,6 +53,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
+    | `options` | `QueryOptions | None` | An optional `QueryOptions` object that can modify how the query is executed. | None |
     | `query` | `Callable[_Params, _Result | None]` | A callable that returns a Django `Model` or `QuerySet`. | N/A |
     | `*args` | `_Params.args` | Positional arguments to pass into `query`. | N/A |
     | `**kwargs` | `_Params.kwargs` | Keyword arguments to pass into `query`. | N/A |
@@ -63,23 +64,155 @@ The function you provide into this hook must return either a `Model` or `QuerySe
     | --- | --- |
     | `Query[_Result | None]` | An object containing `loading`/`error` states, your `data` (if the query has successfully executed), and a `refetch` callable that can be used to re-run the query. |
 
-??? question "Can I make ORM calls without hooks?"
+??? question "How can I provide arguments to my query function?"
 
-    Due to Django's ORM design, database queries must be deferred using hooks. Otherwise, you will see a `SynchronousOnlyOperation` exception.
+    `*args` and `**kwargs` can be provided to your query function via `use_query` parameters.
 
-    This may be resolved in a future version of Django containing an asynchronous ORM.
+    === "components.py"
 
-??? question "Why does the example `get_items` function return a `Model` or `QuerySet`?"
+        ```python
+        from idom import component
+        from django_idom.hooks import use_query
 
-    This was a technical design decision to [based on Apollo](https://www.apollographql.com/docs/react/data/mutations/#usemutation-api), but ultimately helps avoid Django's `SynchronousOnlyOperation` exceptions.
+        def example_query(value: int, other_value: bool = False):
+            ...
+
+        @component
+        def my_component():
+            query = use_query(
+                example_query,
+                123,
+                other_value=True,
+            )
+
+            ...
+        ```
+
+??? question "Why does the example `get_items` function return `TodoItem.objects.all()`?"
+
+    This was a technical design decision to based on [Apollo's `useQuery` hook](https://www.apollographql.com/docs/react/data/queries/), but ultimately helps avoid Django's `SynchronousOnlyOperation` exceptions.
 
     The `use_query` hook ensures the provided `Model` or `QuerySet` executes all [deferred](https://docs.djangoproject.com/en/dev/ref/models/instances/#django.db.models.Model.get_deferred_fields)/[lazy queries](https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy) safely prior to reaching your components.
 
-??? question "What is an "ORM"?"
+??? question "Can this hook be used for things other than the Django ORM?"
 
-    A Python **Object Relational Mapper** is an API for your code to access a database.
+    {% include-markdown "../../includes/orm.md" start="<!--orm-fetch-start-->" end="<!--orm-fetch-end-->" %}
 
-    See the [Django ORM documentation](https://docs.djangoproject.com/en/dev/topics/db/queries/) for more information.
+    However, if you...
+
+    1. Want to use this hook to defer IO intensive tasks to be computed in the background
+    2. Want to to utilize `use_query` with a different ORM
+
+    ... then you can disable all postprocessing behavior by modifying the `QueryOptions.postprocessor` parameter. In the example below, we will set the `postprocessor` to `None` to disable postprocessing behavior.
+
+    === "components.py"
+
+        ```python
+        from idom import component
+        from django_idom.types import QueryOptions
+        from django_idom.hooks import use_query
+
+        def execute_io_intensive_operation():
+            """This is an example query function that does something IO intensive."""
+            pass
+
+        @component
+        def todo_list():
+            query = use_query(
+                QueryOptions(postprocessor=None),
+                execute_io_intensive_operation,
+            )
+
+            if query.loading or query.error:
+                return None
+
+            return str(query.data)
+        ```
+
+    If you wish to create a custom `postprocessor`, you will need to create a callable.
+
+    The first argument of `postprocessor` must be the query `data`. All proceeding arguments
+    are optional `postprocessor_kwargs` (see below). This `postprocessor` must return
+    the modified `data`.
+
+    === "components.py"
+
+        ```python
+        from idom import component
+        from django_idom.types import QueryOptions
+        from django_idom.hooks import use_query
+
+        def my_postprocessor(data, example_kwarg=True):
+            if example_kwarg:
+                return data
+
+            return dict(data)
+
+        def execute_io_intensive_operation():
+            """This is an example query function that does something IO intensive."""
+            pass
+
+        @component
+        def todo_list():
+            query = use_query(
+                QueryOptions(
+                    postprocessor=my_postprocessor,
+                    postprocessor_kwargs={"example_kwarg": False},
+                ),
+                execute_io_intensive_operation,
+            )
+
+            if query.loading or query.error:
+                return None
+
+            return str(query.data)
+        ```
+
+??? question "How can I prevent this hook from recursively fetching `ManyToMany` fields or `ForeignKey` relationships?"
+
+    {% include-markdown "../../includes/orm.md" start="<!--orm-fetch-start-->" end="<!--orm-fetch-end-->" %}
+
+    However, if you have deep nested trees of relational data, this may not be a desirable behavior. In these scenarios, you may prefer to manually fetch these relational fields using a second `use_query` hook.
+
+    You can disable the prefetching behavior of the default `postprocessor` (located at `django_idom.utils.django_query_postprocessor`) via the `QueryOptions.postprocessor_kwargs` parameter.
+
+    === "components.py"
+
+        ```python
+        from example_project.my_app.models import MyModel
+        from idom import component
+        from django_idom.types import QueryOptions
+        from django_idom.hooks import use_query
+
+        def get_model_with_relationships():
+            """This is an example query function that gets `MyModel` which has a ManyToMany field, and
+            additionally other models that have formed a ForeignKey association to `MyModel`.
+
+            ManyToMany Field: `many_to_many_field`
+            ForeignKey Field: `foreign_key_field_set`
+            """
+            return MyModel.objects.get(id=1)
+
+        @component
+        def todo_list():
+            query = use_query(
+                QueryOptions(postprocessor_kwargs={"many_to_many": False, "many_to_one": False}),
+                get_model_with_relationships,
+            )
+
+            if query.loading or query.error:
+                return None
+
+            # By disabling `many_to_many` and `many_to_one`, accessing these fields will now
+            # generate a `SynchronousOnlyOperation` exception
+            return f"{query.data.many_to_many_field} {query.data.foriegn_key_field_set}"
+        ```
+
+    _Note: In Django's ORM design, the field name to access foreign keys is [always be postfixed with `_set`](https://docs.djangoproject.com/en/dev/topics/db/examples/many_to_one/)._
+
+??? question "Can I make ORM calls without hooks?"
+
+    {% include-markdown "../../includes/orm.md" start="<!--orm-excp-start-->" end="<!--orm-excp-end-->" %}
 
 ## Use Mutation
 
@@ -89,7 +222,7 @@ The function you provide into this hook will have no return value.
 
 === "components.py"
 
-    ```python linenums="1"
+    ```python
     from example_project.my_app.models import TodoItem
     from idom import component, html
     from django_idom.hooks import use_mutation
@@ -137,6 +270,28 @@ The function you provide into this hook will have no return value.
     | --- | --- |
     | `Mutation[_Params]` | An object containing `loading`/`error` states, a `reset` callable that will set `loading`/`error` states to defaults, and a `execute` callable that will run the query. |
 
+??? question "How can I provide arguments to my mutation function?"
+
+    `*args` and `**kwargs` can be provided to your mutation function via `mutation.execute` parameters.
+
+    === "components.py"
+
+        ```python
+        from idom import component
+        from django_idom.hooks import use_mutation
+
+        def example_mutation(value: int, other_value: bool = False):
+            ...
+
+        @component
+        def my_component():
+            mutation = use_mutation(example_mutation)
+
+            mutation.execute(123, other_value=True)
+
+            ...
+        ```
+
 ??? question "Can `use_mutation` trigger a refetch of `use_query`?"
 
     Yes, `use_mutation` can queue a refetch of a `use_query` via the `refetch=...` argument.
@@ -147,7 +302,7 @@ The function you provide into this hook will have no return value.
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from example_project.my_app.models import TodoItem
         from idom import component, html
         from django_idom.hooks import use_mutation
@@ -160,11 +315,14 @@ The function you provide into this hook will have no return value.
 
         @component
         def todo_list():
+            item_query = use_query(get_items)
+            item_mutation = use_mutation(add_item, refetch=get_items)
+
             def submit_event(event):
                 if event["key"] == "Enter":
                     item_mutation.execute(text=event["target"]["value"])
 
-            item_query = use_query(get_items)
+            # Handle all possible query states
             if item_query.loading:
                 rendered_items = html.h2("Loading...")
             elif item_query.error:
@@ -172,7 +330,7 @@ The function you provide into this hook will have no return value.
             else:
                 rendered_items = html.ul(html.li(item, key=item) for item in item_query.data)
 
-            item_mutation = use_mutation(add_item, refetch=get_items)
+            # Handle all possible mutation states
             if item_mutation.loading:
                 mutation_status = html.h2("Adding...")
             elif item_mutation.error:
@@ -200,7 +358,7 @@ The function you provide into this hook will have no return value.
 
     === "components.py"
 
-        ```python linenums="1"
+        ```python
         from example_project.my_app.models import TodoItem
         from idom import component, html
         from django_idom.hooks import use_mutation
@@ -210,6 +368,8 @@ The function you provide into this hook will have no return value.
 
         @component
         def todo_list():
+            item_mutation = use_mutation(add_item)
+
             def reset_event(event):
                 item_mutation.reset()
 
@@ -217,7 +377,6 @@ The function you provide into this hook will have no return value.
                 if event["key"] == "Enter":
                     item_mutation.execute(text=event["target"]["value"])
 
-            item_mutation = use_mutation(add_item)
             if item_mutation.loading:
                 mutation_status = html.h2("Adding...")
             elif item_mutation.error:
@@ -238,17 +397,7 @@ The function you provide into this hook will have no return value.
 
 ??? question "Can I make ORM calls without hooks?"
 
-    Due to Django's ORM design, database queries must be deferred using hooks. Otherwise, you will see a `SynchronousOnlyOperation` exception.
-
-    This may be resolved in a future version of Django containing an asynchronous ORM.
-
-    However, even when resolved it is best practice to perform ORM queries within the `use_query` in order to handle `loading` and `error` states.
-
-??? question "What is an "ORM"?"
-
-    A Python **Object Relational Mapper** is an API for your code to access a database.
-
-    See the [Django ORM documentation](https://docs.djangoproject.com/en/dev/topics/db/queries/) for more information.
+    {% include-markdown "../../includes/orm.md" start="<!--orm-excp-start-->" end="<!--orm-excp-end-->" %}
 
 ## Use Websocket
 
@@ -256,7 +405,7 @@ You can fetch the Django Channels [websocket](https://channels.readthedocs.io/en
 
 === "components.py"
 
-    ```python linenums="1"
+    ```python
     from idom import component, html
     from django_idom.hooks import use_websocket
 
@@ -284,7 +433,7 @@ This is a shortcut that returns the Websocket's [`scope`](https://channels.readt
 
 === "components.py"
 
-    ```python linenums="1"
+    ```python
     from idom import component, html
     from django_idom.hooks import use_scope
 
@@ -314,7 +463,7 @@ You can expect this hook to provide strings such as `/idom/my_path`.
 
 === "components.py"
 
-    ```python linenums="1"
+    ```python
     from idom import component, html
     from django_idom.hooks import use_location
 
@@ -350,7 +499,7 @@ You can expect this hook to provide strings such as `http://example.com`.
 
 === "components.py"
 
-    ```python linenums="1"
+    ```python
     from idom import component, html
     from django_idom.hooks import use_origin
 

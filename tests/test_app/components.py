@@ -3,7 +3,7 @@ import inspect
 from django.http import HttpRequest
 from django.shortcuts import render
 from idom import component, hooks, html, web
-from test_app.models import TodoItem
+from test_app.models import ForiegnChild, RelationalChild, RelationalParent, TodoItem
 
 import django_idom
 from django_idom.components import view_to_component
@@ -154,11 +154,63 @@ def authorized_user():
     )
 
 
-def get_items_query():
+def create_relational_parent() -> RelationalParent:
+    child_1 = RelationalChild.objects.create(text="ManyToMany Child 1")
+    child_2 = RelationalChild.objects.create(text="ManyToMany Child 2")
+    child_3 = RelationalChild.objects.create(text="ManyToMany Child 3")
+    child_4 = RelationalChild.objects.create(text="OneToOne Child")
+    parent = RelationalParent.objects.create(one_to_one=child_4)
+    parent.many_to_many.set((child_1, child_2, child_3))
+    parent.save()
+    return parent
+
+
+def get_relational_parent_query():
+    return RelationalParent.objects.first() or create_relational_parent()
+
+
+def get_foriegn_child_query():
+    child = ForiegnChild.objects.first()
+    if not child:
+        parent = RelationalParent.objects.first()
+        if not parent:
+            parent = get_relational_parent_query()
+        child = ForiegnChild.objects.create(parent=parent, text="Foriegn Child")
+        child.save()
+    return child
+
+
+@component
+def relational_query():
+    foriegn_child = use_query(get_foriegn_child_query)
+    relational_parent = use_query(get_relational_parent_query)
+
+    if not relational_parent.data or not foriegn_child.data:
+        return
+
+    mtm = relational_parent.data.many_to_many.all()
+    oto = relational_parent.data.one_to_one
+    mto = relational_parent.data.foriegnchild_set.all()
+    fk = foriegn_child.data.parent
+
+    return html.div(
+        {
+            "id": "relational-query",
+            "data-success": bool(mtm) and bool(oto) and bool(mto) and bool(fk),
+        },
+        html.div(f"Relational Parent Many To Many: {mtm}"),
+        html.div(f"Relational Parent One To One: {oto}"),
+        html.div(f"Relational Parent Many to One: {mto}"),
+        html.div(f"Relational Child Foreign Key: {fk}"),
+        html.hr(),
+    )
+
+
+def get_todo_query():
     return TodoItem.objects.all()
 
 
-def add_item_mutation(text: str):
+def add_todo_mutation(text: str):
     existing = TodoItem.objects.filter(text=text).first()
     if existing:
         if existing.done:
@@ -170,7 +222,7 @@ def add_item_mutation(text: str):
         TodoItem(text=text, done=False).save()
 
 
-def toggle_item_mutation(item: TodoItem):
+def toggle_todo_mutation(item: TodoItem):
     item.done = not item.done
     item.save()
 
@@ -178,8 +230,8 @@ def toggle_item_mutation(item: TodoItem):
 @component
 def todo_list():
     input_value, set_input_value = hooks.use_state("")
-    items = use_query(get_items_query)
-    toggle_item = use_mutation(toggle_item_mutation)
+    items = use_query(get_todo_query)
+    toggle_item = use_mutation(toggle_todo_mutation)
 
     if items.error:
         rendered_items = html.h2(f"Error when loading - {items.error}")
@@ -188,12 +240,12 @@ def todo_list():
     else:
         rendered_items = html._(
             html.h3("Not Done"),
-            _render_items([i for i in items.data if not i.done], toggle_item),
+            _render_todo_items([i for i in items.data if not i.done], toggle_item),
             html.h3("Done"),
-            _render_items([i for i in items.data if i.done], toggle_item),
+            _render_todo_items([i for i in items.data if i.done], toggle_item),
         )
 
-    add_item = use_mutation(add_item_mutation, refetch=get_items_query)
+    add_item = use_mutation(add_todo_mutation, refetch=get_todo_query)
 
     if add_item.loading:
         mutation_status = html.h2("Working...")
@@ -227,7 +279,7 @@ def todo_list():
     )
 
 
-def _render_items(items, toggle_item):
+def _render_todo_items(items, toggle_item):
     return html.ul(
         [
             html.li(

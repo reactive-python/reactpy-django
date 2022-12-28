@@ -1,12 +1,24 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any, Awaitable, Callable, Generic, Optional, Sequence, TypeVar, Union
+from dataclasses import dataclass, field
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    Generic,
+    Optional,
+    Protocol,
+    Sequence,
+    TypeVar,
+    Union,
+)
 
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
 from django.views.generic import View
 from typing_extensions import ParamSpec
+
+from django_idom.defaults import _DEFAULT_QUERY_POSTPROCESSOR
 
 
 __all__ = ["_Result", "_Params", "_Data", "IdomWebsocket", "Query", "Mutation"]
@@ -51,3 +63,29 @@ class ViewComponentIframe:
     view: View | Callable
     args: Sequence
     kwargs: dict
+
+
+class Postprocessor(Protocol):
+    def __call__(self, data: Any) -> Any:
+        ...
+
+
+@dataclass
+class QueryOptions:
+    """Configuration options that can be provided to `use_query`."""
+
+    postprocessor: Postprocessor | None = _DEFAULT_QUERY_POSTPROCESSOR
+    """A callable that can modify the query `data` after the query has been executed.
+
+    The first argument of postprocessor must be the query `data`. All proceeding arguments
+    are optional `postprocessor_kwargs` (see below). This postprocessor function must return
+    the modified `data`.
+
+    If `None`, the default postprocessor is used.
+
+    This default Django query postprocessor prevents Django's lazy query execution, and
+    additionally can be configured via `postprocessor_kwargs` to recursively fetch
+    `many_to_many` and `many_to_one` fields."""
+
+    postprocessor_kwargs: dict[str, Any] = field(default_factory=lambda: {})
+    """Keyworded arguments directly passed into the `postprocessor` for configuration."""
