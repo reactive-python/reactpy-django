@@ -22,6 +22,10 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+-   Nothing (yet)
+
+## [2.2.0] - 2022-12-28
+
 ### Added
 
 -   Add `options: QueryOptions` parameter to `use_query` to allow for configuration of this hook.
@@ -180,7 +184,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/idom-team/django-idom/compare/2.1.0...HEAD
+[unreleased]: https://github.com/idom-team/django-idom/compare/2.2.0...HEAD
+[2.2.0]: https://github.com/idom-team/django-idom/compare/2.1.0...2.2.0
 [2.1.0]: https://github.com/idom-team/django-idom/compare/2.0.1...2.1.0
 [2.0.1]: https://github.com/idom-team/django-idom/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/idom-team/django-idom/compare/1.2.0...2.0.0
