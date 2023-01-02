@@ -2,7 +2,7 @@ import inspect
 
 from django.http import HttpRequest
 from django.shortcuts import render
-from idom import component, hooks, html, web
+from idom import component, hooks, html
 from test_app.models import ForiegnChild, RelationalChild, RelationalParent, TodoItem
 
 import django_idom
