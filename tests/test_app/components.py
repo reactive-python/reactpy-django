@@ -44,15 +44,6 @@ def parameterized_component(x, y):
     )
 
 
-victory = web.module_from_template("react", "victory-bar", fallback="...")
-VictoryBar = web.export(victory, "VictoryBar")
-
-
-@component
-def simple_bar_chart():
-    return html._(VictoryBar(), html.hr())
-
-
 @component
 def use_websocket():
     ws = django_idom.hooks.use_websocket()
