@@ -22,7 +22,9 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)
+### Fixed
+
+-   Fixed bug where `use_query` would not recursively fetch many-to-one relationships.
 
 ## [2.2.0] - 2022-12-28
 
