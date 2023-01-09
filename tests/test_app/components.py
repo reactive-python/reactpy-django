@@ -2,7 +2,7 @@ import inspect
 
 from django.http import HttpRequest
 from django.shortcuts import render
-from idom import component, hooks, html
+from idom import component, hooks, html, web
 from test_app.models import ForiegnChild, RelationalChild, RelationalParent, TodoItem
 
 import django_idom
@@ -40,6 +40,20 @@ def parameterized_component(x, y):
     total = x + y
     return html._(
         html.h1({"id": "parametrized-component", "data-value": total}, total),
+        html.hr(),
+    )
+
+
+SimpleButtonModule = web.module_from_url(
+    "/static/simple-button.js", resolve_exports=False, fallback="..."
+)
+SimpleButton = web.export(SimpleButtonModule, "SimpleButton")
+
+
+@component
+def simple_button():
+    return html._(
+        SimpleButton({"id": "simple-button"}),
         html.hr(),
     )
 
