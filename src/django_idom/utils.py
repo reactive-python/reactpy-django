@@ -184,7 +184,7 @@ class ComponentPreloader:
                 _logger.info("IDOM preloader has detected component %s", component)
                 _register_component(component)
             except Exception:
-                _logger.error(
+                _logger.exception(
                     "\033[91m"
                     "IDOM failed to register component '%s'! "
                     "This component path may not be valid, "
