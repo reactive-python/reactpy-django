@@ -24,7 +24,7 @@ Using the following categories, list your changes in this order:
 
 -   Nothing (yet)
 
-## [2.2.1] - 2022-01-02
+## [2.2.1] - 2022-01-09
 
 ### Fixed
 
