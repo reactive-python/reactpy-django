@@ -48,7 +48,7 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
         self.page.locator("#parametrized-component[data-value='579']").wait_for()
 
     def test_component_from_web_module(self):
-        self.page.wait_for_selector(".VictoryContainer")
+        self.page.wait_for_selector("#simple-button")
 
     def test_use_websocket(self):
         self.page.locator("#use-websocket[data-success=true]").wait_for()

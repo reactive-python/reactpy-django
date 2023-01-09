@@ -24,6 +24,13 @@ Using the following categories, list your changes in this order:
 
 -   Nothing (yet)
 
+## [2.2.1] - 2022-01-09
+
+### Fixed
+
+-   Fixed bug where `use_query` would not recursively fetch many-to-one relationships.
+-   IDOM preloader will now print out the exception stack when failing to import a module.
+
 ## [2.2.0] - 2022-12-28
 
 ### Added
@@ -184,7 +191,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/idom-team/django-idom/compare/2.2.0...HEAD
+[unreleased]: https://github.com/idom-team/django-idom/compare/2.2.1...HEAD
+[2.2.1]: https://github.com/idom-team/django-idom/compare/2.2.0...2.2.1
 [2.2.0]: https://github.com/idom-team/django-idom/compare/2.1.0...2.2.0
 [2.1.0]: https://github.com/idom-team/django-idom/compare/2.0.1...2.1.0
 [2.0.1]: https://github.com/idom-team/django-idom/compare/2.0.0...2.0.1

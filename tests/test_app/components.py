@@ -1,4 +1,5 @@
 import inspect
+from pathlib import Path
 
 from django.http import HttpRequest
 from django.shortcuts import render
@@ -44,13 +45,21 @@ def parameterized_component(x, y):
     )
 
 
-victory = web.module_from_template("react", "victory-bar", fallback="...")
-VictoryBar = web.export(victory, "VictoryBar")
+SimpleButtonModule = web.module_from_file(
+    "SimpleButton",
+    Path(__file__).parent / "tests" / "js" / "simple-button.js",
+    resolve_exports=False,
+    fallback="...",
+)
+SimpleButton = web.export(SimpleButtonModule, "SimpleButton")
 
 
 @component
-def simple_bar_chart():
-    return html._(VictoryBar(), html.hr())
+def simple_button():
+    return html._(
+        SimpleButton({"id": "simple-button"}),
+        html.hr(),
+    )
 
 
 @component
