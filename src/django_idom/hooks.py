@@ -45,7 +45,9 @@ def use_location() -> Location:
     # TODO: Use the browser's current page, rather than the WS route
     scope = use_scope()
     search = scope["query_string"].decode()
-    return Location(scope["path"], f"?{search}" if search else "")
+    return Location(
+        scope["path"], f"?{search}" if (search and (search != "undefined")) else ""
+    )
 
 
 def use_origin() -> str | None:
