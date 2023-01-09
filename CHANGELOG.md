@@ -29,6 +29,7 @@ Using the following categories, list your changes in this order:
 ### Fixed
 
 -   Fixed bug where `use_query` would not recursively fetch many-to-one relationships.
+-   IDOM preloader will now print out the exception stack when failing to import a module.
 
 ## [2.2.0] - 2022-12-28
 

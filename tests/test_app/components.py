@@ -1,4 +1,5 @@
 import inspect
+from pathlib import Path
 
 from django.http import HttpRequest
 from django.shortcuts import render
@@ -44,8 +45,11 @@ def parameterized_component(x, y):
     )
 
 
-SimpleButtonModule = web.module_from_url(
-    "/static/simple-button.js", resolve_exports=False, fallback="..."
+SimpleButtonModule = web.module_from_file(
+    "SimpleButton",
+    Path(__file__).parent / "tests" / "js" / "simple-button.js",
+    resolve_exports=False,
+    fallback="...",
 )
 SimpleButton = web.export(SimpleButtonModule, "SimpleButton")
 
