@@ -96,5 +96,5 @@ class ComponentParamData:
     """Container used for serializing component parameters.
     This dataclass is pickled & stored in the database, then unpickled when needed."""
 
-    args: Sequence
+    args: tuple
     kwargs: dict

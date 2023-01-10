@@ -66,8 +66,8 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
         try:
             # Fetch the component's args/kwargs from the database, if needed
-            component_args = []
-            component_kwargs = {}
+            component_args: tuple[Any, ...] = tuple()
+            component_kwargs: dict = {}
             if func_has_params(component_constructor):
                 params_query = await models.ComponentParams.objects.aget(uuid=uuid)
                 component_params: ComponentParamData = pickle.loads(params_query.data)
