@@ -16,8 +16,6 @@
 
 {% include-markdown "../features/templatetag.md" start="<!--multiple-components-start-->" end="<!--multiple-components-end-->" %}
 
-{% include-markdown "../features/templatetag.md" start="<!--kwargs-start-->" end="<!--kwargs-end-->" %}
-
 {% include-markdown "../features/templatetag.md" start="<!--tags-start-->" end="<!--tags-end-->" %}
 
 ??? question "Where is my templates folder?"

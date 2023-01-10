@@ -399,19 +399,19 @@ The function you provide into this hook will have no return value.
 
     {% include-markdown "../../includes/orm.md" start="<!--orm-excp-start-->" end="<!--orm-excp-end-->" %}
 
-## Use Websocket
+## Use Connection
 
-You can fetch the Django Channels [websocket](https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer) at any time by using `use_websocket`.
+You can fetch the Django Channels [websocket](https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer) at any time by using `use_connection`.
 
 === "components.py"
 
     ```python
     from idom import component, html
-    from django_idom.hooks import use_websocket
+    from django_idom.hooks import use_connection
 
     @component
     def my_component():
-        my_websocket = use_websocket()
+        my_websocket = use_connection()
         return html.div(my_websocket)
     ```
 

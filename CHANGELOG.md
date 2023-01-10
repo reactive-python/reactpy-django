@@ -22,6 +22,18 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+### Changed
+
+-   The `component` template tag now supports both positional and keyword arguments.
+-   `use_location`, `use_scope`, and `use_websocket` previously contained within `django_idom.hooks` have been migrated to `idom.backend.hooks`.
+-   Bumped the minimum IDOM version to 0.43.0
+
+### Removed
+
+-   `django_idom.hooks.use_location` has been removed. The equivalent replacement is found at `idom.backends.hooks.use_location`.
+-   `django_idom.hooks.use_scope` has been removed. The equivalent replacement is found at `idom.backends.hooks.use_scope`.
+-   `django_idom.hooks.use_websocket` has been removed. The equivalent replacement is found at `idom.backends.hooks.use_connection`.
+
 ### Security
 
 -   Fixed a potential method of component argument spoofing

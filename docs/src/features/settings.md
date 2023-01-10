@@ -16,7 +16,7 @@
 
     # Maximum seconds between two reconnection attempts that would cause the client give up.
     # 0 will disable reconnection.
-    IDOM_WS_MAX_RECONNECT_TIMEOUT = 604800
+    IDOM_MAX_RECONNECT_TIMEOUT = 259200
 
     # The URL for IDOM to serve websockets
     IDOM_WEBSOCKET_URL = "idom/"
