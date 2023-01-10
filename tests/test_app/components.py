@@ -14,11 +14,12 @@ from django_idom.components import view_to_component
 from django_idom.hooks import use_mutation, use_query
 
 from . import views
+from .types import TestObject
 
 
 @component
 def hello_world():
-    return html._(html.h1({"id": "hello-world"}, "Hello World!"), html.hr())
+    return html._(html.div({"id": "hello-world"}, "Hello World!"), html.hr())
 
 
 @component
@@ -26,6 +27,7 @@ def button():
     count, set_count = hooks.use_state(0)
     return html._(
         html.div(
+            "button:",
             html.button(
                 {"id": "counter-inc", "onClick": lambda event: set_count(count + 1)},
                 "Click me!",
@@ -43,7 +45,27 @@ def button():
 def parameterized_component(x, y):
     total = x + y
     return html._(
-        html.h1({"id": "parametrized-component", "data-value": total}, total),
+        html.div(
+            {"id": "parametrized-component", "data-value": total},
+            f"parameterized_component: {total}",
+        ),
+        html.hr(),
+    )
+
+
+@component
+def object_in_templatetag(my_object: TestObject):
+    success = bool(my_object and my_object.value)
+    co_name = inspect.currentframe().f_code.co_name  # type: ignore
+    return html._(
+        html.div(
+            {
+                "id": co_name,
+                "data-success": success,
+            },
+            f"{co_name}: ",
+            str(my_object),
+        ),
         html.hr(),
     )
 
@@ -60,6 +82,7 @@ SimpleButton = web.export(SimpleButtonModule, "SimpleButton")
 @component
 def simple_button():
     return html._(
+        "simple_button:",
         SimpleButton({"id": "simple-button"}),
         html.hr(),
     )

@@ -2,7 +2,7 @@ import { mountLayoutWithWebSocket } from "idom-client-react";
 
 // Set up a websocket at the base endpoint
 const LOCATION = window.location;
-const WS_PROTOCOL = "";
+let WS_PROTOCOL = "";
 if (LOCATION.protocol == "https:") {
 	WS_PROTOCOL = "wss://";
 } else {

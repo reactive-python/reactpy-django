@@ -47,6 +47,9 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
     def test_parametrized_component(self):
         self.page.locator("#parametrized-component[data-value='579']").wait_for()
 
+    def test_object_in_templatetag(self):
+        self.page.locator("#object_in_templatetag[data-success=true]").wait_for()
+
     def test_component_from_web_module(self):
         self.page.wait_for_selector("#simple-button")
 

@@ -61,5 +61,5 @@ def component(dotted_path: str, *args, **kwargs):
         "idom_web_modules_url": IDOM_WEB_MODULES_URL,
         "idom_ws_max_reconnect_timeout": IDOM_MAX_RECONNECT_TIMEOUT,
         "idom_mount_uuid": uuid,
-        "idom_component_path": f"{dotted_path}/{uuid}",
+        "idom_component_path": f"{dotted_path}/{uuid}/",
     }
