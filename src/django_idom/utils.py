@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import inspect
 import logging
 import os
 import re
@@ -74,14 +75,15 @@ async def render_view(
     return response
 
 
-def _register_component(dotted_path: str) -> None:
+def _register_component(dotted_path: str) -> Callable:
     from django_idom.config import IDOM_REGISTERED_COMPONENTS
 
     if dotted_path in IDOM_REGISTERED_COMPONENTS:
-        return
+        return IDOM_REGISTERED_COMPONENTS[dotted_path]
 
     IDOM_REGISTERED_COMPONENTS[dotted_path] = _import_dotted_path(dotted_path)
     _logger.debug("IDOM has registered component %s", dotted_path)
+    return IDOM_REGISTERED_COMPONENTS[dotted_path]
 
 
 def _import_dotted_path(dotted_path: str) -> Callable:
@@ -257,3 +259,7 @@ def django_query_postprocessor(
         )
 
     return data
+
+
+def func_has_params(func: Callable):
+    return str(inspect.signature(func)) != "()"

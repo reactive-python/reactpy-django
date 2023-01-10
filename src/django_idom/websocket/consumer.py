@@ -1,10 +1,9 @@
 """Anything used to construct a websocket endpoint"""
 import asyncio
-import json
 import logging
 from typing import Any
-from urllib.parse import parse_qsl
 
+import dill as pickle
 from channels.auth import login
 from channels.db import database_sync_to_async as convert_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
@@ -13,7 +12,8 @@ from idom.core.serve import serve_json_patch
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
 from django_idom.hooks import WebsocketContext
-from django_idom.types import IdomWebsocket
+from django_idom.types import ComponentParamData, IdomWebsocket
+from django_idom.utils import func_has_params
 
 
 _logger = logging.getLogger(__name__)
@@ -48,22 +48,36 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         await self._idom_recv_queue.put(LayoutEvent(**content))
 
     async def _run_dispatch_loop(self):
-        view_id = self.scope["url_route"]["kwargs"]["view_id"]
+        from django_idom import models
+
+        dotted_path = self.scope["url_route"]["kwargs"]["dotted_path"]
+        uuid = self.scope["url_route"]["kwargs"]["uuid"]
 
         try:
-            component_constructor = IDOM_REGISTERED_COMPONENTS[view_id]
+            component_constructor = IDOM_REGISTERED_COMPONENTS[dotted_path]
         except KeyError:
-            _logger.warning(f"Unknown IDOM view ID {view_id!r}")
+            _logger.warning(
+                f"Attempt to access invalid IDOM component: {dotted_path!r}"
+            )
             return
 
-        query_dict = dict(parse_qsl(self.scope["query_string"].decode()))
-        component_kwargs = json.loads(query_dict.get("kwargs", "{}"))
-
         # Provide developer access to parts of this websocket
-        socket = IdomWebsocket(self.scope, self.close, self.disconnect, view_id)
+        socket = IdomWebsocket(self.scope, self.close, self.disconnect, dotted_path)
 
         try:
-            component_instance = component_constructor(**component_kwargs)
+            # Fetch the component's args/kwargs from the database, if needed
+            component_args = []
+            component_kwargs = {}
+            if func_has_params(component_constructor):
+                params_query = await models.ComponentParams.objects.aget(uuid=uuid)
+                component_params: ComponentParamData = pickle.loads(params_query.data)
+                component_args = component_params.args
+                component_kwargs = component_params.kwargs
+
+            # Generate the initial component instance
+            component_instance = component_constructor(
+                *component_args, **component_kwargs
+            )
         except Exception:
             _logger.exception(
                 f"Failed to construct component {component_constructor} "

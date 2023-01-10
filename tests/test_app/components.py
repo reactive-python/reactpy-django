@@ -65,7 +65,7 @@ def simple_button():
 @component
 def use_websocket():
     ws = django_idom.hooks.use_websocket()
-    success = bool(ws.scope and ws.close and ws.disconnect and ws.view_id)
+    success = bool(ws.scope and ws.close and ws.disconnect and ws.dotted_path)
     return html.div(
         {"id": "use-websocket", "data-success": success},
         f"use_websocket: {ws}",

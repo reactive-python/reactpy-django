@@ -22,7 +22,9 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)
+### Security
+
+-   Fixed a potential method of component argument spoofing
 
 ## [2.2.1] - 2022-01-09
 

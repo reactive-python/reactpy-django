@@ -17,10 +17,10 @@ IDOM_WEBSOCKET_URL = getattr(
     "IDOM_WEBSOCKET_URL",
     "idom/",
 )
-IDOM_WS_MAX_RECONNECT_TIMEOUT = getattr(
+IDOM_MAX_RECONNECT_TIMEOUT = getattr(
     settings,
-    "IDOM_WS_MAX_RECONNECT_TIMEOUT",
-    604800,
+    "IDOM_MAX_RECONNECT_TIMEOUT",
+    259200,  # Default to 3 days
 )
 IDOM_CACHE: BaseCache = (
     caches["idom"]

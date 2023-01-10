@@ -35,7 +35,7 @@ class IdomWebsocket:
     scope: dict
     close: Callable[[Optional[int]], Awaitable[None]]
     disconnect: Callable[[int], Awaitable[None]]
-    view_id: str
+    dotted_path: str
 
 
 @dataclass
@@ -89,3 +89,12 @@ class QueryOptions:
 
     postprocessor_kwargs: dict[str, Any] = field(default_factory=lambda: {})
     """Keyworded arguments directly passed into the `postprocessor` for configuration."""
+
+
+@dataclass
+class ComponentParamData:
+    """Container used for serializing component parameters.
+    This dataclass is pickled & stored in the database, then unpickled when needed."""
+
+    args: Sequence
+    kwargs: dict
