@@ -12,6 +12,9 @@ line_length = 88
 lines_after_imports = 2
 
 [tool.mypy]
+exclude = [
+    'migrations/.*',
+]
 ignore_missing_imports = true
 warn_unused_configs = true
 warn_redundant_casts = true
