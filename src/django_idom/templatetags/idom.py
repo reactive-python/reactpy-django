@@ -46,6 +46,14 @@ def component(dotted_path: str, *args, **kwargs):
         model = models.ComponentParams(uuid=uuid, data=pickle.dumps(params))
         model.full_clean()
         model.save()
+    else:
+        kwargs.pop("key", "")
+        if args or kwargs:
+            raise ValueError(
+                f"Component {dotted_path!r} does not accept any arguments, but "
+                f"{f'{args} and ' if args else ''!r}"
+                f"{kwargs!r} were provided."
+            )
 
     return {
         "class": class_,
