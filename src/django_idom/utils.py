@@ -261,6 +261,17 @@ def django_query_postprocessor(
     return data
 
 
-def func_has_params(func: Callable) -> bool:
-    """Checks if a function has any args or kwarg parameters."""
-    return str(inspect.signature(func)) != "()"
+def func_has_params(func: Callable, *args, **kwargs) -> bool:
+    """Checks if a function has any args or kwarg parameters.
+
+    Can optionally validate whether a set of args/kwargs would work on the given function.
+    """
+    signature = inspect.signature(func)
+
+    # Check if the function has any args/kwargs
+    if not args and not kwargs:
+        return str(signature) != "()"
+
+    # Check if the function has the given args/kwargs
+    signature.bind(*args, **kwargs)
+    return True

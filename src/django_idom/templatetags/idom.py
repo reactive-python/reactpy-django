@@ -38,22 +38,20 @@ def component(dotted_path: str, *args, **kwargs):
     component = _register_component(dotted_path)
     uuid = uuid4().hex
     class_ = kwargs.pop("class", "")
+    kwargs.pop("key", "")  # `key` is effectively useless for the root node
 
     # Store the component's args/kwargs in the database if needed
     # This will be fetched by the websocket consumer later
-    if func_has_params(component):
-        params = ComponentParamData(args, kwargs)
-        model = models.ComponentParams(uuid=uuid, data=pickle.dumps(params))
-        model.full_clean()
-        model.save()
-    else:
-        kwargs.pop("key", "")
-        if args or kwargs:
-            raise ValueError(
-                f"Component {dotted_path!r} does not accept any arguments, but "
-                f"{f'{args} and ' if args else ''!r}"
-                f"{kwargs!r} were provided."
-            )
+    try:
+        if func_has_params(component, *args, **kwargs):
+            params = ComponentParamData(args, kwargs)
+            model = models.ComponentParams(uuid=uuid, data=pickle.dumps(params))
+            model.full_clean()
+            model.save()
+    except TypeError as e:
+        raise TypeError(
+            f"The provided parameters are incompatible with component '{dotted_path}'."
+        ) from e
 
     return {
         "class": class_,
