@@ -21,7 +21,7 @@ from typing_extensions import ParamSpec
 from django_idom.defaults import _DEFAULT_QUERY_POSTPROCESSOR
 
 
-__all__ = ["_Result", "_Params", "_Data", "IdomWebsocket", "Query", "Mutation"]
+__all__ = ["_Result", "_Params", "_Data", "WebsocketConnection", "Query", "Mutation"]
 
 _Result = TypeVar("_Result", bound=Union[Model, QuerySet[Any]])
 _Params = ParamSpec("_Params")
@@ -29,10 +29,9 @@ _Data = TypeVar("_Data")
 
 
 @dataclass
-class IdomWebsocket:
-    """Websocket returned by the `use_websocket` hook."""
+class WebsocketConnection:
+    """Carrier type for `idom.backends.hooks.use_connection().carrier`"""
 
-    scope: dict
     close: Callable[[Optional[int]], Awaitable[None]]
     disconnect: Callable[[int], Awaitable[None]]
     dotted_path: str

@@ -50,8 +50,8 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
     def test_component_from_web_module(self):
         self.page.wait_for_selector("#simple-button")
 
-    def test_use_websocket(self):
-        self.page.locator("#use-websocket[data-success=true]").wait_for()
+    def test_use_connection(self):
+        self.page.locator("#use-connection[data-success=true]").wait_for()
 
     def test_use_scope(self):
         self.page.locator("#use-scope[data-success=true]").wait_for()

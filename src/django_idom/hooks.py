@@ -15,17 +15,10 @@ from typing import (
 
 from channels.db import database_sync_to_async as _database_sync_to_async
 from idom import use_callback, use_ref
-from idom.backend.types import Location
-from idom.core.hooks import Context, create_context, use_context, use_effect, use_state
+from idom.backend.hooks import use_scope
+from idom.core.hooks import use_effect, use_state
 
-from django_idom.types import (
-    IdomWebsocket,
-    Mutation,
-    Query,
-    QueryOptions,
-    _Params,
-    _Result,
-)
+from django_idom.types import Mutation, Query, QueryOptions, _Params, _Result
 from django_idom.utils import _generate_obj_name
 
 
@@ -34,20 +27,9 @@ database_sync_to_async = cast(
     Callable[..., Callable[..., Awaitable[Any]]],
     _database_sync_to_async,
 )
-WebsocketContext: Context[IdomWebsocket | None] = create_context(None)
 _REFETCH_CALLBACKS: DefaultDict[
     Callable[..., Any], set[Callable[[], None]]
 ] = DefaultDict(set)
-
-
-def use_location() -> Location:
-    """Get the current route as a `Location` object"""
-    # TODO: Use the browser's current page, rather than the WS route
-    scope = use_scope()
-    search = scope["query_string"].decode()
-    return Location(
-        scope["path"], f"?{search}" if (search and (search != "undefined")) else ""
-    )
 
 
 def use_origin() -> str | None:
@@ -65,19 +47,6 @@ def use_origin() -> str | None:
         )
     except Exception:
         return None
-
-
-def use_scope() -> dict[str, Any]:
-    """Get the current ASGI scope dictionary"""
-    return use_websocket().scope
-
-
-def use_websocket() -> IdomWebsocket:
-    """Get the current IdomWebsocket object"""
-    websocket = use_context(WebsocketContext)
-    if websocket is None:
-        raise RuntimeError("No websocket. Are you running with a Django server?")
-    return websocket
 
 
 @overload

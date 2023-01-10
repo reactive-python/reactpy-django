@@ -4,6 +4,9 @@ from pathlib import Path
 from django.http import HttpRequest
 from django.shortcuts import render
 from idom import component, hooks, html, web
+from idom.backend.hooks import use_connection as use_connection_hook
+from idom.backend.hooks import use_location as use_location_hook
+from idom.backend.hooks import use_scope as use_scope_hook
 from test_app.models import ForiegnChild, RelationalChild, RelationalParent, TodoItem
 
 import django_idom
@@ -63,19 +66,25 @@ def simple_button():
 
 
 @component
-def use_websocket():
-    ws = django_idom.hooks.use_websocket()
-    success = bool(ws.scope and ws.close and ws.disconnect and ws.dotted_path)
+def use_connection():
+    ws = use_connection_hook()
+    success = bool(
+        ws.scope
+        and ws.location
+        and ws.carrier.close
+        and ws.carrier.disconnect
+        and ws.carrier.dotted_path
+    )
     return html.div(
-        {"id": "use-websocket", "data-success": success},
-        f"use_websocket: {ws}",
+        {"id": "use-connection", "data-success": success},
+        f"use_connection: {ws}",
         html.hr(),
     )
 
 
 @component
 def use_scope():
-    scope = django_idom.hooks.use_scope()
+    scope = use_scope_hook()
     success = len(scope) >= 10 and scope["type"] == "websocket"
     return html.div(
         {"id": "use-scope", "data-success": success},
@@ -86,7 +95,7 @@ def use_scope():
 
 @component
 def use_location():
-    location = django_idom.hooks.use_location()
+    location = use_location_hook()
     success = bool(location)
     return html.div(
         {"id": "use-location", "data-success": success},

@@ -7,12 +7,13 @@ import dill as pickle
 from channels.auth import login
 from channels.db import database_sync_to_async as convert_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from idom.backend.hooks import ConnectionContext
+from idom.backend.types import Connection, Location
 from idom.core.layout import Layout, LayoutEvent
 from idom.core.serve import serve_json_patch
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
-from django_idom.hooks import WebsocketContext
-from django_idom.types import ComponentParamData, IdomWebsocket
+from django_idom.types import ComponentParamData, WebsocketConnection
 from django_idom.utils import func_has_params
 
 
@@ -50,10 +51,24 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
     async def _run_dispatch_loop(self):
         from django_idom import models
 
-        dotted_path = self.scope["url_route"]["kwargs"]["dotted_path"]
-        uuid = self.scope["url_route"]["kwargs"]["uuid"]
+        scope = self.scope
+        dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
+        uuid = scope["url_route"]["kwargs"]["uuid"]
+        search = scope["query_string"].decode()
+        self._idom_recv_queue = recv_queue = asyncio.Queue()  # type: ignore
+        connection = Connection(  # Set up the `idom.backend.hooks` using context values
+            scope=scope,
+            location=Location(
+                pathname=scope["path"],
+                search=f"?{search}" if (search and (search != "undefined")) else "",
+            ),
+            carrier=WebsocketConnection(self.close, self.disconnect, dotted_path),
+        )
+        component_args: tuple[Any, ...] = tuple()
+        component_kwargs: dict = {}
 
         try:
+            # Verify the component has already been registered
             component_constructor = IDOM_REGISTERED_COMPONENTS[dotted_path]
         except KeyError:
             _logger.warning(
@@ -61,13 +76,8 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             )
             return
 
-        # Provide developer access to parts of this websocket
-        socket = IdomWebsocket(self.scope, self.close, self.disconnect, dotted_path)
-
         try:
             # Fetch the component's args/kwargs from the database, if needed
-            component_args: tuple[Any, ...] = tuple()
-            component_kwargs: dict = {}
             if func_has_params(component_constructor):
                 params_query = await models.ComponentParams.objects.aget(uuid=uuid)
                 component_params: ComponentParamData = pickle.loads(params_query.data)
@@ -85,10 +95,10 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             )
             return
 
-        self._idom_recv_queue = recv_queue = asyncio.Queue()  # type: ignore
         try:
+            # Begin serving the IDOM component
             await serve_json_patch(
-                Layout(WebsocketContext(component_instance, value=socket)),
+                Layout(ConnectionContext(component_instance, value=connection)),
                 self.send_json,
                 recv_queue.get,
             )
