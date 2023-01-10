@@ -20,10 +20,10 @@ def component(dotted_path: str, *args, **kwargs):
 
     Args:
         dotted_path: The dotted path to the component to render.
-        *args: The positional arguments to pass to the component.
+        *args: The positional arguments to provide to the component.
 
     Keyword Args:
-        **kwargs: The keyword arguments to pass to the component.
+        **kwargs: The keyword arguments to provide to the component.
 
     Example ::
 
