@@ -24,9 +24,11 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
     """Communicates with the browser to perform actions on-demand."""
 
     async def connect(self) -> None:
+        from django.contrib.auth.models import AbstractBaseUser
+
         await super().connect()
 
-        user = self.scope.get("user")
+        user: AbstractBaseUser = self.scope.get("user")
         if user and user.is_authenticated:
             try:
                 await login(self.scope, user)
