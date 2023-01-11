@@ -41,6 +41,7 @@ Using the following categories, list your changes in this order:
 ### Fixed
 
 -   `view_to_component` will now retain nodes (such as CSS and JavaScript) that were defined in a page's HTML `<head>`
+-   The React client is now set to `production` rather than `development`
 
 ### Security
 
