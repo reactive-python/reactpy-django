@@ -1,7 +1,9 @@
 """Anything used to construct a websocket endpoint"""
+from __future__ import annotations
+
 import asyncio
 import logging
-from typing import Any, Tuple
+from typing import Any
 
 import dill as pickle
 from channels.auth import login
@@ -66,7 +68,7 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             ),
             carrier=WebsocketConnection(self.close, self.disconnect, dotted_path),
         )
-        component_args: Tuple[Any, ...] = tuple()
+        component_args: tuple[Any, ...] = tuple()
         component_kwargs: dict = {}
 
         try:
