@@ -62,6 +62,7 @@ def _view_to_component(
         set_converted_view(
             utils.html_to_vdom(
                 response.content.decode("utf-8").strip(),
+                utils.del_html_head_body_transform,
                 *transforms,
                 strict=strict_parsing,
             )
