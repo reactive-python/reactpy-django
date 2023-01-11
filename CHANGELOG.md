@@ -25,16 +25,22 @@ Using the following categories, list your changes in this order:
 ### Changed
 
 -   The `component` template tag now supports both positional and keyword arguments.
+-   The `component` template tag now supports non-serializable arguments.
 -   `use_location`, `use_scope`, and `use_websocket` previously contained within `django_idom.hooks` have been migrated to `idom.backend.hooks`.
 -   Bumped the minimum IDOM version to 0.43.0
--   `IDOM_WS_MAX_RECONNECT_TIMEOUT` has been renamed to `IDOM_RECONNECT_MAX`
+-   `IDOM_WS_MAX_RECONNECT_TIMEOUT` setting has been renamed to `IDOM_RECONNECT_MAX`
+-   `django_idom.types.IdomWebsocket` has been renamed to `WebsocketConnection`
 -   It is now mandatory to run `manage.py migrate` after installing IDOM
 
 ### Removed
 
--   `django_idom.hooks.use_location` has been removed. The equivalent replacement is found at `idom.backends.hooks.use_location`.
--   `django_idom.hooks.use_scope` has been removed. The equivalent replacement is found at `idom.backends.hooks.use_scope`.
--   `django_idom.hooks.use_websocket` has been removed. The equivalent replacement is found at `idom.backends.hooks.use_connection`.
+-   `django_idom.hooks.use_location` has been removed. The equivalent replacement is found at `idom.backend.hooks.use_location`.
+-   `django_idom.hooks.use_scope` has been removed. The equivalent replacement is found at `idom.backend.hooks.use_scope`.
+-   `django_idom.hooks.use_websocket` has been removed. The equivalent replacement is found at `idom.backend.hooks.use_connection`.
+
+### Fixed
+
+-   `view_to_component` will now retain nodes (such as CSS and JavaScript) that were defined in a page's HTML `<head>`
 
 ### Security
 

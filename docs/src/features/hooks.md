@@ -399,98 +399,6 @@ The function you provide into this hook will have no return value.
 
     {% include-markdown "../../includes/orm.md" start="<!--orm-excp-start-->" end="<!--orm-excp-end-->" %}
 
-## Use Connection
-
-You can fetch the Django Channels [websocket](https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer) at any time by using `use_connection`.
-
-=== "components.py"
-
-    ```python
-    from idom import component, html
-    from django_idom.hooks import use_connection
-
-    @component
-    def my_component():
-        my_websocket = use_connection()
-        return html.div(my_websocket)
-    ```
-
-??? example "See Interface"
-
-    <font size="4">**Parameters**</font>
-
-    `None`
-
-    <font size="4">**Returns**</font>
-
-    | Type | Description |
-    | --- | --- |
-    | `IdomWebsocket` | The component's websocket. |
-
-## Use Scope
-
-This is a shortcut that returns the Websocket's [`scope`](https://channels.readthedocs.io/en/stable/topics/consumers.html#scope).
-
-=== "components.py"
-
-    ```python
-    from idom import component, html
-    from django_idom.hooks import use_scope
-
-    @component
-    def my_component():
-        my_scope = use_scope()
-        return html.div(my_scope)
-    ```
-
-??? example "See Interface"
-
-    <font size="4">**Parameters**</font>
-
-    `None`
-
-    <font size="4">**Returns**</font>
-
-    | Type | Description |
-    | --- | --- |
-    | `dict[str, Any]` | The websocket's `scope`. |
-
-## Use Location
-
-This is a shortcut that returns the Websocket's `path`.
-
-You can expect this hook to provide strings such as `/idom/my_path`.
-
-=== "components.py"
-
-    ```python
-    from idom import component, html
-    from django_idom.hooks import use_location
-
-    @component
-    def my_component():
-        my_location = use_location()
-        return html.div(my_location)
-    ```
-
-??? example "See Interface"
-
-    <font size="4">**Parameters**</font>
-
-    `None`
-
-    <font size="4">**Returns**</font>
-
-    | Type | Description |
-    | --- | --- |
-    | `Location` | A object containing the current URL's `pathname` and `search` query. |
-
-??? info "This hook's behavior will be changed in a future update"
-
-    This hook will be updated to return the browser's currently active path. This change will come in alongside IDOM URL routing support.
-
-    Check out [idom-team/idom-router#2](https://github.com/idom-team/idom-router/issues/2) for more information.
-
 ## Use Origin
 
 This is a shortcut that returns the Websocket's `origin`.
@@ -520,3 +428,95 @@ You can expect this hook to provide strings such as `http://example.com`.
     | Type | Description |
     | --- | --- |
     | `str | None` | A string containing the browser's current origin, obtained from websocket headers (if available). |
+
+## Use Connection
+
+You can fetch the Django Channels [websocket](https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer) at any time by using `use_connection`.
+
+=== "components.py"
+
+    ```python
+    from idom import component, html
+    from idom.backend.hooks import use_connection
+
+    @component
+    def my_component():
+        my_websocket = use_connection()
+        return html.div(my_websocket)
+    ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    `None`
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `WebsocketConnection` | The component's websocket. |
+
+## Use Scope
+
+This is a shortcut that returns the Websocket's [`scope`](https://channels.readthedocs.io/en/stable/topics/consumers.html#scope).
+
+=== "components.py"
+
+    ```python
+    from idom import component, html
+    from idom.backend.hooks import use_scope
+
+    @component
+    def my_component():
+        my_scope = use_scope()
+        return html.div(my_scope)
+    ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    `None`
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `dict[str, Any]` | The websocket's `scope`. |
+
+## Use Location
+
+This is a shortcut that returns the Websocket's `path`.
+
+You can expect this hook to provide strings such as `/idom/my_path`.
+
+=== "components.py"
+
+    ```python
+    from idom import component, html
+    from idom.backend.hooks import use_location
+
+    @component
+    def my_component():
+        my_location = use_location()
+        return html.div(my_location)
+    ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    `None`
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `Location` | A object containing the current URL's `pathname` and `search` query. |
+
+??? info "This hook's behavior will be changed in a future update"
+
+    This hook will be updated to return the browser's currently active path. This change will come in alongside IDOM URL routing support.
+
+    Check out [idom-team/idom-router#2](https://github.com/idom-team/idom-router/issues/2) for more information.

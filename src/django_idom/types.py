@@ -30,7 +30,7 @@ _Data = TypeVar("_Data")
 
 @dataclass
 class WebsocketConnection:
-    """Carrier type for `idom.backends.hooks.use_connection().carrier`"""
+    """Carrier type for `idom.backend.hooks.use_connection().carrier`"""
 
     close: Callable[[Optional[int]], Awaitable[None]]
     disconnect: Callable[[int], Awaitable[None]]
