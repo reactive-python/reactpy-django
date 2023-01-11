@@ -1,6 +1,7 @@
-import sys
+import contextlib
 
 from django.apps import AppConfig
+from django.db.utils import OperationalError
 
 from django_idom.utils import ComponentPreloader, db_cleanup
 
@@ -13,5 +14,8 @@ class DjangoIdomConfig(AppConfig):
         ComponentPreloader().register_all()
 
         # Delete expired database entries
-        if "test" not in sys.argv:
+        # Suppress exceptions to avoid issues with `manage.py` commands such as
+        # `test`, `migrate`, `makemigrations`, or any custom user created commands
+        # where the database may not be preconfigured.
+        with contextlib.suppress(OperationalError):
             db_cleanup(immediate=True)
