@@ -22,6 +22,10 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+### Added
+
+-   The built-in `idom` client will now automatically configure itself to debug mode depending on `settings.py:DEBUG`
+
 ### Changed
 
 -   The `component` template tag now supports both positional and keyword arguments.
