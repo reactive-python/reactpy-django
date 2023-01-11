@@ -25,3 +25,4 @@ idom
 asgi
 postfixed
 postprocessing
+serializable
