@@ -5,7 +5,7 @@ from django import template
 from django.urls import reverse
 
 from django_idom import models
-from django_idom.config import IDOM_MAX_RECONNECT_TIMEOUT, IDOM_WEBSOCKET_URL
+from django_idom.config import IDOM_RECONNECT_MAX, IDOM_WEBSOCKET_URL
 from django_idom.types import ComponentParamData
 from django_idom.utils import _register_component, func_has_params
 
@@ -57,7 +57,7 @@ def component(dotted_path: str, *args, **kwargs):
         "class": class_,
         "idom_websocket_url": IDOM_WEBSOCKET_URL,
         "idom_web_modules_url": IDOM_WEB_MODULES_URL,
-        "idom_ws_max_reconnect_timeout": IDOM_MAX_RECONNECT_TIMEOUT,
+        "idom_reconnect_max": IDOM_RECONNECT_MAX,
         "idom_mount_uuid": uuid,
         "idom_component_path": f"{dotted_path}/{uuid}/",
     }

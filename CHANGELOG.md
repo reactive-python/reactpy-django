@@ -27,6 +27,8 @@ Using the following categories, list your changes in this order:
 -   The `component` template tag now supports both positional and keyword arguments.
 -   `use_location`, `use_scope`, and `use_websocket` previously contained within `django_idom.hooks` have been migrated to `idom.backend.hooks`.
 -   Bumped the minimum IDOM version to 0.43.0
+-   `IDOM_WS_MAX_RECONNECT_TIMEOUT` has been renamed to `IDOM_RECONNECT_MAX`
+-   It is now mandatory to run `manage.py migrate` after installing IDOM
 
 ### Removed
 

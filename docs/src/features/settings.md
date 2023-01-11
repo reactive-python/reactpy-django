@@ -14,9 +14,9 @@
     "idom": {"BACKEND": ...},
     }
 
-    # Maximum seconds between two reconnection attempts that would cause the client give up.
+    # Maximum seconds between a reconnection attempt before giving up.
     # 0 will disable reconnection.
-    IDOM_MAX_RECONNECT_TIMEOUT = 259200
+    IDOM_RECONNECT_MAX = 259200
 
     # The URL for IDOM to serve websockets
     IDOM_WEBSOCKET_URL = "idom/"

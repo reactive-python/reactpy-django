@@ -5,6 +5,7 @@ import inspect
 import logging
 import os
 import re
+from datetime import datetime, timedelta
 from fnmatch import fnmatch
 from importlib import import_module
 from inspect import iscoroutinefunction
@@ -17,6 +18,7 @@ from django.db.models.fields.reverse_related import ManyToOneRel
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.template import engines
+from django.utils import timezone
 from django.utils.encoding import smart_str
 from django.views import View
 
@@ -275,3 +277,44 @@ def func_has_params(func: Callable, *args, **kwargs) -> bool:
     # Check if the function has the given args/kwargs
     signature.bind(*args, **kwargs)
     return True
+
+
+def _create_cache_key(*args):
+    """Creates a cache key string that starts with `django_idom` contains
+    all *args separated by `:`."""
+
+    if not args:
+        raise ValueError("At least one argument is required to create a cache key.")
+
+    return f"django_idom:{':'.join(str(arg) for arg in args)}"
+
+
+def db_cleanup(immediate: bool = False):
+    """Deletes expired component parameters from the database.
+    This function may be expanded in the future to include additional cleanup tasks."""
+    from .config import IDOM_CACHE, IDOM_RECONNECT_MAX
+    from .models import ComponentParams
+
+    date_format: str = "%Y-%m-%d %H:%M:%S.%f+%Z"
+    cache_key: str = _create_cache_key("last_cleaned")
+    now_str: str = datetime.strftime(timezone.now(), date_format)
+    last_cleaned_str: str = IDOM_CACHE.get(cache_key)
+
+    # Calculate the expiration time using Django timezones
+    last_cleaned: datetime = timezone.make_aware(
+        datetime.strptime(last_cleaned_str or now_str, date_format)
+    )
+    expiration: datetime = last_cleaned + timedelta(seconds=IDOM_RECONNECT_MAX)
+
+    # Component params exist in the DB, but we don't know when they were last cleaned
+    if not last_cleaned_str and ComponentParams.objects.all():
+        _logger.warning(
+            "IDOM has detected component sessions in the database, "
+            "but no timestamp was found in cache. This may indicate that "
+            "the cache has been cleared."
+        )
+
+    # Delete expired component parameters
+    if immediate or not last_cleaned_str or timezone.now() >= expiration:
+        ComponentParams.objects.filter(last_accessed__gte=expiration).delete()
+        IDOM_CACHE.set(cache_key, now_str)

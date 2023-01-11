@@ -9,6 +9,7 @@ import dill as pickle
 from channels.auth import login
 from channels.db import database_sync_to_async as convert_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from django.utils import timezone
 from idom.backend.hooks import ConnectionContext
 from idom.backend.types import Connection, Location
 from idom.core.layout import Layout, LayoutEvent
@@ -16,7 +17,7 @@ from idom.core.serve import serve_json_patch
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
 from django_idom.types import ComponentParamData, WebsocketConnection
-from django_idom.utils import func_has_params
+from django_idom.utils import db_cleanup, func_has_params
 
 
 _logger = logging.getLogger(__name__)
@@ -83,7 +84,20 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         try:
             # Fetch the component's args/kwargs from the database, if needed
             if func_has_params(component_constructor):
-                params_query = await models.ComponentParams.objects.aget(uuid=uuid)
+                try:
+                    # Always clean up expired entries first
+                    await convert_to_async(db_cleanup)()
+
+                    # Get the queries from a DB
+                    params_query = await models.ComponentParams.objects.aget(uuid=uuid)
+                    params_query.last_accessed = timezone.now()
+                    await convert_to_async(params_query.save)()
+                except models.ComponentParams.DoesNotExist:
+                    _logger.warning(
+                        f"Browser has attempted to access '{dotted_path}', "
+                        f"but the component has already expired beyond IDOM_RECONNECT_MAX."
+                    )
+                    return
                 component_params: ComponentParamData = pickle.loads(params_query.data)
                 component_args = component_params.args
                 component_kwargs = component_params.kwargs
