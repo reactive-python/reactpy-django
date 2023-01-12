@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from datetime import timedelta
 from typing import Any
 
 import dill as pickle
@@ -55,6 +56,7 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
     async def _run_dispatch_loop(self):
         from django_idom import models
+        from django_idom.config import IDOM_RECONNECT_MAX
 
         scope = self.scope
         dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
@@ -69,11 +71,12 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             ),
             carrier=WebsocketConnection(self.close, self.disconnect, dotted_path),
         )
+        now = timezone.now()
         component_args: tuple[Any, ...] = tuple()
         component_kwargs: dict = {}
 
+        # Verify the component has already been registered
         try:
-            # Verify the component has already been registered
             component_constructor = IDOM_REGISTERED_COMPONENTS[dotted_path]
         except KeyError:
             _logger.warning(
@@ -81,15 +84,18 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             )
             return
 
+        # Fetch the component's args/kwargs from the database, if needed
         try:
-            # Fetch the component's args/kwargs from the database, if needed
             if func_has_params(component_constructor):
                 try:
                     # Always clean up expired entries first
                     await convert_to_async(db_cleanup)()
 
                     # Get the queries from a DB
-                    params_query = await models.ComponentParams.objects.aget(uuid=uuid)
+                    params_query = await models.ComponentParams.objects.aget(
+                        uuid=uuid,
+                        last_accessed__gt=now - timedelta(seconds=IDOM_RECONNECT_MAX),
+                    )
                     params_query.last_accessed = timezone.now()
                     await convert_to_async(params_query.save)()
                 except models.ComponentParams.DoesNotExist:
@@ -113,8 +119,8 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             )
             return
 
+        # Begin serving the IDOM component
         try:
-            # Begin serving the IDOM component
             await serve_json_patch(
                 Layout(ConnectionContext(component_instance, value=connection)),
                 self.send_json,
