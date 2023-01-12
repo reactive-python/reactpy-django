@@ -19,7 +19,7 @@ from idom.backend.hooks import use_scope
 from idom.core.hooks import use_effect, use_state
 
 from django_idom.types import Mutation, Query, QueryOptions, _Params, _Result
-from django_idom.utils import _generate_obj_name
+from django_idom.utils import generate_obj_name
 
 
 _logger = logging.getLogger(__name__)
@@ -136,7 +136,7 @@ def use_query(
             set_loading(False)
             set_error(e)
             _logger.exception(
-                f"Failed to execute query: {_generate_obj_name(query) or query}"
+                f"Failed to execute query: {generate_obj_name(query) or query}"
             )
             return
         finally:
@@ -179,7 +179,7 @@ def use_mutation(
                 set_loading(False)
                 set_error(e)
                 _logger.exception(
-                    f"Failed to execute mutation: {_generate_obj_name(mutate) or mutate}"
+                    f"Failed to execute mutation: {generate_obj_name(mutate) or mutate}"
                 )
             else:
                 set_loading(False)

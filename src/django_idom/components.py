@@ -13,7 +13,7 @@ from idom.types import ComponentType, Key, VdomDict
 
 from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
 from django_idom.types import ViewComponentIframe
-from django_idom.utils import _generate_obj_name, render_view
+from django_idom.utils import generate_obj_name, render_view
 
 
 class _ViewComponentConstructor(Protocol):
@@ -47,8 +47,8 @@ def _view_to_component(
     # Render the view render within a hook
     @hooks.use_effect(
         dependencies=[
-            json.dumps(vars(_request), default=lambda x: _generate_obj_name(x)),
-            json.dumps([_args, _kwargs], default=lambda x: _generate_obj_name(x)),
+            json.dumps(vars(_request), default=lambda x: generate_obj_name(x)),
+            json.dumps([_args, _kwargs], default=lambda x: generate_obj_name(x)),
         ]
     )
     async def async_render():

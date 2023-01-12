@@ -198,7 +198,7 @@ class ComponentPreloader:
                 )
 
 
-def _generate_obj_name(object: Any) -> str | None:
+def generate_obj_name(object: Any) -> str | None:
     """Makes a best effort to create a name for an object.
     Useful for JSON serialization of Python objects."""
     if hasattr(object, "__module__"):
@@ -279,7 +279,7 @@ def func_has_params(func: Callable, *args, **kwargs) -> bool:
     return True
 
 
-def _create_cache_key(*args):
+def create_cache_key(*args):
     """Creates a cache key string that starts with `django_idom` contains
     all *args separated by `:`."""
 
