@@ -215,7 +215,18 @@ def django_query_postprocessor(
 ) -> QuerySet | Model:
     """Recursively fetch all fields within a `Model` or `QuerySet` to ensure they are not performed lazily.
 
-    Some behaviors can be modified through `query_options` attributes."""
+    Behaviors can be modified through `QueryOptions` within your `use_query` hook.
+
+    Args:
+        data: The `Model` or `QuerySet` to recursively fetch fields from.
+
+    Keyword Args:
+        many_to_many: Whether or not to recursively fetch `ManyToManyField` relationships.
+        many_to_one: Whether or not to recursively fetch `ForeignKey` relationships.
+
+    Returns:
+        The `Model` or `QuerySet` with all fields fetched.
+    """
 
     # `QuerySet`, which is an iterable of `Model`/`QuerySet` instances
     # https://github.com/typeddjango/django-stubs/issues/704

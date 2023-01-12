@@ -131,7 +131,7 @@ def view_to_component(
             perfectly adhere to HTML5.
 
     Returns:
-        Callable: A function that takes `request: HttpRequest | None, *args: Any, key: Key | None, **kwargs: Any`
+        A function that takes `request: HttpRequest | None, *args: Any, key: Key | None, **kwargs: Any`
             and returns an IDOM component.
     """
 
