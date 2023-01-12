@@ -37,6 +37,7 @@ COMPONENT_REGEX = re.compile(
     + _component_kwargs
     + r"\s*%}"
 )
+DATE_FORMAT = "%Y-%m-%d %H:%M:%S.%f+%Z"
 
 
 async def render_view(
@@ -292,19 +293,13 @@ def create_cache_key(*args):
 def db_cleanup(immediate: bool = False):
     """Deletes expired component parameters from the database.
     This function may be expanded in the future to include additional cleanup tasks."""
-    from .config import IDOM_CACHE, IDOM_RECONNECT_MAX
+    from .config import IDOM_CACHE
     from .models import ComponentParams
 
-    date_format: str = "%Y-%m-%d %H:%M:%S.%f+%Z"
-    cache_key: str = _create_cache_key("last_cleaned")
-    now_str: str = datetime.strftime(timezone.now(), date_format)
+    cache_key: str = create_cache_key("last_cleaned")
+    now_str: str = datetime.strftime(timezone.now(), DATE_FORMAT)
     last_cleaned_str: str = IDOM_CACHE.get(cache_key)
-
-    # Calculate the expiration time using Django timezones
-    last_cleaned: datetime = timezone.make_aware(
-        datetime.strptime(last_cleaned_str or now_str, date_format)
-    )
-    expiration: datetime = last_cleaned + timedelta(seconds=IDOM_RECONNECT_MAX)
+    expiration: datetime = connection_expiration_date(last_cleaned_str or now_str)
 
     # Component params exist in the DB, but we don't know when they were last cleaned
     if not last_cleaned_str and ComponentParams.objects.all():
@@ -318,3 +313,14 @@ def db_cleanup(immediate: bool = False):
     if immediate or not last_cleaned_str or timezone.now() >= expiration:
         ComponentParams.objects.filter(last_accessed__gte=expiration).delete()
         IDOM_CACHE.set(cache_key, now_str)
+
+
+def connection_expiration_date(datetime_str) -> datetime:
+    """Calculates the expiration time for a connection."""
+    from .config import IDOM_RECONNECT_MAX
+
+    # Calculate the expiration time using Django timezones
+    last_cleaned: datetime = timezone.make_aware(
+        datetime.strptime(datetime_str, DATE_FORMAT)
+    )
+    return last_cleaned + timedelta(seconds=IDOM_RECONNECT_MAX)
