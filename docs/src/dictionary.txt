@@ -26,3 +26,4 @@ asgi
 postfixed
 postprocessing
 serializable
+postprocessor
