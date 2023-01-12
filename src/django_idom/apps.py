@@ -11,7 +11,7 @@ class DjangoIdomConfig(AppConfig):
 
     def ready(self):
         # Populate the IDOM component registry when Django is ready
-        ComponentPreloader().register_all()
+        ComponentPreloader().run()
 
         # Delete expired database entries
         # Suppress exceptions to avoid issues with `manage.py` commands such as

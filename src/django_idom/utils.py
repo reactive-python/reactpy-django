@@ -84,12 +84,12 @@ def _register_component(dotted_path: str) -> Callable:
     if dotted_path in IDOM_REGISTERED_COMPONENTS:
         return IDOM_REGISTERED_COMPONENTS[dotted_path]
 
-    IDOM_REGISTERED_COMPONENTS[dotted_path] = _import_dotted_path(dotted_path)
+    IDOM_REGISTERED_COMPONENTS[dotted_path] = import_dotted_path(dotted_path)
     _logger.debug("IDOM has registered component %s", dotted_path)
     return IDOM_REGISTERED_COMPONENTS[dotted_path]
 
 
-def _import_dotted_path(dotted_path: str) -> Callable:
+def import_dotted_path(dotted_path: str) -> Callable:
     """Imports a dotted path and returns the callable."""
     module_name, component_name = dotted_path.rsplit(".", 1)
 
@@ -104,18 +104,18 @@ def _import_dotted_path(dotted_path: str) -> Callable:
 
 
 class ComponentPreloader:
-    def register_all(self):
+    def run(self):
         """Registers all IDOM components found within Django templates."""
         # Get all template folder paths
-        paths = self._get_paths()
+        paths = self.get_paths()
         # Get all HTML template files
-        templates = self._get_templates(paths)
+        templates = self.get_templates(paths)
         # Get all components
-        components = self._get_components(templates)
+        components = self.get_components(templates)
         # Register all components
-        self._register_components(components)
+        self.register_components(components)
 
-    def _get_loaders(self):
+    def get_loaders(self):
         """Obtains currently configured template loaders."""
         template_source_loaders = []
         for e in engines.all():
@@ -131,10 +131,10 @@ class ComponentPreloader:
                 loaders.append(loader)
         return loaders
 
-    def _get_paths(self) -> set[str]:
+    def get_paths(self) -> set[str]:
         """Obtains a set of all template directories."""
         paths: set[str] = set()
-        for loader in self._get_loaders():
+        for loader in self.get_loaders():
             with contextlib.suppress(ImportError, AttributeError, TypeError):
                 module = import_module(loader.__module__)
                 get_template_sources = getattr(module, "get_template_sources", None)
@@ -143,7 +143,7 @@ class ComponentPreloader:
                 paths.update(smart_str(origin) for origin in get_template_sources(""))
         return paths
 
-    def _get_templates(self, paths: set[str]) -> set[str]:
+    def get_templates(self, paths: set[str]) -> set[str]:
         """Obtains a set of all HTML template paths."""
         extensions = [".html"]
         templates: set[str] = set()
@@ -158,7 +158,7 @@ class ComponentPreloader:
 
         return templates
 
-    def _get_components(self, templates: set[str]) -> set[str]:
+    def get_components(self, templates: set[str]) -> set[str]:
         """Obtains a set of all IDOM components by parsing HTML templates."""
         components: set[str] = set()
         for template in templates:
@@ -182,7 +182,7 @@ class ComponentPreloader:
             )
         return components
 
-    def _register_components(self, components: set[str]) -> None:
+    def register_components(self, components: set[str]) -> None:
         """Registers all IDOM components in an iterable."""
         for component in components:
             try:
