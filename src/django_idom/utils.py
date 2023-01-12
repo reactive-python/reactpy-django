@@ -293,16 +293,20 @@ def create_cache_key(*args):
 def db_cleanup(immediate: bool = False):
     """Deletes expired component parameters from the database.
     This function may be expanded in the future to include additional cleanup tasks."""
-    from .config import IDOM_CACHE
+    from .config import IDOM_CACHE, IDOM_RECONNECT_MAX
     from .models import ComponentParams
 
     cache_key: str = create_cache_key("last_cleaned")
     now_str: str = datetime.strftime(timezone.now(), DATE_FORMAT)
-    last_cleaned_str: str = IDOM_CACHE.get(cache_key)
-    expiration: datetime = connection_expiration_date(last_cleaned_str or now_str)
+    cleaned_at_str: str = IDOM_CACHE.get(cache_key)
+    cleaned_at: datetime = timezone.make_aware(
+        datetime.strptime(cleaned_at_str or now_str, DATE_FORMAT)
+    )
+    clean_needed_by = cleaned_at + timedelta(seconds=IDOM_RECONNECT_MAX)
+    expires_by: datetime = timezone.now() - timedelta(seconds=IDOM_RECONNECT_MAX)
 
     # Component params exist in the DB, but we don't know when they were last cleaned
-    if not last_cleaned_str and ComponentParams.objects.all():
+    if not cleaned_at_str and ComponentParams.objects.all():
         _logger.warning(
             "IDOM has detected component sessions in the database, "
             "but no timestamp was found in cache. This may indicate that "
@@ -310,17 +314,6 @@ def db_cleanup(immediate: bool = False):
         )
 
     # Delete expired component parameters
-    if immediate or not last_cleaned_str or timezone.now() >= expiration:
-        ComponentParams.objects.filter(last_accessed__gte=expiration).delete()
+    if immediate or not cleaned_at_str or timezone.now() >= clean_needed_by:
+        ComponentParams.objects.filter(last_accessed__lte=expires_by).delete()
         IDOM_CACHE.set(cache_key, now_str)
-
-
-def connection_expiration_date(datetime_str) -> datetime:
-    """Calculates the expiration time for a connection."""
-    from .config import IDOM_RECONNECT_MAX
-
-    # Calculate the expiration time using Django timezones
-    last_cleaned: datetime = timezone.make_aware(
-        datetime.strptime(datetime_str, DATE_FORMAT)
-    )
-    return last_cleaned + timedelta(seconds=IDOM_RECONNECT_MAX)
