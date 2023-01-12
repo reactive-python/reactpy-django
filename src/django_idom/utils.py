@@ -79,6 +79,8 @@ async def render_view(
 
 
 def _register_component(dotted_path: str) -> Callable:
+    """Adds a component to the mapping of registered components.
+    This should only be called on startup to maintain synchronization during mulitprocessing."""
     from django_idom.config import IDOM_REGISTERED_COMPONENTS
 
     if dotted_path in IDOM_REGISTERED_COMPONENTS:
