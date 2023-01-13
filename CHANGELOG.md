@@ -22,7 +22,9 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)
+### Fixed
+
+-   `use_query` will now utilize `field.related_name` when postprocessing many-to-one relationships
 
 ## [2.2.1] - 2022-01-09
 
