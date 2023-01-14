@@ -437,12 +437,12 @@ You can fetch the Django Channels [websocket](https://channels.readthedocs.io/en
 
     ```python
     from idom import component, html
-    from idom.backend.hooks import use_connection
+    from django_idom.hooks import use_connection
 
     @component
     def my_component():
-        my_websocket = use_connection()
-        return html.div(my_websocket)
+        my_connection = use_connection()
+        return html.div(my_connection)
     ```
 
 ??? example "See Interface"
@@ -455,7 +455,7 @@ You can fetch the Django Channels [websocket](https://channels.readthedocs.io/en
 
     | Type | Description |
     | --- | --- |
-    | `WebsocketConnection` | The component's websocket. |
+    | `Connection` | The component's websocket. |
 
 ## Use Scope
 
@@ -465,7 +465,7 @@ This is a shortcut that returns the Websocket's [`scope`](https://channels.readt
 
     ```python
     from idom import component, html
-    from idom.backend.hooks import use_scope
+    from django_idom.hooks import use_scope
 
     @component
     def my_component():
@@ -483,7 +483,7 @@ This is a shortcut that returns the Websocket's [`scope`](https://channels.readt
 
     | Type | Description |
     | --- | --- |
-    | `dict[str, Any]` | The websocket's `scope`. |
+    | `MutableMapping[str, Any]` | The websocket's `scope`. |
 
 ## Use Location
 
@@ -495,7 +495,7 @@ You can expect this hook to provide strings such as `/idom/my_path`.
 
     ```python
     from idom import component, html
-    from idom.backend.hooks import use_location
+    from django_idom.hooks import use_location
 
     @component
     def my_component():

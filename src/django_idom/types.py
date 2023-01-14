@@ -6,6 +6,7 @@ from typing import (
     Awaitable,
     Callable,
     Generic,
+    MutableMapping,
     Optional,
     Protocol,
     Sequence,
@@ -16,12 +17,13 @@ from typing import (
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
 from django.views.generic import View
+from idom.types import Location
 from typing_extensions import ParamSpec
 
 from django_idom.defaults import _DEFAULT_QUERY_POSTPROCESSOR
 
 
-__all__ = ["_Result", "_Params", "_Data", "WebsocketConnection", "Query", "Mutation"]
+__all__ = ["_Result", "_Params", "_Data", "ComponentWebsocket", "Query", "Mutation"]
 
 _Result = TypeVar("_Result", bound=Union[Model, QuerySet[Any]])
 _Params = ParamSpec("_Params")
@@ -29,8 +31,22 @@ _Data = TypeVar("_Data")
 
 
 @dataclass
-class WebsocketConnection:
-    """Carrier type for `idom.backend.hooks.use_connection().carrier`"""
+class Connection:
+    """Represents a connection with a client"""
+
+    scope: MutableMapping[str, Any]
+    """An ASGI scope or WSGI environment dictionary"""
+
+    location: Location
+    """The current location (URL)"""
+
+    carrier: ComponentWebsocket
+    """The websocket that mediates the connection."""
+
+
+@dataclass
+class ComponentWebsocket:
+    """Carrier type for the `use_connection` hook."""
 
     close: Callable[[Optional[int]], Awaitable[None]]
     disconnect: Callable[[int], Awaitable[None]]

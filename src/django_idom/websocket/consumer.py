@@ -17,7 +17,7 @@ from idom.core.layout import Layout, LayoutEvent
 from idom.core.serve import serve_json_patch
 
 from django_idom.config import IDOM_REGISTERED_COMPONENTS
-from django_idom.types import ComponentParamData, WebsocketConnection
+from django_idom.types import ComponentParamData, ComponentWebsocket
 from django_idom.utils import db_cleanup, func_has_params
 
 
@@ -69,7 +69,7 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 pathname=scope["path"],
                 search=f"?{search}" if (search and (search != "undefined")) else "",
             ),
-            carrier=WebsocketConnection(self.close, self.disconnect, dotted_path),
+            carrier=ComponentWebsocket(self.close, self.disconnect, dotted_path),
         )
         now = timezone.now()
         component_args: tuple[Any, ...] = tuple()

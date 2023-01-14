@@ -3,8 +3,9 @@ from __future__ import annotations
 from functools import wraps
 from typing import Callable
 
-from idom.backend.hooks import use_scope
 from idom.core.types import ComponentType, VdomDict
+
+from django_idom.hooks import use_scope
 
 
 def auth_required(

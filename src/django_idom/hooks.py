@@ -7,6 +7,7 @@ from typing import (
     Awaitable,
     Callable,
     DefaultDict,
+    MutableMapping,
     Sequence,
     Union,
     cast,
@@ -15,10 +16,20 @@ from typing import (
 
 from channels.db import database_sync_to_async as _database_sync_to_async
 from idom import use_callback, use_ref
-from idom.backend.hooks import use_scope
+from idom.backend.hooks import use_connection as _use_connection
+from idom.backend.hooks import use_location as _use_location
+from idom.backend.hooks import use_scope as _use_scope
+from idom.backend.types import Location
 from idom.core.hooks import use_effect, use_state
 
-from django_idom.types import Mutation, Query, QueryOptions, _Params, _Result
+from django_idom.types import (
+    Connection,
+    Mutation,
+    Query,
+    QueryOptions,
+    _Params,
+    _Result,
+)
 from django_idom.utils import generate_obj_name
 
 
@@ -32,10 +43,15 @@ _REFETCH_CALLBACKS: DefaultDict[
 ] = DefaultDict(set)
 
 
+def use_location() -> Location:
+    """Get the current route as a `Location` object"""
+    return _use_location()
+
+
 def use_origin() -> str | None:
     """Get the current origin as a string. If the browser did not send an origin header,
     this will be None."""
-    scope = use_scope()
+    scope = _use_scope()
     try:
         return next(
             (
@@ -47,6 +63,16 @@ def use_origin() -> str | None:
         )
     except Exception:
         return None
+
+
+def use_scope() -> MutableMapping[str, Any]:
+    """Get the current ASGI scope dictionary"""
+    return _use_scope()
+
+
+def use_connection() -> Connection:
+    """Get the current `Connection` object"""
+    return _use_connection()  # type: ignore
 
 
 @overload

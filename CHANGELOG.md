@@ -24,33 +24,30 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
--   The built-in `idom` client will now automatically configure itself to debug mode depending on `settings.py:DEBUG`.
+-   The `idom` client will automatically configure itself to debug mode depending on `settings.py:DEBUG`.
+-   `use_connection` hook for returning the browser's active `Connection`
 
 ### Changed
 
 -   The `component` template tag now supports both positional and keyword arguments.
 -   The `component` template tag now supports non-serializable arguments.
--   `use_location` and `use_scope` previously contained within `django_idom.hooks` have been migrated to `idom.backend.hooks`.
--   `use_websocket` functionality has been moved into `idom.backend.hooks.use_connection`.
--   Bumped the minimum IDOM version to 0.43.0
 -   `IDOM_WS_MAX_RECONNECT_TIMEOUT` setting has been renamed to `IDOM_RECONNECT_MAX`.
--   `django_idom.types.IdomWebsocket` has been renamed to `WebsocketConnection`.
 -   It is now mandatory to run `manage.py migrate` after installing IDOM.
+-   Bumped the minimum IDOM version to 0.43.0
 
 ### Removed
 
--   `django_idom.hooks.use_location` has been removed. The equivalent replacement is found at `idom.backend.hooks.use_location`.
--   `django_idom.hooks.use_scope` has been removed. The equivalent replacement is found at `idom.backend.hooks.use_scope`.
--   `django_idom.hooks.use_websocket` has been removed. The functionally similar replacement is found at `idom.backend.hooks.use_connection`.
+-   `django_idom.hooks.use_websocket` has been removed. The similar replacement is `django_idom.hooks.use_connection`.
+-   `django_idom.types.IdomWebsocket` has been removed. The similar replacement is `django_idom.types.Connection`
 
 ### Fixed
 
 -   `view_to_component` will now retain any HTML that was defined in a `<head>` tag.
--   The React client is now set to `production` rather than `development`.
+-   React client is now set to `production` rather than `development`.
 
 ### Security
 
--   Fixed a potential method of component argument spoofing.
+-   Fixed a potential method of component template tag argument spoofing.
 
 ## [2.2.1] - 2022-01-09
 
