@@ -4,6 +4,8 @@
 
 ## Component
 
+The `component` template tag can be used to insert any number of IDOM components onto your page.
+
 === "my-template.html"
 
     {% include-markdown "../../../README.md" start="<!--html-code-start-->" end="<!--html-code-end-->" %}
@@ -12,7 +14,7 @@
 
 ??? warning "Do not use context variables for the IDOM component name"
 
-    Our pre-processor relies on the template tag containing a string.
+    Our preprocessor relies on the template tag containing a string.
 
     **Do not** use Django template/context variables for the component path. Failure to follow this warning will result in unexpected behavior.
 
@@ -92,22 +94,8 @@
         </html>
         ```
 
-    But keep in mind, in scenarios where you are trying to create a Single Page Application (SPA) within Django, you will only have one central component within your `#!html <body>` tag.
+    Please note that components separated like this will not be able to interact with each other, except through database queries.
 
-    Additionally, the components in the example above will not be able to interact with each other, except through database queries.
+    Additionally, in scenarios where you are trying to create a Single Page Application (SPA) within Django, you will only have one component within your `#!html <body>` tag.
 
 <!--multiple-components-end-->
-
-<!--tags-start-->
-
-??? question "What is a "template tag"?"
-
-    You can think of template tags as Django's way of allowing you to run Python code within your HTML. Django-IDOM uses a `#!jinja {% component ... %}` template tag to perform it's magic.
-
-    Keep in mind, in order to use the `#!jinja {% component ... %}` tag, you will need to first call `#!jinja {% load idom %}` to gain access to it.
-
-    === "my-template.html"
-
-        {% include-markdown "../../../README.md" start="<!--html-code-start-->" end="<!--html-code-end-->" %}
-
-<!--tags-end-->

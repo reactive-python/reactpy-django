@@ -6,7 +6,7 @@
 
 This is the default postprocessor for the `use_query` hook.
 
-To prevent Django's `SynchronousOnlyException`, this postprocessor will recursively fetch all fields within a `Model` or `QuerySet` to ensure they are not performed lazily.
+This postprocessor is designed to prevent Django's `SynchronousOnlyException` by recursively fetching all fields within a `Model` or `QuerySet` to prevent [lazy execution](https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy).
 
 === "components.py"
 
