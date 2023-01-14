@@ -199,7 +199,7 @@ def relational_query():
 
     mtm = relational_parent.data.many_to_many.all()
     oto = relational_parent.data.one_to_one
-    mto = relational_parent.data.foriegnchild_set.all()
+    mto = relational_parent.data.many_to_one.all()
     fk = foriegn_child.data.parent
 
     return html.div(

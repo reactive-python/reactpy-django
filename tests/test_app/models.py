@@ -20,4 +20,4 @@ class RelationalParent(models.Model):
 
 class ForiegnChild(models.Model):
     text = models.CharField(max_length=1000)  # type: ignore
-    parent = models.ForeignKey(RelationalParent, on_delete=models.CASCADE)  # type: ignore
+    parent = models.ForeignKey(RelationalParent, related_name="many_to_one", on_delete=models.CASCADE)  # type: ignore
