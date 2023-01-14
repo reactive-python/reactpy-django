@@ -16,7 +16,7 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
             asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
         # FIXME: This is required otherwise the tests will throw a `SynchronousOnlyOperation`
-        # error when deleting the test datatabase. Potentially a Django bug.
+        # error when discarding the test datatabase. Potentially a `ChannelsLiveServerTestCase` bug.
         os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
         super().setUpClass()
