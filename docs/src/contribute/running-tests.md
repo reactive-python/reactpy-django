@@ -7,7 +7,7 @@ If you plan to run tests, you will need to install the following dependencies fi
 
 Once done, you should clone this repository:
 
-```bash
+```bash linenums="0"
 git clone https://github.com/idom-team/django-idom.git
 cd django-idom
 pip install -r ./requirements/test-run.txt --upgrade
@@ -15,12 +15,12 @@ pip install -r ./requirements/test-run.txt --upgrade
 
 Then, by running the command below you can run the full test suite:
 
-```
+```bash linenums="0"
 nox -s test
 ```
 
 Or, if you want to run the tests in the foreground:
 
-```
+```bash linenums="0"
 nox -s test -- --headed
 ```

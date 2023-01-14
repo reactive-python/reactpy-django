@@ -10,7 +10,7 @@ If you plan to make code changes to this repository, you will need to install th
 
 Once done, you should clone this repository:
 
-```bash
+```bash linenums="0"
 git clone https://github.com/idom-team/django-idom.git
 cd django-idom
 ```
@@ -20,13 +20,13 @@ Then, by running the command below you can:
 -   Install an editable version of the Python code
 -   Download, build, and install Javascript dependencies
 
-```bash
+```bash linenums="0"
 pip install -e . -r requirements.txt
 ```
 
 Finally, to verify that everything is working properly, you can manually run the development webserver.
 
-```bash
+```bash linenums="0"
 cd tests
 python manage.py runserver
 ```

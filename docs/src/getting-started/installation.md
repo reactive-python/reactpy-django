@@ -8,7 +8,7 @@ These docs assumes you have already created [a **Django project**](https://docs.
 
 ## Step 1: Install from PyPI
 
-```bash
+```bash linenums="0"
 pip install django-idom
 ```
 
@@ -101,6 +101,6 @@ Register IDOM's Websocket using `IDOM_WEBSOCKET_PATH`.
 
 Run Django's database migrations to initialize Django-IDOM's database table.
 
-```bash
+```bash linenums="0"
 python manage.py migrate
 ```
