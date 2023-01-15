@@ -22,7 +22,19 @@ from typing_extensions import ParamSpec
 from django_idom.defaults import _DEFAULT_QUERY_POSTPROCESSOR
 
 
-__all__ = ["_Result", "_Params", "_Data", "ComponentWebsocket", "Query", "Mutation"]
+__all__ = [
+    "_Result",
+    "_Params",
+    "_Data",
+    "ComponentWebsocket",
+    "Query",
+    "Mutation",
+    "Connection",
+    "ViewComponentIframe",
+    "Postprocessor",
+    "QueryOptions",
+    "ComponentParamData",
+]
 
 _Result = TypeVar("_Result", bound=Union[Model, QuerySet[Any]])
 _Params = ParamSpec("_Params")
