@@ -72,7 +72,7 @@ def use_scope() -> MutableMapping[str, Any]:
 
 def use_connection() -> Connection:
     """Get the current `Connection` object"""
-    return _use_connection()  # type: ignore
+    return _use_connection()
 
 
 @overload
