@@ -9,7 +9,7 @@ from playwright.sync_api import TimeoutError, sync_playwright
 CLICK_DELAY = 250  # Delay in miliseconds. Needed for GitHub Actions.
 
 
-class TestIdomCapabilities(ChannelsLiveServerTestCase):
+class ComponentTests(ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         if sys.platform == "win32":
