@@ -4,7 +4,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from datetime import timedelta
-from typing import Any
+from typing import Any, MutableMapping, Sequence
 
 import dill as pickle
 from channels.auth import login
@@ -62,8 +62,8 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
         uuid = scope["url_route"]["kwargs"]["uuid"]
         search = scope["query_string"].decode()
-        self._idom_recv_queue = recv_queue = asyncio.Queue()  # type: ignore
-        connection = Connection(  # Set up the `idom.backend.hooks` using context values
+        self._idom_recv_queue: asyncio.Queue = asyncio.Queue()
+        connection = Connection(  # For `use_connection`
             scope=scope,
             location=Location(
                 pathname=scope["path"],
@@ -72,8 +72,8 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             carrier=ComponentWebsocket(self.close, self.disconnect, dotted_path),
         )
         now = timezone.now()
-        component_args: tuple[Any, ...] = tuple()
-        component_kwargs: dict = {}
+        component_args: Sequence[Any] = tuple()
+        component_kwargs: MutableMapping[str, Any] = {}
 
         # Verify the component has already been registered
         try:
@@ -101,7 +101,8 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 except models.ComponentParams.DoesNotExist:
                     _logger.warning(
                         f"Browser has attempted to access '{dotted_path}', "
-                        f"but the component has already expired beyond IDOM_RECONNECT_MAX."
+                        f"but the component has already expired beyond IDOM_RECONNECT_MAX. "
+                        "If this was expected, this warning can be ignored."
                     )
                     return
                 component_params: ComponentParamData = pickle.loads(params_query.data)
@@ -124,7 +125,7 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             await serve_json_patch(
                 Layout(ConnectionContext(component_instance, value=connection)),
                 self.send_json,
-                recv_queue.get,
+                self._idom_recv_queue.get,
             )
         except Exception:
             await self.close()
