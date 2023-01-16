@@ -6,6 +6,7 @@ from typing import (
     Awaitable,
     Callable,
     Generic,
+    MutableMapping,
     Optional,
     Protocol,
     Sequence,
@@ -111,5 +112,5 @@ class ComponentParamData:
     """Container used for serializing component parameters.
     This dataclass is pickled & stored in the database, then unpickled when needed."""
 
-    args: tuple
-    kwargs: dict
+    args: Sequence
+    kwargs: MutableMapping[str, Any]
