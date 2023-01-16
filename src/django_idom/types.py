@@ -103,7 +103,7 @@ class QueryOptions:
     additionally can be configured via `postprocessor_kwargs` to recursively fetch
     `many_to_many` and `many_to_one` fields."""
 
-    postprocessor_kwargs: dict[str, Any] = field(default_factory=lambda: {})
+    postprocessor_kwargs: MutableMapping[str, Any] = field(default_factory=lambda: {})
     """Keyworded arguments directly passed into the `postprocessor` for configuration."""
 
 
