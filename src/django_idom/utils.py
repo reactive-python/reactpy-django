@@ -106,6 +106,9 @@ def import_dotted_path(dotted_path: str) -> Callable:
 
 
 class ComponentPreloader:
+    """Preloads all IDOM components found within Django templates.
+    This should only be `run` once on startup to maintain synchronization during mulitprocessing."""
+
     def run(self):
         """Registers all IDOM components found within Django templates."""
         # Get all template folder paths
