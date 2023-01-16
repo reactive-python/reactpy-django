@@ -14,7 +14,7 @@ class DatabaseTests(TransactionTestCase):
         self.assertEqual(ComponentParams.objects.count(), 0)
 
         # Add component params to the database
-        params = ComponentParamData([1], {"test_value": 1})
+        params = ComponentParamData((1,), {"test_value": 1})
         model = ComponentParams(uuid4().hex, data=pickle.dumps(params))
         model.full_clean()
         model.save()
