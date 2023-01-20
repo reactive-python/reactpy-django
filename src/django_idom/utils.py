@@ -37,7 +37,7 @@ COMPONENT_REGEX = re.compile(
     + _component_kwargs
     + r"\s*%}"
 )
-DATE_FORMAT = "%Y-%m-%d %H:%M:%S.%f+%Z"
+DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 async def render_view(
