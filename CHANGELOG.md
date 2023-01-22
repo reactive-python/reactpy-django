@@ -53,6 +53,7 @@ Using the following categories, list your changes in this order:
 ### Security
 
 -   Fixed a potential method of component template tag argument spoofing.
+-   Exception information will no longer be displayed on the page, based on the value of `settings.py:DEBUG`.
 
 ## [2.2.1] - 2022-01-09
 

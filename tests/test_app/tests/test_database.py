@@ -1,3 +1,5 @@
+from time import sleep
+from typing import Any
 from uuid import uuid4
 
 import dill as pickle
@@ -12,28 +14,33 @@ class DatabaseTests(TransactionTestCase):
     def test_component_params(self):
         # Make sure the ComponentParams table is empty
         self.assertEqual(ComponentParams.objects.count(), 0)
-
-        # Add component params to the database
-        params = ComponentParamData((1,), {"test_value": 1})
-        model = ComponentParams(uuid4().hex, data=pickle.dumps(params))
-        model.full_clean()
-        model.save()
+        params_1 = self._save_params_to_db(1)
 
         # Check if a component params are in the database
         self.assertEqual(ComponentParams.objects.count(), 1)
+        self.assertEqual(pickle.loads(ComponentParams.objects.first().data), params_1)  # type: ignore
 
-        # Check if the data is the same
-        self.assertEqual(pickle.loads(ComponentParams.objects.first().data), params)  # type: ignore
-
-        # Check if the data is the same after a reload
-        ComponentParams.objects.first().refresh_from_db()  # type: ignore
-        self.assertEqual(pickle.loads(ComponentParams.objects.first().data), params)  # type: ignore
-
-        # Force the data to expire
+        # Force `params_1` to expire
         from django_idom import config
 
-        config.IDOM_RECONNECT_MAX = 0
-        utils.db_cleanup()  # Don't use `immediate` to better simulate a real world scenario
+        config.IDOM_RECONNECT_MAX = 1
+        sleep(config.IDOM_RECONNECT_MAX + 0.1)
 
-        # Make sure the data is gone
-        self.assertEqual(ComponentParams.objects.count(), 0)
+        # Create a new, non-expired component params
+        params_2 = self._save_params_to_db(2)
+        self.assertEqual(ComponentParams.objects.count(), 2)
+
+        # Delete the first component params based on expiration time
+        utils.db_cleanup()  # Don't use `immediate` to test cache timestamping logic
+
+        # Make sure `params_1` has expired
+        self.assertEqual(ComponentParams.objects.count(), 1)
+        self.assertEqual(pickle.loads(ComponentParams.objects.first().data), params_2)  # type: ignore
+
+    def _save_params_to_db(self, value: Any) -> ComponentParamData:
+        param_data = ComponentParamData((value,), {"test_value": value})
+        model = ComponentParams(uuid4().hex, data=pickle.dumps(param_data))
+        model.full_clean()
+        model.save()
+
+        return param_data
