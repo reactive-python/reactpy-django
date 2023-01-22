@@ -20,8 +20,6 @@ from django.views.generic import View
 from idom.types import Connection as _Connection
 from typing_extensions import ParamSpec
 
-from django_idom.defaults import _DEFAULT_QUERY_POSTPROCESSOR
-
 
 __all__ = [
     "_Result",
@@ -89,6 +87,8 @@ class Postprocessor(Protocol):
 @dataclass
 class QueryOptions:
     """Configuration options that can be provided to `use_query`."""
+
+    from django_idom.defaults import _DEFAULT_QUERY_POSTPROCESSOR
 
     postprocessor: Postprocessor | None = _DEFAULT_QUERY_POSTPROCESSOR
     """A callable that can modify the query `data` after the query has been executed.

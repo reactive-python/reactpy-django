@@ -16,7 +16,6 @@ from idom.backend.types import Connection, Location
 from idom.core.layout import Layout, LayoutEvent
 from idom.core.serve import serve_json_patch
 
-from django_idom.config import IDOM_REGISTERED_COMPONENTS
 from django_idom.types import ComponentParamData, ComponentWebsocket
 from django_idom.utils import db_cleanup, func_has_params
 
@@ -56,7 +55,7 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
     async def _run_dispatch_loop(self):
         from django_idom import models
-        from django_idom.config import IDOM_RECONNECT_MAX
+        from django_idom.config import IDOM_RECONNECT_MAX, IDOM_REGISTERED_COMPONENTS
 
         scope = self.scope
         dotted_path = scope["url_route"]["kwargs"]["dotted_path"]

@@ -11,7 +11,6 @@ from django.views import View
 from idom import component, hooks, html, utils
 from idom.types import ComponentType, Key, VdomDict
 
-from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
 from django_idom.types import ViewComponentIframe
 from django_idom.utils import generate_obj_name, render_view
 
@@ -33,6 +32,8 @@ def _view_to_component(
     args: Sequence | None,
     kwargs: dict | None,
 ):
+    from django_idom.config import IDOM_VIEW_COMPONENT_IFRAMES
+
     converted_view, set_converted_view = hooks.use_state(
         cast(Union[VdomDict, None], None)
     )
@@ -198,6 +199,8 @@ def django_js(static_path: str, key: Key | None = None):
 
 
 def _cached_static_contents(static_path: str):
+    from django_idom.config import IDOM_CACHE
+
     # Try to find the file within Django's static files
     abs_path = find(static_path)
     if not abs_path:
