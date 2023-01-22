@@ -88,9 +88,9 @@ class Postprocessor(Protocol):
 class QueryOptions:
     """Configuration options that can be provided to `use_query`."""
 
-    from django_idom.defaults import _DEFAULT_QUERY_POSTPROCESSOR
+    from django_idom.config import IDOM_DEFAULT_QUERY_POSTPROCESSOR
 
-    postprocessor: Postprocessor | None = _DEFAULT_QUERY_POSTPROCESSOR
+    postprocessor: Postprocessor | None = IDOM_DEFAULT_QUERY_POSTPROCESSOR
     """A callable that can modify the query `data` after the query has been executed.
 
     The first argument of postprocessor must be the query `data`. All proceeding arguments

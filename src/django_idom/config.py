@@ -7,8 +7,8 @@ from django.core.cache import DEFAULT_CACHE_ALIAS, BaseCache, caches
 from idom.config import IDOM_DEBUG_MODE
 from idom.core.types import ComponentConstructor
 
-from django_idom.defaults import _DEFAULT_QUERY_POSTPROCESSOR
 from django_idom.types import Postprocessor, ViewComponentIframe
+from django_idom.utils import import_dotted_path
 
 
 IDOM_DEBUG_MODE.set_current(getattr(settings, "DEBUG"))
@@ -29,4 +29,10 @@ IDOM_CACHE: BaseCache = (
     if "idom" in getattr(settings, "CACHES", {})
     else caches[DEFAULT_CACHE_ALIAS]
 )
-IDOM_DEFAULT_QUERY_POSTPROCESSOR: Postprocessor | None = _DEFAULT_QUERY_POSTPROCESSOR
+IDOM_DEFAULT_QUERY_POSTPROCESSOR: Postprocessor | None = import_dotted_path(
+    getattr(
+        settings,
+        "IDOM_DEFAULT_QUERY_POSTPROCESSOR",
+        "django_idom.utils.django_query_postprocessor",
+    )
+)
