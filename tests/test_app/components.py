@@ -89,10 +89,10 @@ def use_connection():
     ws = django_idom.hooks.use_connection()
     success = bool(
         ws.scope
-        and ws.location
-        and ws.carrier.close
-        and ws.carrier.disconnect
-        and ws.carrier.dotted_path
+        and getattr(ws, "location", None)
+        and getattr(ws.carrier, "close", None)
+        and getattr(ws.carrier, "disconnect", None)
+        and getattr(ws.carrier, "dotted_path", None)
     )
     return html.div(
         {"id": "use-connection", "data-success": success},
