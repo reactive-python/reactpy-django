@@ -22,10 +22,6 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)
-
-## [3.0.0] - 2022-01-14
-
 ### Added
 
 -   The `idom` client will automatically configure itself to debug mode depending on `settings.py:DEBUG`.
@@ -222,8 +218,7 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/idom-team/django-idom/compare/3.0.0...HEAD
-[3.0.0]: https://github.com/idom-team/django-idom/compare/2.2.1...3.0.0
+[unreleased]: https://github.com/idom-team/django-idom/compare/2.2.1...HEAD
 [2.2.1]: https://github.com/idom-team/django-idom/compare/2.2.0...2.2.1
 [2.2.0]: https://github.com/idom-team/django-idom/compare/2.1.0...2.2.0
 [2.1.0]: https://github.com/idom-team/django-idom/compare/2.0.1...2.1.0
