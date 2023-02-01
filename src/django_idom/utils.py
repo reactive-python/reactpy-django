@@ -330,6 +330,7 @@ def db_cleanup(immediate: bool = False):
         )
 
     # Delete expired component parameters
+    # Use timestamps in cache (`cleaned_at_str`) as a no-dependency rate limiter
     if immediate or not cleaned_at_str or timezone.now() >= clean_needed_by:
         ComponentParams.objects.filter(last_accessed__lte=expires_by).delete()
         IDOM_CACHE.set(cache_key, now_str)
