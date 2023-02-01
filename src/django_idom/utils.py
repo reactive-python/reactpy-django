@@ -80,7 +80,8 @@ async def render_view(
 
 def _register_component(dotted_path: str) -> Callable:
     """Adds a component to the mapping of registered components.
-    This should only be called on startup to maintain synchronization during mulitprocessing."""
+    This should only be called on startup to maintain synchronization during mulitprocessing.
+    """
     from django_idom.config import IDOM_REGISTERED_COMPONENTS
 
     if dotted_path in IDOM_REGISTERED_COMPONENTS:
@@ -107,7 +108,8 @@ def import_dotted_path(dotted_path: str) -> Callable:
 
 class ComponentPreloader:
     """Preloads all IDOM components found within Django templates.
-    This should only be `run` once on startup to maintain synchronization during mulitprocessing."""
+    This should only be `run` once on startup to maintain synchronization during mulitprocessing.
+    """
 
     def run(self):
         """Registers all IDOM components found within Django templates."""
