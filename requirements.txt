@@ -5,3 +5,4 @@
 -r requirements/dev-env.txt
 -r requirements/pkg-deps.txt
 -r requirements/test-env.txt
+-r requirements/test-run.txt
