@@ -12,6 +12,7 @@ nav:
           - Components: features/components.md
           - Hooks: features/hooks.md
           - Decorators: features/decorators.md
+          - Utilities: features/utils.md
           - Template Tag: features/templatetag.md
           - Settings: features/settings.md
     - Contribute:

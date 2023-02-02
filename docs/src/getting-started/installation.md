@@ -2,13 +2,13 @@
 
     Django-IDOM can be installed from PyPI to an existing **Django project** with minimal configuration.
 
-## Step 0: Set up a Django Project
+## Step 0: Create a Django Project
 
 These docs assumes you have already created [a **Django project**](https://docs.djangoproject.com/en/dev/intro/tutorial01/), which involves creating and installing at least one **Django app**. If not, check out this [9 minute YouTube tutorial](https://www.youtube.com/watch?v=ZsJRXS_vrw0) created by _IDG TECHtalk_.
 
 ## Step 1: Install from PyPI
 
-```bash
+```bash linenums="0"
 pip install django-idom
 ```
 
@@ -96,3 +96,11 @@ Register IDOM's Websocket using `IDOM_WEBSOCKET_PATH`.
 ??? question "Where is my `asgi.py`?"
 
     If you do not have an `asgi.py`, follow the [`channels` installation guide](https://channels.readthedocs.io/en/stable/installation.html).
+
+## Step 5: Run Migrations
+
+Run Django's database migrations to initialize Django-IDOM's database table.
+
+```bash linenums="0"
+python manage.py migrate
+```

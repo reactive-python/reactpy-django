@@ -9,7 +9,7 @@ from playwright.sync_api import TimeoutError, sync_playwright
 CLICK_DELAY = 250  # Delay in miliseconds. Needed for GitHub Actions.
 
 
-class TestIdomCapabilities(ChannelsLiveServerTestCase):
+class ComponentTests(ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         if sys.platform == "win32":
@@ -47,11 +47,14 @@ class TestIdomCapabilities(ChannelsLiveServerTestCase):
     def test_parametrized_component(self):
         self.page.locator("#parametrized-component[data-value='579']").wait_for()
 
+    def test_object_in_templatetag(self):
+        self.page.locator("#object_in_templatetag[data-success=true]").wait_for()
+
     def test_component_from_web_module(self):
         self.page.wait_for_selector("#simple-button")
 
-    def test_use_websocket(self):
-        self.page.locator("#use-websocket[data-success=true]").wait_for()
+    def test_use_connection(self):
+        self.page.locator("#use-connection[data-success=true]").wait_for()
 
     def test_use_scope(self):
         self.page.locator("#use-scope[data-success=true]").wait_for()

@@ -9,16 +9,17 @@
     <!--settings-start-->
 
     ```python
-    # If "idom" cache is not configured, then we will use "default" instead
+    # If "idom" cache is not configured, then "default" will be used
+    # IDOM expects a multiprocessing-safe and thread-safe cache backend.
     CACHES = {
     "idom": {"BACKEND": ...},
     }
 
-    # Maximum seconds between two reconnection attempts that would cause the client give up.
-    # 0 will disable reconnection.
-    IDOM_WS_MAX_RECONNECT_TIMEOUT = 604800
+    # Maximum seconds between reconnection attempts before giving up.
+    # Use `0` to prevent component reconnection.
+    IDOM_RECONNECT_MAX = 259200
 
-    # The URL for IDOM to serve websockets
+    # The URL for IDOM to serve the component rendering websocket
     IDOM_WEBSOCKET_URL = "idom/"
 
     # Dotted path to the default postprocessor function, or `None`

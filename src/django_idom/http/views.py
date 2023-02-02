@@ -5,13 +5,14 @@ from django.core.exceptions import SuspiciousOperation
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
 from idom.config import IDOM_WED_MODULES_DIR
 
-from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
-from django_idom.utils import render_view
+from django_idom.utils import create_cache_key, render_view
 
 
 async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
     """Gets JavaScript required for IDOM modules at runtime. These modules are
     returned from cache if available."""
+    from django_idom.config import IDOM_CACHE
+
     web_modules_dir = IDOM_WED_MODULES_DIR.current
     path = os.path.abspath(web_modules_dir.joinpath(*file.split("/")))
 
@@ -23,7 +24,7 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
 
     # Fetch the file from cache, if available
     last_modified_time = os.stat(path).st_mtime
-    cache_key = f"django_idom:web_module:{str(path).lstrip(str(web_modules_dir))}"
+    cache_key = create_cache_key("web_module", str(path).lstrip(str(web_modules_dir)))
     response = await IDOM_CACHE.aget(cache_key, version=int(last_modified_time))
     if response is None:
         async with async_open(path, "r") as fp:
@@ -40,6 +41,8 @@ async def view_to_component_iframe(
 ) -> HttpResponse:
     """Returns a view that was registered by view_to_component.
     This view is intended to be used as iframe, for compatibility purposes."""
+    from django_idom.config import IDOM_VIEW_COMPONENT_IFRAMES
+
     # Get the view from IDOM_REGISTERED_IFRAMES
     iframe = IDOM_VIEW_COMPONENT_IFRAMES.get(view_path)
     if not iframe:

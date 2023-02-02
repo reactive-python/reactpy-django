@@ -5,7 +5,7 @@ If you plan to make changes to this documentation, you will need to install the 
 
 Once done, you should clone this repository:
 
-```bash
+```bash linenums="0"
 git clone https://github.com/idom-team/django-idom.git
 cd django-idom
 ```
@@ -15,13 +15,13 @@ Then, by running the command below you can:
 -   Install an editable version of the documentation
 -   Self-host a test server for the documentation
 
-```bash
+```bash linenums="0"
 pip install -r ./requirements/build-docs.txt --upgrade
 ```
 
 Finally, to verify that everything is working properly, you can manually run the docs preview webserver.
 
-```bash
+```bash linenums="0"
 mkdocs serve
 ```
 

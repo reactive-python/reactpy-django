@@ -1,37 +1,34 @@
 import { mountLayoutWithWebSocket } from "idom-client-react";
 
 // Set up a websocket at the base endpoint
-let LOCATION = window.location;
+const LOCATION = window.location;
 let WS_PROTOCOL = "";
 if (LOCATION.protocol == "https:") {
-  WS_PROTOCOL = "wss://";
+	WS_PROTOCOL = "wss://";
 } else {
-  WS_PROTOCOL = "ws://";
+	WS_PROTOCOL = "ws://";
 }
-let WS_ENDPOINT_URL = WS_PROTOCOL + LOCATION.host + "/";
+const WS_ENDPOINT_URL = WS_PROTOCOL + LOCATION.host + "/";
 
 export function mountViewToElement(
-  mountPoint,
-  idomWebsocketUrl,
-  idomWebModulesUrl,
-  maxReconnectTimeout,
-  viewId,
-  queryParams
+	mountElement,
+	idomWebsocketUrl,
+	idomWebModulesUrl,
+	maxReconnectTimeout,
+	componentPath
 ) {
-  const fullWebsocketUrl =
-    WS_ENDPOINT_URL + idomWebsocketUrl + viewId + "/?" + queryParams;
+	const WS_URL = WS_ENDPOINT_URL + idomWebsocketUrl + componentPath;
+	const WEB_MODULE_URL = LOCATION.origin + "/" + idomWebModulesUrl;
+	const loadImportSource = (source, sourceType) => {
+		return import(
+			sourceType == "NAME" ? `${WEB_MODULE_URL}${source}` : source
+		);
+	};
 
-  const fullWebModulesUrl = LOCATION.origin + "/" + idomWebModulesUrl;
-  const loadImportSource = (source, sourceType) => {
-    return import(
-      sourceType == "NAME" ? `${fullWebModulesUrl}${source}` : source
-    );
-  };
-
-  mountLayoutWithWebSocket(
-    mountPoint,
-    fullWebsocketUrl,
-    loadImportSource,
-    maxReconnectTimeout
-  );
+	mountLayoutWithWebSocket(
+		mountElement,
+		WS_URL,
+		loadImportSource,
+		maxReconnectTimeout
+	);
 }

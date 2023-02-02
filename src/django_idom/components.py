@@ -11,9 +11,8 @@ from django.views import View
 from idom import component, hooks, html, utils
 from idom.types import ComponentType, Key, VdomDict
 
-from django_idom.config import IDOM_CACHE, IDOM_VIEW_COMPONENT_IFRAMES
 from django_idom.types import ViewComponentIframe
-from django_idom.utils import _generate_obj_name, render_view
+from django_idom.utils import generate_obj_name, render_view
 
 
 class _ViewComponentConstructor(Protocol):
@@ -33,6 +32,8 @@ def _view_to_component(
     args: Sequence | None,
     kwargs: dict | None,
 ):
+    from django_idom.config import IDOM_VIEW_COMPONENT_IFRAMES
+
     converted_view, set_converted_view = hooks.use_state(
         cast(Union[VdomDict, None], None)
     )
@@ -47,8 +48,8 @@ def _view_to_component(
     # Render the view render within a hook
     @hooks.use_effect(
         dependencies=[
-            json.dumps(vars(_request), default=lambda x: _generate_obj_name(x)),
-            json.dumps([_args, _kwargs], default=lambda x: _generate_obj_name(x)),
+            json.dumps(vars(_request), default=lambda x: generate_obj_name(x)),
+            json.dumps([_args, _kwargs], default=lambda x: generate_obj_name(x)),
         ]
     )
     async def async_render():
@@ -62,6 +63,7 @@ def _view_to_component(
         set_converted_view(
             utils.html_to_vdom(
                 response.content.decode("utf-8").strip(),
+                utils.del_html_head_body_transform,
                 *transforms,
                 strict=strict_parsing,
             )
@@ -130,7 +132,7 @@ def view_to_component(
             perfectly adhere to HTML5.
 
     Returns:
-        Callable: A function that takes `request: HttpRequest | None, *args: Any, key: Key | None, **kwargs: Any`
+        A function that takes `request: HttpRequest | None, *args: Any, key: Key | None, **kwargs: Any`
             and returns an IDOM component.
     """
 
@@ -197,6 +199,8 @@ def django_js(static_path: str, key: Key | None = None):
 
 
 def _cached_static_contents(static_path: str):
+    from django_idom.config import IDOM_CACHE
+
     # Try to find the file within Django's static files
     abs_path = find(static_path)
     if not abs_path:

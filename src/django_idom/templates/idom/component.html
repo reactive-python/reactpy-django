@@ -2,13 +2,12 @@
 <div id="{{ idom_mount_uuid }}" class="{{ class }}"></div>
 <script type="module" crossorigin="anonymous">
   import { mountViewToElement } from "{% static 'django_idom/client.js' %}";
-  const mountPoint = document.getElementById("{{ idom_mount_uuid }}");
+  const mountElement = document.getElementById("{{ idom_mount_uuid }}");
   mountViewToElement(
-    mountPoint,
+    mountElement,
     "{{ idom_websocket_url }}",
     "{{ idom_web_modules_url }}",
-    "{{ idom_ws_max_reconnect_timeout }}",
-    "{{ idom_component_id }}",
-    "{{ idom_component_params }}"
+    "{{ idom_reconnect_max }}",
+    "{{ idom_component_path }}",
   );
 </script>

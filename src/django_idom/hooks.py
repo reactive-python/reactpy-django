@@ -7,6 +7,7 @@ from typing import (
     Awaitable,
     Callable,
     DefaultDict,
+    MutableMapping,
     Sequence,
     Union,
     cast,
@@ -15,18 +16,21 @@ from typing import (
 
 from channels.db import database_sync_to_async as _database_sync_to_async
 from idom import use_callback, use_ref
+from idom.backend.hooks import use_connection as _use_connection
+from idom.backend.hooks import use_location as _use_location
+from idom.backend.hooks import use_scope as _use_scope
 from idom.backend.types import Location
-from idom.core.hooks import Context, create_context, use_context, use_effect, use_state
+from idom.core.hooks import use_effect, use_state
 
 from django_idom.types import (
-    IdomWebsocket,
+    Connection,
     Mutation,
     Query,
     QueryOptions,
     _Params,
     _Result,
 )
-from django_idom.utils import _generate_obj_name
+from django_idom.utils import generate_obj_name
 
 
 _logger = logging.getLogger(__name__)
@@ -34,7 +38,6 @@ database_sync_to_async = cast(
     Callable[..., Callable[..., Awaitable[Any]]],
     _database_sync_to_async,
 )
-WebsocketContext: Context[IdomWebsocket | None] = create_context(None)
 _REFETCH_CALLBACKS: DefaultDict[
     Callable[..., Any], set[Callable[[], None]]
 ] = DefaultDict(set)
@@ -42,16 +45,13 @@ _REFETCH_CALLBACKS: DefaultDict[
 
 def use_location() -> Location:
     """Get the current route as a `Location` object"""
-    # TODO: Use the browser's current page, rather than the WS route
-    scope = use_scope()
-    search = scope["query_string"].decode()
-    return Location(scope["path"], f"?{search}" if search else "")
+    return _use_location()
 
 
 def use_origin() -> str | None:
     """Get the current origin as a string. If the browser did not send an origin header,
     this will be None."""
-    scope = use_scope()
+    scope = _use_scope()
     try:
         return next(
             (
@@ -65,17 +65,14 @@ def use_origin() -> str | None:
         return None
 
 
-def use_scope() -> dict[str, Any]:
+def use_scope() -> MutableMapping[str, Any]:
     """Get the current ASGI scope dictionary"""
-    return use_websocket().scope
+    return _use_scope()
 
 
-def use_websocket() -> IdomWebsocket:
-    """Get the current IdomWebsocket object"""
-    websocket = use_context(WebsocketContext)
-    if websocket is None:
-        raise RuntimeError("No websocket. Are you running with a Django server?")
-    return websocket
+def use_connection() -> Connection:
+    """Get the current `Connection` object"""
+    return _use_connection()
 
 
 @overload
@@ -165,7 +162,7 @@ def use_query(
             set_loading(False)
             set_error(e)
             _logger.exception(
-                f"Failed to execute query: {_generate_obj_name(query) or query}"
+                f"Failed to execute query: {generate_obj_name(query) or query}"
             )
             return
         finally:
@@ -208,7 +205,7 @@ def use_mutation(
                 set_loading(False)
                 set_error(e)
                 _logger.exception(
-                    f"Failed to execute mutation: {_generate_obj_name(mutate) or mutate}"
+                    f"Failed to execute mutation: {generate_obj_name(mutate) or mutate}"
                 )
             else:
                 set_loading(False)

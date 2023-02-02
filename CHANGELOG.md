@@ -22,9 +22,34 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+### Added
+
+-   The `idom` client will automatically configure itself to debug mode depending on `settings.py:DEBUG`.
+-   `use_connection` hook for returning the browser's active `Connection`
+
+### Changed
+
+-   The `component` template tag now supports both positional and keyword arguments.
+-   The `component` template tag now supports non-serializable arguments.
+-   `IDOM_WS_MAX_RECONNECT_TIMEOUT` setting has been renamed to `IDOM_RECONNECT_MAX`.
+-   It is now mandatory to run `manage.py migrate` after installing IDOM.
+-   Bumped the minimum IDOM version to 0.43.0
+
+### Removed
+
+-   `django_idom.hooks.use_websocket` has been removed. The similar replacement is `django_idom.hooks.use_connection`.
+-   `django_idom.types.IdomWebsocket` has been removed. The similar replacement is `django_idom.types.Connection`
+
 ### Fixed
 
+-   `view_to_component` will now retain any HTML that was defined in a `<head>` tag.
+-   React client is now set to `production` rather than `development`.
 -   `use_query` will now utilize `field.related_name` when postprocessing many-to-one relationships
+
+### Security
+
+-   Fixed a potential method of component template tag argument spoofing.
+-   Exception information will no longer be displayed on the page, based on the value of `settings.py:DEBUG`.
 
 ## [2.2.1] - 2022-01-09
 

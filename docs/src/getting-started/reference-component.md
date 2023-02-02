@@ -16,10 +16,6 @@
 
 {% include-markdown "../features/templatetag.md" start="<!--multiple-components-start-->" end="<!--multiple-components-end-->" %}
 
-{% include-markdown "../features/templatetag.md" start="<!--kwargs-start-->" end="<!--kwargs-end-->" %}
-
-{% include-markdown "../features/templatetag.md" start="<!--tags-start-->" end="<!--tags-end-->" %}
-
 ??? question "Where is my templates folder?"
 
        If you do not have a `templates` folder in your **Django app**, you can simply create one! Keep in mind, templates within this folder will not be detected by Django unless you [add the corresponding **Django app** to `settings.py:INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/applications/#configuring-applications).

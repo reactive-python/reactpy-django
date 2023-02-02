@@ -10,11 +10,15 @@ ensure_newline_before_comments = "True"
 include_trailing_comma = "True"
 line_length = 88
 lines_after_imports = 2
-extend_skip_glob = ["*/migrations/*"]
+extend_skip_glob = ["*/migrations/*", '.nox/*', '.venv/*', 'build/*']
 
 [tool.mypy]
+exclude = [
+    'migrations/.*',
+]
 ignore_missing_imports = true
 warn_unused_configs = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 check_untyped_defs = true
+incremental = false

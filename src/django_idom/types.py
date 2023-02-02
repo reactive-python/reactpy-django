@@ -6,6 +6,7 @@ from typing import (
     Awaitable,
     Callable,
     Generic,
+    MutableMapping,
     Optional,
     Protocol,
     Sequence,
@@ -16,12 +17,23 @@ from typing import (
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
 from django.views.generic import View
+from idom.types import Connection as _Connection
 from typing_extensions import ParamSpec
 
-from django_idom.defaults import _DEFAULT_QUERY_POSTPROCESSOR
 
-
-__all__ = ["_Result", "_Params", "_Data", "IdomWebsocket", "Query", "Mutation"]
+__all__ = [
+    "_Result",
+    "_Params",
+    "_Data",
+    "ComponentWebsocket",
+    "Query",
+    "Mutation",
+    "Connection",
+    "ViewComponentIframe",
+    "Postprocessor",
+    "QueryOptions",
+    "ComponentParamData",
+]
 
 _Result = TypeVar("_Result", bound=Union[Model, QuerySet[Any]])
 _Params = ParamSpec("_Params")
@@ -29,13 +41,15 @@ _Data = TypeVar("_Data")
 
 
 @dataclass
-class IdomWebsocket:
-    """Websocket returned by the `use_websocket` hook."""
+class ComponentWebsocket:
+    """Carrier type for the `use_connection` hook."""
 
-    scope: dict
     close: Callable[[Optional[int]], Awaitable[None]]
     disconnect: Callable[[int], Awaitable[None]]
-    view_id: str
+    dotted_path: str
+
+
+Connection = _Connection[ComponentWebsocket]
 
 
 @dataclass
@@ -74,7 +88,9 @@ class Postprocessor(Protocol):
 class QueryOptions:
     """Configuration options that can be provided to `use_query`."""
 
-    postprocessor: Postprocessor | None = _DEFAULT_QUERY_POSTPROCESSOR
+    from django_idom.config import IDOM_DEFAULT_QUERY_POSTPROCESSOR
+
+    postprocessor: Postprocessor | None = IDOM_DEFAULT_QUERY_POSTPROCESSOR
     """A callable that can modify the query `data` after the query has been executed.
 
     The first argument of postprocessor must be the query `data`. All proceeding arguments
@@ -87,5 +103,14 @@ class QueryOptions:
     additionally can be configured via `postprocessor_kwargs` to recursively fetch
     `many_to_many` and `many_to_one` fields."""
 
-    postprocessor_kwargs: dict[str, Any] = field(default_factory=lambda: {})
+    postprocessor_kwargs: MutableMapping[str, Any] = field(default_factory=lambda: {})
     """Keyworded arguments directly passed into the `postprocessor` for configuration."""
+
+
+@dataclass
+class ComponentParamData:
+    """Container used for serializing component parameters.
+    This dataclass is pickled & stored in the database, then unpickled when needed."""
+
+    args: Sequence
+    kwargs: MutableMapping[str, Any]

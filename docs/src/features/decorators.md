@@ -4,19 +4,16 @@
 
 ## Auth Required
 
-You can limit access to a component to users with a specific `auth_attribute` by using this decorator.
+You can limit access to a component to users with a specific `auth_attribute` by using this decorator (with or without parentheses).
 
 By default, this decorator checks if the user is logged in, and his/her account has not been deactivated.
 
 This decorator is commonly used to selectively render a component only if a user [`is_staff`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_staff) or [`is_superuser`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_superuser).
 
-This decorator can be used with or without parentheses.
-
 === "components.py"
 
     ```python
     from django_idom.decorators import auth_required
-    from django_idom.hooks import use_websocket
     from idom import component, html
 
     @component
@@ -70,7 +67,6 @@ This decorator can be used with or without parentheses.
 
         ```python
         from django_idom.decorators import auth_required
-        from django_idom.hooks import use_websocket
         from idom import component, html
 
         @component
@@ -87,7 +83,6 @@ This decorator can be used with or without parentheses.
 
         ```python
         from django_idom.decorators import auth_required
-        from django_idom.hooks import use_websocket
         from idom import component, html
 
 
@@ -120,7 +115,6 @@ This decorator can be used with or without parentheses.
 
         ```python
         from django_idom.decorators import auth_required
-        from django_idom.hooks import use_websocket
         from idom import component, html
 
         @component

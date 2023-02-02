@@ -5,7 +5,7 @@ from typing import Callable
 
 from idom.core.types import ComponentType, VdomDict
 
-from django_idom.hooks import use_websocket
+from django_idom.hooks import use_scope
 
 
 def auth_required(
@@ -27,9 +27,9 @@ def auth_required(
     def decorator(component):
         @wraps(component)
         def _wrapped_func(*args, **kwargs):
-            websocket = use_websocket()
+            scope = use_scope()
 
-            if getattr(websocket.scope["user"], auth_attribute):
+            if getattr(scope["user"], auth_attribute):
                 return component(*args, **kwargs)
             return fallback(*args, **kwargs) if callable(fallback) else fallback
 

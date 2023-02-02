@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import contextlib
+import inspect
 import logging
 import os
 import re
+from datetime import datetime, timedelta
 from fnmatch import fnmatch
 from importlib import import_module
 from inspect import iscoroutinefunction
@@ -16,6 +18,7 @@ from django.db.models.fields.reverse_related import ManyToOneRel
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.template import engines
+from django.utils import timezone
 from django.utils.encoding import smart_str
 from django.views import View
 
@@ -34,6 +37,7 @@ COMPONENT_REGEX = re.compile(
     + _component_kwargs
     + r"\s*%}"
 )
+DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 async def render_view(
@@ -74,17 +78,21 @@ async def render_view(
     return response
 
 
-def _register_component(dotted_path: str) -> None:
+def _register_component(dotted_path: str) -> Callable:
+    """Adds a component to the mapping of registered components.
+    This should only be called on startup to maintain synchronization during mulitprocessing.
+    """
     from django_idom.config import IDOM_REGISTERED_COMPONENTS
 
     if dotted_path in IDOM_REGISTERED_COMPONENTS:
-        return
+        return IDOM_REGISTERED_COMPONENTS[dotted_path]
 
-    IDOM_REGISTERED_COMPONENTS[dotted_path] = _import_dotted_path(dotted_path)
+    IDOM_REGISTERED_COMPONENTS[dotted_path] = import_dotted_path(dotted_path)
     _logger.debug("IDOM has registered component %s", dotted_path)
+    return IDOM_REGISTERED_COMPONENTS[dotted_path]
 
 
-def _import_dotted_path(dotted_path: str) -> Callable:
+def import_dotted_path(dotted_path: str) -> Callable:
     """Imports a dotted path and returns the callable."""
     module_name, component_name = dotted_path.rsplit(".", 1)
 
@@ -99,24 +107,28 @@ def _import_dotted_path(dotted_path: str) -> Callable:
 
 
 class ComponentPreloader:
-    def register_all(self):
+    """Preloads all IDOM components found within Django templates.
+    This should only be `run` once on startup to maintain synchronization during mulitprocessing.
+    """
+
+    def run(self):
         """Registers all IDOM components found within Django templates."""
         # Get all template folder paths
-        paths = self._get_paths()
+        paths = self.get_paths()
         # Get all HTML template files
-        templates = self._get_templates(paths)
+        templates = self.get_templates(paths)
         # Get all components
-        components = self._get_components(templates)
+        components = self.get_components(templates)
         # Register all components
-        self._register_components(components)
+        self.register_components(components)
 
-    def _get_loaders(self):
+    def get_loaders(self):
         """Obtains currently configured template loaders."""
         template_source_loaders = []
         for e in engines.all():
             if hasattr(e, "engine"):
                 template_source_loaders.extend(
-                    e.engine.get_template_loaders(e.engine.loaders)  # type: ignore
+                    e.engine.get_template_loaders(e.engine.loaders)
                 )
         loaders = []
         for loader in template_source_loaders:
@@ -126,10 +138,10 @@ class ComponentPreloader:
                 loaders.append(loader)
         return loaders
 
-    def _get_paths(self) -> set[str]:
+    def get_paths(self) -> set[str]:
         """Obtains a set of all template directories."""
         paths: set[str] = set()
-        for loader in self._get_loaders():
+        for loader in self.get_loaders():
             with contextlib.suppress(ImportError, AttributeError, TypeError):
                 module = import_module(loader.__module__)
                 get_template_sources = getattr(module, "get_template_sources", None)
@@ -138,7 +150,7 @@ class ComponentPreloader:
                 paths.update(smart_str(origin) for origin in get_template_sources(""))
         return paths
 
-    def _get_templates(self, paths: set[str]) -> set[str]:
+    def get_templates(self, paths: set[str]) -> set[str]:
         """Obtains a set of all HTML template paths."""
         extensions = [".html"]
         templates: set[str] = set()
@@ -153,7 +165,7 @@ class ComponentPreloader:
 
         return templates
 
-    def _get_components(self, templates: set[str]) -> set[str]:
+    def get_components(self, templates: set[str]) -> set[str]:
         """Obtains a set of all IDOM components by parsing HTML templates."""
         components: set[str] = set()
         for template in templates:
@@ -177,7 +189,7 @@ class ComponentPreloader:
             )
         return components
 
-    def _register_components(self, components: set[str]) -> None:
+    def register_components(self, components: set[str]) -> None:
         """Registers all IDOM components in an iterable."""
         for component in components:
             try:
@@ -194,7 +206,7 @@ class ComponentPreloader:
                 )
 
 
-def _generate_obj_name(object: Any) -> str | None:
+def generate_obj_name(object: Any) -> str | None:
     """Makes a best effort to create a name for an object.
     Useful for JSON serialization of Python objects."""
     if hasattr(object, "__module__"):
@@ -210,7 +222,18 @@ def django_query_postprocessor(
 ) -> QuerySet | Model:
     """Recursively fetch all fields within a `Model` or `QuerySet` to ensure they are not performed lazily.
 
-    Some behaviors can be modified through `query_options` attributes."""
+    Behaviors can be modified through `QueryOptions` within your `use_query` hook.
+
+    Args:
+        data: The `Model` or `QuerySet` to recursively fetch fields from.
+
+    Keyword Args:
+        many_to_many: Whether or not to recursively fetch `ManyToManyField` relationships.
+        many_to_one: Whether or not to recursively fetch `ForeignKey` relationships.
+
+    Returns:
+        The `Model` or `QuerySet` with all fields fetched.
+    """
 
     # `QuerySet`, which is an iterable of `Model`/`QuerySet` instances
     # https://github.com/typeddjango/django-stubs/issues/704
@@ -257,3 +280,59 @@ def django_query_postprocessor(
         )
 
     return data
+
+
+def func_has_params(func: Callable, *args, **kwargs) -> bool:
+    """Checks if a function has any args or kwarg parameters.
+
+    Can optionally validate whether a set of args/kwargs would work on the given function.
+    """
+    signature = inspect.signature(func)
+
+    # Check if the function has any args/kwargs
+    if not args and not kwargs:
+        return str(signature) != "()"
+
+    # Check if the function has the given args/kwargs
+    signature.bind(*args, **kwargs)
+    return True
+
+
+def create_cache_key(*args):
+    """Creates a cache key string that starts with `django_idom` contains
+    all *args separated by `:`."""
+
+    if not args:
+        raise ValueError("At least one argument is required to create a cache key.")
+
+    return f"django_idom:{':'.join(str(arg) for arg in args)}"
+
+
+def db_cleanup(immediate: bool = False):
+    """Deletes expired component parameters from the database.
+    This function may be expanded in the future to include additional cleanup tasks."""
+    from .config import IDOM_CACHE, IDOM_RECONNECT_MAX
+    from .models import ComponentParams
+
+    cache_key: str = create_cache_key("last_cleaned")
+    now_str: str = datetime.strftime(timezone.now(), DATE_FORMAT)
+    cleaned_at_str: str = IDOM_CACHE.get(cache_key)
+    cleaned_at: datetime = timezone.make_aware(
+        datetime.strptime(cleaned_at_str or now_str, DATE_FORMAT)
+    )
+    clean_needed_by = cleaned_at + timedelta(seconds=IDOM_RECONNECT_MAX)
+    expires_by: datetime = timezone.now() - timedelta(seconds=IDOM_RECONNECT_MAX)
+
+    # Component params exist in the DB, but we don't know when they were last cleaned
+    if not cleaned_at_str and ComponentParams.objects.all():
+        _logger.warning(
+            "IDOM has detected component sessions in the database, "
+            "but no timestamp was found in cache. This may indicate that "
+            "the cache has been cleared."
+        )
+
+    # Delete expired component parameters
+    # Use timestamps in cache (`cleaned_at_str`) as a no-dependency rate limiter
+    if immediate or not cleaned_at_str or timezone.now() >= clean_needed_by:
+        ComponentParams.objects.filter(last_accessed__lte=expires_by).delete()
+        IDOM_CACHE.set(cache_key, now_str)

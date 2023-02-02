@@ -6,7 +6,7 @@ from .consumer import IdomAsyncWebsocketConsumer
 
 
 IDOM_WEBSOCKET_PATH = path(
-    f"{IDOM_WEBSOCKET_URL}<view_id>/", IdomAsyncWebsocketConsumer.as_asgi()
+    f"{IDOM_WEBSOCKET_URL}<dotted_path>/<uuid>/", IdomAsyncWebsocketConsumer.as_asgi()
 )
 
 """A URL path for :class:`IdomAsyncWebsocketConsumer`.

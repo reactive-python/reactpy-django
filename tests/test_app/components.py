@@ -8,14 +8,14 @@ from test_app.models import ForiegnChild, RelationalChild, RelationalParent, Tod
 
 import django_idom
 from django_idom.components import view_to_component
-from django_idom.hooks import use_mutation, use_query
 
 from . import views
+from .types import TestObject
 
 
 @component
 def hello_world():
-    return html._(html.h1({"id": "hello-world"}, "Hello World!"), html.hr())
+    return html._(html.div({"id": "hello-world"}, "Hello World!"), html.hr())
 
 
 @component
@@ -23,6 +23,7 @@ def button():
     count, set_count = hooks.use_state(0)
     return html._(
         html.div(
+            "button:",
             html.button(
                 {"id": "counter-inc", "onClick": lambda event: set_count(count + 1)},
                 "Click me!",
@@ -40,7 +41,27 @@ def button():
 def parameterized_component(x, y):
     total = x + y
     return html._(
-        html.h1({"id": "parametrized-component", "data-value": total}, total),
+        html.div(
+            {"id": "parametrized-component", "data-value": total},
+            f"parameterized_component: {total}",
+        ),
+        html.hr(),
+    )
+
+
+@component
+def object_in_templatetag(my_object: TestObject):
+    success = bool(my_object and my_object.value)
+    co_name = inspect.currentframe().f_code.co_name  # type: ignore
+    return html._(
+        html.div(
+            {
+                "id": co_name,
+                "data-success": success,
+            },
+            f"{co_name}: ",
+            str(my_object),
+        ),
         html.hr(),
     )
 
@@ -57,18 +78,25 @@ SimpleButton = web.export(SimpleButtonModule, "SimpleButton")
 @component
 def simple_button():
     return html._(
+        "simple_button:",
         SimpleButton({"id": "simple-button"}),
         html.hr(),
     )
 
 
 @component
-def use_websocket():
-    ws = django_idom.hooks.use_websocket()
-    success = bool(ws.scope and ws.close and ws.disconnect and ws.view_id)
+def use_connection():
+    ws = django_idom.hooks.use_connection()
+    success = bool(
+        ws.scope
+        and getattr(ws, "location", None)
+        and getattr(ws.carrier, "close", None)
+        and getattr(ws.carrier, "disconnect", None)
+        and getattr(ws.carrier, "dotted_path", None)
+    )
     return html.div(
-        {"id": "use-websocket", "data-success": success},
-        f"use_websocket: {ws}",
+        {"id": "use-connection", "data-success": success},
+        f"use_connection: {ws}",
         html.hr(),
     )
 
@@ -191,8 +219,8 @@ def get_foriegn_child_query():
 
 @component
 def relational_query():
-    foriegn_child = use_query(get_foriegn_child_query)
-    relational_parent = use_query(get_relational_parent_query)
+    foriegn_child = django_idom.hooks.use_query(get_foriegn_child_query)
+    relational_parent = django_idom.hooks.use_query(get_relational_parent_query)
 
     if not relational_parent.data or not foriegn_child.data:
         return
@@ -239,8 +267,8 @@ def toggle_todo_mutation(item: TodoItem):
 @component
 def todo_list():
     input_value, set_input_value = hooks.use_state("")
-    items = use_query(get_todo_query)
-    toggle_item = use_mutation(toggle_todo_mutation)
+    items = django_idom.hooks.use_query(get_todo_query)
+    toggle_item = django_idom.hooks.use_mutation(toggle_todo_mutation)
 
     if items.error:
         rendered_items = html.h2(f"Error when loading - {items.error}")
@@ -254,7 +282,7 @@ def todo_list():
             _render_todo_items([i for i in items.data if i.done], toggle_item),
         )
 
-    add_item = use_mutation(add_todo_mutation, refetch=get_todo_query)
+    add_item = django_idom.hooks.use_mutation(add_todo_mutation, refetch=get_todo_query)
 
     if add_item.loading:
         mutation_status = html.h2("Working...")
