@@ -12,20 +12,20 @@
         <meta name="author" content="Archmonger">
       
       
-        <link rel="canonical" href="https://idom-team.github.io/django-idom/getting-started/learn-more/">
+        <link rel="canonical" href="https://idom-team.github.io/django-idom/features/utils/">
       
       
-        <link rel="prev" href="../render-view/">
+        <link rel="prev" href="../decorators/">
       
       
-        <link rel="next" href="../../features/components/">
+        <link rel="next" href="../templatetag/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.9">
     
     
       
-        <title>6. Learn More - Django IDOM Docs</title>
+        <title>Utilities - Django IDOM Docs</title>
       
     
     
@@ -79,7 +79,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#congratulations" class="md-skip">
+        <a href="#django-query-postprocessor" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              6. Learn More
+              Utilities
             
           </span>
         </div>
@@ -216,15 +216,13 @@
         
   
   
-    
-  
 
 
   
   
   
     <li class="md-tabs__item">
-      <a href="../installation/" class="md-tabs__link md-tabs__link--active">
+      <a href="../../getting-started/installation/" class="md-tabs__link">
         Getting Started
       </a>
     </li>
@@ -234,13 +232,15 @@
         
   
   
+    
+  
 
 
   
   
   
     <li class="md-tabs__item">
-      <a href="../../features/components/" class="md-tabs__link">
+      <a href="../components/" class="md-tabs__link md-tabs__link--active">
         Usage
       </a>
     </li>
@@ -342,16 +342,14 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
       
       
       
@@ -360,7 +358,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_2">
           <span class="md-nav__icon md-icon"></span>
           Getting Started
@@ -373,7 +371,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../installation/" class="md-nav__link">
+      <a href="../../getting-started/installation/" class="md-nav__link">
         1. Install Django-IDOM
       </a>
     </li>
@@ -387,7 +385,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../choose-django-app/" class="md-nav__link">
+      <a href="../../getting-started/choose-django-app/" class="md-nav__link">
         2. Choose a Django App
       </a>
     </li>
@@ -401,7 +399,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../create-component/" class="md-nav__link">
+      <a href="../../getting-started/create-component/" class="md-nav__link">
         3. Create a Component
       </a>
     </li>
@@ -415,7 +413,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reference-component/" class="md-nav__link">
+      <a href="../../getting-started/reference-component/" class="md-nav__link">
         4. Use the Template Tag
       </a>
     </li>
@@ -429,8 +427,101 @@
   
   
     <li class="md-nav__item">
-      <a href="../render-view/" class="md-nav__link">
+      <a href="../../getting-started/render-view/" class="md-nav__link">
         5. Render Your View
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/learn-more/" class="md-nav__link">
+        6. Learn More
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Usage
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Usage
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../components/" class="md-nav__link">
+        Components
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hooks/" class="md-nav__link">
+        Hooks
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../decorators/" class="md-nav__link">
+        Decorators
       </a>
     </li>
   
@@ -449,104 +540,40 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
-        
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Utilities
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        6. Learn More
-      </a>
-      
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-      
-      
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-      
-      
-      
-        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-          Usage
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_3">
-          <span class="md-nav__icon md-icon"></span>
-          Usage
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../features/components/" class="md-nav__link">
-        Components
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../features/hooks/" class="md-nav__link">
-        Hooks
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../features/decorators/" class="md-nav__link">
-        Decorators
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../features/utils/" class="md-nav__link">
         Utilities
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#django-query-postprocessor" class="md-nav__link">
+    Django Query Postprocessor
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -558,7 +585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../features/templatetag/" class="md-nav__link">
+      <a href="../templatetag/" class="md-nav__link">
         Template Tag
       </a>
     </li>
@@ -572,7 +599,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../features/settings/" class="md-nav__link">
+      <a href="../settings/" class="md-nav__link">
         Settings
       </a>
     </li>
@@ -697,29 +724,129 @@
 
 
 
-<h1 id="congratulations"><img alt="🎊" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f38a.svg" title=":confetti_ball:" /> Congratulations <img alt="🎊" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f38a.svg" title=":confetti_ball:" /><a class="headerlink" href="#congratulations" title="Permanent link">&para;</a></h1>
-<p>If you followed the previous steps, you have now created a "Hello World" component!</p>
-<p>The docs you are reading only covers our Django integration. To learn more about features, such as interactive events and hooks, check out the <a href="https://idom-docs.herokuapp.com/docs/guides/creating-interfaces/index.html">IDOM Core Documentation</a>!</p>
-<p>Additionally, the vast majority of tutorials/guides you find for React can be applied to IDOM.</p>
+  <h1>Utilities</h1>
+
+<details class="summary" open="open">
+<summary>Summary</summary>
+<p>Utility functions that you can use when needed.</p>
+</details>
+<h2 id="django-query-postprocessor">Django Query Postprocessor<a class="headerlink" href="#django-query-postprocessor" title="Permanent link">&para;</a></h2>
+<p>This is the default postprocessor for the <code>use_query</code> hook.</p>
+<p>This postprocessor is designed to prevent Django's <code>SynchronousOnlyException</code> by recursively fetching all fields within a <code>Model</code> or <code>QuerySet</code> to prevent <a href="https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy">lazy execution</a>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">components.py</label><label for="__tabbed_1_2">models.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">example_project.my_app.models</span> <span class="kn">import</span> <span class="n">TodoItem</span>
+<span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span>
+<span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_query</span>
+<span class="kn">from</span> <span class="nn">django_idom.types</span> <span class="kn">import</span> <span class="n">QueryOptions</span>
+<span class="kn">from</span> <span class="nn">django_idom.utils</span> <span class="kn">import</span> <span class="n">django_query_postprocessor</span>
+
+<span class="k">def</span> <span class="nf">get_items</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">TodoItem</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+<span class="nd">@component</span>
+<span class="k">def</span> <span class="nf">todo_list</span><span class="p">():</span>
+    <span class="c1"># These `QueryOptions` are functionally equivalent to Django-IDOM&#39;s default values</span>
+    <span class="n">item_query</span> <span class="o">=</span> <span class="n">use_query</span><span class="p">(</span>
+        <span class="n">QueryOptions</span><span class="p">(</span>
+            <span class="n">postprocessor</span><span class="o">=</span><span class="n">django_query_postprocessor</span><span class="p">,</span>
+            <span class="n">postprocessor_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;many_to_many&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;many_to_one&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+        <span class="p">),</span>
+        <span class="n">get_items</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="o">...</span>
+</code></pre></div></td></tr></table></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="k">class</span> <span class="nc">TodoItem</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+<details class="example">
+<summary>See Interface</summary>
+<p><font size="4"><strong>Parameters</strong></font></p>
 <table>
 <thead>
 <tr>
-<th>Learn More</th>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><a class="md-button" href="../../features/components/">Django-IDOM Advanced Usage</a> <a class="md-button" href="https://idom-docs.herokuapp.com/docs/guides/creating-interfaces/index.html">IDOM Core Documentation</a> <a class="md-button md-button--primary" href="https://github.com/idom-team/idom/discussions">Ask Questions on GitHub Discussions</a></td>
+<td><code>data</code></td>
+<td><code>QuerySet | Model</code></td>
+<td>The <code>Model</code> or <code>QuerySet</code> to recursively fetch fields from.</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><code>many_to_many</code></td>
+<td><code>bool</code></td>
+<td>Whether or not to recursively fetch <code>ManyToManyField</code> relationships.</td>
+<td><code>True</code></td>
+</tr>
+<tr>
+<td><code>many_to_one</code></td>
+<td><code>bool</code></td>
+<td>Whether or not to recursively fetch <code>ForeignKey</code> relationships.</td>
+<td><code>True</code></td>
 </tr>
 </tbody>
 </table>
+<p><font size="4"><strong>Returns</strong></font></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QuerySet | Model</code></td>
+<td>The <code>Model</code> or <code>QuerySet</code> with all fields fetched.</td>
+</tr>
+</tbody>
+</table>
+</details>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 15, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">February 2, 2023</span>
       
     
   </small>

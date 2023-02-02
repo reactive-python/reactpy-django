@@ -21,7 +21,7 @@
         <link rel="next" href="../choose-django-app/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.4">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.9">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.9c788c91.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.0d440cfe.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
@@ -79,7 +79,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#step-0-set-up-a-django-project" class="md-skip">
+        <a href="#step-0-create-a-django-project" class="md-skip">
           Skip to content
         </a>
       
@@ -167,7 +167,7 @@
           <div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list" role="presentation"></ol>
         </div>
       </div>
     </div>
@@ -351,16 +351,16 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
       
       
       
-        <label class="md-nav__link" for="__nav_2" tabindex="0" aria-expanded="true">
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
           Getting Started
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_2">
           <span class="md-nav__icon md-icon"></span>
           Getting Started
@@ -376,7 +376,7 @@
   
     <li class="md-nav__item md-nav__item--active">
       
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
       
@@ -403,8 +403,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#step-0-set-up-a-django-project" class="md-nav__link">
-    Step 0: Set up a Django Project
+  <a href="#step-0-create-a-django-project" class="md-nav__link">
+    Step 0: Create a Django Project
   </a>
   
 </li>
@@ -433,6 +433,13 @@
         <li class="md-nav__item">
   <a href="#step-4-configure-asgipy" class="md-nav__link">
     Step 4: Configure asgi.py
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-run-migrations" class="md-nav__link">
+    Step 5: Run Migrations
   </a>
   
 </li>
@@ -535,16 +542,16 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
       
       
       
-        <label class="md-nav__link" for="__nav_3" tabindex="0" aria-expanded="false">
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
           Usage
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Usage" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
           Usage
@@ -599,6 +606,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../features/utils/" class="md-nav__link">
+        Utilities
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../features/templatetag/" class="md-nav__link">
         Template Tag
       </a>
@@ -640,16 +661,16 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
       
       
       
-        <label class="md-nav__link" for="__nav_4" tabindex="0" aria-expanded="false">
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
           Contribute
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Contribute" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_4">
           <span class="md-nav__icon md-icon"></span>
           Contribute
@@ -744,11 +765,11 @@
 <summary>Summary</summary>
 <p>Django-IDOM can be installed from PyPI to an existing <strong>Django project</strong> with minimal configuration.</p>
 </details>
-<h2 id="step-0-set-up-a-django-project">Step 0: Set up a Django Project<a class="headerlink" href="#step-0-set-up-a-django-project" title="Permanent link">&para;</a></h2>
+<h2 id="step-0-create-a-django-project">Step 0: Create a Django Project<a class="headerlink" href="#step-0-create-a-django-project" title="Permanent link">&para;</a></h2>
 <p>These docs assumes you have already created <a href="https://docs.djangoproject.com/en/dev/intro/tutorial01/">a <strong>Django project</strong></a>, which involves creating and installing at least one <strong>Django app</strong>. If not, check out this <a href="https://www.youtube.com/watch?v=ZsJRXS_vrw0">9 minute YouTube tutorial</a> created by <em>IDG TECHtalk</em>.</p>
 <h2 id="step-1-install-from-pypi">Step 1: Install from PyPI<a class="headerlink" href="#step-1-install-from-pypi" title="Permanent link">&para;</a></h2>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>django-idom
-</code></pre></div></td></tr></table></div>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>django-idom
+</code></pre></div>
 <h2 id="step-2-configure-settingspy">Step 2: Configure <a href="https://docs.djangoproject.com/en/dev/topics/settings/"><code>settings.py</code></a><a class="headerlink" href="#step-2-configure-settingspy" title="Permanent link">&para;</a></h2>
 <p>In your settings you will need to add <code>django_idom</code> to <a href="https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS"><code>INSTALLED_APPS</code></a>.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">settings.py</label></div>
@@ -804,16 +825,18 @@
 <span class="normal">11</span>
 <span class="normal">12</span>
 <span class="normal">13</span>
-<span class="normal">14</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># If &quot;idom&quot; cache is not configured, then we will use &quot;default&quot; instead</span>
+<span class="normal">14</span>
+<span class="normal">15</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># If &quot;idom&quot; cache is not configured, then &quot;default&quot; will be used</span>
+<span class="c1"># IDOM expects a multiprocessing-safe and thread-safe cache backend.</span>
 <span class="n">CACHES</span> <span class="o">=</span> <span class="p">{</span>
 <span class="s2">&quot;idom&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;BACKEND&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">},</span>
 <span class="p">}</span>
 
-<span class="c1"># Maximum seconds between two reconnection attempts that would cause the client give up.</span>
-<span class="c1"># 0 will disable reconnection.</span>
-<span class="n">IDOM_WS_MAX_RECONNECT_TIMEOUT</span> <span class="o">=</span> <span class="mi">604800</span>
+<span class="c1"># Maximum seconds between reconnection attempts before giving up.</span>
+<span class="c1"># Use `0` to prevent component reconnection.</span>
+<span class="n">IDOM_RECONNECT_MAX</span> <span class="o">=</span> <span class="mi">259200</span>
 
-<span class="c1"># The URL for IDOM to serve websockets</span>
+<span class="c1"># The URL for IDOM to serve the component rendering websocket</span>
 <span class="n">IDOM_WEBSOCKET_URL</span> <span class="o">=</span> <span class="s2">&quot;idom/&quot;</span>
 
 <span class="c1"># Dotted path to the default postprocessor function, or `None`</span>
@@ -894,13 +917,17 @@
 <summary>Where is my <code>asgi.py</code>?</summary>
 <p>If you do not have an <code>asgi.py</code>, follow the <a href="https://channels.readthedocs.io/en/stable/installation.html"><code>channels</code> installation guide</a>.</p>
 </details>
+<h2 id="step-5-run-migrations">Step 5: Run Migrations<a class="headerlink" href="#step-5-run-migrations" title="Permanent link">&para;</a></h2>
+<p>Run Django's database migrations to initialize Django-IDOM's database table.</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>manage.py<span class="w"> </span>migrate
+</code></pre></div>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">December 28, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">February 2, 2023</span>
       
     
   </small>
@@ -946,10 +973,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.db81ec45.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.ba449ae6.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a00a7c5e.min.js"></script>
       
     
   </body>

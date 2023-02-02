@@ -21,7 +21,7 @@
         <link rel="next" href="../render-view/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.4">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.9">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.9c788c91.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.0d440cfe.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
@@ -162,7 +162,7 @@
           <div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list" role="presentation"></ol>
         </div>
       </div>
     </div>
@@ -346,16 +346,16 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
       
       
       
-        <label class="md-nav__link" for="__nav_2" tabindex="0" aria-expanded="true">
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
           Getting Started
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_2">
           <span class="md-nav__icon md-icon"></span>
           Getting Started
@@ -413,7 +413,7 @@
   
     <li class="md-nav__item md-nav__item--active">
       
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
       
@@ -473,16 +473,16 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
       
       
       
-        <label class="md-nav__link" for="__nav_3" tabindex="0" aria-expanded="false">
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
           Usage
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Usage" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
           Usage
@@ -537,6 +537,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../features/utils/" class="md-nav__link">
+        Utilities
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../features/templatetag/" class="md-nav__link">
         Template Tag
       </a>
@@ -578,16 +592,16 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
       
       
       
-        <label class="md-nav__link" for="__nav_4" tabindex="0" aria-expanded="false">
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
           Contribute
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Contribute" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_4">
           <span class="md-nav__icon md-icon"></span>
           Contribute
@@ -684,7 +698,7 @@
 <!-- BEGIN INCLUDE ../../../README.md '&lt;!--html-header-start--&gt;' '&lt;!--html-header-end--&gt;' -->
 
 <p>In your <strong>Django app</strong>'s HTML template, you can now embed your IDOM component using the <code>component</code> template tag. Within this tag, you will need to type in your dotted path to the component function as the first argument.</p>
-<p>Additionally, you can pass in keyword arguments into your component function. For example, after reading the code below, pay attention to how the function definition for <code>hello_world</code> (<em>in the previous example</em>) accepts a <code>recipient</code> argument.</p>
+<p>Additionally, you can pass in <code>args</code> and <code>kwargs</code> into your component function. For example, after reading the code below, pay attention to how the function definition for <code>hello_world</code> (<em>in the previous example</em>) accepts a <code>recipient</code> argument.</p>
 <!-- END INCLUDE -->
 
 <div class="tabbed-set tabbed-alternate" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">my-template.html</label></div>
@@ -713,7 +727,7 @@
 
 <details class="warning">
 <summary>Do not use context variables for the IDOM component name</summary>
-<p>Our pre-processor relies on the template tag containing a string.</p>
+<p>Our preprocessor relies on the template tag containing a string.</p>
 <p><strong>Do not</strong> use Django template/context variables for the component path. Failure to follow this warning will result in unexpected behavior.</p>
 <p>For example, <strong>do not</strong> do the following:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">my-template.html</label><label for="__tabbed_2_2">views.py</label></div>
@@ -750,7 +764,7 @@
 <p>For this template tag, there are two reserved keyword arguments: <code>class</code> and <code>key</code></p>
 <ul>
 <li><code>class</code> allows you to apply a HTML class to the top-level component div. This is useful for styling purposes.</li>
-<li><code>key</code> allows you to force the component to use a <a href="https://idom-docs.herokuapp.com/docs/guides/understanding-idom/why-idom-needs-keys.html?highlight=key">specific key value</a>. You typically won't need to set this.</li>
+<li><code>key</code> allows you to force the component to use a <a href="https://idom-docs.herokuapp.com/docs/guides/creating-interfaces/rendering-data/index.html#organizing-items-with-keys">specific key value</a>. Using <code>key</code> within a template tag is effectively useless.</li>
 </ul>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">my-template.html</label></div>
 <div class="tabbed-content">
@@ -796,47 +810,8 @@
 </div>
 </div>
 </div>
-<p>But keep in mind, in scenarios where you are trying to create a Single Page Application (SPA) within Django, you will only have one central component within your <code class="highlight"><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span></code> tag.</p>
-<p>Additionally, the components in the example above will not be able to interact with each other, except through database queries.</p>
-</details>
-<!-- END INCLUDE -->
-
-<!-- BEGIN INCLUDE ../features/templatetag.md '&lt;!--kwargs-start--&gt;' '&lt;!--kwargs-end--&gt;' -->
-
-<details class="question">
-<summary>Can I use positional arguments instead of keyword arguments?</summary>
-<p>You can only pass in <strong>keyword arguments</strong> within the template tag. Due to technical limitations, <strong>positional arguments</strong> are not supported at this time.</p>
-</details>
-<!-- END INCLUDE -->
-
-<!-- BEGIN INCLUDE ../features/templatetag.md '&lt;!--tags-start--&gt;' '&lt;!--tags-end--&gt;' -->
-
-<details class="question">
-<summary>What is a "template tag"?</summary>
-<p>You can think of template tags as Django's way of allowing you to run Python code within your HTML. Django-IDOM uses a <code class="highlight"><span class="cp">{%</span> <span class="k">component</span> <span class="p">...</span> <span class="cp">%}</span></code> template tag to perform it's magic.</p>
-<p>Keep in mind, in order to use the <code class="highlight"><span class="cp">{%</span> <span class="k">component</span> <span class="p">...</span> <span class="cp">%}</span></code> tag, you will need to first call <code class="highlight"><span class="cp">{%</span> <span class="k">load</span> <span class="nv">idom</span> <span class="cp">%}</span></code> to gain access to it.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="5:1"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">my-template.html</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<!-- BEGIN INCLUDE ../../../README.md '&lt;!--html-code-start--&gt;' '&lt;!--html-code-end--&gt;' -->
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="cp">{%</span> <span class="k">load</span> <span class="nv">idom</span> <span class="cp">%}</span>
-<span class="x">&lt;!DOCTYPE html&gt;</span>
-<span class="x">&lt;html&gt;</span>
-<span class="x">  &lt;body&gt;</span>
-<span class="x">    </span><span class="cp">{%</span> <span class="k">component</span> <span class="s2">&quot;example_project.my_app.components.hello_world&quot;</span> <span class="nv">recipient</span><span class="o">=</span><span class="s2">&quot;World&quot;</span> <span class="cp">%}</span>
-<span class="x">  &lt;/body&gt;</span>
-<span class="x">&lt;/html&gt;</span>
-</code></pre></div></td></tr></table></div>
-<!-- END INCLUDE -->
-</div>
-</div>
-</div>
+<p>Please note that components separated like this will not be able to interact with each other, except through database queries.</p>
+<p>Additionally, in scenarios where you are trying to create a Single Page Application (SPA) within Django, you will only have one component within your <code class="highlight"><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span></code> tag.</p>
 </details>
 <!-- END INCLUDE -->
 
@@ -850,7 +825,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">October 14, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">February 2, 2023</span>
       
     
   </small>
@@ -896,10 +871,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.db81ec45.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.ba449ae6.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a00a7c5e.min.js"></script>
       
     
   </body>

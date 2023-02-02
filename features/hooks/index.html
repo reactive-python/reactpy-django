@@ -21,7 +21,7 @@
         <link rel="next" href="../decorators/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.4">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.9">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.9c788c91.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.0d440cfe.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
@@ -167,7 +167,7 @@
           <div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list" role="presentation"></ol>
         </div>
       </div>
     </div>
@@ -349,16 +349,16 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
       
       
       
-        <label class="md-nav__link" for="__nav_2" tabindex="0" aria-expanded="false">
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
           Getting Started
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_2">
           <span class="md-nav__icon md-icon"></span>
           Getting Started
@@ -470,16 +470,16 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
       
       
       
-        <label class="md-nav__link" for="__nav_3" tabindex="0" aria-expanded="true">
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
           Usage
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Usage" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
           Usage
@@ -509,7 +509,7 @@
   
     <li class="md-nav__item md-nav__item--active">
       
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
       
@@ -550,8 +550,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#use-websocket" class="md-nav__link">
-    Use Websocket
+  <a href="#use-origin" class="md-nav__link">
+    Use Origin
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-connection" class="md-nav__link">
+    Use Connection
   </a>
   
 </li>
@@ -566,13 +573,6 @@
         <li class="md-nav__item">
   <a href="#use-location" class="md-nav__link">
     Use Location
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#use-origin" class="md-nav__link">
-    Use Origin
   </a>
   
 </li>
@@ -594,6 +594,20 @@
     <li class="md-nav__item">
       <a href="../decorators/" class="md-nav__link">
         Decorators
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utils/" class="md-nav__link">
+        Utilities
       </a>
     </li>
   
@@ -647,16 +661,16 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
       
       
       
-        <label class="md-nav__link" for="__nav_4" tabindex="0" aria-expanded="false">
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
           Contribute
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Contribute" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_4">
           <span class="md-nav__icon md-icon"></span>
           Contribute
@@ -1459,8 +1473,9 @@ the modified <code>data</code>.</p>
 <p>These <code>SynchronousOnlyOperation</code> exceptions may be resolved in a future version of Django containing an asynchronous ORM. However, it is best practice to always perform ORM calls in the background via hooks.</p>
 <!-- END INCLUDE -->
 </details>
-<h2 id="use-websocket">Use Websocket<a class="headerlink" href="#use-websocket" title="Permanent link">&para;</a></h2>
-<p>You can fetch the Django Channels <a href="https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer">websocket</a> at any time by using <code>use_websocket</code>.</p>
+<h2 id="use-origin">Use Origin<a class="headerlink" href="#use-origin" title="Permanent link">&para;</a></h2>
+<p>This is a shortcut that returns the Websocket's <code>origin</code>.</p>
+<p>You can expect this hook to provide strings such as <code>http://example.com</code>.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="10:1"><input checked="checked" id="__tabbed_10_1" name="__tabbed_10" type="radio" /><div class="tabbed-labels"><label for="__tabbed_10_1">components.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -1471,12 +1486,12 @@ the modified <code>data</code>.</p>
 <span class="normal">5</span>
 <span class="normal">6</span>
 <span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
-<span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_websocket</span>
+<span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_origin</span>
 
 <span class="nd">@component</span>
 <span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
-    <span class="n">my_websocket</span> <span class="o">=</span> <span class="n">use_websocket</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">my_websocket</span><span class="p">)</span>
+    <span class="n">my_origin</span> <span class="o">=</span> <span class="n">use_origin</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">my_origin</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
 </div>
 </div>
@@ -1495,7 +1510,49 @@ the modified <code>data</code>.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>IdomWebsocket</code></td>
+<td><code>str | None</code></td>
+<td>A string containing the browser's current origin, obtained from websocket headers (if available).</td>
+</tr>
+</tbody>
+</table>
+</details>
+<h2 id="use-connection">Use Connection<a class="headerlink" href="#use-connection" title="Permanent link">&para;</a></h2>
+<p>You can fetch the Django Channels <a href="https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer">websocket</a> at any time by using <code>use_connection</code>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="11:1"><input checked="checked" id="__tabbed_11_1" name="__tabbed_11" type="radio" /><div class="tabbed-labels"><label for="__tabbed_11_1">components.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
+<span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_connection</span>
+
+<span class="nd">@component</span>
+<span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
+    <span class="n">my_connection</span> <span class="o">=</span> <span class="n">use_connection</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">my_connection</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+<details class="example">
+<summary>See Interface</summary>
+<p><font size="4"><strong>Parameters</strong></font></p>
+<p><code>None</code></p>
+<p><font size="4"><strong>Returns</strong></font></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Connection</code></td>
 <td>The component's websocket.</td>
 </tr>
 </tbody>
@@ -1503,7 +1560,7 @@ the modified <code>data</code>.</p>
 </details>
 <h2 id="use-scope">Use Scope<a class="headerlink" href="#use-scope" title="Permanent link">&para;</a></h2>
 <p>This is a shortcut that returns the Websocket's <a href="https://channels.readthedocs.io/en/stable/topics/consumers.html#scope"><code>scope</code></a>.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="11:1"><input checked="checked" id="__tabbed_11_1" name="__tabbed_11" type="radio" /><div class="tabbed-labels"><label for="__tabbed_11_1">components.py</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="12:1"><input checked="checked" id="__tabbed_12_1" name="__tabbed_12" type="radio" /><div class="tabbed-labels"><label for="__tabbed_12_1">components.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
@@ -1537,7 +1594,7 @@ the modified <code>data</code>.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>dict[str, Any]</code></td>
+<td><code>MutableMapping[str, Any]</code></td>
 <td>The websocket's <code>scope</code>.</td>
 </tr>
 </tbody>
@@ -1546,7 +1603,7 @@ the modified <code>data</code>.</p>
 <h2 id="use-location">Use Location<a class="headerlink" href="#use-location" title="Permanent link">&para;</a></h2>
 <p>This is a shortcut that returns the Websocket's <code>path</code>.</p>
 <p>You can expect this hook to provide strings such as <code>/idom/my_path</code>.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="12:1"><input checked="checked" id="__tabbed_12_1" name="__tabbed_12" type="radio" /><div class="tabbed-labels"><label for="__tabbed_12_1">components.py</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="13:1"><input checked="checked" id="__tabbed_13_1" name="__tabbed_13" type="radio" /><div class="tabbed-labels"><label for="__tabbed_13_1">components.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
@@ -1591,56 +1648,13 @@ the modified <code>data</code>.</p>
 <p>This hook will be updated to return the browser's currently active path. This change will come in alongside IDOM URL routing support.</p>
 <p>Check out <a href="https://github.com/idom-team/idom-router/issues/2">idom-team/idom-router#2</a> for more information.</p>
 </details>
-<h2 id="use-origin">Use Origin<a class="headerlink" href="#use-origin" title="Permanent link">&para;</a></h2>
-<p>This is a shortcut that returns the Websocket's <code>origin</code>.</p>
-<p>You can expect this hook to provide strings such as <code>http://example.com</code>.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="13:1"><input checked="checked" id="__tabbed_13_1" name="__tabbed_13" type="radio" /><div class="tabbed-labels"><label for="__tabbed_13_1">components.py</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">idom</span> <span class="kn">import</span> <span class="n">component</span><span class="p">,</span> <span class="n">html</span>
-<span class="kn">from</span> <span class="nn">django_idom.hooks</span> <span class="kn">import</span> <span class="n">use_origin</span>
-
-<span class="nd">@component</span>
-<span class="k">def</span> <span class="nf">my_component</span><span class="p">():</span>
-    <span class="n">my_origin</span> <span class="o">=</span> <span class="n">use_origin</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">my_origin</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-</div>
-</div>
-</div>
-<details class="example">
-<summary>See Interface</summary>
-<p><font size="4"><strong>Parameters</strong></font></p>
-<p><code>None</code></p>
-<p><font size="4"><strong>Returns</strong></font></p>
-<table>
-<thead>
-<tr>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>str | None</code></td>
-<td>A string containing the browser's current origin, obtained from websocket headers (if available).</td>
-</tr>
-</tbody>
-</table>
-</details>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">December 28, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">February 2, 2023</span>
       
     
   </small>
@@ -1686,10 +1700,10 @@ the modified <code>data</code>.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.db81ec45.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.ba449ae6.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a00a7c5e.min.js"></script>
       
     
   </body>
