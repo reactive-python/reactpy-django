@@ -15,7 +15,7 @@ from .types import TestObject
 
 @component
 def hello_world():
-    return html._(html.div({"id": "hello-world"}, "Hello World!"), html.hr())
+    return html._(html.div("Hello World!", id="hello-world"), html.hr())
 
 
 @component
@@ -25,13 +25,11 @@ def button():
         html.div(
             "button:",
             html.button(
-                {"id": "counter-inc", "onClick": lambda event: set_count(count + 1)},
                 "Click me!",
+                id="counter-inc",
+                on_click=lambda event: set_count(count + 1),
             ),
-            html.p(
-                {"id": "counter-num", "data-count": count},
-                f"Current count is: {count}",
-            ),
+            html.p(f"Current count is: {count}", id="counter-num", data_count=count),
         ),
         html.hr(),
     )
@@ -42,8 +40,9 @@ def parameterized_component(x, y):
     total = x + y
     return html._(
         html.div(
-            {"id": "parametrized-component", "data-value": total},
             f"parameterized_component: {total}",
+            id="parametrized-component",
+            data_value=total,
         ),
         html.hr(),
     )
@@ -54,14 +53,7 @@ def object_in_templatetag(my_object: TestObject):
     success = bool(my_object and my_object.value)
     co_name = inspect.currentframe().f_code.co_name  # type: ignore
     return html._(
-        html.div(
-            {
-                "id": co_name,
-                "data-success": success,
-            },
-            f"{co_name}: ",
-            str(my_object),
-        ),
+        html.div(f"{co_name}: ", str(my_object), id=co_name, data_success=success),
         html.hr(),
     )
 
@@ -79,7 +71,7 @@ SimpleButton = web.export(SimpleButtonModule, "SimpleButton")
 def simple_button():
     return html._(
         "simple_button:",
-        SimpleButton({"id": "simple-button"}),
+        SimpleButton(id="simple-button"),
         html.hr(),
     )
 
@@ -95,9 +87,7 @@ def use_connection():
         and getattr(ws.carrier, "dotted_path", None)
     )
     return html.div(
-        {"id": "use-connection", "data-success": success},
-        f"use_connection: {ws}",
-        html.hr(),
+        f"use_connection: {ws}", html.hr(), id="use-connection", data_success=success
     )
 
 
@@ -106,9 +96,7 @@ def use_scope():
     scope = django_idom.hooks.use_scope()
     success = len(scope) >= 10 and scope["type"] == "websocket"
     return html.div(
-        {"id": "use-scope", "data-success": success},
-        f"use_scope: {scope}",
-        html.hr(),
+        f"use_scope: {scope}", html.hr(), id="use-scope", data_success=success
     )
 
 
@@ -117,9 +105,7 @@ def use_location():
     location = django_idom.hooks.use_location()
     success = bool(location)
     return html.div(
-        {"id": "use-location", "data-success": success},
-        f"use_location: {location}",
-        html.hr(),
+        f"use_location: {location}", html.hr(), id="use-location", data_success=success
     )
 
 
@@ -128,20 +114,18 @@ def use_origin():
     origin = django_idom.hooks.use_origin()
     success = bool(origin)
     return html.div(
-        {"id": "use-origin", "data-success": success},
-        f"use_origin: {origin}",
-        html.hr(),
+        f"use_origin: {origin}", html.hr(), id="use-origin", data_success=success
     )
 
 
 @component
 def django_css():
     return html.div(
-        {"id": "django-css"},
         django_idom.components.django_css("django-css-test.css", key="test"),
-        html.div({"style": {"display": "inline"}}, "django_css: "),
+        html.div("django_css: ", style={"display": "inline"}),
         html.button("This text should be blue."),
         html.hr(),
+        id="django-css",
     )
 
 
@@ -150,9 +134,10 @@ def django_js():
     success = False
     return html._(
         html.div(
-            {"id": "django-js", "data-success": success},
             f"django_js: {success}",
             django_idom.components.django_js("django-js-test.js", key="test"),
+            id="django-js",
+            data_success=success,
         ),
         html.hr(),
     )
@@ -161,34 +146,22 @@ def django_js():
 @component
 @django_idom.decorators.auth_required(
     fallback=html.div(
-        {"id": "unauthorized-user-fallback"},
-        "unauthorized_user: Success",
-        html.hr(),
+        "unauthorized_user: Success", html.hr(), id="unauthorized-user-fallback"
     )
 )
 def unauthorized_user():
-    return html.div(
-        {"id": "unauthorized-user"},
-        "unauthorized_user: Fail",
-        html.hr(),
-    )
+    return html.div("unauthorized_user: Fail", html.hr(), id="unauthorized-user")
 
 
 @component
 @django_idom.decorators.auth_required(
     auth_attribute="is_anonymous",
     fallback=html.div(
-        {"id": "authorized-user-fallback"},
-        "authorized_user: Fail",
-        html.hr(),
+        "authorized_user: Fail", html.hr(), id="authorized-user-fallback"
     ),
 )
 def authorized_user():
-    return html.div(
-        {"id": "authorized-user"},
-        "authorized_user: Success",
-        html.hr(),
-    )
+    return html.div("authorized_user: Success", html.hr(), id="authorized-user")
 
 
 def create_relational_parent() -> RelationalParent:
@@ -231,15 +204,13 @@ def relational_query():
     fk = foriegn_child.data.parent
 
     return html.div(
-        {
-            "id": "relational-query",
-            "data-success": bool(mtm) and bool(oto) and bool(mto) and bool(fk),
-        },
         html.div(f"Relational Parent Many To Many: {mtm}"),
         html.div(f"Relational Parent One To One: {oto}"),
         html.div(f"Relational Parent Many to One: {mto}"),
         html.div(f"Relational Child Foreign Key: {fk}"),
         html.hr(),
+        id="relational-query",
+        data_success=bool(mtm) and bool(oto) and bool(mto) and bool(fk),
     )
 
 
@@ -302,13 +273,11 @@ def todo_list():
     return html.div(
         html.label("Add an item:"),
         html.input(
-            {
-                "type": "text",
-                "id": "todo-input",
-                "value": input_value,
-                "onKeyPress": on_submit,
-                "onChange": on_change,
-            }
+            type="text",
+            id="todo-input",
+            value=input_value,
+            on_key_press=on_submit,
+            on_change=on_change,
         ),
         mutation_status,
         rendered_items,
@@ -320,17 +289,15 @@ def _render_todo_items(items, toggle_item):
     return html.ul(
         [
             html.li(
-                {"id": f"todo-item-{item.text}"},
                 item.text,
                 html.input(
-                    {
-                        "id": f"todo-item-{item.text}-checkbox",
-                        "type": "checkbox",
-                        "checked": item.done,
-                        "onChange": lambda event, i=item: toggle_item.execute(i),
-                    }
+                    id=f"todo-item-{item.text}-checkbox",
+                    type="checkbox",
+                    checked=item.done,
+                    on_change=lambda event, i=item: toggle_item.execute(i),
                 ),
                 key=item.text,
+                id=f"todo-item-{item.text}",
             )
             for item in items
         ]
@@ -368,45 +335,45 @@ _view_to_component_kwargs = view_to_component(views.view_to_component_kwargs)
 @component
 def view_to_component_sync_func_compatibility():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         _view_to_component_sync_func_compatibility(key="test"),
         html.hr(),
+        id=inspect.currentframe().f_code.co_name,  # type: ignore
     )
 
 
 @component
 def view_to_component_async_func_compatibility():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         _view_to_component_async_func_compatibility(),
         html.hr(),
+        id=inspect.currentframe().f_code.co_name,  # type: ignore
     )
 
 
 @component
 def view_to_component_sync_class_compatibility():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         _view_to_component_sync_class_compatibility(),
         html.hr(),
+        id=inspect.currentframe().f_code.co_name,  # type: ignore
     )
 
 
 @component
 def view_to_component_async_class_compatibility():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         _view_to_component_async_class_compatibility(),
         html.hr(),
+        id=inspect.currentframe().f_code.co_name,  # type: ignore
     )
 
 
 @component
 def view_to_component_template_view_class_compatibility():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         _view_to_component_template_view_class_compatibility(),
         html.hr(),
+        id=inspect.currentframe().f_code.co_name,  # type: ignore
     )
 
 
@@ -421,8 +388,9 @@ def view_to_component_request():
 
     return html._(
         html.button(
-            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},  # type: ignore
             "Click me",
+            id=f"{inspect.currentframe().f_code.co_name}_btn",  # type: ignore
+            on_click=on_click,
         ),
         _view_to_component_request(request=request),
     )
@@ -437,8 +405,9 @@ def view_to_component_args():
 
     return html._(
         html.button(
-            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},  # type: ignore
             "Click me",
+            id=f"{inspect.currentframe().f_code.co_name}_btn",  # type: ignore
+            on_click=on_click,
         ),
         _view_to_component_args(None, success),
     )
@@ -453,8 +422,9 @@ def view_to_component_kwargs():
 
     return html._(
         html.button(
-            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},  # type: ignore
             "Click me",
+            id=f"{inspect.currentframe().f_code.co_name}_btn",  # type: ignore
+            on_click=on_click,
         ),
         _view_to_component_kwargs(success=success),
     )

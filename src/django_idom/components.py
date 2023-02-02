@@ -76,10 +76,7 @@ def _view_to_component(
             view, _args, _kwargs
         )
         return html.iframe(
-            {
-                "src": reverse("idom:view_to_component", args=[dotted_path]),
-                "loading": "lazy",
-            }
+            src=reverse("idom:view_to_component", args=[dotted_path]), loading="lazy"
         )
 
     # Return the view if it's been rendered via the `async_render` hook

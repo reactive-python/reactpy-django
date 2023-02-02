@@ -1,3 +1,13 @@
+## Overview
+
+!!! summary
+
+    You will need to set up a Python environment to preview docs changes.
+
+---
+
+## Modifying Docs
+
 If you plan to make changes to this documentation, you will need to install the following dependencies first:
 
 -   [Python 3.8+](https://www.python.org/downloads/)
@@ -16,7 +26,7 @@ Then, by running the command below you can:
 -   Self-host a test server for the documentation
 
 ```bash linenums="0"
-pip install -r ./requirements/build-docs.txt --upgrade
+pip install -e . -r requirements.txt --upgrade
 ```
 
 Finally, to verify that everything is working properly, you can manually run the docs preview webserver.
@@ -26,3 +36,7 @@ mkdocs serve
 ```
 
 Navigate to `http://127.0.0.1:8000` to view a preview of the documentation.
+
+## GitHub Pull Request
+
+{% include-markdown "../../includes/pr.md" %}

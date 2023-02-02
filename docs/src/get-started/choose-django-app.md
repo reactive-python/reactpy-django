@@ -1,10 +1,14 @@
-???+ summary
+## Overview
+
+!!! summary
 
       Set up a **Django Project** with at least one app.
 
 ---
 
-If you have reached this point, you should have already [installed Django-IDOM](../getting-started/installation.md) through the previous steps.
+## Choose a Django App
+
+If you have reached this point, you should have already [installed Django-IDOM](../get-started/installation.md) through the previous steps.
 
 You will now need to pick at least one **Django app** to start using Django-IDOM on.
 

@@ -1,36 +1,39 @@
 ---
 nav:
     - Home: index.md
-    - Getting Started:
-          - 1. Install Django-IDOM: getting-started/installation.md
-          - 2. Choose a Django App: getting-started/choose-django-app.md
-          - 3. Create a Component: getting-started/create-component.md
-          - 4. Use the Template Tag: getting-started/reference-component.md
-          - 5. Render Your View: getting-started/render-view.md
-          - 6. Learn More: getting-started/learn-more.md
-    - Usage:
+    - Get Started:
+          - Install Django-IDOM: get-started/installation.md
+          - Choose a Django App: get-started/choose-django-app.md
+          - Create a Component: get-started/create-component.md
+          - Use the Template Tag: get-started/use-template-tag.md
+          - Render Your View: get-started/render-view.md
+          - Learn More: get-started/learn-more.md
+    - Reference:
           - Components: features/components.md
           - Hooks: features/hooks.md
           - Decorators: features/decorators.md
           - Utilities: features/utils.md
-          - Template Tag: features/templatetag.md
+          - Template Tag: features/template-tag.md
           - Settings: features/settings.md
-    - Contribute:
-          - Code: contribute/code.md
-          - Docs: contribute/docs.md
-          - Running Tests: contribute/running-tests.md
-    - Changelog: changelog/index.md
+    - About:
+          - Contribute:
+                - Code: contribute/code.md
+                - Docs: contribute/docs.md
+                - Running Tests: contribute/running-tests.md
+          - Community: https://github.com/idom-team/idom/discussions
+          - Changelog: changelog/index.md
 
 theme:
     name: material
+    custom_dir: docs/overrides
     palette:
         - media: "(prefers-color-scheme: dark)"
           scheme: slate
           toggle:
               icon: material/white-balance-sunny
               name: Switch to light mode
-          primary: deep-orange
-          accent: orange
+          primary: light blue
+          accent: light blue
         - media: "(prefers-color-scheme: light)"
           scheme: default
           toggle:
@@ -39,10 +42,9 @@ theme:
           primary: black
     features:
         - navigation.instant
-        - navigation.tracking
         - navigation.tabs
-        - toc.integrate
         - navigation.top
+        - content.code.copy
     icon:
         repo: fontawesome/brands/github
 
@@ -64,7 +66,13 @@ markdown_extensions:
 
 plugins:
     - search
+    - git-authors
     - include-markdown
+    - minify:
+          minify_html: true
+          minify_js: true
+          minify_css: true
+          cache_safe: true
     - git-revision-date-localized:
           fallback_to_build_date: true
     - spellcheck:
@@ -84,7 +92,7 @@ watch:
     - README.md
     - CHANGELOG.md
 
-site_name: Django IDOM Docs
+site_name: Django-IDOM Docs
 site_author: Archmonger
 site_description: React for Django developers.
 copyright: Copyright &copy; 2022 IDOM Team

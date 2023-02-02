@@ -3,7 +3,7 @@ import os
 from aiofile import async_open
 from django.core.exceptions import SuspiciousOperation
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
-from idom.config import IDOM_WED_MODULES_DIR
+from idom.config import IDOM_WEB_MODULES_DIR
 
 from django_idom.utils import create_cache_key, render_view
 
@@ -13,13 +13,13 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
     returned from cache if available."""
     from django_idom.config import IDOM_CACHE
 
-    web_modules_dir = IDOM_WED_MODULES_DIR.current
+    web_modules_dir = IDOM_WEB_MODULES_DIR.current
     path = os.path.abspath(web_modules_dir.joinpath(*file.split("/")))
 
     # Prevent attempts to walk outside of the web modules dir
     if str(web_modules_dir) != os.path.commonpath((path, web_modules_dir)):
         raise SuspiciousOperation(
-            "Attempt to access a directory outside of IDOM_WED_MODULES_DIR."
+            "Attempt to access a directory outside of IDOM_WEB_MODULES_DIR."
         )
 
     # Fetch the file from cache, if available

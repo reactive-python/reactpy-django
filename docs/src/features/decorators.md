@@ -1,6 +1,10 @@
-???+ summary
+## Overview
+
+!!! summary
 
     Decorator utilities can be used within your `components.py` to help simplify development.
+
+---
 
 ## Auth Required
 
@@ -13,13 +17,7 @@ This decorator is commonly used to selectively render a component only if a user
 === "components.py"
 
     ```python
-    from django_idom.decorators import auth_required
-    from idom import component, html
-
-    @component
-    @auth_required
-    def my_component():
-        return html.div("I am logged in!")
+    {% include "../../python/auth-required.py" %}
     ```
 
 ??? example "See Interface"
@@ -46,17 +44,7 @@ This decorator is commonly used to selectively render a component only if a user
     === "components.py"
 
         ```python
-        from django_idom.decorators import auth_required
-        from idom import component, html
-
-        @component
-        def my_component_fallback():
-            return html.div("I am NOT logged in!")
-
-        @component
-        @auth_required(fallback=my_component_fallback)
-        def my_component():
-            return html.div("I am logged in!")
+        {% include "../../python/auth-required-component-fallback.py" %}
         ```
 
 ??? question "How do I render a simple `idom.html` snippet if authentication fails?"
@@ -66,13 +54,7 @@ This decorator is commonly used to selectively render a component only if a user
     === "components.py"
 
         ```python
-        from django_idom.decorators import auth_required
-        from idom import component, html
-
-        @component
-        @auth_required(fallback=html.div("I am NOT logged in!"))
-        def my_component():
-            return html.div("I am logged in!")
+        {% include "../../python/auth-required-vdom-fallback.py" %}
         ```
 
 ??? question "How can I check if a user `is_staff`?"
@@ -82,14 +64,7 @@ This decorator is commonly used to selectively render a component only if a user
     === "components.py"
 
         ```python
-        from django_idom.decorators import auth_required
-        from idom import component, html
-
-
-        @component
-        @auth_required(auth_attribute="is_staff")
-        def my_component():
-            return html.div("I am logged in!")
+        {% include "../../python/auth-required-attribute.py" %}
         ```
 
 ??? question "How can I check for a custom attribute?"
@@ -101,12 +76,7 @@ This decorator is commonly used to selectively render a component only if a user
     === "models.py"
 
         ```python
-        from django.contrib.auth.models import AbstractBaseUser
-
-        class CustomUserModel(AbstractBaseUser):
-            @property
-            def is_really_cool(self):
-                return True
+        {% include "../../python/auth-required-custom-attribute-model.py" %}
         ```
 
     ... then you would do the following within your decorator:
@@ -114,11 +84,5 @@ This decorator is commonly used to selectively render a component only if a user
     === "components.py"
 
         ```python
-        from django_idom.decorators import auth_required
-        from idom import component, html
-
-        @component
-        @auth_required(auth_attribute="is_really_cool")
-        def my_component():
-            return html.div("I am logged in!")
+        {% include "../../python/auth-required-custom-attribute.py" %}
         ```
