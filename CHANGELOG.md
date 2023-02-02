@@ -10,17 +10,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!--
 Using the following categories, list your changes in this order:
-    - "Added" for new features.
-    - "Changed" for changes in existing functionality.
-    - "Deprecated" for soon-to-be removed features.
-    - "Removed" for now removed features.
-    - "Fixed" for any bug fixes.
-    - "Security" in case of vulnerabilities.
+
+### Added
+-   for new features.
+
+### Changed
+-   for changes in existing functionality.
+
+### Deprecated
+-   for soon-to-be removed features.
+
+### Removed
+-   for removed features.
+
+### Fixed
+-   for bug fixes.
+
+### Security
+-   for vulnerability fixes.
  -->
 
 <!--changelog-start-->
 
 ## [Unreleased]
+
+-   Nothing (yet)
+
+## [3.0.0a1] - 2023-02-02
+
+???+ note
+
+    This is Django-IDOM's biggest update yet!
+
+    To upgrade from previous version you will need to...
+
+    1. Install `django-idom >= 3.0.0`
+    2. Run `idom update-html-usages <DIR>` to update your `idom.html.*` calls to the new syntax
+    3. Run `python manage.py migrate` to create the new Django-IDOM database entries
 
 ### Added
 
@@ -29,11 +55,13 @@ Using the following categories, list your changes in this order:
 
 ### Changed
 
+-   It is now mandatory to run `manage.py migrate` after installing IDOM.
+-   Bumped the minimum IDOM version to 1.0.0
+    -   Due to IDOM 1.0.0, `idom.html.*`, HTML properties are now `snake_case` `**kwargs` rather than a `dict` of values.
+    -   You can auto-convert to the new style using `idom update-html-usages <DIR>`.
 -   The `component` template tag now supports both positional and keyword arguments.
 -   The `component` template tag now supports non-serializable arguments.
 -   `IDOM_WS_MAX_RECONNECT_TIMEOUT` setting has been renamed to `IDOM_RECONNECT_MAX`.
--   It is now mandatory to run `manage.py migrate` after installing IDOM.
--   Bumped the minimum IDOM version to 0.43.0
 
 ### Removed
 
@@ -51,7 +79,7 @@ Using the following categories, list your changes in this order:
 -   Fixed a potential method of component template tag argument spoofing.
 -   Exception information will no longer be displayed on the page, based on the value of `settings.py:DEBUG`.
 
-## [2.2.1] - 2022-01-09
+## [2.2.1] - 2023-01-09
 
 ### Fixed
 
@@ -218,7 +246,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/idom-team/django-idom/compare/2.2.1...HEAD
+[unreleased]: https://github.com/idom-team/django-idom/compare/3.0.0a1...HEAD
+[3.0.0a1]: https://github.com/idom-team/django-idom/compare/2.2.1...3.0.0a1
 [2.2.1]: https://github.com/idom-team/django-idom/compare/2.2.0...2.2.1
 [2.2.0]: https://github.com/idom-team/django-idom/compare/2.1.0...2.2.0
 [2.1.0]: https://github.com/idom-team/django-idom/compare/2.0.1...2.1.0

@@ -38,6 +38,7 @@ settings.json
 *$py.class
 
 # Distribution / packaging
+build/
 .Python build/
 develop-eggs/
 dist/

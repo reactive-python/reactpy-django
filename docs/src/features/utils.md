@@ -1,6 +1,10 @@
-???+ summary
+## Overview
+
+!!! summary
 
     Utility functions that you can use when needed.
+
+---
 
 ## Django Query Postprocessor
 
@@ -11,36 +15,13 @@ This postprocessor is designed to prevent Django's `SynchronousOnlyException` by
 === "components.py"
 
     ```python
-    from example_project.my_app.models import TodoItem
-    from idom import component
-    from django_idom.hooks import use_query
-    from django_idom.types import QueryOptions
-    from django_idom.utils import django_query_postprocessor
-
-    def get_items():
-        return TodoItem.objects.all()
-
-    @component
-    def todo_list():
-        # These `QueryOptions` are functionally equivalent to Django-IDOM's default values
-        item_query = use_query(
-            QueryOptions(
-                postprocessor=django_query_postprocessor,
-                postprocessor_kwargs={"many_to_many": True, "many_to_one": True},
-            ),
-            get_items,
-        )
-
-        ...
+    {% include "../../python/django-query-postprocessor.py" %}
     ```
 
 === "models.py"
 
     ```python
-    from django.db import models
-
-    class TodoItem(models.Model):
-        text = models.CharField(max_length=255)
+    {% include "../../python/example/models.py" %}
     ```
 
 ??? example "See Interface"

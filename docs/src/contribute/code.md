@@ -1,6 +1,16 @@
-???+ tip "Looking to contribute features that are not Django specific?"
+## Overview
+
+!!! summary
+
+    You will need to set up a Python environment to develop Django-IDOM.
+
+??? tip "Looking to contribute features that are not Django specific?"
 
     Everything within the `django-idom` repository must be specific to Django integration. Check out the [IDOM Core documentation](https://idom-docs.herokuapp.com/docs/about/contributor-guide.html) to contribute general features such as: components, hooks, events, and more.
+
+---
+
+## Modifying Code
 
 If you plan to make code changes to this repository, you will need to install the following dependencies first:
 
@@ -24,7 +34,7 @@ Then, by running the command below you can:
 pip install -e . -r requirements.txt
 ```
 
-Finally, to verify that everything is working properly, you can manually run the development webserver.
+Finally, to verify that everything is working properly, you can manually run the test webserver.
 
 ```bash linenums="0"
 cd tests
@@ -32,3 +42,7 @@ python manage.py runserver
 ```
 
 Navigate to `http://127.0.0.1:8000` to see if the tests are rendering correctly.
+
+## GitHub Pull Request
+
+{% include-markdown "../../includes/pr.md" %}

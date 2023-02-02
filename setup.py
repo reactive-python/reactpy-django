@@ -84,7 +84,7 @@ for line in (package_dir / "__init__.py").read_text().split("\n"):
         package["version"] = eval(line.split("=", 1)[1])
         break
 else:
-    print("No version found in %s/__init__.py" % package_dir)
+    print(f"No version found in {package_dir}/__init__.py")
     sys.exit(1)
 
 
@@ -95,9 +95,7 @@ else:
 
 requirements = []
 with (root_dir / "requirements" / "pkg-deps.txt").open() as f:
-    for line in map(str.strip, f):
-        if not line.startswith("#"):
-            requirements.append(line)
+    requirements.extend(line for line in map(str.strip, f) if not line.startswith("#"))
 package["install_requires"] = requirements
 
 
@@ -121,22 +119,42 @@ package["long_description_content_type"] = "text/markdown"
 def build_javascript_first(cls):
     class Command(cls):
         def run(self):
+            js_dir = str(src_dir / "js")
+            npm = shutil.which("npm")  # this is required on windows
+            if npm is None:
+                raise RuntimeError("NPM is not installed.")
+
+            log.info("Updating NPM...")
+            try:
+                args_list = [npm, "install", "-g", "npm@latest"]
+                log.info(f"> {list2cmdline(args_list)}")
+                subprocess.run(args_list, cwd=js_dir, check=True)
+            except Exception:
+                log.error("Failed to update NPM")
+                log.error(traceback.format_exc())
+                raise
+
             log.info("Installing Javascript...")
             try:
-                js_dir = str(src_dir / "js")
-                npm = shutil.which("npm")  # this is required on windows
-                if npm is None:
-                    raise RuntimeError("NPM is not installed.")
-                for args in (f"{npm} install", f"{npm} run build"):
-                    args_list = args.split()
-                    log.info(f"> {list2cmdline(args_list)}")
-                    subprocess.run(args_list, cwd=js_dir, check=True)
+                args_list = [npm, "install"]
+                log.info(f"> {list2cmdline(args_list)}")
+                subprocess.run(args_list, cwd=js_dir, check=True)
             except Exception:
                 log.error("Failed to install Javascript")
                 log.error(traceback.format_exc())
                 raise
-            else:
-                log.info("Successfully installed Javascript")
+
+            log.info("Building Javascript...")
+            try:
+                args_list = [npm, "run", "build"]
+                log.info(f"> {list2cmdline(args_list)}")
+                subprocess.run(args_list, cwd=js_dir, check=True)
+            except Exception:
+                log.error("Failed to build Javascript")
+                log.error(traceback.format_exc())
+                raise
+
+            log.info("Successfully built Javascript")
             super().run()
 
     return Command

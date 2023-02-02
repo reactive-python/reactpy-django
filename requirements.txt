@@ -1,5 +1,8 @@
--r requirements/pkg-deps.txt
+-r requirements/build-docs.txt
+-r requirements/build-pkg.txt
 -r requirements/check-style.txt
+-r requirements/check-types.txt
+-r requirements/dev-env.txt
+-r requirements/pkg-deps.txt
 -r requirements/test-env.txt
 -r requirements/test-run.txt
--r requirements/dev-env.txt

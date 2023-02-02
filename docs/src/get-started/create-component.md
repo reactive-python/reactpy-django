@@ -1,8 +1,12 @@
-???+ summary
+## Overview
+
+!!! summary
 
       Create a component function using our decorator.
 
 ---
+
+## Create a Component
 
 {% include-markdown "../../../README.md" start="<!--py-header-start-->" end="<!--py-header-end-->" %}
 

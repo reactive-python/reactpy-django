@@ -1,8 +1,12 @@
-???+ summary
+## Overview
+
+!!! summary
 
     Select your template containing an IDOM component, and render it using a Django view.
 
 ---
+
+## Render Your View
 
 We will assume you have [created a Django View](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view) before, but here's a simple example below.
 
@@ -13,10 +17,7 @@ In this example, we will create a view that renders `my-template.html` (_from th
 === "views.py"
 
     ```python
-    from django.shortcuts import render
-
-    def index(request):
-        return render(request, "my-template.html")
+    {% include "../../python/example/views.py" %}
     ```
 
 We will add this new view into your [`urls.py`](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view).
@@ -24,12 +25,7 @@ We will add this new view into your [`urls.py`](https://docs.djangoproject.com/e
 === "urls.py"
 
     ```python
-    from django.urls import path
-    from example_project.my_app import views
-
-    urlpatterns = [
-        path("example/", views.index),
-    ]
+    {% include "../../python/example/urls.py" %}
     ```
 
 Now, navigate to `http://127.0.0.1:8000/example/`. If you copy-pasted the component from the previous example, you will now see your component display "Hello World".

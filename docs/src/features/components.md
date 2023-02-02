@@ -1,6 +1,10 @@
-???+ summary
+## Overview
+
+!!! summary
 
     Prefabricated components can be used within your `components.py` to help simplify development.
+
+---
 
 ## View To Component
 
@@ -9,19 +13,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 === "components.py"
 
     ```python
-    from idom import component, html
-    from django.http import HttpResponse
-    from django_idom.components import view_to_component
-
-    @view_to_component
-    def hello_world_view(request):
-        return HttpResponse("Hello World!")
-
-    @component
-    def my_component():
-        return html.div(
-            hello_world_view(),
-        )
+    {% include "../../python/vtc.py" %}
     ```
 
 ??? example "See Interface"
@@ -52,23 +44,13 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
     === "Function Based View"
 
         ```python
-        ...
-
-        @view_to_component(compatibility=True)
-        @user_passes_test(lambda u: u.is_superuser)
-        def example_view(request):
-            ...
+        {% include "../../python/vtc-fbv-compat.py" %}
         ```
 
     === "Class Based View"
 
         ```python
-        ...
-
-        @view_to_component(compatibility=True)
-        @method_decorator(user_passes_test(lambda u: u.is_superuser), name="dispatch")
-        class ExampleView(TemplateView):
-            ...
+        {% include "../../python/vtc-cbv-compatibility.py" %}
         ```
 
 ??? info "Existing limitations"
@@ -88,21 +70,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
     === "components.py"
 
         ```python
-        from idom import component, html
-        from django.http import HttpResponse
-        from django.views import View
-        from django_idom.components import view_to_component
-
-        @view_to_component
-        class HelloWorldView(View):
-            def get(self, request):
-                return HttpResponse("Hello World!")
-
-        @component
-        def my_component():
-            return html.div(
-                HelloWorldView(),
-            )
+        {% include "../../python/vtc-cbv.py" %}
         ```
 
 ??? question "How do I transform views from external libraries?"
@@ -112,18 +80,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
     === "components.py"
 
         ```python
-        from idom import component, html
-        from django.http import HttpResponse
-        from django_idom.components import view_to_component
-        from some_library.views import example_view
-
-        example_vtc = view_to_component(example_view)
-
-        @component
-        def my_component():
-            return html.div(
-                example_vtc(),
-            )
+        {% include "../../python/vtc-func.py" %}
         ```
 
 ??? question "How do I provide `request`, `args`, and `kwargs` to a view?"
@@ -135,24 +92,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
     === "components.py"
 
         ```python
-        from idom import component, html
-        from django.http import HttpResponse, HttpRequest
-        from django_idom.components import view_to_component
-
-        example_request = HttpRequest()
-        example_request.method = "PUT"
-
-        @view_to_component
-        def hello_world_view(request):
-            return HttpResponse(f"Hello World! {request.method}")
-
-        @component
-        def my_component():
-            return html.div(
-                hello_world_view(
-                    example_request,
-                ),
-            )
+        {% include "../../python/vtc-request.py" %}
         ```
 
     ---
@@ -164,28 +104,10 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
     === "components.py"
 
         ```python
-        from idom import component, html
-        from django.http import HttpResponse
-        from django_idom.components import view_to_component
-
-        @view_to_component
-        def hello_world_view(request, arg1, arg2, key1=None, key2=None):
-            return HttpResponse(f"Hello World! {arg1} {arg2} {key1} {key2}")
-
-        @component
-        def my_component():
-            return html.div(
-                hello_world_view(
-                    None, # Your request object (optional)
-                    "value_1",
-                    "value_2",
-                    key1="abc",
-                    key2="123",
-                ),
-            )
+        {% include "../../python/vtc-args-kwargs.py" %}
         ```
 
-??? question "How do I use `strict_parseing`, `compatibility`, and `transforms`?"
+??? question "How do I use `strict_parsing`, `compatibility`, and `transforms`?"
 
     <font size="4">**`strict_parsing`**</font>
 
@@ -198,19 +120,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
     === "components.py"
 
         ```python
-        from idom import component, html
-        from django.http import HttpResponse
-        from django_idom.components import view_to_component
-
-        @view_to_component(strict_parsing=False)
-        def hello_world_view(request):
-            return HttpResponse("<my-tag> Hello World </my-tag>")
-
-        @component
-        def my_component():
-            return html.div(
-                hello_world_view(),
-            )
+        {% include "../../python/vtc-strict-parsing.py" %}
         ```
 
     _Note: Best-fit parsing is designed to be similar to how web browsers would handle non-standard or broken HTML._
@@ -228,19 +138,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
     === "components.py"
 
         ```python
-        from idom import component, html
-        from django.http import HttpResponse
-        from django_idom.components import view_to_component
-
-        @view_to_component(compatibility=True)
-        def hello_world_view(request):
-            return HttpResponse("Hello World!")
-
-        @component
-        def my_component():
-            return html.div(
-                hello_world_view(),
-            )
+        {% include "../../python/vtc-compatibility.py" %}
         ```
 
     _Note: By default the `compatibility` iframe is unstyled, and thus won't look pretty until you add some CSS._
@@ -258,24 +156,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
     === "components.py"
 
         ```python
-        from idom import component, html
-        from django.http import HttpResponse
-        from django_idom.components import view_to_component
-
-        def example_transform(vdom):
-            attributes = vdom.get("attributes")
-            if attributes and attributes.get("id") == "hello-world":
-                vdom["children"][0] = "Good Bye World!"
-
-        @view_to_component(transforms=[example_transform])
-        def hello_world_view(request):
-            return HttpResponse("<div id='hello-world'> Hello World! <div>")
-
-        @component
-        def my_component():
-            return html.div(
-                hello_world_view(),
-            )
+        {% include "../../python/vtc-transforms.py" %}
         ```
 
 ## Django CSS
@@ -285,15 +166,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 === "components.py"
 
     ```python
-    from idom import component, html
-    from django_idom.components import django_css
-
-    @component
-    def my_component():
-        return html.div(
-            django_css("css/buttons.css"),
-            html.button("My Button!"),
-        )
+    {% include "../../python/django-css.py" %}
     ```
 
 ??? example "See Interface"
@@ -322,15 +195,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
     Here's an example on what you should avoid doing for Django static files:
 
     ```python
-    from idom import component, html
-    from django.templatetags.static import static
-
-    @component
-    def my_component():
-        return html.div(
-            html.link({"rel": "stylesheet", "href": static("css/buttons.css")}),
-            html.button("My Button!"),
-        )
+    {% include "../../python/django-css-local-link.py" %}
     ```
 
 ??? question "How do I load external CSS?"
@@ -340,14 +205,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
     For external CSS, substitute `django_css` with `html.link`.
 
     ```python
-    from idom import component, html
-
-    @component
-    def my_component():
-        return html.div(
-            html.link({"rel": "stylesheet", "href": "https://example.com/external-styles.css"}),
-            html.button("My Button!"),
-        )
+    {% include "../../python/django-css-external-link.py" %}
     ```
 
 ??? question "Why not load my CSS in `#!html <head>`?"
@@ -363,15 +221,7 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
 === "components.py"
 
     ```python
-    from idom import component, html
-    from django_idom.components import django_js
-
-    @component
-    def my_component():
-        return html.div(
-            html.button("My Button!"),
-            django_js("js/scripts.js"),
-        )
+    {% include "../../python/django-js.py" %}
     ```
 
 ??? example "See Interface"
@@ -400,15 +250,7 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
     Here's an example on what you should avoid doing for Django static files:
 
     ```python
-    from idom import component, html
-    from django.templatetags.static import static
-
-    @component
-    def my_component():
-        return html.div(
-            html.script({"src": static("js/scripts.js")}),
-            html.button("My Button!"),
-        )
+    {% include "../../python/django-js-local-script.py" %}
     ```
 
 ??? question "How do I load external JS?"
@@ -418,14 +260,7 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
     For external JavaScript, substitute `django_js` with `html.script`.
 
     ```python
-    from idom import component, html
-
-    @component
-    def my_component():
-        return html.div(
-            html.script({"src": "https://example.com/external-scripts.js"}),
-            html.button("My Button!"),
-        )
+    {% include "../../python/django-js-remote-script.py" %}
     ```
 
 ??? question "Why not load my JS in `#!html <head>`?"

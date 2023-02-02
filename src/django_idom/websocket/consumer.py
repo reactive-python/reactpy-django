@@ -13,8 +13,8 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from django.utils import timezone
 from idom.backend.hooks import ConnectionContext
 from idom.backend.types import Connection, Location
-from idom.core.layout import Layout, LayoutEvent
-from idom.core.serve import serve_json_patch
+from idom.core.layout import Layout
+from idom.core.serve import serve_layout
 
 from django_idom.types import ComponentParamData, ComponentWebsocket
 from django_idom.utils import db_cleanup, func_has_params
@@ -50,8 +50,8 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             self._idom_dispatcher_future.cancel()
         await super().disconnect(code)
 
-    async def receive_json(self, content: Any, **kwargs: Any) -> None:
-        await self._idom_recv_queue.put(LayoutEvent(**content))
+    async def receive_json(self, content: Any, **_) -> None:
+        await self._idom_recv_queue.put(content)
 
     async def _run_dispatch_loop(self):
         from django_idom import models
@@ -121,7 +121,7 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
         # Begin serving the IDOM component
         try:
-            await serve_json_patch(
+            await serve_layout(
                 Layout(ConnectionContext(component_instance, value=connection)),
                 self.send_json,
                 self._idom_recv_queue.get,

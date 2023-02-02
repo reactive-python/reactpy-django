@@ -20,6 +20,16 @@ jobs:
             - uses: actions/setup-python@v4
               with:
                   python-version: 3.x
-            - run: pip install -r requirements/build-docs.txt
-            - run: linkcheckMarkdown docs/ -v -r
-            - run: mkdocs build --strict
+            - name: Check docs build
+              run: |
+                  pip install -r requirements/build-docs.txt
+                  linkcheckMarkdown docs/ -v -r
+                  mkdocs build --strict
+            - name: Check docs examples
+              run: |
+                  pip install -r requirements/check-types.txt
+                  pip install -r requirements/check-style.txt
+                  mypy --show-error-codes docs/python/
+                  black docs/python/ --check
+                  isort docs/python/ --check-only
+                  flake8 docs/python/

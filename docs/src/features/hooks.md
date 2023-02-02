@@ -1,12 +1,16 @@
-???+ summary
+## Overview
+
+!!! summary
 
     Prefabricated hooks can be used within your `components.py` to help simplify development.
 
-??? tip "Looking for standard ReactJS hooks?"
+??? tip "Looking for standard React hooks?"
 
-    Standard ReactJS hooks are contained within [`idom-team/idom`](https://github.com/idom-team/idom). Since `idom` is installed by default alongside `django-idom`, you can import them at any time.
+    Standard hooks are contained within [`idom-team/idom`](https://github.com/idom-team/idom). Since `idom` is installed alongside `django-idom`, you can import them at any time.
 
     Check out the [IDOM Core docs](https://idom-docs.herokuapp.com/docs/reference/hooks-api.html#basic-hooks) to see what hooks are available!
+
+---
 
 ## Use Query
 
@@ -17,34 +21,13 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 === "components.py"
 
     ```python
-    from example_project.my_app.models import TodoItem
-    from idom import component, html
-    from django_idom.hooks import use_query
-
-    def get_items():
-        return TodoItem.objects.all()
-
-    @component
-    def todo_list():
-        item_query = use_query(get_items)
-
-        if item_query.loading:
-            rendered_items = html.h2("Loading...")
-        elif item_query.error:
-            rendered_items = html.h2("Error when loading!")
-        else:
-            rendered_items = html.ul(html.li(item, key=item) for item in item_query.data)
-
-        return rendered_items
+    {% include "../../python/use-query.py" %}
     ```
 
 === "models.py"
 
     ```python
-    from django.db import models
-
-    class TodoItem(models.Model):
-        text = models.CharField(max_length=255)
+    {% include "../../python/example/models.py" %}
     ```
 
 ??? example "See Interface"
@@ -71,21 +54,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
     === "components.py"
 
         ```python
-        from idom import component
-        from django_idom.hooks import use_query
-
-        def example_query(value: int, other_value: bool = False):
-            ...
-
-        @component
-        def my_component():
-            query = use_query(
-                example_query,
-                123,
-                other_value=True,
-            )
-
-            ...
+        {% include "../../python/use-query-args.py" %}
         ```
 
 ??? question "Why does the example `get_items` function return `TodoItem.objects.all()`?"
@@ -108,25 +77,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
     === "components.py"
 
         ```python
-        from idom import component
-        from django_idom.types import QueryOptions
-        from django_idom.hooks import use_query
-
-        def execute_io_intensive_operation():
-            """This is an example query function that does something IO intensive."""
-            pass
-
-        @component
-        def todo_list():
-            query = use_query(
-                QueryOptions(postprocessor=None),
-                execute_io_intensive_operation,
-            )
-
-            if query.loading or query.error:
-                return None
-
-            return str(query.data)
+        {% include "../../python/use-query-postprocessor-disable.py" %}
         ```
 
     If you wish to create a custom `postprocessor`, you will need to create a callable.
@@ -138,34 +89,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
     === "components.py"
 
         ```python
-        from idom import component
-        from django_idom.types import QueryOptions
-        from django_idom.hooks import use_query
-
-        def my_postprocessor(data, example_kwarg=True):
-            if example_kwarg:
-                return data
-
-            return dict(data)
-
-        def execute_io_intensive_operation():
-            """This is an example query function that does something IO intensive."""
-            pass
-
-        @component
-        def todo_list():
-            query = use_query(
-                QueryOptions(
-                    postprocessor=my_postprocessor,
-                    postprocessor_kwargs={"example_kwarg": False},
-                ),
-                execute_io_intensive_operation,
-            )
-
-            if query.loading or query.error:
-                return None
-
-            return str(query.data)
+        {% include "../../python/use-query-postprocessor-change.py" %}
         ```
 
 ??? question "How can I prevent this hook from recursively fetching `ManyToMany` fields or `ForeignKey` relationships?"
@@ -179,36 +103,10 @@ The function you provide into this hook must return either a `Model` or `QuerySe
     === "components.py"
 
         ```python
-        from example_project.my_app.models import MyModel
-        from idom import component
-        from django_idom.types import QueryOptions
-        from django_idom.hooks import use_query
-
-        def get_model_with_relationships():
-            """This is an example query function that gets `MyModel` which has a ManyToMany field, and
-            additionally other models that have formed a ForeignKey association to `MyModel`.
-
-            ManyToMany Field: `many_to_many_field`
-            ForeignKey Field: `foreign_key_field_set`
-            """
-            return MyModel.objects.get(id=1)
-
-        @component
-        def todo_list():
-            query = use_query(
-                QueryOptions(postprocessor_kwargs={"many_to_many": False, "many_to_one": False}),
-                get_model_with_relationships,
-            )
-
-            if query.loading or query.error:
-                return None
-
-            # By disabling `many_to_many` and `many_to_one`, accessing these fields will now
-            # generate a `SynchronousOnlyOperation` exception
-            return f"{query.data.many_to_many_field} {query.data.foriegn_key_field_set}"
+        {% include "../../python/use-query-postprocessor-kwargs.py" %}
         ```
 
-    _Note: In Django's ORM design, the field name to access foreign keys is [always be postfixed with `_set`](https://docs.djangoproject.com/en/dev/topics/db/examples/many_to_one/)._
+    _Note: In Django's ORM design, the field name to access foreign keys is [postfixed with `_set`](https://docs.djangoproject.com/en/dev/topics/db/examples/many_to_one/) by default._
 
 ??? question "Can I make ORM calls without hooks?"
 
@@ -223,37 +121,14 @@ The function you provide into this hook will have no return value.
 === "components.py"
 
     ```python
-    from example_project.my_app.models import TodoItem
-    from idom import component, html
-    from django_idom.hooks import use_mutation
-
-    def add_item(text: str):
-        TodoItem(text=text).save()
-
-    @component
-    def todo_list():
-        def submit_event(event):
-            if event["key"] == "Enter":
-                item_mutation.execute(text=event["target"]["value"])
-
-        item_mutation = use_mutation(add_item)
-        if item_mutation.loading:
-            mutation_status = html.h2("Adding...")
-        elif item_mutation.error:
-            mutation_status = html.h2("Error when adding!")
-        else:
-            mutation_status = ""
-
-        return html.div(
-            html.label("Add an item:"),
-            html.input({"type": "text", "onKeyDown": submit_event}),
-            mutation_status,
-        )
+    {% include "../../python/use-mutation.py" %}
     ```
 
 === "models.py"
 
-    {% include-markdown "../../includes/examples.md" start="<!--todo-model-start-->" end="<!--todo-model-end-->" %}
+    ```python
+    {% include "../../python/example/models.py" %}
+    ```
 
 ??? example "See Interface"
 
@@ -277,19 +152,7 @@ The function you provide into this hook will have no return value.
     === "components.py"
 
         ```python
-        from idom import component
-        from django_idom.hooks import use_mutation
-
-        def example_mutation(value: int, other_value: bool = False):
-            ...
-
-        @component
-        def my_component():
-            mutation = use_mutation(example_mutation)
-
-            mutation.execute(123, other_value=True)
-
-            ...
+        {% include "../../python/use-mutation-args-kwargs.py" %}
         ```
 
 ??? question "Can `use_mutation` trigger a refetch of `use_query`?"
@@ -303,52 +166,14 @@ The function you provide into this hook will have no return value.
     === "components.py"
 
         ```python
-        from example_project.my_app.models import TodoItem
-        from idom import component, html
-        from django_idom.hooks import use_mutation
-
-        def get_items():
-            return TodoItem.objects.all()
-
-        def add_item(text: str):
-            TodoItem(text=text).save()
-
-        @component
-        def todo_list():
-            item_query = use_query(get_items)
-            item_mutation = use_mutation(add_item, refetch=get_items)
-
-            def submit_event(event):
-                if event["key"] == "Enter":
-                    item_mutation.execute(text=event["target"]["value"])
-
-            # Handle all possible query states
-            if item_query.loading:
-                rendered_items = html.h2("Loading...")
-            elif item_query.error:
-                rendered_items = html.h2("Error when loading!")
-            else:
-                rendered_items = html.ul(html.li(item, key=item) for item in item_query.data)
-
-            # Handle all possible mutation states
-            if item_mutation.loading:
-                mutation_status = html.h2("Adding...")
-            elif item_mutation.error:
-                mutation_status = html.h2("Error when adding!")
-            else:
-                mutation_status = ""
-
-            return html.div(
-                html.label("Add an item:"),
-                html.input({"type": "text", "onKeyDown": submit_event}),
-                mutation_status,
-                rendered_items,
-            )
+        {% include "../../python/use-mutation-query-refetch.py" %}
         ```
 
     === "models.py"
 
-        {% include-markdown "../../includes/examples.md" start="<!--todo-model-start-->" end="<!--todo-model-end-->" %}
+        ```python
+        {% include "../../python/example/models.py" %}
+        ```
 
 ??? question "Can I make a failed `use_mutation` try again?"
 
@@ -359,75 +184,18 @@ The function you provide into this hook will have no return value.
     === "components.py"
 
         ```python
-        from example_project.my_app.models import TodoItem
-        from idom import component, html
-        from django_idom.hooks import use_mutation
-
-        def add_item(text: str):
-            TodoItem(text=text).save()
-
-        @component
-        def todo_list():
-            item_mutation = use_mutation(add_item)
-
-            def reset_event(event):
-                item_mutation.reset()
-
-            def submit_event(event):
-                if event["key"] == "Enter":
-                    item_mutation.execute(text=event["target"]["value"])
-
-            if item_mutation.loading:
-                mutation_status = html.h2("Adding...")
-            elif item_mutation.error:
-                mutation_status = html.button({"onClick": reset_event}, "Error: Try again!")
-            else:
-                mutation_status = ""
-
-            return html.div(
-                html.label("Add an item:"),
-                html.input({"type": "text", "onKeyDown": submit_event}),
-                mutation_status,
-            )
+        {% include "../../python/use-mutation-reset.py" %}
         ```
 
     === "models.py"
 
-        {% include-markdown "../../includes/examples.md" start="<!--todo-model-start-->" end="<!--todo-model-end-->" %}
+        ```python
+        {% include "../../python/example/models.py" %}
+        ```
 
 ??? question "Can I make ORM calls without hooks?"
 
     {% include-markdown "../../includes/orm.md" start="<!--orm-excp-start-->" end="<!--orm-excp-end-->" %}
-
-## Use Origin
-
-This is a shortcut that returns the Websocket's `origin`.
-
-You can expect this hook to provide strings such as `http://example.com`.
-
-=== "components.py"
-
-    ```python
-    from idom import component, html
-    from django_idom.hooks import use_origin
-
-    @component
-    def my_component():
-        my_origin = use_origin()
-        return html.div(my_origin)
-    ```
-
-??? example "See Interface"
-
-    <font size="4">**Parameters**</font>
-
-    `None`
-
-    <font size="4">**Returns**</font>
-
-    | Type | Description |
-    | --- | --- |
-    | `str | None` | A string containing the browser's current origin, obtained from websocket headers (if available). |
 
 ## Use Connection
 
@@ -436,13 +204,7 @@ You can fetch the Django Channels [websocket](https://channels.readthedocs.io/en
 === "components.py"
 
     ```python
-    from idom import component, html
-    from django_idom.hooks import use_connection
-
-    @component
-    def my_component():
-        my_connection = use_connection()
-        return html.div(my_connection)
+    {% include "../../python/use-connection.py" %}
     ```
 
 ??? example "See Interface"
@@ -464,13 +226,7 @@ This is a shortcut that returns the Websocket's [`scope`](https://channels.readt
 === "components.py"
 
     ```python
-    from idom import component, html
-    from django_idom.hooks import use_scope
-
-    @component
-    def my_component():
-        my_scope = use_scope()
-        return html.div(my_scope)
+    {% include "../../python/use-scope.py" %}
     ```
 
 ??? example "See Interface"
@@ -494,13 +250,7 @@ You can expect this hook to provide strings such as `/idom/my_path`.
 === "components.py"
 
     ```python
-    from idom import component, html
-    from django_idom.hooks import use_location
-
-    @component
-    def my_component():
-        my_location = use_location()
-        return html.div(my_location)
+    {% include "../../python/use-location.py" %}
     ```
 
 ??? example "See Interface"
@@ -520,3 +270,27 @@ You can expect this hook to provide strings such as `/idom/my_path`.
     This hook will be updated to return the browser's currently active path. This change will come in alongside IDOM URL routing support.
 
     Check out [idom-team/idom-router#2](https://github.com/idom-team/idom-router/issues/2) for more information.
+
+## Use Origin
+
+This is a shortcut that returns the Websocket's `origin`.
+
+You can expect this hook to provide strings such as `http://example.com`.
+
+=== "components.py"
+
+    ```python
+    {% include "../../python/use-origin.py" %}
+    ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    `None`
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `str | None` | A string containing the browser's current origin, obtained from websocket headers (if available). |

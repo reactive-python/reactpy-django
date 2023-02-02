@@ -1,8 +1,12 @@
-???+ summary
+## Overview
+
+!!! summary
 
        Decide where the component will be displayed by using our template tag.
 
 ---
+
+## Use the Template Tag
 
 {% include-markdown "../../../README.md" start="<!--html-header-start-->" end="<!--html-header-end-->" %}
 
@@ -10,11 +14,11 @@
 
        {% include-markdown "../../../README.md" start="<!--html-code-start-->" end="<!--html-code-end-->" %}
 
-{% include-markdown "../features/templatetag.md" start="<!--context-start-->" end="<!--context-end-->" %}
+{% include-markdown "../features/template-tag.md" start="<!--context-start-->" end="<!--context-end-->" %}
 
-{% include-markdown "../features/templatetag.md" start="<!--kwarg-start-->" end="<!--kwarg-end-->" %}
+{% include-markdown "../features/template-tag.md" start="<!--reserved-arg-start-->" end="<!--reserved-arg-end-->" %}
 
-{% include-markdown "../features/templatetag.md" start="<!--multiple-components-start-->" end="<!--multiple-components-end-->" %}
+{% include-markdown "../features/template-tag.md" start="<!--multiple-components-start-->" end="<!--multiple-components-end-->" %}
 
 ??? question "Where is my templates folder?"
 
