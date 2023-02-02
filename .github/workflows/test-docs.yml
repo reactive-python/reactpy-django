@@ -21,13 +21,15 @@ jobs:
               with:
                   python-version: 3.x
             - name: Check docs build
-              run: pip install -r requirements/build-docs.txt
-              run: linkcheckMarkdown docs/ -v -r
-              run: mkdocs build --strict
+              run: |
+                  pip install -r requirements/build-docs.txt
+                  linkcheckMarkdown docs/ -v -r
+                  mkdocs build --strict
             - name: Check docs examples
-              run: pip install -r requirements/check-types.txt
-              run: pip install -r requirements/check-style.txt
-              run: mypy --show-error-codes docs/python/
-              run: black docs/python/ --check
-              run: isort docs/python/ --check-only
-              run: flake8 docs/python/
+              run: |
+                  pip install -r requirements/check-types.txt
+                  pip install -r requirements/check-style.txt
+                  mypy --show-error-codes docs/python/
+                  black docs/python/ --check
+                  isort docs/python/ --check-only
+                  flake8 docs/python/
