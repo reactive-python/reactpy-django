@@ -46,7 +46,7 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://idom-team.github.io/django-idom/features/templatetag/</loc>
+         <loc>https://idom-team.github.io/django-idom/features/template-tag/</loc>
          <lastmod>2023-02-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -56,32 +56,32 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://idom-team.github.io/django-idom/getting-started/choose-django-app/</loc>
+         <loc>https://idom-team.github.io/django-idom/get-started/choose-django-app/</loc>
          <lastmod>2023-02-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://idom-team.github.io/django-idom/getting-started/create-component/</loc>
+         <loc>https://idom-team.github.io/django-idom/get-started/create-component/</loc>
          <lastmod>2023-02-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://idom-team.github.io/django-idom/getting-started/installation/</loc>
+         <loc>https://idom-team.github.io/django-idom/get-started/installation/</loc>
          <lastmod>2023-02-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://idom-team.github.io/django-idom/getting-started/learn-more/</loc>
+         <loc>https://idom-team.github.io/django-idom/get-started/learn-more/</loc>
          <lastmod>2023-02-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://idom-team.github.io/django-idom/getting-started/reference-component/</loc>
+         <loc>https://idom-team.github.io/django-idom/get-started/render-view/</loc>
          <lastmod>2023-02-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://idom-team.github.io/django-idom/getting-started/render-view/</loc>
+         <loc>https://idom-team.github.io/django-idom/get-started/use-template-tag/</loc>
          <lastmod>2023-02-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
