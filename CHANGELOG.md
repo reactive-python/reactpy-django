@@ -36,7 +36,7 @@ Using the following categories, list your changes in this order:
 
 -   Nothing (yet)
 
-## [3.0.0-a1] - 2023-02-01
+## [3.0.0a1] - 2023-02-01
 
 ???+ note
 
@@ -246,8 +246,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/idom-team/django-idom/compare/3.0.0-a1...HEAD
-[3.0.0-a1]: https://github.com/idom-team/django-idom/compare/2.2.1...3.0.0-a1
+[unreleased]: https://github.com/idom-team/django-idom/compare/3.0.0a1...HEAD
+[3.0.0a1]: https://github.com/idom-team/django-idom/compare/2.2.1...3.0.0a1
 [2.2.1]: https://github.com/idom-team/django-idom/compare/2.2.0...2.2.1
 [2.2.0]: https://github.com/idom-team/django-idom/compare/2.1.0...2.2.0
 [2.1.0]: https://github.com/idom-team/django-idom/compare/2.0.1...2.1.0
