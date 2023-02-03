@@ -184,7 +184,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
     | --- | --- |
     | `Component` | An IDOM component. |
 
-??? question "Should I put `django_css` at the top of my component?"
+??? question "Should I put `django_css` at the top of my HTML?"
 
     Yes, if the stylesheet contains styling for your component.
 
@@ -239,7 +239,7 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
     | --- | --- |
     | `Component` | An IDOM component. |
 
-??? question "Should I put `django_js` at the bottom of my component?"
+??? question "Should I put `django_js` at the bottom of my HTML?"
 
     Yes, if your scripts are reliant on the contents of the component.
 
