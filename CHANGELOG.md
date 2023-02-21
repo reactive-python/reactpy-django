@@ -57,11 +57,9 @@ Using the following categories, list your changes in this order:
 ### Changed
 
 -   It is now mandatory to run `manage.py migrate` after installing IDOM.
--   Bumped the minimum IDOM version to 1.0.0
-    -   Due to IDOM 1.0.0, `idom.html.*`
-        -   HTML properties can now be `snake_case`. For example `className` now becomes `class_name`.
-        -   `key=...` is now declared within the props `dict` (rather than as a `kwarg`).
-    -   You can auto-convert to the new style using `idom update-html-usages <DIR>`.
+-   Bumped the minimum IDOM version to 1.0.0. Due to IDOM 1.0.0, `idom.html.*`...
+    -   HTML properties can now be `snake_case`. For example `className` now becomes `class_name`.
+    -   `key=...` is now declared within the props `dict` (rather than as a `kwarg`).
 -   The `component` template tag now supports both positional and keyword arguments.
 -   The `component` template tag now supports non-serializable arguments.
 -   `IDOM_WS_MAX_RECONNECT_TIMEOUT` setting has been renamed to `IDOM_RECONNECT_MAX`.
