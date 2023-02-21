@@ -45,7 +45,7 @@ Using the following categories, list your changes in this order:
     To upgrade from previous version you will need to...
 
     1. Install `django-idom >= 3.0.0`
-    2. Run `idom update-html-usages <DIR>` to update your `idom.html.*` calls to the new syntax
+    2. Run `idom rewrite-keys <DIR>` and `idom rewrite-camel-case-props <DIR>` to update your `idom.html.*` calls to the new syntax
     3. Run `python manage.py migrate` to create the new Django-IDOM database entries
 
 ### Added
@@ -58,7 +58,9 @@ Using the following categories, list your changes in this order:
 
 -   It is now mandatory to run `manage.py migrate` after installing IDOM.
 -   Bumped the minimum IDOM version to 1.0.0
-    -   Due to IDOM 1.0.0, `idom.html.*`, HTML properties are now `snake_case` `**kwargs` rather than a `dict` of values.
+    -   Due to IDOM 1.0.0, `idom.html.*`
+        -   HTML properties can now be `snake_case`. For example `className` now becomes `class_name`.
+        -   `key=...` is now declared within the props `dict` (rather than as a `kwarg`).
     -   You can auto-convert to the new style using `idom update-html-usages <DIR>`.
 -   The `component` template tag now supports both positional and keyword arguments.
 -   The `component` template tag now supports non-serializable arguments.

@@ -25,12 +25,11 @@ def button():
         html.div(
             "button:",
             html.button(
-                {"id": "counter-inc", "onClick": lambda event: set_count(count + 1)},
+                {"id": "counter-inc", "on_click": lambda event: set_count(count + 1)},
                 "Click me!",
             ),
             html.p(
-                {"id": "counter-num", "data-count": count},
-                f"Current count is: {count}",
+                {"id": "counter-num", "data-count": count}, f"Current count is: {count}"
             ),
         ),
         html.hr(),
@@ -55,12 +54,7 @@ def object_in_templatetag(my_object: TestObject):
     co_name = inspect.currentframe().f_code.co_name  # type: ignore
     return html._(
         html.div(
-            {
-                "id": co_name,
-                "data-success": success,
-            },
-            f"{co_name}: ",
-            str(my_object),
+            {"id": co_name, "data-success": success}, f"{co_name}: ", str(my_object)
         ),
         html.hr(),
     )
@@ -106,9 +100,7 @@ def use_scope():
     scope = django_idom.hooks.use_scope()
     success = len(scope) >= 10 and scope["type"] == "websocket"
     return html.div(
-        {"id": "use-scope", "data-success": success},
-        f"use_scope: {scope}",
-        html.hr(),
+        {"id": "use-scope", "data-success": success}, f"use_scope: {scope}", html.hr()
     )
 
 
@@ -306,8 +298,8 @@ def todo_list():
                 "type": "text",
                 "id": "todo-input",
                 "value": input_value,
-                "onKeyPress": on_submit,
-                "onChange": on_change,
+                "on_key_press": on_submit,
+                "on_change": on_change,
             }
         ),
         mutation_status,
@@ -320,17 +312,16 @@ def _render_todo_items(items, toggle_item):
     return html.ul(
         [
             html.li(
-                {"id": f"todo-item-{item.text}"},
+                {"id": f"todo-item-{item.text}", "key": item.text},
                 item.text,
                 html.input(
                     {
                         "id": f"todo-item-{item.text}-checkbox",
                         "type": "checkbox",
                         "checked": item.done,
-                        "onChange": lambda event, i=item: toggle_item.execute(i),
+                        "on_change": lambda event, i=item: toggle_item.execute(i),
                     }
                 ),
-                key=item.text,
             )
             for item in items
         ]
@@ -421,7 +412,10 @@ def view_to_component_request():
 
     return html._(
         html.button(
-            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},  # type: ignore
+            {
+                "id": f"{inspect.currentframe().f_code.co_name}_btn",  # type: ignore
+                "on_click": on_click,
+            },
             "Click me",
         ),
         _view_to_component_request(request=request),
@@ -437,7 +431,10 @@ def view_to_component_args():
 
     return html._(
         html.button(
-            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},  # type: ignore
+            {
+                "id": f"{inspect.currentframe().f_code.co_name}_btn",  # type: ignore
+                "on_click": on_click,
+            },
             "Click me",
         ),
         _view_to_component_args(None, success),
@@ -453,7 +450,10 @@ def view_to_component_kwargs():
 
     return html._(
         html.button(
-            {"id": f"{inspect.currentframe().f_code.co_name}_btn", "onClick": on_click},  # type: ignore
+            {
+                "id": f"{inspect.currentframe().f_code.co_name}_btn",  # type: ignore
+                "on_click": on_click,
+            },
             "Click me",
         ),
         _view_to_component_kwargs(success=success),
