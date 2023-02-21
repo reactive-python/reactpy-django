@@ -36,7 +36,7 @@ Using the following categories, list your changes in this order:
 
 -   Nothing (yet)
 
-## [3.0.0a3] - 2023-02-02
+## [3.0.0a3] - 2023-02-21
 
 ???+ note
 
