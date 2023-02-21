@@ -311,7 +311,7 @@ def create_cache_key(*args):
 def db_cleanup(immediate: bool = False):
     """Deletes expired component parameters from the database.
     This function may be expanded in the future to include additional cleanup tasks."""
-    from .config import IDOM_CACHE, IDOM_RECONNECT_MAX
+    from .config import IDOM_CACHE, IDOM_DATABASE, IDOM_RECONNECT_MAX
     from .models import ComponentParams
 
     cache_key: str = create_cache_key("last_cleaned")
@@ -324,7 +324,7 @@ def db_cleanup(immediate: bool = False):
     expires_by: datetime = timezone.now() - timedelta(seconds=IDOM_RECONNECT_MAX)
 
     # Component params exist in the DB, but we don't know when they were last cleaned
-    if not cleaned_at_str and ComponentParams.objects.all():
+    if not cleaned_at_str and ComponentParams.objects.using(IDOM_DATABASE).all():
         _logger.warning(
             "IDOM has detected component sessions in the database, "
             "but no timestamp was found in cache. This may indicate that "
@@ -334,5 +334,7 @@ def db_cleanup(immediate: bool = False):
     # Delete expired component parameters
     # Use timestamps in cache (`cleaned_at_str`) as a no-dependency rate limiter
     if immediate or not cleaned_at_str or timezone.now() >= clean_needed_by:
-        ComponentParams.objects.filter(last_accessed__lte=expires_by).delete()
+        ComponentParams.objects.using(IDOM_DATABASE).filter(
+            last_accessed__lte=expires_by
+        ).delete()
         IDOM_CACHE.set(cache_key, now_str)

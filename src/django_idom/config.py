@@ -4,6 +4,7 @@ from typing import Dict
 
 from django.conf import settings
 from django.core.cache import DEFAULT_CACHE_ALIAS, BaseCache, caches
+from django.db import DEFAULT_DB_ALIAS
 from idom.config import IDOM_DEBUG_MODE
 from idom.core.types import ComponentConstructor
 
@@ -28,6 +29,11 @@ IDOM_CACHE: BaseCache = (
     caches["idom"]
     if "idom" in getattr(settings, "CACHES", {})
     else caches[DEFAULT_CACHE_ALIAS]
+)
+IDOM_DATABASE: str = getattr(
+    settings,
+    "IDOM_DATABASE",
+    DEFAULT_DB_ALIAS,
 )
 IDOM_DEFAULT_QUERY_POSTPROCESSOR: Postprocessor | None = import_dotted_path(
     getattr(

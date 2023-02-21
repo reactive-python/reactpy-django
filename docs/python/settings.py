@@ -4,6 +4,9 @@ CACHES = {
     "idom": {"BACKEND": ...},
 }
 
+# IDOM works best with a multiprocessing-safe and thread-safe database backend.
+IDOM_DATABASE = "default"
+
 # Maximum seconds between reconnection attempts before giving up.
 # Use `0` to prevent component reconnection.
 IDOM_RECONNECT_MAX = 259200

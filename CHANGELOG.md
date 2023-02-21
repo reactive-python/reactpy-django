@@ -70,7 +70,7 @@ Using the following categories, list your changes in this order:
 
 ### Fixed
 
--   `view_to_component` will now retain any HTML that was defined in a `<head>` tag.
+-   `view_to_component` will now retain the contents of a `<head>` tag when rendering.
 -   React client is now set to `production` rather than `development`.
 -   `use_query` will now utilize `field.related_name` when postprocessing many-to-one relationships
 
