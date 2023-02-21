@@ -95,7 +95,7 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                     await convert_to_async(db_cleanup)()
 
                     # Get the queries from a DB
-                    params_query = await models.ComponentParams.objects.using(
+                    params_query = await models.ComponentSession.objects.using(
                         IDOM_DATABASE
                     ).aget(
                         uuid=uuid,
@@ -103,14 +103,14 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                     )
                     params_query.last_accessed = timezone.now()
                     await convert_to_async(params_query.save)()
-                except models.ComponentParams.DoesNotExist:
+                except models.ComponentSession.DoesNotExist:
                     _logger.warning(
                         f"Browser has attempted to access '{dotted_path}', "
                         f"but the component has already expired beyond IDOM_RECONNECT_MAX. "
                         "If this was expected, this warning can be ignored."
                     )
                     return
-                component_params: ComponentParamData = pickle.loads(params_query.data)
+                component_params: ComponentParamData = pickle.loads(params_query.params)
                 component_args = component_params.args
                 component_kwargs = component_params.kwargs
 

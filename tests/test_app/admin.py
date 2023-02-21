@@ -1,7 +1,7 @@
 from django.contrib import admin
 from test_app.models import ForiegnChild, RelationalChild, RelationalParent, TodoItem
 
-from django_idom.models import ComponentParams
+from django_idom.models import ComponentSession
 
 
 @admin.register(TodoItem)
@@ -24,6 +24,6 @@ class ForiegnChildAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(ComponentParams)
+@admin.register(ComponentSession)
 class ComponentParamsAdmin(admin.ModelAdmin):
     list_display = ("uuid", "last_accessed")

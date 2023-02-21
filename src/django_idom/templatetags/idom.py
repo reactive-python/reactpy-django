@@ -45,7 +45,7 @@ def component(dotted_path: str, *args, **kwargs):
     try:
         if func_has_params(component, *args, **kwargs):
             params = ComponentParamData(args, kwargs)
-            model = models.ComponentParams(uuid=uuid, data=pickle.dumps(params))
+            model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
             model.full_clean()
             model.save()
     except TypeError as e:
