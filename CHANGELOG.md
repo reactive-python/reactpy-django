@@ -70,7 +70,7 @@ Using the following categories, list your changes in this order:
 
 -   `django_idom.hooks.use_websocket` has been removed. The similar replacement is `django_idom.hooks.use_connection`.
 -   `django_idom.types.IdomWebsocket` has been removed. The similar replacement is `django_idom.types.Connection`.
--   `settings.py:CACHE['idom']` is no longer used by default. The name of the cache backend must now be specified with the `IDOM_CACHE` setting.
+-   `settings.py:CACHE['idom']` is no longer used by default. The name of the cache back-end must now be specified with the `IDOM_CACHE` setting.
 
 ### Fixed
 
