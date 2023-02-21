@@ -51,7 +51,8 @@ Using the following categories, list your changes in this order:
 ### Added
 
 -   The `idom` client will automatically configure itself to debug mode depending on `settings.py:DEBUG`.
--   `use_connection` hook for returning the browser's active `Connection`
+-   `use_connection` hook for returning the browser's active `Connection`.
+-   `IDOM_CACHE` is now configurable within `settings.py` to whatever cache name you wish.
 
 ### Changed
 
@@ -66,13 +67,14 @@ Using the following categories, list your changes in this order:
 ### Removed
 
 -   `django_idom.hooks.use_websocket` has been removed. The similar replacement is `django_idom.hooks.use_connection`.
--   `django_idom.types.IdomWebsocket` has been removed. The similar replacement is `django_idom.types.Connection`
+-   `django_idom.types.IdomWebsocket` has been removed. The similar replacement is `django_idom.types.Connection`.
+-   `settings.py:CACHE['idom']` is no longer used by default. The name of the cache backend must now be specified with the `IDOM_CACHE` setting.
 
 ### Fixed
 
 -   `view_to_component` will now retain the contents of a `<head>` tag when rendering.
 -   React client is now set to `production` rather than `development`.
--   `use_query` will now utilize `field.related_name` when postprocessing many-to-one relationships
+-   `use_query` will now utilize `field.related_name` when postprocessing many-to-one relationships.
 
 ### Security
 

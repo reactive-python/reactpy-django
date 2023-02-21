@@ -1,8 +1,5 @@
-# If "idom" cache is not configured, then "default" will be used
 # IDOM works best with a multiprocessing-safe and thread-safe cache backend.
-CACHES = {
-    "idom": {"BACKEND": ...},
-}
+IDOM_CACHE = "default"
 
 # IDOM works best with a multiprocessing-safe and thread-safe database backend.
 IDOM_DATABASE = "default"

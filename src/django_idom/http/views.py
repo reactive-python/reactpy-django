@@ -1,6 +1,7 @@
 import os
 
 from aiofile import async_open
+from django.core.cache import caches
 from django.core.exceptions import SuspiciousOperation
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
 from idom.config import IDOM_WEB_MODULES_DIR
@@ -25,12 +26,12 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
     # Fetch the file from cache, if available
     last_modified_time = os.stat(path).st_mtime
     cache_key = create_cache_key("web_module", str(path).lstrip(str(web_modules_dir)))
-    response = await IDOM_CACHE.aget(cache_key, version=int(last_modified_time))
+    response = await caches[IDOM_CACHE].aget(cache_key, version=int(last_modified_time))
     if response is None:
         async with async_open(path, "r") as fp:
             response = HttpResponse(await fp.read(), content_type="text/javascript")
-        await IDOM_CACHE.adelete(cache_key)
-        await IDOM_CACHE.aset(
+        await caches[IDOM_CACHE].adelete(cache_key)
+        await caches[IDOM_CACHE].aset(
             cache_key, response, timeout=None, version=int(last_modified_time)
         )
     return response

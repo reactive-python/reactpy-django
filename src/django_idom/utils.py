@@ -12,6 +12,7 @@ from inspect import iscoroutinefunction
 from typing import Any, Callable, Sequence
 
 from channels.db import database_sync_to_async
+from django.core.cache import caches
 from django.db.models import ManyToManyField, prefetch_related_objects
 from django.db.models.base import Model
 from django.db.models.fields.reverse_related import ManyToOneRel
@@ -316,7 +317,7 @@ def db_cleanup(immediate: bool = False):
 
     cache_key: str = create_cache_key("last_cleaned")
     now_str: str = datetime.strftime(timezone.now(), DATE_FORMAT)
-    cleaned_at_str: str = IDOM_CACHE.get(cache_key)
+    cleaned_at_str: str = caches[IDOM_CACHE].get(cache_key)
     cleaned_at: datetime = timezone.make_aware(
         datetime.strptime(cleaned_at_str or now_str, DATE_FORMAT)
     )
@@ -337,4 +338,4 @@ def db_cleanup(immediate: bool = False):
         ComponentParams.objects.using(IDOM_DATABASE).filter(
             last_accessed__lte=expires_by
         ).delete()
-        IDOM_CACHE.set(cache_key, now_str)
+        caches[IDOM_CACHE].set(cache_key, now_str)

@@ -5,6 +5,7 @@ import os
 from typing import Any, Callable, Protocol, Sequence, Union, cast, overload
 
 from django.contrib.staticfiles.finders import find
+from django.core.cache import caches
 from django.http import HttpRequest
 from django.urls import reverse
 from django.views import View
@@ -209,12 +210,12 @@ def _cached_static_contents(static_path: str):
     # Cache is preferrable to `use_memo` due to multiprocessing capabilities
     last_modified_time = os.stat(abs_path).st_mtime
     cache_key = f"django_idom:static_contents:{static_path}"
-    file_contents = IDOM_CACHE.get(cache_key, version=int(last_modified_time))
+    file_contents = caches[IDOM_CACHE].get(cache_key, version=int(last_modified_time))
     if file_contents is None:
         with open(abs_path, encoding="utf-8") as static_file:
             file_contents = static_file.read()
-        IDOM_CACHE.delete(cache_key)
-        IDOM_CACHE.set(
+        caches[IDOM_CACHE].delete(cache_key)
+        caches[IDOM_CACHE].set(
             cache_key, file_contents, timeout=None, version=int(last_modified_time)
         )
 
