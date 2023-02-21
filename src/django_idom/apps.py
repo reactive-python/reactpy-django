@@ -1,7 +1,7 @@
 import logging
 
 from django.apps import AppConfig
-from django.db.utils import OperationalError
+from django.db.utils import DatabaseError
 
 from django_idom.utils import ComponentPreloader, db_cleanup
 
@@ -22,5 +22,7 @@ class DjangoIdomConfig(AppConfig):
         # where the database may not be ready.
         try:
             db_cleanup(immediate=True)
-        except OperationalError:
-            _logger.debug("IDOM database was not ready at startup. Skipping cleanup...")
+        except DatabaseError:
+            _logger.debug(
+                "Could not access IDOM database at startup. Skipping cleanup..."
+            )

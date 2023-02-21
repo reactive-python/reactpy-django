@@ -7,7 +7,6 @@ from typing import (
     Awaitable,
     Callable,
     DefaultDict,
-    MutableMapping,
     Sequence,
     Union,
     cast,
@@ -65,9 +64,14 @@ def use_origin() -> str | None:
         return None
 
 
-def use_scope() -> MutableMapping[str, Any]:
+def use_scope() -> dict[str, Any]:
     """Get the current ASGI scope dictionary"""
-    return _use_scope()
+    scope = _use_scope()
+
+    if isinstance(scope, dict):
+        return scope
+
+    raise TypeError(f"Expected scope to be a dict, got {type(scope)}")
 
 
 def use_connection() -> Connection:

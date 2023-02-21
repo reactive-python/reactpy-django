@@ -55,7 +55,11 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
     async def _run_dispatch_loop(self):
         from django_idom import models
-        from django_idom.config import IDOM_RECONNECT_MAX, IDOM_REGISTERED_COMPONENTS
+        from django_idom.config import (
+            IDOM_DATABASE,
+            IDOM_RECONNECT_MAX,
+            IDOM_REGISTERED_COMPONENTS,
+        )
 
         scope = self.scope
         dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
@@ -91,20 +95,22 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                     await convert_to_async(db_cleanup)()
 
                     # Get the queries from a DB
-                    params_query = await models.ComponentParams.objects.aget(
+                    params_query = await models.ComponentSession.objects.using(
+                        IDOM_DATABASE
+                    ).aget(
                         uuid=uuid,
                         last_accessed__gt=now - timedelta(seconds=IDOM_RECONNECT_MAX),
                     )
                     params_query.last_accessed = timezone.now()
                     await convert_to_async(params_query.save)()
-                except models.ComponentParams.DoesNotExist:
+                except models.ComponentSession.DoesNotExist:
                     _logger.warning(
                         f"Browser has attempted to access '{dotted_path}', "
                         f"but the component has already expired beyond IDOM_RECONNECT_MAX. "
                         "If this was expected, this warning can be ignored."
                     )
                     return
-                component_params: ComponentParamData = pickle.loads(params_query.data)
+                component_params: ComponentParamData = pickle.loads(params_query.params)
                 component_args = component_params.args
                 component_kwargs = component_params.kwargs
 

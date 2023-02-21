@@ -3,7 +3,8 @@ from __future__ import annotations
 from typing import Dict
 
 from django.conf import settings
-from django.core.cache import DEFAULT_CACHE_ALIAS, BaseCache, caches
+from django.core.cache import DEFAULT_CACHE_ALIAS
+from django.db import DEFAULT_DB_ALIAS
 from idom.config import IDOM_DEBUG_MODE
 from idom.core.types import ComponentConstructor
 
@@ -24,10 +25,15 @@ IDOM_RECONNECT_MAX = getattr(
     "IDOM_RECONNECT_MAX",
     259200,  # Default to 3 days
 )
-IDOM_CACHE: BaseCache = (
-    caches["idom"]
-    if "idom" in getattr(settings, "CACHES", {})
-    else caches[DEFAULT_CACHE_ALIAS]
+IDOM_CACHE: str = getattr(
+    settings,
+    "IDOM_CACHE",
+    DEFAULT_CACHE_ALIAS,
+)
+IDOM_DATABASE: str = getattr(
+    settings,
+    "IDOM_DATABASE",
+    DEFAULT_DB_ALIAS,
 )
 IDOM_DEFAULT_QUERY_POSTPROCESSOR: Postprocessor | None = import_dotted_path(
     getattr(

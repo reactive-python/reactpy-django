@@ -36,7 +36,7 @@ Using the following categories, list your changes in this order:
 
 -   Nothing (yet)
 
-## [3.0.0a2] - 2023-02-02
+## [3.0.0a3] - 2023-02-21
 
 ???+ note
 
@@ -45,20 +45,21 @@ Using the following categories, list your changes in this order:
     To upgrade from previous version you will need to...
 
     1. Install `django-idom >= 3.0.0`
-    2. Run `idom update-html-usages <DIR>` to update your `idom.html.*` calls to the new syntax
+    2. Run `idom rewrite-keys <DIR>` and `idom rewrite-camel-case-props <DIR>` to update your `idom.html.*` calls to the new syntax
     3. Run `python manage.py migrate` to create the new Django-IDOM database entries
 
 ### Added
 
 -   The `idom` client will automatically configure itself to debug mode depending on `settings.py:DEBUG`.
--   `use_connection` hook for returning the browser's active `Connection`
+-   `use_connection` hook for returning the browser's active `Connection`.
+-   `IDOM_CACHE` is now configurable within `settings.py` to whatever cache name you wish.
 
 ### Changed
 
 -   It is now mandatory to run `manage.py migrate` after installing IDOM.
--   Bumped the minimum IDOM version to 1.0.0
-    -   Due to IDOM 1.0.0, `idom.html.*`, HTML properties are now `snake_case` `**kwargs` rather than a `dict` of values.
-    -   You can auto-convert to the new style using `idom update-html-usages <DIR>`.
+-   Bumped the minimum IDOM version to 1.0.0. Due to IDOM 1.0.0, `idom.html.*`...
+    -   HTML properties can now be `snake_case`. For example `className` now becomes `class_name`.
+    -   `key=...` is now declared within the props `dict` (rather than as a `kwarg`).
 -   The `component` template tag now supports both positional and keyword arguments.
 -   The `component` template tag now supports non-serializable arguments.
 -   `IDOM_WS_MAX_RECONNECT_TIMEOUT` setting has been renamed to `IDOM_RECONNECT_MAX`.
@@ -66,13 +67,14 @@ Using the following categories, list your changes in this order:
 ### Removed
 
 -   `django_idom.hooks.use_websocket` has been removed. The similar replacement is `django_idom.hooks.use_connection`.
--   `django_idom.types.IdomWebsocket` has been removed. The similar replacement is `django_idom.types.Connection`
+-   `django_idom.types.IdomWebsocket` has been removed. The similar replacement is `django_idom.types.Connection`.
+-   `settings.py:CACHE['idom']` is no longer used by default. The name of the cache back-end must now be specified with the `IDOM_CACHE` setting.
 
 ### Fixed
 
--   `view_to_component` will now retain any HTML that was defined in a `<head>` tag.
+-   `view_to_component` will now retain the contents of a `<head>` tag when rendering.
 -   React client is now set to `production` rather than `development`.
--   `use_query` will now utilize `field.related_name` when postprocessing many-to-one relationships
+-   `use_query` will now utilize `field.related_name` when postprocessing many-to-one relationships.
 
 ### Security
 
@@ -246,8 +248,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/idom-team/django-idom/compare/3.0.0a2...HEAD
-[3.0.0a2]: https://github.com/idom-team/django-idom/compare/2.2.1...3.0.0a2
+[unreleased]: https://github.com/idom-team/django-idom/compare/3.0.0a3...HEAD
+[3.0.0a3]: https://github.com/idom-team/django-idom/compare/2.2.1...3.0.0a3
 [2.2.1]: https://github.com/idom-team/django-idom/compare/2.2.0...2.2.1
 [2.2.0]: https://github.com/idom-team/django-idom/compare/2.1.0...2.2.0
 [2.1.0]: https://github.com/idom-team/django-idom/compare/2.0.1...2.1.0
