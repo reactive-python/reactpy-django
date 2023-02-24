@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Dict
-
 from django.conf import settings
 from django.core.cache import DEFAULT_CACHE_ALIAS
 from django.db import DEFAULT_DB_ALIAS
@@ -12,9 +10,13 @@ from django_idom.types import Postprocessor, ViewComponentIframe
 from django_idom.utils import import_dotted_path
 
 
+# Not user configurable settings
 IDOM_DEBUG_MODE.set_current(getattr(settings, "DEBUG"))
-IDOM_REGISTERED_COMPONENTS: Dict[str, ComponentConstructor] = {}
-IDOM_VIEW_COMPONENT_IFRAMES: Dict[str, ViewComponentIframe] = {}
+IDOM_REGISTERED_COMPONENTS: dict[str, ComponentConstructor] = {}
+IDOM_VIEW_COMPONENT_IFRAMES: dict[str, ViewComponentIframe] = {}
+
+
+# Configurable through Django settings.py
 IDOM_WEBSOCKET_URL = getattr(
     settings,
     "IDOM_WEBSOCKET_URL",

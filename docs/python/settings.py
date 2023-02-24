@@ -12,4 +12,4 @@ IDOM_RECONNECT_MAX = 259200
 IDOM_WEBSOCKET_URL = "idom/"
 
 # Dotted path to the default `django_idom.hooks.use_query` postprocessor function, or `None`
-IDOM_DEFAULT_QUERY_POSTPROCESSOR = "example_project.utils.my_postprocessor"
+IDOM_DEFAULT_QUERY_POSTPROCESSOR = "django_idom.utils.django_query_postprocessor"
