@@ -17,6 +17,6 @@
 		"@rollup/plugin-replace": "^5.0.2"
 	},
 	"dependencies": {
-		"idom-client-react": "^1.0.0-a6"
+		"idom-client-react": "^1.0.0"
 	}
 }
