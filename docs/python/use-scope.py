@@ -1,6 +1,5 @@
-from idom import component, html
-
-from django_idom.hooks import use_scope
+from django_reactpy.hooks import use_scope
+from reactpy import component, html
 
 
 @component

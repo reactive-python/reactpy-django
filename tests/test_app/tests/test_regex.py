@@ -1,6 +1,5 @@
 from django.test import TestCase
-
-from django_idom.utils import COMMENT_REGEX, COMPONENT_REGEX
+from django_reactpy.utils import COMMENT_REGEX, COMPONENT_REGEX
 
 
 class RegexTests(TestCase):

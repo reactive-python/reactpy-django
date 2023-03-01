@@ -1,6 +1,5 @@
-from idom import component, html
-
-from django_idom.components import django_js
+from django_reactpy.components import django_js
+from reactpy import component, html
 
 
 @component

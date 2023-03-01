@@ -1,6 +1,5 @@
-from idom import component, html
-
-from django_idom.hooks import use_location
+from django_reactpy.hooks import use_location
+from reactpy import component, html
 
 
 @component

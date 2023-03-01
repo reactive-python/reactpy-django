@@ -1,4 +1,4 @@
 INSTALLED_APPS = [
-    "django_idom",
+    "django_reactpy",
     ...,
 ]

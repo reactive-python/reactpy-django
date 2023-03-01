@@ -5,7 +5,7 @@ import replace from "@rollup/plugin-replace";
 export default {
 	input: "src/index.js",
 	output: {
-		file: "../django_idom/static/django_idom/client.js",
+		file: "../django_reactpy/static/django_reactpy/client.js",
 		format: "esm",
 	},
 	plugins: [

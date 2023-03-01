@@ -1,7 +1,6 @@
+from django_reactpy.hooks import use_query
 from example.models import TodoItem
-from idom import component, html
-
-from django_idom.hooks import use_query
+from reactpy import component, html
 
 
 def get_items():

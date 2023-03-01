@@ -1,4 +1,4 @@
-from idom import component
+from reactpy import component
 
 
 @component

@@ -1,6 +1,5 @@
-from idom import component
-
-from django_idom.hooks import use_query
+from django_reactpy.hooks import use_query
+from reactpy import component
 
 
 def example_query(value: int, other_value: bool = False):

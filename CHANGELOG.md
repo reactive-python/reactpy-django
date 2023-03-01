@@ -40,35 +40,35 @@ Using the following categories, list your changes in this order:
 
 ???+ note
 
-    This is Django-IDOM's biggest update yet!
+    This is Django-ReactPy's biggest update yet!
 
     To upgrade from previous version you will need to...
 
-    1. Install `django-idom >= 3.0.0`
-    2. Run `idom rewrite-keys <DIR>` and `idom rewrite-camel-case-props <DIR>` to update your `idom.html.*` calls to the new syntax
-    3. Run `python manage.py migrate` to create the new Django-IDOM database entries
+    1. Install `django-reactpy >= 3.0.0`
+    2. Run `reactpy rewrite-keys <DIR>` and `reactpy rewrite-camel-case-props <DIR>` to update your `reactpy.html.*` calls to the new syntax
+    3. Run `python manage.py migrate` to create the new Django-ReactPy database entries
 
 ### Added
 
--   The `idom` client will automatically configure itself to debug mode depending on `settings.py:DEBUG`.
+-   The `reactpy` client will automatically configure itself to debug mode depending on `settings.py:DEBUG`.
 -   `use_connection` hook for returning the browser's active `Connection`.
--   `IDOM_CACHE` is now configurable within `settings.py` to whatever cache name you wish.
+-   `REACTPY_CACHE` is now configurable within `settings.py` to whatever cache name you wish.
 
 ### Changed
 
--   It is now mandatory to run `manage.py migrate` after installing IDOM.
--   Bumped the minimum IDOM version to 1.0.0. Due to IDOM 1.0.0, `idom.html.*`...
+-   It is now mandatory to run `manage.py migrate` after installing ReactPy.
+-   Bumped the minimum ReactPy version to 1.0.0. Due to ReactPy 1.0.0, `reactpy.html.*`...
     -   HTML properties can now be `snake_case`. For example `className` now becomes `class_name`.
     -   `key=...` is now declared within the props `dict` (rather than as a `kwarg`).
 -   The `component` template tag now supports both positional and keyword arguments.
 -   The `component` template tag now supports non-serializable arguments.
--   `IDOM_WS_MAX_RECONNECT_TIMEOUT` setting has been renamed to `IDOM_RECONNECT_MAX`.
+-   `REACTPY_WS_MAX_RECONNECT_TIMEOUT` setting has been renamed to `REACTPY_RECONNECT_MAX`.
 
 ### Removed
 
--   `django_idom.hooks.use_websocket` has been removed. The similar replacement is `django_idom.hooks.use_connection`.
--   `django_idom.types.IdomWebsocket` has been removed. The similar replacement is `django_idom.types.Connection`.
--   `settings.py:CACHE['idom']` is no longer used by default. The name of the cache back-end must now be specified with the `IDOM_CACHE` setting.
+-   `django_reactpy.hooks.use_websocket` has been removed. The similar replacement is `django_reactpy.hooks.use_connection`.
+-   `django_reactpy.types.ReactPyWebsocket` has been removed. The similar replacement is `django_reactpy.types.Connection`.
+-   `settings.py:CACHE['reactpy']` is no longer used by default. The name of the cache back-end must now be specified with the `REACTPY_CACHE` setting.
 
 ### Fixed
 
@@ -86,7 +86,7 @@ Using the following categories, list your changes in this order:
 ### Fixed
 
 -   Fixed bug where `use_query` would not recursively fetch many-to-one relationships.
--   IDOM preloader will now print out the exception stack when failing to import a module.
+-   ReactPy preloader will now print out the exception stack when failing to import a module.
 
 ## [2.2.0] - 2022-12-28
 
@@ -100,7 +100,7 @@ Using the following categories, list your changes in this order:
 
 ### Removed
 
--   `django_idom.hooks._fetch_lazy_fields` has been deleted. The equivalent replacement is `django_idom.utils.django_query_postprocessor`.
+-   `django_reactpy.hooks._fetch_lazy_fields` has been deleted. The equivalent replacement is `django_reactpy.utils.django_query_postprocessor`.
 
 ## [2.1.0] - 2022-11-01
 
@@ -139,7 +139,7 @@ Using the following categories, list your changes in this order:
 -   Allow `use_mutation` to have `refetch=None`, as the docs suggest is possible.
 -   `use_query` will now prefetch all fields to prevent `SynchronousOnlyOperation` exceptions.
 -   `view_to_component`, `django_css`, and `django_js` type hints will now display like normal functions.
--   IDOM preloader no longer attempts to parse commented out IDOM components.
+-   ReactPy preloader no longer attempts to parse commented out ReactPy components.
 -   Tests are now fully functional on Windows
 
 ## [1.2.0] - 2022-09-19
@@ -149,16 +149,16 @@ Using the following categories, list your changes in this order:
 -   `auth_required` decorator to prevent your components from rendering to unauthenticated users.
 -   `use_query` hook for fetching database values.
 -   `use_mutation` hook for modifying database values.
--   `view_to_component` utility to convert legacy Django views to IDOM components.
+-   `view_to_component` utility to convert legacy Django views to ReactPy components.
 
 ### Changed
 
--   Bumped the minimum IDOM version to 0.40.2
+-   Bumped the minimum ReactPy version to 0.40.2
 -   Testing suite now uses `playwright` instead of `selenium`
 
 ### Fixed
 
--   IDOM preloader is no longer sensitive to whitespace within template tags.
+-   ReactPy preloader is no longer sensitive to whitespace within template tags.
 
 ## [1.1.0] - 2022-07-01
 
@@ -168,98 +168,98 @@ Using the following categories, list your changes in this order:
 
 ### Changed
 
--   Bumped the minimum IDOM version to 0.39.0
+-   Bumped the minimum ReactPy version to 0.39.0
 
 ## [1.0.0] - 2022-05-22
 
 ### Added
 
--   Django-specific hooks! `use_websocket`, `use_scope`, and `use_location` are now available within the `django_idom.hooks` module.
+-   Django-specific hooks! `use_websocket`, `use_scope`, and `use_location` are now available within the `django_reactpy.hooks` module.
 -   Documentation has been placed into a formal docs webpage.
 -   Logging for when a component fails to import, or if no components were found within Django.
 
 ### Changed
 
--   `idom_component` template tag has been renamed to `component`
--   Bumped the minimum IDOM version to 0.38.0
+-   `reactpy_component` template tag has been renamed to `component`
+-   Bumped the minimum ReactPy version to 0.38.0
 
 ### Removed
 
--   `websocket` parameter for components has been removed. Functionally, it is replaced with `django_idom.hooks.use_websocket`.
+-   `websocket` parameter for components has been removed. Functionally, it is replaced with `django_reactpy.hooks.use_websocket`.
 
 ## [0.0.5] - 2022-04-04
 
 ### Changed
 
--   Bumped the minimum IDOM version to 0.37.2
+-   Bumped the minimum ReactPy version to 0.37.2
 
 ### Fixed
 
--   ModuleNotFoundError: No module named `idom.core.proto` caused by IDOM 0.37.2
+-   ModuleNotFoundError: No module named `reactpy.core.proto` caused by ReactPy 0.37.2
 
 ## [0.0.4] - 2022-03-05
 
 ### Changed
 
--   Bumped the minimum IDOM version to 0.37.1
+-   Bumped the minimum ReactPy version to 0.37.1
 
 ## [0.0.3] - 2022-02-19
 
 ### Changed
 
--   Bumped the minimum IDOM version to 0.36.3
+-   Bumped the minimum ReactPy version to 0.36.3
 
 ## [0.0.2] - 2022-01-30
 
 ### Added
 
 -   Ability to declare the HTML class of the top-level component `div`
--   `name = ...` parameter to IDOM HTTP paths for use with `django.urls.reverse()`
+-   `name = ...` parameter to ReactPy HTTP paths for use with `django.urls.reverse()`
 -   Cache versioning to automatically invalidate old web module files from the cache back-end
--   Automatic pre-population of the IDOM component registry
--   Type hinting for `IdomWebsocket`
+-   Automatic pre-population of the ReactPy component registry
+-   Type hinting for `ReactPyWebsocket`
 
 ### Changed
 
 -   Fetching web modules from disk and/or cache is now fully async
--   Static files are now contained within a `django_idom/` parent folder
--   Upgraded IDOM to version `0.36.0`
+-   Static files are now contained within a `django_reactpy/` parent folder
+-   Upgraded ReactPy to version `0.36.0`
 -   Minimum Django version required is now `4.0`
 -   Minimum Python version required is now `3.8`
 
 ### Removed
 
--   `IDOM_WEB_MODULES_PATH` has been replaced with Django `include(...)`
--   `IDOM_WS_MAX_RECONNECT_DELAY` has been renamed to `IDOM_WS_MAX_RECONNECT_TIMEOUT`
--   `idom_web_modules` cache back-end has been renamed to `idom`
+-   `REACTPY_WEB_MODULES_PATH` has been replaced with Django `include(...)`
+-   `REACTPY_WS_MAX_RECONNECT_DELAY` has been renamed to `REACTPY_WS_MAX_RECONNECT_TIMEOUT`
+-   `reactpy_web_modules` cache back-end has been renamed to `reactpy`
 
 ### Fixed
 
 -   Increase test timeout values to prevent false positives
--   Windows compatibility for building Django-IDOM
+-   Windows compatibility for building Django-ReactPy
 
 ### Security
 
--   Fixed potential directory traversal attack on the IDOM web modules URL
+-   Fixed potential directory traversal attack on the ReactPy web modules URL
 
 ## [0.0.1] - 2021-08-18
 
 ### Added
 
--   Support for IDOM within the Django
+-   Support for ReactPy within the Django
 
-[unreleased]: https://github.com/idom-team/django-idom/compare/3.0.0a4...HEAD
-[3.0.0a4]: https://github.com/idom-team/django-idom/compare/2.2.1...3.0.0a4
-[2.2.1]: https://github.com/idom-team/django-idom/compare/2.2.0...2.2.1
-[2.2.0]: https://github.com/idom-team/django-idom/compare/2.1.0...2.2.0
-[2.1.0]: https://github.com/idom-team/django-idom/compare/2.0.1...2.1.0
-[2.0.1]: https://github.com/idom-team/django-idom/compare/2.0.0...2.0.1
-[2.0.0]: https://github.com/idom-team/django-idom/compare/1.2.0...2.0.0
-[1.2.0]: https://github.com/idom-team/django-idom/compare/1.1.0...1.2.0
-[1.1.0]: https://github.com/idom-team/django-idom/compare/1.0.0...1.1.0
-[1.0.0]: https://github.com/idom-team/django-idom/compare/0.0.5...1.0.0
-[0.0.5]: https://github.com/idom-team/django-idom/compare/0.0.4...0.0.5
-[0.0.4]: https://github.com/idom-team/django-idom/compare/0.0.3...0.0.4
-[0.0.3]: https://github.com/idom-team/django-idom/compare/0.0.2...0.0.3
-[0.0.2]: https://github.com/idom-team/django-idom/compare/0.0.1...0.0.2
-[0.0.1]: https://github.com/idom-team/django-idom/releases/tag/0.0.1
+[unreleased]: https://github.com/reactive-python/django-reactpy/compare/3.0.0a4...HEAD
+[3.0.0a4]: https://github.com/reactive-python/django-reactpy/compare/2.2.1...3.0.0a4
+[2.2.1]: https://github.com/reactive-python/django-reactpy/compare/2.2.0...2.2.1
+[2.2.0]: https://github.com/reactive-python/django-reactpy/compare/2.1.0...2.2.0
+[2.1.0]: https://github.com/reactive-python/django-reactpy/compare/2.0.1...2.1.0
+[2.0.1]: https://github.com/reactive-python/django-reactpy/compare/2.0.0...2.0.1
+[2.0.0]: https://github.com/reactive-python/django-reactpy/compare/1.2.0...2.0.0
+[1.2.0]: https://github.com/reactive-python/django-reactpy/compare/1.1.0...1.2.0
+[1.1.0]: https://github.com/reactive-python/django-reactpy/compare/1.0.0...1.1.0
+[1.0.0]: https://github.com/reactive-python/django-reactpy/compare/0.0.5...1.0.0
+[0.0.5]: https://github.com/reactive-python/django-reactpy/compare/0.0.4...0.0.5
+[0.0.4]: https://github.com/reactive-python/django-reactpy/compare/0.0.3...0.0.4
+[0.0.3]: https://github.com/reactive-python/django-reactpy/compare/0.0.2...0.0.3
+[0.0.2]: https://github.com/reactive-python/django-reactpy/compare/0.0.1...0.0.2
+[0.0.1]: https://github.com/reactive-python/django-reactpy/releases/tag/0.0.1

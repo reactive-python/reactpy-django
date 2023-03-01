@@ -1,7 +1,6 @@
 from django.http import HttpResponse
-from idom import component, html
-
-from django_idom.components import view_to_component
+from django_reactpy.components import view_to_component
+from reactpy import component, html
 
 
 @view_to_component(strict_parsing=False)

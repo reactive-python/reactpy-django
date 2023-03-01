@@ -1,9 +1,8 @@
+from django_reactpy.hooks import use_query
+from django_reactpy.types import QueryOptions
+from django_reactpy.utils import django_query_postprocessor
 from example.models import TodoItem
-from idom import component
-
-from django_idom.hooks import use_query
-from django_idom.types import QueryOptions
-from django_idom.utils import django_query_postprocessor
+from reactpy import component
 
 
 def get_items():
@@ -12,7 +11,7 @@ def get_items():
 
 @component
 def todo_list():
-    # These `QueryOptions` are functionally equivalent to Django-IDOM's default values
+    # These `QueryOptions` are functionally equivalent to Django-ReactPy's default values
     item_query = use_query(
         QueryOptions(
             postprocessor=django_query_postprocessor,

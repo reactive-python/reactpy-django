@@ -2,13 +2,13 @@
 
 !!! summary
 
-    Template tags can be used within your Django templates such as `my-template.html` to import IDOM features.
+    Template tags can be used within your Django templates such as `my-template.html` to import ReactPy features.
 
 ---
 
 ## Component
 
-The `component` template tag can be used to insert any number of IDOM components onto your page.
+The `component` template tag can be used to insert any number of ReactPy components onto your page.
 
 === "my-template.html"
 
@@ -28,11 +28,11 @@ The `component` template tag can be used to insert any number of IDOM components
 
     | Type | Description |
     | --- | --- |
-    | `Component` | An IDOM component. |
+    | `Component` | An ReactPy component. |
 
 <!--context-start-->
 
-??? warning "Do not use context variables for the IDOM component name"
+??? warning "Do not use context variables for the ReactPy component name"
 
     Our preprocessor relies on the template tag containing a string.
 
@@ -64,7 +64,7 @@ The `component` template tag can be used to insert any number of IDOM components
     For this template tag, there are two reserved keyword arguments: `class` and `key`
 
     -   `class` allows you to apply a HTML class to the top-level component div. This is useful for styling purposes.
-    -   `key` allows you to force the component's root node to use a [specific key value](https://idom-docs.herokuapp.com/docs/guides/creating-interfaces/rendering-data/index.html#organizing-items-with-keys). Using `key` within a template tag is effectively useless.
+    -   `key` allows you to force the component's root node to use a [specific key value](https://reactpy.dev/docs/guides/creating-interfaces/rendering-data/index.html#organizing-items-with-keys). Using `key` within a template tag is effectively useless.
 
     === "my-template.html"
 
@@ -79,12 +79,12 @@ The `component` template tag can be used to insert any number of IDOM components
 
 ??? question "Can I use multiple components on one page?"
 
-    You can add as many components to a webpage as needed by using the template tag multiple times. Retrofitting legacy sites to use IDOM will typically involve many components on one page.
+    You can add as many components to a webpage as needed by using the template tag multiple times. Retrofitting legacy sites to use ReactPy will typically involve many components on one page.
 
     === "my-template.html"
 
         ```jinja
-        {% load idom %}
+        {% load reactpy %}
         <!DOCTYPE html>
         <html>
             <body>
