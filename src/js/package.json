@@ -17,6 +17,6 @@
 		"@rollup/plugin-replace": "^5.0.2"
 	},
 	"dependencies": {
-		"reactpy-client-react": "^1.0.0-a6"
+		"reactpy-client-react": "^1.0.0"
 	}
 }

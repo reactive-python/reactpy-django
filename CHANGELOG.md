@@ -36,7 +36,7 @@ Using the following categories, list your changes in this order:
 
 -   Nothing (yet)
 
-## [3.0.0a4] - 2023-02-21
+## [3.0.0] - 2023-03-08
 
 ???+ note
 
@@ -248,8 +248,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for ReactPy within the Django
 
-[unreleased]: https://github.com/reactive-python/django-reactpy/compare/3.0.0a4...HEAD
-[3.0.0a4]: https://github.com/reactive-python/django-reactpy/compare/2.2.1...3.0.0a4
+[unreleased]: https://github.com/reactive-python/django-reactpy/compare/3.0.0...HEAD
+[3.0.0]: https://github.com/reactive-python/django-reactpy/compare/2.2.1...3.0.0
 [2.2.1]: https://github.com/reactive-python/django-reactpy/compare/2.2.0...2.2.1
 [2.2.0]: https://github.com/reactive-python/django-reactpy/compare/2.1.0...2.2.0
 [2.1.0]: https://github.com/reactive-python/django-reactpy/compare/2.0.1...2.1.0

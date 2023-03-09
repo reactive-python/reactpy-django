@@ -1,5 +1,5 @@
 # Django-ReactPy Build Artifacts
-src/django_reactpy/static/
+src/django_reactpy/static/*
 
 # Django #
 logs
