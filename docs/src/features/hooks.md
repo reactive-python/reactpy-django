@@ -8,7 +8,7 @@
 
     Standard hooks are contained within [`idom-team/idom`](https://github.com/idom-team/idom). Since `idom` is installed alongside `django-idom`, you can import them at any time.
 
-    Check out the [IDOM Core docs](https://idom-docs.herokuapp.com/docs/reference/hooks-api.html#basic-hooks) to see what hooks are available!
+    Check out the [IDOM Core docs](https://reactpy.dev/docs/reference/hooks-api.html#basic-hooks) to see what hooks are available!
 
 ---
 

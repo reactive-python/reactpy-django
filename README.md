@@ -7,15 +7,15 @@
 
 Django-IDOM connects your Python project to a ReactJS front-end, allowing you to create **interactive websites without needing JavaScript!**
 
-Following ReactJS styling, web elements are combined into [reusable "components"](https://idom-docs.herokuapp.com/docs/guides/creating-interfaces/your-first-components/index.html#parametrizing-components). These components can utilize [hooks](https://idom-docs.herokuapp.com/docs/reference/hooks-api.html) and [events](https://idom-docs.herokuapp.com/docs/guides/adding-interactivity/responding-to-events/index.html#async-event-handlers) to create infinitely complex web pages.
+Following ReactJS styling, web elements are combined into [reusable "components"](https://reactpy.dev/docs/guides/creating-interfaces/your-first-components/index.html#parametrizing-components). These components can utilize [hooks](https://reactpy.dev/docs/reference/hooks-api.html) and [events](https://reactpy.dev/docs/guides/adding-interactivity/responding-to-events/index.html#async-event-handlers) to create infinitely complex web pages.
 
-When needed, IDOM can [use components directly from NPM](https://idom-docs.herokuapp.com/docs/guides/escape-hatches/javascript-components.html#dynamically-loaded-components). For additional flexibility, components can also be [fully developed in JavaScript](https://idom-docs.herokuapp.com/docs/guides/escape-hatches/javascript-components.html#custom-javascript-components).
+When needed, IDOM can [use components directly from NPM](https://reactpy.dev/docs/guides/escape-hatches/javascript-components.html#dynamically-loaded-components). For additional flexibility, components can also be [fully developed in JavaScript](https://reactpy.dev/docs/guides/escape-hatches/javascript-components.html#custom-javascript-components).
 
 Any Python web framework with Websockets can support IDOM. See below for what frameworks are supported out of the box.
 
 | Supported Frameworks | Supported Frameworks (External) |
 | --- | --- |
-| [`Flask`, `FastAPI`, `Sanic`, `Tornado`](https://idom-docs.herokuapp.com/docs/guides/getting-started/installing-idom.html#officially-supported-servers) | [`Django`](https://github.com/idom-team/django-idom), [`Plotly-Dash`](https://github.com/idom-team/idom-dash), [`Jupyter`](https://github.com/idom-team/idom-jupyter) |
+| [`Flask`, `FastAPI`, `Sanic`, `Tornado`](https://reactpy.dev/docs/guides/getting-started/installing-idom.html#officially-supported-servers) | [`Django`](https://github.com/idom-team/django-idom), [`Plotly-Dash`](https://github.com/idom-team/idom-dash), [`Jupyter`](https://github.com/idom-team/idom-jupyter) |
 
 <!--intro-end-->
 

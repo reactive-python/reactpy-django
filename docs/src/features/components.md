@@ -147,7 +147,7 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
     <font size="4">**`transforms`**</font>
 
-    After your view has been turned into [VDOM](https://idom-docs.herokuapp.com/docs/reference/specifications.html#vdom) (python dictionaries), `view_to_component` will call your `transforms` functions on every VDOM node.
+    After your view has been turned into [VDOM](https://reactpy.dev/docs/reference/specifications.html#vdom) (python dictionaries), `view_to_component` will call your `transforms` functions on every VDOM node.
 
     This allows you to modify your view prior to rendering.
 

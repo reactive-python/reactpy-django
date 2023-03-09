@@ -64,7 +64,7 @@ The `component` template tag can be used to insert any number of IDOM components
     For this template tag, there are two reserved keyword arguments: `class` and `key`
 
     -   `class` allows you to apply a HTML class to the top-level component div. This is useful for styling purposes.
-    -   `key` allows you to force the component's root node to use a [specific key value](https://idom-docs.herokuapp.com/docs/guides/creating-interfaces/rendering-data/index.html#organizing-items-with-keys). Using `key` within a template tag is effectively useless.
+    -   `key` allows you to force the component's root node to use a [specific key value](https://reactpy.dev/docs/guides/creating-interfaces/rendering-data/index.html#organizing-items-with-keys). Using `key` within a template tag is effectively useless.
 
     === "my-template.html"
 
