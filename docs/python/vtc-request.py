@@ -1,6 +1,7 @@
 from django.http import HttpRequest, HttpResponse
-from django_reactpy.components import view_to_component
 from reactpy import component, html
+
+from django_reactpy.components import view_to_component
 
 
 example_request = HttpRequest()

@@ -1,5 +1,6 @@
-from django_reactpy.components import django_js
 from reactpy import component, html
+
+from django_reactpy.components import django_js
 
 
 @component

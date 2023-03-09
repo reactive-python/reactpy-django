@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import user_passes_test
+
 from django_reactpy.components import view_to_component
 
 

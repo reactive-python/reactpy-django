@@ -1,7 +1,8 @@
-from django_reactpy.hooks import use_query
-from django_reactpy.types import QueryOptions
 from example.models import TodoItem
 from reactpy import component
+
+from django_reactpy.hooks import use_query
+from django_reactpy.types import QueryOptions
 
 
 def get_model_with_relationships():

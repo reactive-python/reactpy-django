@@ -1,8 +1,9 @@
+from example.models import TodoItem
+from reactpy import component
+
 from django_reactpy.hooks import use_query
 from django_reactpy.types import QueryOptions
 from django_reactpy.utils import django_query_postprocessor
-from example.models import TodoItem
-from reactpy import component
 
 
 def get_items():

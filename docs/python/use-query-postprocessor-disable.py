@@ -1,6 +1,7 @@
+from reactpy import component
+
 from django_reactpy.hooks import use_query
 from django_reactpy.types import QueryOptions
-from reactpy import component
 
 
 def execute_io_intensive_operation():

@@ -13,6 +13,7 @@ django_asgi_app = get_asgi_application()
 from channels.auth import AuthMiddlewareStack  # noqa: E402
 from channels.routing import ProtocolTypeRouter, URLRouter  # noqa: E402
 from channels.sessions import SessionMiddlewareStack  # noqa: E402
+
 from django_reactpy import REACTPY_WEBSOCKET_PATH  # noqa: E402
 
 
