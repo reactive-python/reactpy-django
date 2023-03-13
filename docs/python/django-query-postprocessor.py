@@ -12,7 +12,7 @@ def get_items():
 
 @component
 def todo_list():
-    # These `QueryOptions` are functionally equivalent to Django-ReactPy's default values
+    # These `QueryOptions` are functionally equivalent to ReactPy-Django's default values
     item_query = use_query(
         QueryOptions(
             postprocessor=django_query_postprocessor,

@@ -8,7 +8,7 @@
 
 ## Primary Configuration
 
-These are Django-ReactPy's default settings values. You can modify these values in your **Django project's** `settings.py` to change the behavior of ReactPy.
+These are ReactPy-Django's default settings values. You can modify these values in your **Django project's** `settings.py` to change the behavior of ReactPy.
 
 === "settings.py"
 

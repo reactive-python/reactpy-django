@@ -40,13 +40,13 @@ Using the following categories, list your changes in this order:
 
 ???+ note
 
-    This is Django-ReactPy's biggest update yet!
+    This is ReactPy-Django's biggest update yet!
 
     To upgrade from previous version you will need to...
 
-    1. Install `django-reactpy >= 3.0.0`
+    1. Install `reactpy-django >= 3.0.0`
     2. Run `reactpy rewrite-keys <DIR>` and `reactpy rewrite-camel-case-props <DIR>` to update your `reactpy.html.*` calls to the new syntax
-    3. Run `python manage.py migrate` to create the new Django-ReactPy database entries
+    3. Run `python manage.py migrate` to create the new ReactPy-Django database entries
 
 ### Added
 
@@ -236,7 +236,7 @@ Using the following categories, list your changes in this order:
 ### Fixed
 
 -   Increase test timeout values to prevent false positives
--   Windows compatibility for building Django-ReactPy
+-   Windows compatibility for building ReactPy-Django
 
 ### Security
 
@@ -248,18 +248,18 @@ Using the following categories, list your changes in this order:
 
 -   Support for ReactPy within the Django
 
-[unreleased]: https://github.com/reactive-python/django-reactpy/compare/3.0.0...HEAD
-[3.0.0]: https://github.com/reactive-python/django-reactpy/compare/2.2.1...3.0.0
-[2.2.1]: https://github.com/reactive-python/django-reactpy/compare/2.2.0...2.2.1
-[2.2.0]: https://github.com/reactive-python/django-reactpy/compare/2.1.0...2.2.0
-[2.1.0]: https://github.com/reactive-python/django-reactpy/compare/2.0.1...2.1.0
-[2.0.1]: https://github.com/reactive-python/django-reactpy/compare/2.0.0...2.0.1
-[2.0.0]: https://github.com/reactive-python/django-reactpy/compare/1.2.0...2.0.0
-[1.2.0]: https://github.com/reactive-python/django-reactpy/compare/1.1.0...1.2.0
-[1.1.0]: https://github.com/reactive-python/django-reactpy/compare/1.0.0...1.1.0
-[1.0.0]: https://github.com/reactive-python/django-reactpy/compare/0.0.5...1.0.0
-[0.0.5]: https://github.com/reactive-python/django-reactpy/compare/0.0.4...0.0.5
-[0.0.4]: https://github.com/reactive-python/django-reactpy/compare/0.0.3...0.0.4
-[0.0.3]: https://github.com/reactive-python/django-reactpy/compare/0.0.2...0.0.3
-[0.0.2]: https://github.com/reactive-python/django-reactpy/compare/0.0.1...0.0.2
-[0.0.1]: https://github.com/reactive-python/django-reactpy/releases/tag/0.0.1
+[unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.0.0...HEAD
+[3.0.0]: https://github.com/reactive-python/reactpy-django/compare/2.2.1...3.0.0
+[2.2.1]: https://github.com/reactive-python/reactpy-django/compare/2.2.0...2.2.1
+[2.2.0]: https://github.com/reactive-python/reactpy-django/compare/2.1.0...2.2.0
+[2.1.0]: https://github.com/reactive-python/reactpy-django/compare/2.0.1...2.1.0
+[2.0.1]: https://github.com/reactive-python/reactpy-django/compare/2.0.0...2.0.1
+[2.0.0]: https://github.com/reactive-python/reactpy-django/compare/1.2.0...2.0.0
+[1.2.0]: https://github.com/reactive-python/reactpy-django/compare/1.1.0...1.2.0
+[1.1.0]: https://github.com/reactive-python/reactpy-django/compare/1.0.0...1.1.0
+[1.0.0]: https://github.com/reactive-python/reactpy-django/compare/0.0.5...1.0.0
+[0.0.5]: https://github.com/reactive-python/reactpy-django/compare/0.0.4...0.0.5
+[0.0.4]: https://github.com/reactive-python/reactpy-django/compare/0.0.3...0.0.4
+[0.0.3]: https://github.com/reactive-python/reactpy-django/compare/0.0.2...0.0.3
+[0.0.2]: https://github.com/reactive-python/reactpy-django/compare/0.0.1...0.0.2
+[0.0.1]: https://github.com/reactive-python/reactpy-django/releases/tag/0.0.1

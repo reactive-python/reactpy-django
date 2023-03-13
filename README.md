@@ -7,11 +7,11 @@
     <em>Reactive user interfaces with pure Python</em>
 </p>
     <p align="center">
-    <a href="https://github.com/reactive-python/django-reactpy/actions">
-        <img src="https://github.com/reactive-python/django-reactpy/workflows/test/badge.svg" alt="Build Status">
+    <a href="https://github.com/reactive-python/reactpy-django/actions">
+        <img src="https://github.com/reactive-python/reactpy-django/workflows/test/badge.svg" alt="Build Status">
     </a>
-    <a href="https://pypi.org/project/django-reactpy/">
-        <img src="https://badge.fury.io/py/django-reactpy.svg" alt="Package version">
+    <a href="https://pypi.org/project/reactpy-django/">
+        <img src="https://badge.fury.io/py/reactpy-django.svg" alt="Package version">
     </a>
 </p>
 
@@ -101,9 +101,9 @@ Additionally, you can pass in `args` and `kwargs` into your component function. 
 Follow the links below to find out more about this project.
 
 -   [Try it Now](https://mybinder.org/v2/gh/reactive-python/reactpy-jupyter/main?urlpath=lab/tree/notebooks/introduction.ipynb) - check out ReactPy in a Jupyter Notebook.
--   [Documentation](https://reactive-python.github.io/django-reactpy) - learn how to install, run, and use ReactPy.
+-   [Documentation](https://reactive-python.github.io/reactpy-django) - learn how to install, run, and use ReactPy.
 -   [Community Forum](https://github.com/reactive-python/reactpy/discussions) - ask questions, share ideas, and show off projects.
 -   [Contributor Guide](https://idom-team.github.io/django-idom/contribute/code/) - see how you can help develop this project.
--   [Code of Conduct](https://github.com/reactive-python/django-reactpy/blob/main/CODE_OF_CONDUCT.md) - standards for interacting with this community.
+-   [Code of Conduct](https://github.com/reactive-python/reactpy-django/blob/main/CODE_OF_CONDUCT.md) - standards for interacting with this community.
 
 <!--resources-end-->

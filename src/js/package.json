@@ -1,5 +1,5 @@
 {
-	"description": "django-reactpy client",
+	"description": "reactpy-django client",
 	"main": "src/index.js",
 	"type": "module",
 	"files": [

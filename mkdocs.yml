@@ -2,7 +2,7 @@
 nav:
     - Home: index.md
     - Get Started:
-          - Install Django-ReactPy: get-started/installation.md
+          - Install ReactPy-Django: get-started/installation.md
           - Choose a Django App: get-started/choose-django-app.md
           - Create a Component: get-started/create-component.md
           - Use the Template Tag: get-started/use-template-tag.md
@@ -92,12 +92,12 @@ watch:
     - README.md
     - CHANGELOG.md
 
-site_name: Django-ReactPy Docs
+site_name: ReactPy-Django Docs
 site_author: Archmonger
 site_description: React for Django developers.
 copyright: Copyright &copy; 2022 Reactive Python
-repo_url: https://github.com/reactive-python/django-reactpy
-site_url: https://reactive-python.github.io/django-reactpy
-repo_name: reactive-python/django-reactpy
+repo_url: https://github.com/reactive-python/reactpy-django
+site_url: https://reactive-python.github.io/reactpy-django
+repo_name: reactive-python/reactpy-django
 edit_uri: edit/main/docs/src
 docs_dir: docs/src

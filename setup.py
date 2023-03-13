@@ -53,7 +53,7 @@ package = {
     "description": "Control the web with Python",
     "author": "Ryan Morshead",
     "author_email": "ryan.morshead@gmail.com",
-    "url": "https://github.com/reactive-python/django-reactpy",
+    "url": "https://github.com/reactive-python/reactpy-django",
     "license": "MIT",
     "platforms": "Linux, Mac OS X, Windows",
     "keywords": ["interactive", "widgets", "DOM", "React"],

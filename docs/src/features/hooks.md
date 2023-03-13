@@ -6,7 +6,7 @@
 
 ??? tip "Looking for standard React hooks?"
 
-    Standard hooks are contained within [`reactive-python/reactpy`](https://github.com/reactive-python/reactpy). Since `reactpy` is installed alongside `django-reactpy`, you can import them at any time.
+    Standard hooks are contained within [`reactive-python/reactpy`](https://github.com/reactive-python/reactpy). Since `reactpy` is installed alongside `reactpy-django`, you can import them at any time.
 
     Check out the [ReactPy Core docs](https://reactpy.dev/docs/reference/hooks-api.html#basic-hooks) to see what hooks are available!
 

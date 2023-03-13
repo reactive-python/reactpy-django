@@ -2,7 +2,7 @@
 
 !!! summary
 
-    Django-ReactPy can be installed from PyPI to an existing **Django project** with minimal configuration.
+    ReactPy-Django can be installed from PyPI to an existing **Django project** with minimal configuration.
 
 ---
 
@@ -13,7 +13,7 @@ These docs assumes you have already created [a **Django project**](https://docs.
 ## Step 1: Install from PyPI
 
 ```bash linenums="0"
-pip install django-reactpy
+pip install reactpy-django
 ```
 
 ## Step 2: Configure [`settings.py`](https://docs.djangoproject.com/en/dev/topics/settings/)
@@ -28,7 +28,7 @@ In your settings you will need to add `django_reactpy` to [`INSTALLED_APPS`](htt
 
 ??? warning "Enable Django Channels ASGI (Required)"
 
-    Django-ReactPy requires ASGI Websockets from [Django Channels](https://github.com/django/channels).
+    ReactPy-Django requires ASGI Websockets from [Django Channels](https://github.com/django/channels).
 
     If you have not enabled ASGI on your **Django project** yet, you will need to install `channels[daphne]`, add `daphne` to `INSTALLED_APPS`, then set your `ASGI_APPLICATION` variable.
 
@@ -74,7 +74,7 @@ Register ReactPy's Websocket using `REACTPY_WEBSOCKET_PATH`.
 
 ## Step 5: Run Migrations
 
-Run Django's database migrations to initialize Django-ReactPy's database table.
+Run Django's database migrations to initialize ReactPy-Django's database table.
 
 ```bash linenums="0"
 python manage.py migrate

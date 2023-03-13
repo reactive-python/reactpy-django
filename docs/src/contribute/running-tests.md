@@ -18,8 +18,8 @@ If you plan to run tests, you will need to install the following dependencies fi
 Once done, you should clone this repository:
 
 ```bash linenums="0"
-git clone https://github.com/reactive-python/django-reactpy.git
-cd django-reactpy
+git clone https://github.com/reactive-python/reactpy-django.git
+cd reactpy-django
 pip install -e . -r requirements.txt --upgrade
 ```
 
