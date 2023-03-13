@@ -3,10 +3,11 @@ from __future__ import annotations
 from django.conf import settings
 from django.core.cache import DEFAULT_CACHE_ALIAS
 from django.db import DEFAULT_DB_ALIAS
-from django_reactpy.types import Postprocessor, ViewComponentIframe
-from django_reactpy.utils import import_dotted_path
 from reactpy.config import REACTPY_DEBUG_MODE
 from reactpy.core.types import ComponentConstructor
+
+from django_reactpy.types import Postprocessor, ViewComponentIframe
+from django_reactpy.utils import import_dotted_path
 
 
 # Not user configurable settings

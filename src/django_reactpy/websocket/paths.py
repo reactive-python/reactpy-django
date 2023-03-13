@@ -1,4 +1,5 @@
 from django.urls import path
+
 from django_reactpy.config import REACTPY_WEBSOCKET_URL
 
 from .consumer import ReactpyAsyncWebsocketConsumer

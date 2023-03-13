@@ -9,10 +9,11 @@ from django.core.cache import caches
 from django.http import HttpRequest
 from django.urls import reverse
 from django.views import View
-from django_reactpy.types import ViewComponentIframe
-from django_reactpy.utils import generate_obj_name, render_view
 from reactpy import component, hooks, html, utils
 from reactpy.types import ComponentType, Key, VdomDict
+
+from django_reactpy.types import ViewComponentIframe
+from django_reactpy.utils import generate_obj_name, render_view
 
 
 class _ViewComponentConstructor(Protocol):

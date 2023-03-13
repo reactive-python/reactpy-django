@@ -3,8 +3,9 @@ from __future__ import annotations
 from functools import wraps
 from typing import Callable
 
-from django_reactpy.hooks import use_scope
 from reactpy.core.types import ComponentType, VdomDict
+
+from django_reactpy.hooks import use_scope
 
 
 def auth_required(

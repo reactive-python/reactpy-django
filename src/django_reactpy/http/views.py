@@ -4,8 +4,9 @@ from aiofile import async_open
 from django.core.cache import caches
 from django.core.exceptions import SuspiciousOperation
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
-from django_reactpy.utils import create_cache_key, render_view
 from reactpy.config import REACTPY_WEB_MODULES_DIR
+
+from django_reactpy.utils import create_cache_key, render_view
 
 
 async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:

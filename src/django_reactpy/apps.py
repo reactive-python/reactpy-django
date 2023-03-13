@@ -2,6 +2,7 @@ import logging
 
 from django.apps import AppConfig
 from django.db.utils import DatabaseError
+
 from django_reactpy.utils import ComponentPreloader, db_cleanup
 
 

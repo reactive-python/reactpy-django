@@ -11,12 +11,13 @@ from channels.auth import login
 from channels.db import database_sync_to_async as convert_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from django.utils import timezone
-from django_reactpy.types import ComponentParamData, ComponentWebsocket
-from django_reactpy.utils import db_cleanup, func_has_params
 from reactpy.backend.hooks import ConnectionContext
 from reactpy.backend.types import Connection, Location
 from reactpy.core.layout import Layout
 from reactpy.core.serve import serve_layout
+
+from django_reactpy.types import ComponentParamData, ComponentWebsocket
+from django_reactpy.utils import db_cleanup, func_has_params
 
 
 _logger = logging.getLogger(__name__)
