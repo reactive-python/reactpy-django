@@ -16,8 +16,8 @@ from reactpy.backend.types import Connection, Location
 from reactpy.core.layout import Layout
 from reactpy.core.serve import serve_layout
 
-from django_reactpy.types import ComponentParamData, ComponentWebsocket
-from django_reactpy.utils import db_cleanup, func_has_params
+from reactpy_django.types import ComponentParamData, ComponentWebsocket
+from reactpy_django.utils import db_cleanup, func_has_params
 
 
 _logger = logging.getLogger(__name__)
@@ -56,8 +56,8 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         await self._reactpy_recv_queue.put(content)
 
     async def _run_dispatch_loop(self):
-        from django_reactpy import models
-        from django_reactpy.config import (
+        from reactpy_django import models
+        from reactpy_django.config import (
             REACTPY_DATABASE,
             REACTPY_RECONNECT_MAX,
             REACTPY_REGISTERED_COMPONENTS,

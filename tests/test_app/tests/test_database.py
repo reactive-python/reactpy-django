@@ -4,9 +4,10 @@ from uuid import uuid4
 
 import dill as pickle
 from django.test import TransactionTestCase
-from django_reactpy import utils
-from django_reactpy.models import ComponentSession
-from django_reactpy.types import ComponentParamData
+
+from reactpy_django import utils
+from reactpy_django.models import ComponentSession
+from reactpy_django.types import ComponentParamData
 
 
 class DatabaseTests(TransactionTestCase):
@@ -20,7 +21,7 @@ class DatabaseTests(TransactionTestCase):
         self.assertEqual(pickle.loads(ComponentSession.objects.first().params), params_1)  # type: ignore
 
         # Force `params_1` to expire
-        from django_reactpy import config
+        from reactpy_django import config
 
         config.REACTPY_RECONNECT_MAX = 1
         sleep(config.REACTPY_RECONNECT_MAX + 0.1)

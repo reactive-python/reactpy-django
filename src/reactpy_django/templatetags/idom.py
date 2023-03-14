@@ -4,10 +4,10 @@ import dill as pickle
 from django import template
 from django.urls import reverse
 
-from django_reactpy import models
-from django_reactpy.config import REACTPY_RECONNECT_MAX, REACTPY_WEBSOCKET_URL
-from django_reactpy.types import ComponentParamData
-from django_reactpy.utils import _register_component, func_has_params
+from reactpy_django import models
+from reactpy_django.config import REACTPY_RECONNECT_MAX, REACTPY_WEBSOCKET_URL
+from reactpy_django.types import ComponentParamData
+from reactpy_django.utils import _register_component, func_has_params
 
 
 REACTPY_WEB_MODULES_URL = reverse("reactpy:web_modules", args=["x"])[:-1][1:]

@@ -1,7 +1,7 @@
 from example.models import TodoItem
 from reactpy import component, html
 
-from django_reactpy.hooks import use_mutation, use_query
+from reactpy_django.hooks import use_mutation, use_query
 
 
 def get_items():

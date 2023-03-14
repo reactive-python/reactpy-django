@@ -83,7 +83,7 @@ def _register_component(dotted_path: str) -> Callable:
     """Adds a component to the mapping of registered components.
     This should only be called on startup to maintain synchronization during mulitprocessing.
     """
-    from django_reactpy.config import REACTPY_REGISTERED_COMPONENTS
+    from reactpy_django.config import REACTPY_REGISTERED_COMPONENTS
 
     if dotted_path in REACTPY_REGISTERED_COMPONENTS:
         return REACTPY_REGISTERED_COMPONENTS[dotted_path]
@@ -300,13 +300,13 @@ def func_has_params(func: Callable, *args, **kwargs) -> bool:
 
 
 def create_cache_key(*args):
-    """Creates a cache key string that starts with `django_reactpy` contains
+    """Creates a cache key string that starts with `reactpy_django` contains
     all *args separated by `:`."""
 
     if not args:
         raise ValueError("At least one argument is required to create a cache key.")
 
-    return f"django_reactpy:{':'.join(str(arg) for arg in args)}"
+    return f"reactpy_django:{':'.join(str(arg) for arg in args)}"
 
 
 def db_cleanup(immediate: bool = False):

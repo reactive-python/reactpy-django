@@ -21,7 +21,7 @@ from reactpy.backend.hooks import use_scope as _use_scope
 from reactpy.backend.types import Location
 from reactpy.core.hooks import use_effect, use_state
 
-from django_reactpy.types import (
+from reactpy_django.types import (
     Connection,
     Mutation,
     Query,
@@ -29,7 +29,7 @@ from django_reactpy.types import (
     _Params,
     _Result,
 )
-from django_reactpy.utils import generate_obj_name
+from reactpy_django.utils import generate_obj_name
 
 
 _logger = logging.getLogger(__name__)

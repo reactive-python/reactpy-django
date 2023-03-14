@@ -1,6 +1,6 @@
 from reactpy import component, html
 
-from django_reactpy.decorators import auth_required
+from reactpy_django.decorators import auth_required
 
 
 @component

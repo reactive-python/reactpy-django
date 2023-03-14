@@ -1,12 +1,13 @@
 import inspect
 from pathlib import Path
 
-import django_reactpy
 from django.http import HttpRequest
 from django.shortcuts import render
-from django_reactpy.components import view_to_component
 from reactpy import component, hooks, html, web
 from test_app.models import ForiegnChild, RelationalChild, RelationalParent, TodoItem
+
+import reactpy_django
+from reactpy_django.components import view_to_component
 
 from . import views
 from .types import TestObject
@@ -79,7 +80,7 @@ def simple_button():
 
 @component
 def use_connection():
-    ws = django_reactpy.hooks.use_connection()
+    ws = reactpy_django.hooks.use_connection()
     success = bool(
         ws.scope
         and getattr(ws, "location", None)
@@ -96,7 +97,7 @@ def use_connection():
 
 @component
 def use_scope():
-    scope = django_reactpy.hooks.use_scope()
+    scope = reactpy_django.hooks.use_scope()
     success = len(scope) >= 10 and scope["type"] == "websocket"
     return html.div(
         {"id": "use-scope", "data-success": success}, f"use_scope: {scope}", html.hr()
@@ -105,7 +106,7 @@ def use_scope():
 
 @component
 def use_location():
-    location = django_reactpy.hooks.use_location()
+    location = reactpy_django.hooks.use_location()
     success = bool(location)
     return html.div(
         {"id": "use-location", "data-success": success},
@@ -116,7 +117,7 @@ def use_location():
 
 @component
 def use_origin():
-    origin = django_reactpy.hooks.use_origin()
+    origin = reactpy_django.hooks.use_origin()
     success = bool(origin)
     return html.div(
         {"id": "use-origin", "data-success": success},
@@ -129,7 +130,7 @@ def use_origin():
 def django_css():
     return html.div(
         {"id": "django-css"},
-        django_reactpy.components.django_css("django-css-test.css", key="test"),
+        reactpy_django.components.django_css("django-css-test.css", key="test"),
         html.div({"style": {"display": "inline"}}, "django_css: "),
         html.button("This text should be blue."),
         html.hr(),
@@ -143,14 +144,14 @@ def django_js():
         html.div(
             {"id": "django-js", "data-success": success},
             f"django_js: {success}",
-            django_reactpy.components.django_js("django-js-test.js", key="test"),
+            reactpy_django.components.django_js("django-js-test.js", key="test"),
         ),
         html.hr(),
     )
 
 
 @component
-@django_reactpy.decorators.auth_required(
+@reactpy_django.decorators.auth_required(
     fallback=html.div(
         {"id": "unauthorized-user-fallback"},
         "unauthorized_user: Success",
@@ -166,7 +167,7 @@ def unauthorized_user():
 
 
 @component
-@django_reactpy.decorators.auth_required(
+@reactpy_django.decorators.auth_required(
     auth_attribute="is_anonymous",
     fallback=html.div(
         {"id": "authorized-user-fallback"},
@@ -210,8 +211,8 @@ def get_foriegn_child_query():
 
 @component
 def relational_query():
-    foriegn_child = django_reactpy.hooks.use_query(get_foriegn_child_query)
-    relational_parent = django_reactpy.hooks.use_query(get_relational_parent_query)
+    foriegn_child = reactpy_django.hooks.use_query(get_foriegn_child_query)
+    relational_parent = reactpy_django.hooks.use_query(get_relational_parent_query)
 
     if not relational_parent.data or not foriegn_child.data:
         return
@@ -258,8 +259,8 @@ def toggle_todo_mutation(item: TodoItem):
 @component
 def todo_list():
     input_value, set_input_value = hooks.use_state("")
-    items = django_reactpy.hooks.use_query(get_todo_query)
-    toggle_item = django_reactpy.hooks.use_mutation(toggle_todo_mutation)
+    items = reactpy_django.hooks.use_query(get_todo_query)
+    toggle_item = reactpy_django.hooks.use_mutation(toggle_todo_mutation)
 
     if items.error:
         rendered_items = html.h2(f"Error when loading - {items.error}")
@@ -273,7 +274,7 @@ def todo_list():
             _render_todo_items([i for i in items.data if i.done], toggle_item),
         )
 
-    add_item = django_reactpy.hooks.use_mutation(
+    add_item = reactpy_django.hooks.use_mutation(
         add_todo_mutation, refetch=get_todo_query
     )
 

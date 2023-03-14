@@ -18,7 +18,7 @@ pip install reactpy-django
 
 ## Step 2: Configure [`settings.py`](https://docs.djangoproject.com/en/dev/topics/settings/)
 
-In your settings you will need to add `django_reactpy` to [`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS).
+In your settings you will need to add `reactpy_django` to [`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS).
 
 === "settings.py"
 

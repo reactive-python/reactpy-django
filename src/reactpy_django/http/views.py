@@ -6,13 +6,13 @@ from django.core.exceptions import SuspiciousOperation
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
 from reactpy.config import REACTPY_WEB_MODULES_DIR
 
-from django_reactpy.utils import create_cache_key, render_view
+from reactpy_django.utils import create_cache_key, render_view
 
 
 async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
     """Gets JavaScript required for ReactPy modules at runtime. These modules are
     returned from cache if available."""
-    from django_reactpy.config import REACTPY_CACHE
+    from reactpy_django.config import REACTPY_CACHE
 
     web_modules_dir = REACTPY_WEB_MODULES_DIR.current
     path = os.path.abspath(web_modules_dir.joinpath(*file.split("/")))
@@ -44,7 +44,7 @@ async def view_to_component_iframe(
 ) -> HttpResponse:
     """Returns a view that was registered by view_to_component.
     This view is intended to be used as iframe, for compatibility purposes."""
-    from django_reactpy.config import REACTPY_VIEW_COMPONENT_IFRAMES
+    from reactpy_django.config import REACTPY_VIEW_COMPONENT_IFRAMES
 
     # Get the view from REACTPY_REGISTERED_IFRAMES
     iframe = REACTPY_VIEW_COMPONENT_IFRAMES.get(view_path)

@@ -98,7 +98,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     However, if you have deep nested trees of relational data, this may not be a desirable behavior. In these scenarios, you may prefer to manually fetch these relational fields using a second `use_query` hook.
 
-    You can disable the prefetching behavior of the default `postprocessor` (located at `django_reactpy.utils.django_query_postprocessor`) via the `QueryOptions.postprocessor_kwargs` parameter.
+    You can disable the prefetching behavior of the default `postprocessor` (located at `reactpy_django.utils.django_query_postprocessor`) via the `QueryOptions.postprocessor_kwargs` parameter.
 
     === "components.py"
 

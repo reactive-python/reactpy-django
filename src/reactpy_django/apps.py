@@ -3,14 +3,14 @@ import logging
 from django.apps import AppConfig
 from django.db.utils import DatabaseError
 
-from django_reactpy.utils import ComponentPreloader, db_cleanup
+from reactpy_django.utils import ComponentPreloader, db_cleanup
 
 
 _logger = logging.getLogger(__name__)
 
 
 class ReactPyConfig(AppConfig):
-    name = "django_reactpy"
+    name = "reactpy_django"
 
     def ready(self):
         # Populate the ReactPy component registry when Django is ready

@@ -12,8 +12,8 @@ from django.views import View
 from reactpy import component, hooks, html, utils
 from reactpy.types import ComponentType, Key, VdomDict
 
-from django_reactpy.types import ViewComponentIframe
-from django_reactpy.utils import generate_obj_name, render_view
+from reactpy_django.types import ViewComponentIframe
+from reactpy_django.utils import generate_obj_name, render_view
 
 
 class _ViewComponentConstructor(Protocol):
@@ -33,7 +33,7 @@ def _view_to_component(
     args: Sequence | None,
     kwargs: dict | None,
 ):
-    from django_reactpy.config import REACTPY_VIEW_COMPONENT_IFRAMES
+    from reactpy_django.config import REACTPY_VIEW_COMPONENT_IFRAMES
 
     converted_view, set_converted_view = hooks.use_state(
         cast(Union[VdomDict, None], None)
@@ -200,7 +200,7 @@ def django_js(static_path: str, key: Key | None = None):
 
 
 def _cached_static_contents(static_path: str):
-    from django_reactpy.config import REACTPY_CACHE
+    from reactpy_django.config import REACTPY_CACHE
 
     # Try to find the file within Django's static files
     abs_path = find(static_path)
@@ -212,7 +212,7 @@ def _cached_static_contents(static_path: str):
     # Fetch the file from cache, if available
     # Cache is preferrable to `use_memo` due to multiprocessing capabilities
     last_modified_time = os.stat(abs_path).st_mtime
-    cache_key = f"django_reactpy:static_contents:{static_path}"
+    cache_key = f"reactpy_django:static_contents:{static_path}"
     file_contents = caches[REACTPY_CACHE].get(
         cache_key, version=int(last_modified_time)
     )

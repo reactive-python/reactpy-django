@@ -1,5 +1,5 @@
-from django_reactpy import components, decorators, hooks, types, utils
-from django_reactpy.websocket.paths import REACTPY_WEBSOCKET_PATH
+from reactpy_django import components, decorators, hooks, types, utils
+from reactpy_django.websocket.paths import REACTPY_WEBSOCKET_PATH
 
 
 __version__ = "3.0.0a4"

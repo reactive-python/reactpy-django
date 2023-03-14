@@ -1,6 +1,7 @@
 from django.contrib import admin
-from django_reactpy.models import ComponentSession
 from test_app.models import ForiegnChild, RelationalChild, RelationalParent, TodoItem
+
+from reactpy_django.models import ComponentSession
 
 
 @admin.register(TodoItem)

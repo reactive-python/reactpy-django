@@ -88,7 +88,7 @@ class Postprocessor(Protocol):
 class QueryOptions:
     """Configuration options that can be provided to `use_query`."""
 
-    from django_reactpy.config import REACTPY_DEFAULT_QUERY_POSTPROCESSOR
+    from reactpy_django.config import REACTPY_DEFAULT_QUERY_POSTPROCESSOR
 
     postprocessor: Postprocessor | None = REACTPY_DEFAULT_QUERY_POSTPROCESSOR
     """A callable that can modify the query `data` after the query has been executed.

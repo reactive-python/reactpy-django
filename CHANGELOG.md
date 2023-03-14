@@ -66,8 +66,8 @@ Using the following categories, list your changes in this order:
 
 ### Removed
 
--   `django_reactpy.hooks.use_websocket` has been removed. The similar replacement is `django_reactpy.hooks.use_connection`.
--   `django_reactpy.types.ReactPyWebsocket` has been removed. The similar replacement is `django_reactpy.types.Connection`.
+-   `reactpy_django.hooks.use_websocket` has been removed. The similar replacement is `reactpy_django.hooks.use_connection`.
+-   `reactpy_django.types.ReactPyWebsocket` has been removed. The similar replacement is `reactpy_django.types.Connection`.
 -   `settings.py:CACHE['reactpy']` is no longer used by default. The name of the cache back-end must now be specified with the `REACTPY_CACHE` setting.
 
 ### Fixed
@@ -100,7 +100,7 @@ Using the following categories, list your changes in this order:
 
 ### Removed
 
--   `django_reactpy.hooks._fetch_lazy_fields` has been deleted. The equivalent replacement is `django_reactpy.utils.django_query_postprocessor`.
+-   `reactpy_django.hooks._fetch_lazy_fields` has been deleted. The equivalent replacement is `reactpy_django.utils.django_query_postprocessor`.
 
 ## [2.1.0] - 2022-11-01
 
@@ -174,7 +174,7 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
--   Django-specific hooks! `use_websocket`, `use_scope`, and `use_location` are now available within the `django_reactpy.hooks` module.
+-   Django-specific hooks! `use_websocket`, `use_scope`, and `use_location` are now available within the `reactpy_django.hooks` module.
 -   Documentation has been placed into a formal docs webpage.
 -   Logging for when a component fails to import, or if no components were found within Django.
 
@@ -185,7 +185,7 @@ Using the following categories, list your changes in this order:
 
 ### Removed
 
--   `websocket` parameter for components has been removed. Functionally, it is replaced with `django_reactpy.hooks.use_websocket`.
+-   `websocket` parameter for components has been removed. Functionally, it is replaced with `reactpy_django.hooks.use_websocket`.
 
 ## [0.0.5] - 2022-04-04
 
@@ -222,7 +222,7 @@ Using the following categories, list your changes in this order:
 ### Changed
 
 -   Fetching web modules from disk and/or cache is now fully async
--   Static files are now contained within a `django_reactpy/` parent folder
+-   Static files are now contained within a `reactpy_django/` parent folder
 -   Upgraded ReactPy to version `0.36.0`
 -   Minimum Django version required is now `4.0`
 -   Minimum Python version required is now `3.8`

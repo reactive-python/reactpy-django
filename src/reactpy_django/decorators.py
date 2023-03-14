@@ -5,7 +5,7 @@ from typing import Callable
 
 from reactpy.core.types import ComponentType, VdomDict
 
-from django_reactpy.hooks import use_scope
+from reactpy_django.hooks import use_scope
 
 
 def auth_required(

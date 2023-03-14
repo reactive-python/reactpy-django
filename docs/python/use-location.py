@@ -1,6 +1,6 @@
 from reactpy import component, html
 
-from django_reactpy.hooks import use_location
+from reactpy_django.hooks import use_location
 
 
 @component

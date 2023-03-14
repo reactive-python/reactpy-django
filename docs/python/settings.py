@@ -11,5 +11,5 @@ REACTPY_RECONNECT_MAX = 259200
 # The URL for ReactPy to serve the component rendering websocket
 REACTPY_WEBSOCKET_URL = "reactpy/"
 
-# Dotted path to the default `django_reactpy.hooks.use_query` postprocessor function, or `None`
-REACTPY_DEFAULT_QUERY_POSTPROCESSOR = "django_reactpy.utils.django_query_postprocessor"
+# Dotted path to the default `reactpy_django.hooks.use_query` postprocessor function, or `None`
+REACTPY_DEFAULT_QUERY_POSTPROCESSOR = "reactpy_django.utils.django_query_postprocessor"

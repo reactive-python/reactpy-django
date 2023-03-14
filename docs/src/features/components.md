@@ -55,7 +55,7 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
 
 ??? info "Existing limitations"
 
-    There are currently several limitations of using `view_to_component` that may be resolved in a future version of `django_reactpy`.
+    There are currently several limitations of using `view_to_component` that may be resolved in a future version of `reactpy_django`.
 
     - Requires manual intervention to change request methods beyond `GET`.
     - ReactPy events cannot conveniently be attached to converted view HTML.

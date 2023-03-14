@@ -32,7 +32,7 @@ log.addHandler(StreamHandler(sys.stdout))
 
 
 # the name of the project
-name = "django_reactpy"
+name = "reactpy_django"
 
 # basic paths used to gather files
 root_dir = Path(__file__).parent

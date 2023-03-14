@@ -5,7 +5,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("django_reactpy", "0001_initial"),
+        ("reactpy_django", "0001_initial"),
     ]
 
     operations = [

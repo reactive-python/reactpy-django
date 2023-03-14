@@ -63,14 +63,14 @@ def test_suite(session: Session) -> None:
 def test_types(session: Session) -> None:
     install_requirements_file(session, "check-types")
     install_requirements_file(session, "pkg-deps")
-    session.run("mypy", "--show-error-codes", "src/django_reactpy", "tests/test_app")
+    session.run("mypy", "--show-error-codes", "src/reactpy_django", "tests/test_app")
 
 
 @nox.session
 def test_style(session: Session) -> None:
     """Check that style guidelines are being followed"""
     install_requirements_file(session, "check-style")
-    session.run("flake8", "src/django_reactpy", "tests")
+    session.run("flake8", "src/reactpy_django", "tests")
     session.run(
         "black",
         ".",

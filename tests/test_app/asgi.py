@@ -11,7 +11,7 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-from django_reactpy import REACTPY_WEBSOCKET_PATH
+from reactpy_django import REACTPY_WEBSOCKET_PATH
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
