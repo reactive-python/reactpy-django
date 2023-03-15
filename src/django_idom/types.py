@@ -79,9 +79,17 @@ class ViewComponentIframe:
     kwargs: dict
 
 
-class Postprocessor(Protocol):
+class AsyncPostprocessor(Protocol):
+    async def __call__(self, data: Any) -> Any:
+        ...
+
+
+class SyncPostprocessor(Protocol):
     def __call__(self, data: Any) -> Any:
         ...
+
+
+Postprocessor = AsyncPostprocessor | SyncPostprocessor
 
 
 @dataclass

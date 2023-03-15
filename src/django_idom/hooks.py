@@ -13,7 +13,7 @@ from typing import (
     overload,
 )
 
-from channels.db import database_sync_to_async as _database_sync_to_async
+from channels.db import database_sync_to_async
 from idom import use_callback, use_ref
 from idom.backend.hooks import use_connection as _use_connection
 from idom.backend.hooks import use_location as _use_location
@@ -33,10 +33,6 @@ from django_idom.utils import generate_obj_name
 
 
 _logger = logging.getLogger(__name__)
-database_sync_to_async = cast(
-    Callable[..., Callable[..., Awaitable[Any]]],
-    _database_sync_to_async,
-)
 _REFETCH_CALLBACKS: DefaultDict[
     Callable[..., Any], set[Callable[[], None]]
 ] = DefaultDict(set)
@@ -82,7 +78,8 @@ def use_connection() -> Connection:
 @overload
 def use_query(
     options: QueryOptions,
-    query: Callable[_Params, _Result | None],
+    query: Callable[_Params, _Result | None]
+    | Callable[_Params, Awaitable[_Result | None]],
     /,
     *args: _Params.args,
     **kwargs: _Params.kwargs,
@@ -92,7 +89,8 @@ def use_query(
 
 @overload
 def use_query(
-    query: Callable[_Params, _Result | None],
+    query: Callable[_Params, _Result | None]
+    | Callable[_Params, Awaitable[_Result | None]],
     /,
     *args: _Params.args,
     **kwargs: _Params.kwargs,
@@ -147,20 +145,29 @@ def use_query(
         return lambda: _REFETCH_CALLBACKS[query].remove(refetch)
 
     @use_effect(dependencies=None)
-    @database_sync_to_async
-    def execute_query() -> None:
+    async def execute_query() -> None:
         if not should_execute:
             return
 
         try:
             # Run the initial query
-            new_data = query(*args, **kwargs)
+            if asyncio.iscoroutinefunction(query):
+                new_data = await query(*args, **kwargs)
+            else:
+                new_data = await database_sync_to_async(query)(*args, **kwargs)
 
+            # Run the postprocessor
             if query_options.postprocessor:
-                new_data = query_options.postprocessor(
-                    new_data, **query_options.postprocessor_kwargs
-                )
+                if asyncio.iscoroutinefunction(query_options.postprocessor):
+                    new_data = await query_options.postprocessor(
+                        new_data, **query_options.postprocessor_kwargs
+                    )
+                else:
+                    new_data = await database_sync_to_async(
+                        query_options.postprocessor
+                    )(new_data, **query_options.postprocessor_kwargs)
 
+        # Log any errors and set the error state
         except Exception as e:
             set_data(None)
             set_loading(False)
@@ -180,7 +187,7 @@ def use_query(
 
 
 def use_mutation(
-    mutate: Callable[_Params, bool | None],
+    mutate: Callable[_Params, bool | None] | Callable[_Params, Awaitable[bool | None]],
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
 ) -> Mutation[_Params]:
     """Hook to create, update, or delete Django ORM objects.
@@ -201,16 +208,25 @@ def use_mutation(
     def call(*args: _Params.args, **kwargs: _Params.kwargs) -> None:
         set_loading(True)
 
-        @database_sync_to_async
-        def execute_mutation() -> None:
+        async def execute_mutation() -> None:
             try:
-                should_refetch = mutate(*args, **kwargs)
+                # Run the mutation
+                if asyncio.iscoroutinefunction(mutate):
+                    should_refetch = await mutate(*args, **kwargs)
+                else:
+                    should_refetch = await database_sync_to_async(mutate)(
+                        *args, **kwargs
+                    )
+
+            # Log any errors and set the error state
             except Exception as e:
                 set_loading(False)
                 set_error(e)
                 _logger.exception(
                     f"Failed to execute mutation: {generate_obj_name(mutate) or mutate}"
                 )
+
+            # If the mutation was successful, mark the mutation as complete
             else:
                 set_loading(False)
                 set_error(None)
