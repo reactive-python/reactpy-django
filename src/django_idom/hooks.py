@@ -144,24 +144,13 @@ def use_query(
         _REFETCH_CALLBACKS[query].add(refetch)
         return lambda: _REFETCH_CALLBACKS[query].remove(refetch)
 
-    @use_effect(dependencies=[])
-    async def execute_query() -> None:
-        if not should_execute:
-            return
-
-        print("Executing query function: ", query)
-
-        # Make sure we don't re-execute the query
-        set_should_execute(False)
-
+    async def execute_query():
         try:
             # Run the initial query
             if asyncio.iscoroutinefunction(query):
                 new_data = await query(*args, **kwargs)
             else:
                 new_data = await database_sync_to_async(query)(*args, **kwargs)
-
-            print("Initial query data: ", new_data)
 
             # Run the postprocessor
             if query_options.postprocessor:
@@ -173,8 +162,6 @@ def use_query(
                     new_data = await database_sync_to_async(
                         query_options.postprocessor
                     )(new_data, **query_options.postprocessor_kwargs)
-
-            print("Final (postprocessed) data: ", new_data)
 
         # Log any errors and set the error state
         except Exception as e:
@@ -191,6 +178,16 @@ def use_query(
             set_data(new_data)
             set_loading(False)
             set_error(None)
+
+    @use_effect(dependencies=None)
+    def schedule_query() -> None:
+        # Make sure we don't re-execute the query unless we're told to
+        if not should_execute:
+            return
+        set_should_execute(False)
+
+        # Execute the query in the background
+        asyncio.create_task(execute_query())
 
     return Query(data, loading, error, refetch)
 

@@ -221,10 +221,6 @@ def relational_query():
     foriegn_child = django_idom.hooks.use_query(get_foriegn_child_query)
     relational_parent = django_idom.hooks.use_query(get_relational_parent_query)
 
-    print(
-        f"Component re-rendered with child: {foriegn_child.data} parent: {relational_parent.data}"
-    )
-
     if not relational_parent.data or not foriegn_child.data:
         return
 
@@ -238,6 +234,7 @@ def relational_query():
             "id": "relational-query",
             "data-success": bool(mtm) and bool(oto) and bool(mto) and bool(fk),
         },
+        html.p(inspect.currentframe().f_code.co_name),  # type: ignore
         html.div(f"Relational Parent Many To Many: {mtm}"),
         html.div(f"Relational Parent One To One: {oto}"),
         html.div(f"Relational Parent Many to One: {mto}"),
@@ -290,9 +287,10 @@ def async_relational_query():
 
     return html.div(
         {
-            "id": "relational-query",
+            "id": "async-relational-query",
             "data-success": bool(mtm) and bool(oto) and bool(mto) and bool(fk),
         },
+        html.p(inspect.currentframe().f_code.co_name),  # type: ignore
         html.div(f"Relational Parent Many To Many: {mtm}"),
         html.div(f"Relational Parent One To One: {oto}"),
         html.div(f"Relational Parent Many to One: {mto}"),

@@ -282,7 +282,6 @@ def django_query_postprocessor(
             "If these situations seem correct, you may want to consider disabling the postprocessor via `QueryOptions`."
         )
 
-    print("django_query_postprocessor returned: ", data)
     return data
 
 
