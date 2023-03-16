@@ -6,7 +6,7 @@ from django.db import DEFAULT_DB_ALIAS
 from idom.config import IDOM_DEBUG_MODE
 from idom.core.types import ComponentConstructor
 
-from django_idom.types import Postprocessor, ViewComponentIframe
+from django_idom.types import AsyncPostprocessor, SyncPostprocessor, ViewComponentIframe
 from django_idom.utils import import_dotted_path
 
 
@@ -37,10 +37,12 @@ IDOM_DATABASE: str = getattr(
     "IDOM_DATABASE",
     DEFAULT_DB_ALIAS,
 )
-IDOM_DEFAULT_QUERY_POSTPROCESSOR: Postprocessor | None = import_dotted_path(
-    getattr(
-        settings,
-        "IDOM_DEFAULT_QUERY_POSTPROCESSOR",
-        "django_idom.utils.django_query_postprocessor",
+IDOM_DEFAULT_QUERY_POSTPROCESSOR: AsyncPostprocessor | SyncPostprocessor | None = (
+    import_dotted_path(
+        getattr(
+            settings,
+            "IDOM_DEFAULT_QUERY_POSTPROCESSOR",
+            "django_idom.utils.django_query_postprocessor",
+        )
     )
 )
