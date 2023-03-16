@@ -144,10 +144,15 @@ def use_query(
         _REFETCH_CALLBACKS[query].add(refetch)
         return lambda: _REFETCH_CALLBACKS[query].remove(refetch)
 
-    @use_effect(dependencies=None)
+    @use_effect(dependencies=[])
     async def execute_query() -> None:
         if not should_execute:
             return
+
+        print("Executing query function: ", query)
+
+        # Make sure we don't re-execute the query
+        set_should_execute(False)
 
         try:
             # Run the initial query
@@ -155,6 +160,8 @@ def use_query(
                 new_data = await query(*args, **kwargs)
             else:
                 new_data = await database_sync_to_async(query)(*args, **kwargs)
+
+            print("Initial query data: ", new_data)
 
             # Run the postprocessor
             if query_options.postprocessor:
@@ -167,6 +174,8 @@ def use_query(
                         query_options.postprocessor
                     )(new_data, **query_options.postprocessor_kwargs)
 
+            print("Final (postprocessed) data: ", new_data)
+
         # Log any errors and set the error state
         except Exception as e:
             set_data(None)
@@ -176,12 +185,12 @@ def use_query(
                 f"Failed to execute query: {generate_obj_name(query) or query}"
             )
             return
-        finally:
-            set_should_execute(False)
 
-        set_data(new_data)
-        set_loading(False)
-        set_error(None)
+        # Query was successful
+        else:
+            set_data(new_data)
+            set_loading(False)
+            set_error(None)
 
     return Query(data, loading, error, refetch)
 
@@ -226,7 +235,7 @@ def use_mutation(
                     f"Failed to execute mutation: {generate_obj_name(mutate) or mutate}"
                 )
 
-            # If the mutation was successful, mark the mutation as complete
+            # Mutation was successful
             else:
                 set_loading(False)
                 set_error(None)

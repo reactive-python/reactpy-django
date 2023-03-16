@@ -254,10 +254,8 @@ def django_query_postprocessor(
     elif isinstance(data, Model):
         prefetch_fields: list[str] = []
         for field in data._meta.get_fields():
-            # `ForeignKey` relationships will cause an `AttributeError`
-            # This is handled within the `ManyToOneRel` conditional below.
-            with contextlib.suppress(AttributeError):
-                getattr(data, field.name)
+            # Force the query to execute
+            getattr(data, field.name, None)
 
             if many_to_one and type(field) == ManyToOneRel:
                 prefetch_fields.append(field.related_name or f"{field.name}_set")
@@ -284,6 +282,7 @@ def django_query_postprocessor(
             "If these situations seem correct, you may want to consider disabling the postprocessor via `QueryOptions`."
         )
 
+    print("django_query_postprocessor returned: ", data)
     return data
 
 

@@ -221,8 +221,9 @@ def relational_query():
     foriegn_child = django_idom.hooks.use_query(get_foriegn_child_query)
     relational_parent = django_idom.hooks.use_query(get_relational_parent_query)
 
-    print("Relational Parent: ", relational_parent.data)
-    print("Foriegn Child: ", foriegn_child.data)
+    print(
+        f"Component re-rendered with child: {foriegn_child.data} parent: {relational_parent.data}"
+    )
 
     if not relational_parent.data or not foriegn_child.data:
         return
@@ -276,8 +277,8 @@ async def async_get_foriegn_child_query():
 
 @component
 def async_relational_query():
-    relational_parent = django_idom.hooks.use_query(async_get_foriegn_child_query)
-    foriegn_child = django_idom.hooks.use_query(async_get_relational_parent_query)
+    foriegn_child = django_idom.hooks.use_query(async_get_foriegn_child_query)
+    relational_parent = django_idom.hooks.use_query(async_get_relational_parent_query)
 
     if not relational_parent.data or not foriegn_child.data:
         return
