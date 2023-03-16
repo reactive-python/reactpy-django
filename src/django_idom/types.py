@@ -30,7 +30,8 @@ __all__ = [
     "Mutation",
     "Connection",
     "ViewComponentIframe",
-    "Postprocessor",
+    "AsyncPostprocessor",
+    "SyncPostprocessor",
     "QueryOptions",
     "ComponentParamData",
 ]
