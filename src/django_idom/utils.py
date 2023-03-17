@@ -13,9 +13,8 @@ from typing import Any, Callable, Sequence
 
 from channels.db import database_sync_to_async
 from django.core.cache import caches
-from django.db.models import ManyToManyField, prefetch_related_objects
+from django.db.models import ManyToManyField, ManyToOneRel, prefetch_related_objects
 from django.db.models.base import Model
-from django.db.models.fields.reverse_related import ManyToOneRel
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.template import engines

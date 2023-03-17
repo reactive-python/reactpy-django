@@ -1,3 +1,4 @@
+import asyncio
 import inspect
 from pathlib import Path
 
@@ -6,6 +7,9 @@ from django.http import HttpRequest
 from django.shortcuts import render
 from idom import component, hooks, html, web
 from test_app.models import (
+    AsyncForiegnChild,
+    AsyncRelationalChild,
+    AsyncRelationalParent,
     AsyncTodoItem,
     ForiegnChild,
     RelationalChild,
@@ -208,10 +212,9 @@ def get_relational_parent_query():
 def get_foriegn_child_query():
     child = ForiegnChild.objects.first()
     if not child:
-        parent = RelationalParent.objects.first()
-        if not parent:
-            parent = get_relational_parent_query()
-        child = ForiegnChild.objects.create(parent=parent, text="Foriegn Child")
+        child = ForiegnChild.objects.create(
+            parent=get_relational_parent_query(), text="Foriegn Child"
+        )
         child.save()
     return child
 
@@ -234,7 +237,7 @@ def relational_query():
             "id": "relational-query",
             "data-success": bool(mtm) and bool(oto) and bool(mto) and bool(fk),
         },
-        html.p(inspect.currentframe().f_code.co_name),
+        html.p(inspect.currentframe().f_code.co_name),  # type: ignore
         html.div(f"Relational Parent Many To Many: {mtm}"),
         html.div(f"Relational Parent One To One: {oto}"),
         html.div(f"Relational Parent Many to One: {mto}"),
@@ -243,31 +246,33 @@ def relational_query():
     )
 
 
-async def async_create_relational_parent() -> RelationalParent:
-    child_1 = await RelationalChild.objects.acreate(text="ManyToMany Child 1")
-    child_2 = await RelationalChild.objects.acreate(text="ManyToMany Child 2")
-    child_3 = await RelationalChild.objects.acreate(text="ManyToMany Child 3")
-    child_4 = await RelationalChild.objects.acreate(text="OneToOne Child")
-    parent = await RelationalParent.objects.acreate(one_to_one=child_4)
+async def async_get_or_create_relational_parent() -> AsyncRelationalParent:
+    parent = await AsyncRelationalParent.objects.afirst()
+    if parent:
+        return parent
+
+    child_1 = await AsyncRelationalChild.objects.acreate(text="ManyToMany Child 1")
+    child_2 = await AsyncRelationalChild.objects.acreate(text="ManyToMany Child 2")
+    child_3 = await AsyncRelationalChild.objects.acreate(text="ManyToMany Child 3")
+    child_4 = await AsyncRelationalChild.objects.acreate(text="OneToOne Child")
+    parent = await AsyncRelationalParent.objects.acreate(one_to_one=child_4)
     await database_sync_to_async(parent.many_to_many.set)((child_1, child_2, child_3))
     database_sync_to_async(parent.save)()
     return parent
 
 
-async def async_get_relational_parent_query():
-    return (
-        await RelationalParent.objects.afirst()
-        or await async_create_relational_parent()
-    )
+async def async_get_relational_parent_query() -> AsyncRelationalParent:
+    # Sleep to avoid race conditions in the test
+    await asyncio.sleep(1)
+    return await async_get_or_create_relational_parent()
 
 
-async def async_get_foriegn_child_query():
-    child = await ForiegnChild.objects.afirst()
+async def async_get_foriegn_child_query() -> AsyncForiegnChild:
+    child = await AsyncForiegnChild.objects.afirst()
     if not child:
-        parent = await RelationalParent.objects.afirst()
-        if not parent:
-            parent = await async_get_relational_parent_query()
-        child = await ForiegnChild.objects.acreate(parent=parent, text="Foriegn Child")
+        child = await AsyncForiegnChild.objects.acreate(
+            parent=await async_get_or_create_relational_parent(), text="Foriegn Child"
+        )
         await database_sync_to_async(child.save)()
     return child
 
@@ -290,7 +295,7 @@ def async_relational_query():
             "id": "async-relational-query",
             "data-success": bool(mtm) and bool(oto) and bool(mto) and bool(fk),
         },
-        html.p(inspect.currentframe().f_code.co_name),
+        html.p(inspect.currentframe().f_code.co_name),  # type: ignore
         html.div(f"Relational Parent Many To Many: {mtm}"),
         html.div(f"Relational Parent One To One: {oto}"),
         html.div(f"Relational Parent Many to One: {mto}"),

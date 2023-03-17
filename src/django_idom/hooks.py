@@ -144,7 +144,7 @@ def use_query(
         _REFETCH_CALLBACKS[query].add(refetch)
         return lambda: _REFETCH_CALLBACKS[query].remove(refetch)
 
-    async def execute_query():
+    async def execute_query() -> None:
         try:
             # Run the initial query
             if asyncio.iscoroutinefunction(query):
