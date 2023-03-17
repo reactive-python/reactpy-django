@@ -150,7 +150,10 @@ def use_query(
             if asyncio.iscoroutinefunction(query):
                 new_data = await query(*args, **kwargs)
             else:
-                new_data = await database_sync_to_async(query)(*args, **kwargs)
+                new_data = await database_sync_to_async(
+                    query,
+                    thread_sensitive=query_options.thread_sensitive,
+                )(*args, **kwargs)
 
             # Run the postprocessor
             if query_options.postprocessor:
@@ -160,7 +163,8 @@ def use_query(
                     )
                 else:
                     new_data = await database_sync_to_async(
-                        query_options.postprocessor
+                        query_options.postprocessor,
+                        thread_sensitive=query_options.thread_sensitive,
                     )(new_data, **query_options.postprocessor_kwargs)
 
         # Log any errors and set the error state

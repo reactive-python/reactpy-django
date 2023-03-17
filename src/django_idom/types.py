@@ -114,6 +114,9 @@ class QueryOptions:
     postprocessor_kwargs: MutableMapping[str, Any] = field(default_factory=lambda: {})
     """Keyworded arguments directly passed into the `postprocessor` for configuration."""
 
+    thread_sensitive: bool = True
+    """Whether to run the query in thread-sensitive mode. This setting only applies to sync query functions."""
+
 
 @dataclass
 class ComponentParamData:
