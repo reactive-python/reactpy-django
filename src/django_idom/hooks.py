@@ -197,7 +197,8 @@ def use_query(
 
 
 def use_mutation(
-    mutate: Callable[_Params, bool | None] | Callable[_Params, Awaitable[bool | None]],
+    mutation: Callable[_Params, bool | None]
+    | Callable[_Params, Awaitable[bool | None]],
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
 ) -> Mutation[_Params]:
     """Hook to create, update, or delete Django ORM objects.
@@ -221,10 +222,10 @@ def use_mutation(
         async def execute_mutation() -> None:
             try:
                 # Run the mutation
-                if asyncio.iscoroutinefunction(mutate):
-                    should_refetch = await mutate(*args, **kwargs)
+                if asyncio.iscoroutinefunction(mutation):
+                    should_refetch = await mutation(*args, **kwargs)
                 else:
-                    should_refetch = await database_sync_to_async(mutate)(
+                    should_refetch = await database_sync_to_async(mutation)(
                         *args, **kwargs
                     )
 
@@ -233,7 +234,7 @@ def use_mutation(
                 set_loading(False)
                 set_error(e)
                 _logger.exception(
-                    f"Failed to execute mutation: {generate_obj_name(mutate) or mutate}"
+                    f"Failed to execute mutation: {generate_obj_name(mutation) or mutation}"
                 )
 
             # Mutation was successful
