@@ -34,7 +34,10 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)
+### Added
+
+-   Allow for native async query functions within `use_query`
+-   `QueryOptions.thread_sensitive` option to customize how sync `use_query` functions are executed
 
 ## [3.0.0] - 2023-03-08
 

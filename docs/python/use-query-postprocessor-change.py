@@ -17,7 +17,7 @@ def execute_io_intensive_operation():
 
 
 @component
-def todo_list():
+def my_component():
     query = use_query(
         QueryOptions(
             postprocessor=my_postprocessor,

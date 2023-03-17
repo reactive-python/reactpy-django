@@ -4,6 +4,7 @@ from idom import component, html
 from django_idom.hooks import use_query
 
 
+# Note: Async query functions are also supported!
 def get_items():
     return TodoItem.objects.all()
 
