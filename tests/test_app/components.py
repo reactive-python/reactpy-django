@@ -246,7 +246,7 @@ def relational_query():
     )
 
 
-async def async_get_or_create_relational_parent() -> AsyncRelationalParent:
+async def async_get_or_create_relational_parent():
     parent = await AsyncRelationalParent.objects.afirst()
     if parent:
         return parent
@@ -261,13 +261,13 @@ async def async_get_or_create_relational_parent() -> AsyncRelationalParent:
     return parent
 
 
-async def async_get_relational_parent_query() -> AsyncRelationalParent:
+async def async_get_relational_parent_query():
     # Sleep to avoid race conditions in the test
     await asyncio.sleep(1)
     return await async_get_or_create_relational_parent()
 
 
-async def async_get_foriegn_child_query() -> AsyncForiegnChild:
+async def async_get_foriegn_child_query():
     child = await AsyncForiegnChild.objects.afirst()
     if not child:
         child = await AsyncForiegnChild.objects.acreate(
