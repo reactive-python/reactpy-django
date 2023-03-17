@@ -1,11 +1,12 @@
+from channels.db import database_sync_to_async
 from example.models import TodoItem
 from idom import component, html
 
 from django_idom.hooks import use_query
 
 
-def get_items():
-    return TodoItem.objects.all()
+async def get_items():
+    return await database_sync_to_async(TodoItem.objects.all)()
 
 
 @component

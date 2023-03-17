@@ -126,6 +126,18 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     _Note: In Django's ORM design, the field name to access foreign keys is [postfixed with `_set`](https://docs.djangoproject.com/en/dev/topics/db/examples/many_to_one/) by default._
 
+??? question "Can I define async query functions?"
+
+    Async functions are supported by `use_query`. You can use them in the same way as a sync query function.
+
+    However, be mindful of Django async ORM restrictions.
+
+    === "components.py"
+
+        ```python
+        {% include "../../python/use-query-async.py" %}
+        ```
+
 ??? question "Can I make ORM calls without hooks?"
 
     {% include-markdown "../../includes/orm.md" start="<!--orm-excp-start-->" end="<!--orm-excp-end-->" %}
