@@ -380,6 +380,7 @@ def todo_list():
         mutation_status = ""  # type: ignore
 
     return html.div(
+        {"id": "todo-list"},
         html.p(inspect.currentframe().f_code.co_name),  # type: ignore
         html.label("Add an item:"),
         html.input(
@@ -455,12 +456,13 @@ def async_todo_list():
         mutation_status = ""  # type: ignore
 
     return html.div(
+        {"id": "async-todo-list"},
         html.p(inspect.currentframe().f_code.co_name),  # type: ignore
         html.label("Add an item:"),
         html.input(
             {
                 "type": "text",
-                "id": "todo-input",
+                "id": "async-todo-input",
                 "value": input_value,
                 "on_key_press": on_submit,
                 "on_change": on_change,

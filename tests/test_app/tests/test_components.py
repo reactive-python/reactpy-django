@@ -97,6 +97,9 @@ class ComponentTests(ChannelsLiveServerTestCase):
     def test_relational_query(self):
         self.page.locator("#relational-query[data-success=true]").wait_for()
 
+    def test_async_relational_query(self):
+        self.page.locator("#relational-query[data-success=true]").wait_for()
+
     def test_use_query_and_mutation(self):
         todo_input = self.page.wait_for_selector("#todo-input")
 
@@ -105,12 +108,33 @@ class ComponentTests(ChannelsLiveServerTestCase):
         for i in item_ids:
             todo_input.type(f"sample-{i}", delay=CLICK_DELAY)
             todo_input.press("Enter", delay=CLICK_DELAY)
-            self.page.wait_for_selector(f"#todo-item-sample-{i}")
-            self.page.wait_for_selector(f"#todo-item-sample-{i}-checkbox").click()
+            self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}")
+            self.page.wait_for_selector(
+                f"#todo-list #todo-item-sample-{i}-checkbox"
+            ).click()
             self.assertRaises(
                 TimeoutError,
                 self.page.wait_for_selector,
-                f"#todo-item-sample-{i}",
+                f"#todo-list #todo-item-sample-{i}",
+                timeout=1,
+            )
+
+    def test_async_use_query_and_mutation(self):
+        todo_input = self.page.wait_for_selector("#async-todo-input")
+
+        item_ids = list(range(5))
+
+        for i in item_ids:
+            todo_input.type(f"sample-{i}", delay=CLICK_DELAY)
+            todo_input.press("Enter", delay=CLICK_DELAY)
+            self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}")
+            self.page.wait_for_selector(
+                f"#async-todo-list #todo-item-sample-{i}-checkbox"
+            ).click()
+            self.assertRaises(
+                TimeoutError,
+                self.page.wait_for_selector,
+                f"#async-todo-list #todo-item-sample-{i}",
                 timeout=1,
             )
 
