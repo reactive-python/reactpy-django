@@ -33,6 +33,7 @@ __all__ = [
     "AsyncPostprocessor",
     "SyncPostprocessor",
     "QueryOptions",
+    "MutationOptions",
     "ComponentParamData",
 ]
 
