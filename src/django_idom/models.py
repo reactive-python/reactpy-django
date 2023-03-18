@@ -2,7 +2,7 @@ from django.db import models
 
 
 class ComponentSession(models.Model):
-    """A model for storing component parameters.
+    """A model for storing component sesssions.
     All queries must be routed through `django_idom.config.IDOM_DATABASE`.
     """
 

@@ -311,7 +311,7 @@ def create_cache_key(*args):
 
 
 def db_cleanup(immediate: bool = False):
-    """Deletes expired component parameters from the database.
+    """Deletes expired component sessions from the database.
     This function may be expanded in the future to include additional cleanup tasks."""
     from .config import IDOM_CACHE, IDOM_DATABASE, IDOM_RECONNECT_MAX
     from .models import ComponentSession
