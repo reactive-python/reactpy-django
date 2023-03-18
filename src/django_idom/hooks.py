@@ -211,7 +211,7 @@ def use_mutation_args_2(
     | Callable[_Params, Awaitable[bool | None]],
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
 ):
-    return mutation, refetch
+    return MutationOptions(), mutation, refetch
 
 
 @overload
@@ -247,15 +247,9 @@ def use_mutation(*args: Any, **kwargs: Any) -> Mutation[_Params]:
 
     if isinstance(args[0], MutationOptions):
         _args = use_mutation_args_1(*args, **kwargs)
-        mutation_options = _args[0]
-        mutation = _args[1]
-        refetch = _args[2]
-
     else:
         _args = use_mutation_args_2(*args, **kwargs)
-        mutation_options = MutationOptions()
-        mutation = _args[0]
-        refetch = _args[1]
+    mutation_options, mutation, refetch = _args
 
     loading, set_loading = use_state(False)
     error, set_error = use_state(cast(Union[Exception, None], None))
