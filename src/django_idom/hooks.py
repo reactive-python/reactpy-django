@@ -246,10 +246,9 @@ def use_mutation(*args: Any, **kwargs: Any) -> Mutation[_Params]:
     """
 
     if isinstance(args[0], MutationOptions):
-        _args = use_mutation_args_1(*args, **kwargs)
+        mutation_options, mutation, refetch = use_mutation_args_1(*args, **kwargs)
     else:
-        _args = use_mutation_args_2(*args, **kwargs)
-    mutation_options, mutation, refetch = _args
+        mutation_options, mutation, refetch = use_mutation_args_2(*args, **kwargs)
 
     loading, set_loading = use_state(False)
     error, set_error = use_state(cast(Union[Exception, None], None))
