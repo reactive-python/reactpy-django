@@ -416,7 +416,7 @@ async def async_add_todo_mutation(text: str):
             return False
     else:
         await database_sync_to_async(
-            AsyncTodoItem(text=text, done=False, thread_sensitive=False).save
+            AsyncTodoItem(text=text, done=False).save, thread_sensitive=False
         )()
 
 
