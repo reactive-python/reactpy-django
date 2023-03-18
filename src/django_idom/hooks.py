@@ -24,6 +24,7 @@ from idom.core.hooks import use_effect, use_state
 from django_idom.types import (
     Connection,
     Mutation,
+    MutationOptions,
     Query,
     QueryOptions,
     _Params,
@@ -196,11 +197,43 @@ def use_query(
     return Query(data, loading, error, refetch)
 
 
+def use_mutation_args_1(
+    options: MutationOptions,
+    mutation: Callable[_Params, bool | None]
+    | Callable[_Params, Awaitable[bool | None]],
+    refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
+):
+    return options, mutation, refetch
+
+
+def use_mutation_args_2(
+    mutation: Callable[_Params, bool | None]
+    | Callable[_Params, Awaitable[bool | None]],
+    refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
+):
+    return mutation, refetch
+
+
+@overload
+def use_mutation(
+    options: MutationOptions,
+    mutation: Callable[_Params, bool | None]
+    | Callable[_Params, Awaitable[bool | None]],
+    refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
+) -> Mutation[_Params]:
+    ...
+
+
+@overload
 def use_mutation(
     mutation: Callable[_Params, bool | None]
     | Callable[_Params, Awaitable[bool | None]],
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
 ) -> Mutation[_Params]:
+    ...
+
+
+def use_mutation(*args: Any, **kwargs: Any) -> Mutation[_Params]:
     """Hook to create, update, or delete Django ORM objects.
 
     Args:
@@ -212,22 +245,36 @@ def use_mutation(
             refetching data after a mutation has been performed.
     """
 
+    if isinstance(args[0], MutationOptions):
+        _args = use_mutation_args_1(*args, **kwargs)
+        mutation_options = _args[0]
+        mutation = _args[1]
+        refetch = _args[2]
+
+    else:
+        _args = use_mutation_args_2(*args, **kwargs)
+        mutation_options = MutationOptions()
+        mutation = _args[0]
+        refetch = _args[1]
+
     loading, set_loading = use_state(False)
     error, set_error = use_state(cast(Union[Exception, None], None))
 
     @use_callback
-    def call(*args: _Params.args, **kwargs: _Params.kwargs) -> None:
+    def schedule_mutation(
+        *exec_args: _Params.args, **exec_kwargs: _Params.kwargs
+    ) -> None:
         set_loading(True)
 
         async def execute_mutation() -> None:
             try:
                 # Run the mutation
                 if asyncio.iscoroutinefunction(mutation):
-                    should_refetch = await mutation(*args, **kwargs)
+                    should_refetch = await mutation(*exec_args, **exec_kwargs)
                 else:
-                    should_refetch = await database_sync_to_async(mutation)(
-                        *args, **kwargs
-                    )
+                    should_refetch = await database_sync_to_async(
+                        mutation, thread_sensitive=mutation_options.thread_sensitive
+                    )(*exec_args, **exec_kwargs)
 
             # Log any errors and set the error state
             except Exception as e:
@@ -256,4 +303,4 @@ def use_mutation(
         set_loading(False)
         set_error(None)
 
-    return Mutation(call, loading, error, reset)
+    return Mutation(schedule_mutation, loading, error, reset)

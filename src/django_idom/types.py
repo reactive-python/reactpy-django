@@ -119,6 +119,14 @@ class QueryOptions:
 
 
 @dataclass
+class MutationOptions:
+    """Configuration options that can be provided to `use_mutation`."""
+
+    thread_sensitive: bool = True
+    """Whether to run the mutation in thread-sensitive mode. This setting only applies to sync mutation functions."""
+
+
+@dataclass
 class ComponentParamData:
     """Container used for serializing component parameters.
     This dataclass is pickled & stored in the database, then unpickled when needed."""
