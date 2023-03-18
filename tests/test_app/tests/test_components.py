@@ -98,7 +98,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
         self.page.locator("#relational-query[data-success=true]").wait_for()
 
     def test_async_relational_query(self):
-        self.page.locator("#relational-query[data-success=true]").wait_for()
+        self.page.locator("#async-relational-query[data-success=true]").wait_for()
 
     def test_use_query_and_mutation(self):
         todo_input = self.page.wait_for_selector("#todo-input")
