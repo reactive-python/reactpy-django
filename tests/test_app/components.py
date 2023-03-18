@@ -256,8 +256,10 @@ async def async_get_or_create_relational_parent():
     child_3 = await AsyncRelationalChild.objects.acreate(text="ManyToMany Child 3")
     child_4 = await AsyncRelationalChild.objects.acreate(text="OneToOne Child")
     parent = await AsyncRelationalParent.objects.acreate(one_to_one=child_4)
-    await database_sync_to_async(parent.many_to_many.set)((child_1, child_2, child_3))
-    database_sync_to_async(parent.save)()
+    await database_sync_to_async(parent.many_to_many.set, thread_sensitive=False)(
+        (child_1, child_2, child_3)
+    )
+    database_sync_to_async(parent.save, thread_sensitive=False)()
     return parent
 
 
@@ -273,7 +275,7 @@ async def async_get_foriegn_child_query():
         child = await AsyncForiegnChild.objects.acreate(
             parent=await async_get_or_create_relational_parent(), text="Foriegn Child"
         )
-        await database_sync_to_async(child.save)()
+        await database_sync_to_async(child.save, thread_sensitive=False)()
     return child
 
 
@@ -399,7 +401,9 @@ def todo_list():
 
 
 async def async_get_todo_query():
-    return await database_sync_to_async(AsyncTodoItem.objects.all)()
+    return await database_sync_to_async(
+        AsyncTodoItem.objects.all, thread_sensitive=False
+    )()
 
 
 async def async_add_todo_mutation(text: str):
@@ -407,16 +411,18 @@ async def async_add_todo_mutation(text: str):
     if existing:
         if existing.done:
             existing.done = False
-            await database_sync_to_async(existing.save)()
+            await database_sync_to_async(existing.save, thread_sensitive=False)()
         else:
             return False
     else:
-        await database_sync_to_async(AsyncTodoItem(text=text, done=False).save)()
+        await database_sync_to_async(
+            AsyncTodoItem(text=text, done=False, thread_sensitive=False).save
+        )()
 
 
 async def async_toggle_todo_mutation(item: AsyncTodoItem):
     item.done = not item.done
-    await database_sync_to_async(item.save)()
+    await database_sync_to_async(item.save, thread_sensitive=False)()
 
 
 @component

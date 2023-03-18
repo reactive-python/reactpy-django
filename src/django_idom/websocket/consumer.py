@@ -92,7 +92,7 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             if func_has_params(component_constructor):
                 try:
                     # Always clean up expired entries first
-                    await database_sync_to_async(db_cleanup)()
+                    await database_sync_to_async(db_cleanup, thread_sensitive=False)()
 
                     # Get the queries from a DB
                     params_query = await models.ComponentSession.objects.using(
@@ -102,7 +102,9 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                         last_accessed__gt=now - timedelta(seconds=IDOM_RECONNECT_MAX),
                     )
                     params_query.last_accessed = timezone.now()
-                    await database_sync_to_async(params_query.save)()
+                    await database_sync_to_async(
+                        params_query.save, thread_sensitive=False
+                    )()
                 except models.ComponentSession.DoesNotExist:
                     _logger.warning(
                         f"Browser has attempted to access '{dotted_path}', "
