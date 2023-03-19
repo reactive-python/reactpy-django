@@ -39,7 +39,7 @@ Using the following categories, list your changes in this order:
 -   `use_query` now supports async functions.
 -   `use_mutation` now supports async functions.
 -   `django_idom.types.QueryOptions.thread_sensitive` option to customize how sync queries are executed.
--   `use_mutation` now accepts `django_idom.types.MutationOptions` option to customize mutations are executed.
+-   `django_idom.hooks.use_mutation` now accepts `django_idom.types.MutationOptions` option to customize how mutations are executed.
 
 ### Changed
 
