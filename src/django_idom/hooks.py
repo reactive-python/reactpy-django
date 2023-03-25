@@ -132,7 +132,7 @@ def use_query(
     # The main "running" function for `use_query`
     async def execute_query() -> None:
         try:
-            # Run the initial query
+            # Run the query
             if asyncio.iscoroutinefunction(query):
                 new_data = await query(*args, **kwargs)
             else:
@@ -256,8 +256,8 @@ def use_mutation(*args: Any, **kwargs: Any) -> Mutation[_Params]:
 
     # The main "running" function for `use_mutation`
     async def execute_mutation(exec_args, exec_kwargs) -> None:
+        # Run the mutation
         try:
-            # Run the mutation
             if asyncio.iscoroutinefunction(mutation):
                 should_refetch = await mutation(*exec_args, **exec_kwargs)
             else:

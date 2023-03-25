@@ -265,6 +265,7 @@ async def async_get_or_create_relational_parent():
 
 async def async_get_relational_parent_query():
     # Sleep to avoid race conditions in the test
+    # Also serves as a good way of testing whether things are truly async
     await asyncio.sleep(1)
     return await async_get_or_create_relational_parent()
 
