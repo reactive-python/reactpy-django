@@ -6,7 +6,7 @@
 
 ---
 
-## Register Your View
+## Register a View
 
 We will assume you have [created a Django View](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view) before, but here's a simple example below.
 
