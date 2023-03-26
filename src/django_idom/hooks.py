@@ -76,12 +76,32 @@ def use_connection() -> Connection:
     return _use_connection()
 
 
+def use_query_args_1(
+    options: QueryOptions,
+    /,
+    query: Callable[_Params, _Result | None]
+    | Callable[_Params, Awaitable[_Result | None]],
+    *args: _Params.args,
+    **kwargs: _Params.kwargs,
+):
+    return options, query, args, kwargs
+
+
+def use_query_args_2(
+    query: Callable[_Params, _Result | None]
+    | Callable[_Params, Awaitable[_Result | None]],
+    *args: _Params.args,
+    **kwargs: _Params.kwargs,
+):
+    return QueryOptions(), query, args, kwargs
+
+
 @overload
 def use_query(
     options: QueryOptions,
+    /,
     query: Callable[_Params, _Result | None]
     | Callable[_Params, Awaitable[_Result | None]],
-    /,
     *args: _Params.args,
     **kwargs: _Params.kwargs,
 ) -> Query[_Result | None]:
@@ -92,7 +112,6 @@ def use_query(
 def use_query(
     query: Callable[_Params, _Result | None]
     | Callable[_Params, Awaitable[_Result | None]],
-    /,
     *args: _Params.args,
     **kwargs: _Params.kwargs,
 ) -> Query[_Result | None]:
@@ -118,13 +137,13 @@ def use_query(
     loading, set_loading = use_state(True)
     error, set_error = use_state(cast(Union[Exception, None], None))
     if isinstance(args[0], QueryOptions):
-        query_options = args[0]
-        query = args[1]
-        args = args[2:]
+        query_options, query, query_args, query_kwargs = use_query_args_1(
+            *args, **kwargs
+        )
     else:
-        query_options = QueryOptions()
-        query = args[0]
-        args = args[1:]
+        query_options, query, query_args, query_kwargs = use_query_args_2(
+            *args, **kwargs
+        )
     query_ref = use_ref(query)
     if query_ref.current is not query:
         raise ValueError(f"Query function changed from {query_ref.current} to {query}.")
@@ -134,12 +153,12 @@ def use_query(
         try:
             # Run the query
             if asyncio.iscoroutinefunction(query):
-                new_data = await query(*args, **kwargs)
+                new_data = await query(*query_args, **query_kwargs)
             else:
                 new_data = await database_sync_to_async(
                     query,
                     thread_sensitive=query_options.thread_sensitive,
-                )(*args, **kwargs)
+                )(*query_args, **query_kwargs)
 
             # Run the postprocessor
             if query_options.postprocessor:
