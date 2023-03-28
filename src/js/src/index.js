@@ -1,4 +1,4 @@
-import { mountLayoutWithWebSocket } from "reactpy-client-react";
+import { mountLayoutWithWebSocket } from "@reactpy/client";
 
 // Set up a websocket at the base endpoint
 const LOCATION = window.location;
