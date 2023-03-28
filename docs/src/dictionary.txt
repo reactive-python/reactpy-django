@@ -1,4 +1,6 @@
 django
+sanic
+plotly
 nox
 websocket
 websockets
@@ -28,3 +30,7 @@ postprocessing
 serializable
 postprocessor
 preprocessor
+backends
+backend
+frontend
+frontends

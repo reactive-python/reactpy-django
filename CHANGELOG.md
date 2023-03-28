@@ -68,7 +68,7 @@ Using the following categories, list your changes in this order:
 
 -   `reactpy_django.hooks.use_websocket` has been removed. The similar replacement is `reactpy_django.hooks.use_connection`.
 -   `reactpy_django.types.ReactPyWebsocket` has been removed. The similar replacement is `reactpy_django.types.Connection`.
--   `settings.py:CACHE['reactpy']` is no longer used by default. The name of the cache back-end must now be specified with the `REACTPY_CACHE` setting.
+-   `settings.py:CACHE['reactpy']` is no longer used by default. The name of the cache backend must now be specified with the `REACTPY_CACHE` setting.
 
 ### Fixed
 
@@ -215,7 +215,7 @@ Using the following categories, list your changes in this order:
 
 -   Ability to declare the HTML class of the top-level component `div`
 -   `name = ...` parameter to ReactPy HTTP paths for use with `django.urls.reverse()`
--   Cache versioning to automatically invalidate old web module files from the cache back-end
+-   Cache versioning to automatically invalidate old web module files from the cache backend
 -   Automatic pre-population of the ReactPy component registry
 -   Type hinting for `ReactPyWebsocket`
 
@@ -231,7 +231,7 @@ Using the following categories, list your changes in this order:
 
 -   `REACTPY_WEB_MODULES_PATH` has been replaced with Django `include(...)`
 -   `REACTPY_WS_MAX_RECONNECT_DELAY` has been renamed to `REACTPY_WS_MAX_RECONNECT_TIMEOUT`
--   `reactpy_web_modules` cache back-end has been renamed to `reactpy`
+-   `reactpy_web_modules` cache backend has been renamed to `reactpy`
 
 ### Fixed
 

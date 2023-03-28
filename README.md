@@ -1,19 +1,8 @@
 <!--header-start-->
 
-<p align="center" id="reactpy">
-    <img src="https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-landscape.svg" alt="ReactPy Logo" style="min-width: 300px; width: 50%" />
-</p>
-<p align="center">
-    <em>Reactive user interfaces with pure Python</em>
-</p>
-    <p align="center">
-    <a href="https://github.com/reactive-python/reactpy-django/actions">
-        <img src="https://github.com/reactive-python/reactpy-django/workflows/test/badge.svg" alt="Build Status">
-    </a>
-    <a href="https://pypi.org/project/reactpy-django/">
-        <img src="https://badge.fury.io/py/reactpy-django.svg" alt="Package version">
-    </a>
-</p>
+# <img src="https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg" align="left" height="45"/> ReactPy Django
+
+[![Tests](https://github.com/idom-team/django-idom/workflows/Test/badge.svg?event=push)](https://github.com/idom-team/django-idom/actions?query=workflow%3ATest) [![PyPI Version](https://img.shields.io/pypi/v/django-idom.svg?label=PyPI)](https://pypi.python.org/pypi/django-idom) [![License](https://img.shields.io/badge/License-MIT-purple.svg)](https://github.com/idom-team/django-idom/blob/main/LICENSE) [![Docs](https://img.shields.io/website?down_message=offline&label=Docs&logo=read%20the%20docs&logoColor=white&up_message=online&url=https%3A%2F%2Fidom-team.github.io%2Fdjango-idom%2F)](https://idom-team.github.io/django-idom/)
 
 <!--header-end-->
 
