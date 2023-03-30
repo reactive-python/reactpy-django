@@ -34,7 +34,7 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
-## [3.0.0-django-reactpy] - 2023-03-30
+## [3.0.0-reactpy] - 2023-03-30
 
 ### Changed
 
@@ -252,7 +252,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.0.0...HEAD
+[unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.0.0-reactpy...HEAD
+[3.0.0-reactpy]: https://github.com/reactive-python/reactpy-django/compare/3.0.0...3.0.0-reactpy
 [3.0.0]: https://github.com/reactive-python/reactpy-django/compare/2.2.1...3.0.0
 [2.2.1]: https://github.com/reactive-python/reactpy-django/compare/2.2.0...2.2.1
 [2.2.0]: https://github.com/reactive-python/reactpy-django/compare/2.1.0...2.2.0
