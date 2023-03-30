@@ -17,7 +17,7 @@ from typing import (
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
 from django.views.generic import View
-from idom.types import Connection as _Connection
+from reactpy.types import Connection as _Connection
 from typing_extensions import ParamSpec
 
 
@@ -88,9 +88,9 @@ class Postprocessor(Protocol):
 class QueryOptions:
     """Configuration options that can be provided to `use_query`."""
 
-    from django_idom.config import IDOM_DEFAULT_QUERY_POSTPROCESSOR
+    from reactpy_django.config import REACTPY_DEFAULT_QUERY_POSTPROCESSOR
 
-    postprocessor: Postprocessor | None = IDOM_DEFAULT_QUERY_POSTPROCESSOR
+    postprocessor: Postprocessor | None = REACTPY_DEFAULT_QUERY_POSTPROCESSOR
     """A callable that can modify the query `data` after the query has been executed.
 
     The first argument of postprocessor must be the query `data`. All proceeding arguments

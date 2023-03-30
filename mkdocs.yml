@@ -2,7 +2,7 @@
 nav:
     - Home: index.md
     - Get Started:
-          - Install Django-IDOM: get-started/installation.md
+          - Install ReactPy-Django: get-started/installation.md
           - Choose a Django App: get-started/choose-django-app.md
           - Create a Component: get-started/create-component.md
           - Use the Template Tag: get-started/use-template-tag.md
@@ -20,7 +20,7 @@ nav:
                 - Code: contribute/code.md
                 - Docs: contribute/docs.md
                 - Running Tests: contribute/running-tests.md
-          - Community: https://github.com/idom-team/idom/discussions
+          - Community: https://github.com/reactive-python/reactpy/discussions
           - Changelog: changelog/index.md
 
 theme:
@@ -92,12 +92,12 @@ watch:
     - README.md
     - CHANGELOG.md
 
-site_name: Django-IDOM Docs
+site_name: ReactPy-Django Docs
 site_author: Archmonger
 site_description: React for Django developers.
-copyright: Copyright &copy; 2022 IDOM Team
-repo_url: https://github.com/idom-team/django-idom
-site_url: https://idom-team.github.io/django-idom
-repo_name: idom-team/django-idom
+copyright: Copyright &copy; 2022 Reactive Python
+repo_url: https://github.com/reactive-python/reactpy-django
+site_url: https://reactive-python.github.io/reactpy-django
+repo_name: reactive-python/reactpy-django
 edit_uri: edit/main/docs/src
 docs_dir: docs/src

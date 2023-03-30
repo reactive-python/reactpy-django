@@ -14,7 +14,7 @@
 
       {% include-markdown "../../../README.md" start="<!--py-code-start-->" end="<!--py-code-end-->" %}
 
-??? question "What should I name my IDOM files and functions?"
+??? question "What should I name my ReactPy files and functions?"
 
       You have full freedom in naming/placement of your files and functions.
 

@@ -9,11 +9,11 @@ from django.core.cache import caches
 from django.http import HttpRequest
 from django.urls import reverse
 from django.views import View
-from idom import component, hooks, html, utils
-from idom.types import ComponentType, Key, VdomDict
+from reactpy import component, hooks, html, utils
+from reactpy.types import ComponentType, Key, VdomDict
 
-from django_idom.types import ViewComponentIframe
-from django_idom.utils import generate_obj_name, render_view
+from reactpy_django.types import ViewComponentIframe
+from reactpy_django.utils import generate_obj_name, render_view
 
 
 class _ViewComponentConstructor(Protocol):
@@ -33,7 +33,7 @@ def _view_to_component(
     args: Sequence | None,
     kwargs: dict | None,
 ):
-    from django_idom.config import IDOM_VIEW_COMPONENT_IFRAMES
+    from reactpy_django.config import REACTPY_VIEW_COMPONENT_IFRAMES
 
     converted_view, set_converted_view = hooks.use_state(
         cast(Union[VdomDict, None], None)
@@ -73,12 +73,12 @@ def _view_to_component(
     # Render in compatibility mode, if needed
     if compatibility:
         dotted_path = f"{view.__module__}.{view.__name__}".replace("<", "").replace(">", "")  # type: ignore
-        IDOM_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
+        REACTPY_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
             view, _args, _kwargs
         )
         return html.iframe(
             {
-                "src": reverse("idom:view_to_component", args=[dotted_path]),
+                "src": reverse("reactpy:view_to_component", args=[dotted_path]),
                 "loading": "lazy",
             }
         )
@@ -120,7 +120,7 @@ def view_to_component(
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
 ) -> _ViewComponentConstructor | Callable[[Callable], _ViewComponentConstructor]:
-    """Converts a Django view to an IDOM component.
+    """Converts a Django view to an ReactPy component.
 
     Keyword Args:
         view: The view function or class to convert.
@@ -134,7 +134,7 @@ def view_to_component(
 
     Returns:
         A function that takes `request: HttpRequest | None, *args: Any, key: Key | None, **kwargs: Any`
-            and returns an IDOM component.
+            and returns an ReactPy component.
     """
 
     def decorator(view: Callable | View):
@@ -169,7 +169,7 @@ def _django_css(static_path: str):
 
 
 def django_css(static_path: str, key: Key | None = None):
-    """Fetches a CSS static file for use within IDOM. This allows for deferred CSS loading.
+    """Fetches a CSS static file for use within ReactPy. This allows for deferred CSS loading.
 
     Args:
         static_path: The path to the static file. This path is identical to what you would
@@ -187,7 +187,7 @@ def _django_js(static_path: str):
 
 
 def django_js(static_path: str, key: Key | None = None):
-    """Fetches a JS static file for use within IDOM. This allows for deferred JS loading.
+    """Fetches a JS static file for use within ReactPy. This allows for deferred JS loading.
 
     Args:
         static_path: The path to the static file. This path is identical to what you would
@@ -200,7 +200,7 @@ def django_js(static_path: str, key: Key | None = None):
 
 
 def _cached_static_contents(static_path: str):
-    from django_idom.config import IDOM_CACHE
+    from reactpy_django.config import REACTPY_CACHE
 
     # Try to find the file within Django's static files
     abs_path = find(static_path)
@@ -212,13 +212,15 @@ def _cached_static_contents(static_path: str):
     # Fetch the file from cache, if available
     # Cache is preferrable to `use_memo` due to multiprocessing capabilities
     last_modified_time = os.stat(abs_path).st_mtime
-    cache_key = f"django_idom:static_contents:{static_path}"
-    file_contents = caches[IDOM_CACHE].get(cache_key, version=int(last_modified_time))
+    cache_key = f"reactpy_django:static_contents:{static_path}"
+    file_contents = caches[REACTPY_CACHE].get(
+        cache_key, version=int(last_modified_time)
+    )
     if file_contents is None:
         with open(abs_path, encoding="utf-8") as static_file:
             file_contents = static_file.read()
-        caches[IDOM_CACHE].delete(cache_key)
-        caches[IDOM_CACHE].set(
+        caches[REACTPY_CACHE].delete(cache_key)
+        caches[REACTPY_CACHE].set(
             cache_key, file_contents, timeout=None, version=int(last_modified_time)
         )
 

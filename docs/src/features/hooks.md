@@ -6,9 +6,9 @@
 
 ??? tip "Looking for standard React hooks?"
 
-    Standard hooks are contained within [`idom-team/idom`](https://github.com/idom-team/idom). Since `idom` is installed alongside `django-idom`, you can import them at any time.
+    Standard hooks are contained within [`reactive-python/reactpy`](https://github.com/reactive-python/reactpy). Since `reactpy` is installed alongside `reactpy-django`, you can import them at any time.
 
-    Check out the [IDOM Core docs](https://reactpy.dev/docs/reference/hooks-api.html#basic-hooks) to see what hooks are available!
+    Check out the [ReactPy Core docs](https://reactpy.dev/docs/reference/hooks-api.html#basic-hooks) to see what hooks are available!
 
 ---
 
@@ -98,7 +98,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     However, if you have deep nested trees of relational data, this may not be a desirable behavior. In these scenarios, you may prefer to manually fetch these relational fields using a second `use_query` hook.
 
-    You can disable the prefetching behavior of the default `postprocessor` (located at `django_idom.utils.django_query_postprocessor`) via the `QueryOptions.postprocessor_kwargs` parameter.
+    You can disable the prefetching behavior of the default `postprocessor` (located at `reactpy_django.utils.django_query_postprocessor`) via the `QueryOptions.postprocessor_kwargs` parameter.
 
     === "components.py"
 
@@ -245,7 +245,7 @@ This is a shortcut that returns the Websocket's [`scope`](https://channels.readt
 
 This is a shortcut that returns the Websocket's `path`.
 
-You can expect this hook to provide strings such as `/idom/my_path`.
+You can expect this hook to provide strings such as `/reactpy/my_path`.
 
 === "components.py"
 
@@ -267,9 +267,9 @@ You can expect this hook to provide strings such as `/idom/my_path`.
 
 ??? info "This hook's behavior will be changed in a future update"
 
-    This hook will be updated to return the browser's currently active path. This change will come in alongside IDOM URL routing support.
+    This hook will be updated to return the browser's currently active path. This change will come in alongside ReactPy URL routing support.
 
-    Check out [idom-team/idom-router#2](https://github.com/idom-team/idom-router/issues/2) for more information.
+    Check out [reactive-python/reactpy-router#2](https://github.com/idom-team/idom-router/issues/2) for more information.
 
 ## Use Origin
 

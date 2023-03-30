@@ -27,14 +27,14 @@ This decorator is commonly used to selectively render a component only if a user
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
     | `auth_attribute` | `str` | The value to check within the user object. This is checked in the form of `UserModel.<auth_attribute>`. | `#!python "is_active"` |
-    | `fallback` | `ComponentType`, `VdomDict`, `None` | The `component` or `idom.html` snippet to render if the user is not authenticated. | `None` |
+    | `fallback` | `ComponentType`, `VdomDict`, `None` | The `component` or `reactpy.html` snippet to render if the user is not authenticated. | `None` |
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
-    | `Component` | An IDOM component. |
-    | `VdomDict` | An `idom.html` snippet. |
+    | `Component` | An ReactPy component. |
+    | `VdomDict` | An `reactpy.html` snippet. |
     | `None` | No component render. |
 
 ??? question "How do I render a different component if authentication fails?"
@@ -47,9 +47,9 @@ This decorator is commonly used to selectively render a component only if a user
         {% include "../../python/auth-required-component-fallback.py" %}
         ```
 
-??? question "How do I render a simple `idom.html` snippet if authentication fails?"
+??? question "How do I render a simple `reactpy.html` snippet if authentication fails?"
 
-    You can use a `idom.html` snippet with the `fallback` argument, as seen below.
+    You can use a `reactpy.html` snippet with the `fallback` argument, as seen below.
 
     === "components.py"
 

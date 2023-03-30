@@ -5,9 +5,9 @@ from uuid import uuid4
 import dill as pickle
 from django.test import TransactionTestCase
 
-from django_idom import utils
-from django_idom.models import ComponentSession
-from django_idom.types import ComponentParamData
+from reactpy_django import utils
+from reactpy_django.models import ComponentSession
+from reactpy_django.types import ComponentParamData
 
 
 class DatabaseTests(TransactionTestCase):
@@ -21,10 +21,10 @@ class DatabaseTests(TransactionTestCase):
         self.assertEqual(pickle.loads(ComponentSession.objects.first().params), params_1)  # type: ignore
 
         # Force `params_1` to expire
-        from django_idom import config
+        from reactpy_django import config
 
-        config.IDOM_RECONNECT_MAX = 1
-        sleep(config.IDOM_RECONNECT_MAX + 0.1)
+        config.REACTPY_RECONNECT_MAX = 1
+        sleep(config.REACTPY_RECONNECT_MAX + 0.1)
 
         # Create a new, non-expired component params
         params_2 = self._save_params_to_db(2)

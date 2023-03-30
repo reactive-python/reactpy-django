@@ -1,6 +1,6 @@
-from idom import component, html
+from reactpy import component, html
 
-from django_idom.hooks import use_connection
+from reactpy_django.hooks import use_connection
 
 
 @component

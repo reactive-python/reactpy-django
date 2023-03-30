@@ -14,14 +14,14 @@ from typing import (
 )
 
 from channels.db import database_sync_to_async as _database_sync_to_async
-from idom import use_callback, use_ref
-from idom.backend.hooks import use_connection as _use_connection
-from idom.backend.hooks import use_location as _use_location
-from idom.backend.hooks import use_scope as _use_scope
-from idom.backend.types import Location
-from idom.core.hooks import use_effect, use_state
+from reactpy import use_callback, use_ref
+from reactpy.backend.hooks import use_connection as _use_connection
+from reactpy.backend.hooks import use_location as _use_location
+from reactpy.backend.hooks import use_scope as _use_scope
+from reactpy.backend.types import Location
+from reactpy.core.hooks import use_effect, use_state
 
-from django_idom.types import (
+from reactpy_django.types import (
     Connection,
     Mutation,
     Query,
@@ -29,7 +29,7 @@ from django_idom.types import (
     _Params,
     _Result,
 )
-from django_idom.utils import generate_obj_name
+from reactpy_django.utils import generate_obj_name
 
 
 _logger = logging.getLogger(__name__)

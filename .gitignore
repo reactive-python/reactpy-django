@@ -1,5 +1,5 @@
-# Django IDOM Build Artifacts
-src/django_idom/static/
+# ReactPy-Django Build Artifacts
+src/reactpy_django/static/*
 
 # Django #
 logs

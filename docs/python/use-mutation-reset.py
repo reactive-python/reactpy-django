@@ -1,7 +1,7 @@
 from example.models import TodoItem
-from idom import component, html
+from reactpy import component, html
 
-from django_idom.hooks import use_mutation
+from reactpy_django.hooks import use_mutation
 
 
 def add_item(text: str):

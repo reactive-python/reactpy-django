@@ -2,11 +2,11 @@
 
 !!! summary
 
-    You will need to set up a Python environment to develop Django-IDOM.
+    You will need to set up a Python environment to develop ReactPy-Django.
 
 ??? tip "Looking to contribute features that are not Django specific?"
 
-    Everything within the `django-idom` repository must be specific to Django integration. Check out the [IDOM Core documentation](https://reactpy.dev/docs/about/contributor-guide.html) to contribute general features such as: components, hooks, events, and more.
+    Everything within the `reactpy-django` repository must be specific to Django integration. Check out the [ReactPy Core documentation](https://reactpy.dev/docs/about/contributor-guide.html) to contribute general features such as: components, hooks, events, and more.
 
 ---
 
@@ -21,8 +21,8 @@ If you plan to make code changes to this repository, you will need to install th
 Once done, you should clone this repository:
 
 ```bash linenums="0"
-git clone https://github.com/idom-team/django-idom.git
-cd django-idom
+git clone https://github.com/reactive-python/reactpy-django.git
+cd reactpy-django
 ```
 
 Then, by running the command below you can:

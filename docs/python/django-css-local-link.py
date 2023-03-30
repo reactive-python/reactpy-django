@@ -1,5 +1,5 @@
 from django.templatetags.static import static
-from idom import component, html
+from reactpy import component, html
 
 
 @component

@@ -16,8 +16,8 @@ If you plan to make changes to this documentation, you will need to install the 
 Once done, you should clone this repository:
 
 ```bash linenums="0"
-git clone https://github.com/idom-team/django-idom.git
-cd django-idom
+git clone https://github.com/reactive-python/reactpy-django.git
+cd reactpy-django
 ```
 
 Then, by running the command below you can:

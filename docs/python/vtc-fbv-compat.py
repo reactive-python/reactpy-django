@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import user_passes_test
 
-from django_idom.components import view_to_component
+from reactpy_django.components import view_to_component
 
 
 @view_to_component(compatibility=True)

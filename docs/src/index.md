@@ -4,11 +4,11 @@ hide:
     - toc
 ---
 
-{% include-markdown "../../README.md" start="<!--header-start-->" end="<!--header-end-->" %}
+![ReactPy Django](https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg){ align=left style=height:40px }
 
-## ReactJS for Django Developers.
+# ReactPy Django
 
----
+{% include-markdown "../../README.md" start="<!--badge-start-->" end="<!--badge-end-->" %}
 
 {% include-markdown "../../README.md" start="<!--intro-start-->" end="<!--intro-end-->" %}
 

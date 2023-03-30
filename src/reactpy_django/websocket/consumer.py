@@ -11,19 +11,19 @@ from channels.auth import login
 from channels.db import database_sync_to_async as convert_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from django.utils import timezone
-from idom.backend.hooks import ConnectionContext
-from idom.backend.types import Connection, Location
-from idom.core.layout import Layout
-from idom.core.serve import serve_layout
+from reactpy.backend.hooks import ConnectionContext
+from reactpy.backend.types import Connection, Location
+from reactpy.core.layout import Layout
+from reactpy.core.serve import serve_layout
 
-from django_idom.types import ComponentParamData, ComponentWebsocket
-from django_idom.utils import db_cleanup, func_has_params
+from reactpy_django.types import ComponentParamData, ComponentWebsocket
+from reactpy_django.utils import db_cleanup, func_has_params
 
 
 _logger = logging.getLogger(__name__)
 
 
-class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
+class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
     """Communicates with the browser to perform actions on-demand."""
 
     async def connect(self) -> None:
@@ -37,35 +37,37 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 await login(self.scope, user)
                 await convert_to_async(self.scope["session"].save)()
             except Exception:
-                _logger.exception("IDOM websocket authentication has failed!")
+                _logger.exception("ReactPy websocket authentication has failed!")
         elif user is None:
-            _logger.warning("IDOM websocket is missing AuthMiddlewareStack!")
+            _logger.warning("ReactPy websocket is missing AuthMiddlewareStack!")
 
-        self._idom_dispatcher_future = asyncio.ensure_future(self._run_dispatch_loop())
+        self._reactpy_dispatcher_future = asyncio.ensure_future(
+            self._run_dispatch_loop()
+        )
 
     async def disconnect(self, code: int) -> None:
-        if self._idom_dispatcher_future.done():
-            await self._idom_dispatcher_future
+        if self._reactpy_dispatcher_future.done():
+            await self._reactpy_dispatcher_future
         else:
-            self._idom_dispatcher_future.cancel()
+            self._reactpy_dispatcher_future.cancel()
         await super().disconnect(code)
 
     async def receive_json(self, content: Any, **_) -> None:
-        await self._idom_recv_queue.put(content)
+        await self._reactpy_recv_queue.put(content)
 
     async def _run_dispatch_loop(self):
-        from django_idom import models
-        from django_idom.config import (
-            IDOM_DATABASE,
-            IDOM_RECONNECT_MAX,
-            IDOM_REGISTERED_COMPONENTS,
+        from reactpy_django import models
+        from reactpy_django.config import (
+            REACTPY_DATABASE,
+            REACTPY_RECONNECT_MAX,
+            REACTPY_REGISTERED_COMPONENTS,
         )
 
         scope = self.scope
         dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
         uuid = scope["url_route"]["kwargs"]["uuid"]
         search = scope["query_string"].decode()
-        self._idom_recv_queue: asyncio.Queue = asyncio.Queue()
+        self._reactpy_recv_queue: asyncio.Queue = asyncio.Queue()
         connection = Connection(  # For `use_connection`
             scope=scope,
             location=Location(
@@ -80,10 +82,10 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
         # Verify the component has already been registered
         try:
-            component_constructor = IDOM_REGISTERED_COMPONENTS[dotted_path]
+            component_constructor = REACTPY_REGISTERED_COMPONENTS[dotted_path]
         except KeyError:
             _logger.warning(
-                f"Attempt to access invalid IDOM component: {dotted_path!r}"
+                f"Attempt to access invalid ReactPy component: {dotted_path!r}"
             )
             return
 
@@ -96,17 +98,18 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
                     # Get the queries from a DB
                     params_query = await models.ComponentSession.objects.using(
-                        IDOM_DATABASE
+                        REACTPY_DATABASE
                     ).aget(
                         uuid=uuid,
-                        last_accessed__gt=now - timedelta(seconds=IDOM_RECONNECT_MAX),
+                        last_accessed__gt=now
+                        - timedelta(seconds=REACTPY_RECONNECT_MAX),
                     )
                     params_query.last_accessed = timezone.now()
                     await convert_to_async(params_query.save)()
                 except models.ComponentSession.DoesNotExist:
                     _logger.warning(
                         f"Browser has attempted to access '{dotted_path}', "
-                        f"but the component has already expired beyond IDOM_RECONNECT_MAX. "
+                        f"but the component has already expired beyond REACTPY_RECONNECT_MAX. "
                         "If this was expected, this warning can be ignored."
                     )
                     return
@@ -125,12 +128,12 @@ class IdomAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             )
             return
 
-        # Begin serving the IDOM component
+        # Begin serving the ReactPy component
         try:
             await serve_layout(
                 Layout(ConnectionContext(component_instance, value=connection)),
                 self.send_json,
-                self._idom_recv_queue.get,
+                self._reactpy_recv_queue.get,
             )
         except Exception:
             await self.close()

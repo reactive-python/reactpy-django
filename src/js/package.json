@@ -1,5 +1,5 @@
 {
-	"description": "django-idom client",
+	"description": "reactpy-django client",
 	"main": "src/index.js",
 	"type": "module",
 	"files": [
@@ -17,6 +17,6 @@
 		"@rollup/plugin-replace": "^5.0.2"
 	},
 	"dependencies": {
-		"idom-client-react": "^1.0.0"
+		"@reactpy/client": "^0.1.0"
 	}
 }

@@ -83,14 +83,14 @@ def _register_component(dotted_path: str) -> Callable:
     """Adds a component to the mapping of registered components.
     This should only be called on startup to maintain synchronization during mulitprocessing.
     """
-    from django_idom.config import IDOM_REGISTERED_COMPONENTS
+    from reactpy_django.config import REACTPY_REGISTERED_COMPONENTS
 
-    if dotted_path in IDOM_REGISTERED_COMPONENTS:
-        return IDOM_REGISTERED_COMPONENTS[dotted_path]
+    if dotted_path in REACTPY_REGISTERED_COMPONENTS:
+        return REACTPY_REGISTERED_COMPONENTS[dotted_path]
 
-    IDOM_REGISTERED_COMPONENTS[dotted_path] = import_dotted_path(dotted_path)
-    _logger.debug("IDOM has registered component %s", dotted_path)
-    return IDOM_REGISTERED_COMPONENTS[dotted_path]
+    REACTPY_REGISTERED_COMPONENTS[dotted_path] = import_dotted_path(dotted_path)
+    _logger.debug("ReactPy has registered component %s", dotted_path)
+    return REACTPY_REGISTERED_COMPONENTS[dotted_path]
 
 
 def import_dotted_path(dotted_path: str) -> Callable:
@@ -108,12 +108,12 @@ def import_dotted_path(dotted_path: str) -> Callable:
 
 
 class ComponentPreloader:
-    """Preloads all IDOM components found within Django templates.
+    """Preloads all ReactPy components found within Django templates.
     This should only be `run` once on startup to maintain synchronization during mulitprocessing.
     """
 
     def run(self):
-        """Registers all IDOM components found within Django templates."""
+        """Registers all ReactPy components found within Django templates."""
         # Get all template folder paths
         paths = self.get_paths()
         # Get all HTML template files
@@ -167,7 +167,7 @@ class ComponentPreloader:
         return templates
 
     def get_components(self, templates: set[str]) -> set[str]:
-        """Obtains a set of all IDOM components by parsing HTML templates."""
+        """Obtains a set of all ReactPy components by parsing HTML templates."""
         components: set[str] = set()
         for template in templates:
             with contextlib.suppress(Exception):
@@ -182,8 +182,8 @@ class ComponentPreloader:
         if not components:
             _logger.warning(
                 "\033[93m"
-                "IDOM did not find any components! "
-                "You are either not using any IDOM components, "
+                "ReactPy did not find any components! "
+                "You are either not using any ReactPy components, "
                 "using the template tag incorrectly, "
                 "or your HTML templates are not registered with Django."
                 "\033[0m"
@@ -191,15 +191,15 @@ class ComponentPreloader:
         return components
 
     def register_components(self, components: set[str]) -> None:
-        """Registers all IDOM components in an iterable."""
+        """Registers all ReactPy components in an iterable."""
         for component in components:
             try:
-                _logger.info("IDOM preloader has detected component %s", component)
+                _logger.info("ReactPy preloader has detected component %s", component)
                 _register_component(component)
             except Exception:
                 _logger.exception(
                     "\033[91m"
-                    "IDOM failed to register component '%s'! "
+                    "ReactPy failed to register component '%s'! "
                     "This component path may not be valid, "
                     "or an exception may have occurred while importing."
                     "\033[0m",
@@ -300,34 +300,34 @@ def func_has_params(func: Callable, *args, **kwargs) -> bool:
 
 
 def create_cache_key(*args):
-    """Creates a cache key string that starts with `django_idom` contains
+    """Creates a cache key string that starts with `reactpy_django` contains
     all *args separated by `:`."""
 
     if not args:
         raise ValueError("At least one argument is required to create a cache key.")
 
-    return f"django_idom:{':'.join(str(arg) for arg in args)}"
+    return f"reactpy_django:{':'.join(str(arg) for arg in args)}"
 
 
 def db_cleanup(immediate: bool = False):
     """Deletes expired component parameters from the database.
     This function may be expanded in the future to include additional cleanup tasks."""
-    from .config import IDOM_CACHE, IDOM_DATABASE, IDOM_RECONNECT_MAX
+    from .config import REACTPY_CACHE, REACTPY_DATABASE, REACTPY_RECONNECT_MAX
     from .models import ComponentSession
 
     cache_key: str = create_cache_key("last_cleaned")
     now_str: str = datetime.strftime(timezone.now(), DATE_FORMAT)
-    cleaned_at_str: str = caches[IDOM_CACHE].get(cache_key)
+    cleaned_at_str: str = caches[REACTPY_CACHE].get(cache_key)
     cleaned_at: datetime = timezone.make_aware(
         datetime.strptime(cleaned_at_str or now_str, DATE_FORMAT)
     )
-    clean_needed_by = cleaned_at + timedelta(seconds=IDOM_RECONNECT_MAX)
-    expires_by: datetime = timezone.now() - timedelta(seconds=IDOM_RECONNECT_MAX)
+    clean_needed_by = cleaned_at + timedelta(seconds=REACTPY_RECONNECT_MAX)
+    expires_by: datetime = timezone.now() - timedelta(seconds=REACTPY_RECONNECT_MAX)
 
     # Component params exist in the DB, but we don't know when they were last cleaned
-    if not cleaned_at_str and ComponentSession.objects.using(IDOM_DATABASE).all():
+    if not cleaned_at_str and ComponentSession.objects.using(REACTPY_DATABASE).all():
         _logger.warning(
-            "IDOM has detected component sessions in the database, "
+            "ReactPy has detected component sessions in the database, "
             "but no timestamp was found in cache. This may indicate that "
             "the cache has been cleared."
         )
@@ -335,7 +335,7 @@ def db_cleanup(immediate: bool = False):
     # Delete expired component parameters
     # Use timestamps in cache (`cleaned_at_str`) as a no-dependency rate limiter
     if immediate or not cleaned_at_str or timezone.now() >= clean_needed_by:
-        ComponentSession.objects.using(IDOM_DATABASE).filter(
+        ComponentSession.objects.using(REACTPY_DATABASE).filter(
             last_accessed__lte=expires_by
         ).delete()
-        caches[IDOM_CACHE].set(cache_key, now_str)
+        caches[REACTPY_CACHE].set(cache_key, now_str)

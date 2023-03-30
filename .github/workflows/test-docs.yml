@@ -24,6 +24,8 @@ jobs:
               run: |
                   pip install -r requirements/build-docs.txt
                   linkcheckMarkdown docs/ -v -r
+                  linkcheckMarkdown README.md -v -r
+                  linkcheckMarkdown CHANGELOG.md -v -r
                   mkdocs build --strict
             - name: Check docs examples
               run: |

@@ -3,17 +3,17 @@ import logging
 from django.apps import AppConfig
 from django.db.utils import DatabaseError
 
-from django_idom.utils import ComponentPreloader, db_cleanup
+from reactpy_django.utils import ComponentPreloader, db_cleanup
 
 
 _logger = logging.getLogger(__name__)
 
 
-class DjangoIdomConfig(AppConfig):
-    name = "django_idom"
+class ReactPyConfig(AppConfig):
+    name = "reactpy_django"
 
     def ready(self):
-        # Populate the IDOM component registry when Django is ready
+        # Populate the ReactPy component registry when Django is ready
         ComponentPreloader().run()
 
         # Delete expired database entries
@@ -24,5 +24,5 @@ class DjangoIdomConfig(AppConfig):
             db_cleanup(immediate=True)
         except DatabaseError:
             _logger.debug(
-                "Could not access IDOM database at startup. Skipping cleanup..."
+                "Could not access ReactPy database at startup. Skipping cleanup..."
             )
