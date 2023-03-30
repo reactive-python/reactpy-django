@@ -1,11 +1,10 @@
-<!--header-start-->
-
 # <img src="https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg" align="left" height="45"/> ReactPy Django
+
+<!--badge-start-->
 
 [![Tests](https://github.com/idom-team/django-idom/workflows/Test/badge.svg?event=push)](https://github.com/idom-team/django-idom/actions?query=workflow%3ATest) [![PyPI Version](https://img.shields.io/pypi/v/django-idom.svg?label=PyPI)](https://pypi.python.org/pypi/django-idom) [![License](https://img.shields.io/badge/License-MIT-purple.svg)](https://github.com/idom-team/django-idom/blob/main/LICENSE) [![Docs](https://img.shields.io/website?down_message=offline&label=Docs&logo=read%20the%20docs&logoColor=white&up_message=online&url=https%3A%2F%2Fidom-team.github.io%2Fdjango-idom%2F)](https://idom-team.github.io/django-idom/)
 
-<!--header-end-->
-
+<!--badge-end-->
 <!--intro-start-->
 
 [ReactPy](https://reactpy.dev/) is a library for building user interfaces in Python without Javascript. ReactPy interfaces are made from components which look and behave similarly to those found in [ReactJS](https://reactjs.org/). Designed with simplicity in mind, ReactPy can be used by those without web development experience while also being powerful enough to grow with your ambitions.
@@ -90,7 +89,7 @@ Follow the links below to find out more about this project.
 -   [Try it Now](https://mybinder.org/v2/gh/reactive-python/reactpy-jupyter/main?urlpath=lab/tree/notebooks/introduction.ipynb) - check out ReactPy in a Jupyter Notebook.
 -   [Documentation](https://reactive-python.github.io/reactpy-django) - learn how to install, run, and use ReactPy.
 -   [Community Forum](https://github.com/reactive-python/reactpy/discussions) - ask questions, share ideas, and show off projects.
--   [Contributor Guide](https://idom-team.github.io/django-idom/contribute/code/) - see how you can help develop this project.
+-   [Contributor Guide](https://reactive-python.github.io/reactpy-django/contribute/code/) - see how you can help develop this project.
 -   [Code of Conduct](https://github.com/reactive-python/reactpy-django/blob/main/CODE_OF_CONDUCT.md) - standards for interacting with this community.
 
 <!--resources-end-->
