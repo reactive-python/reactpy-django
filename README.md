@@ -2,7 +2,7 @@
 
 <!--badge-start-->
 
-[![Tests](https://github.com/reactive-python/reactpy-django/workflows/Test/badge.svg?event=push)](https://github.com/reactive-python/reactpy-django/actions?query=workflow%3ATest) [![PyPI Version](https://img.shields.io/pypi/v/django-idom.svg?label=PyPI)](https://pypi.python.org/pypi/django-idom) [![License](https://img.shields.io/badge/License-MIT-purple.svg)](https://github.com/reactive-python/reactpy-django/blob/main/LICENSE) [![Docs](https://img.shields.io/website?down_message=offline&label=Docs&logo=read%20the%20docs&logoColor=white&up_message=online&url=https%3A%2F%2Freactive-python.github.io%2Freactpy-django%2F)](https://reactive-python.github.io/reactpy-django/)
+[![Tests](https://github.com/reactive-python/reactpy-django/workflows/Test/badge.svg?event=push)](https://github.com/reactive-python/reactpy-django/actions?query=workflow%3ATest) [![PyPI Version](https://img.shields.io/pypi/v/reactpy-django.svg?label=PyPI)](https://pypi.python.org/pypi/reactpy-django) [![License](https://img.shields.io/badge/License-MIT-purple.svg)](https://github.com/reactive-python/reactpy-django/blob/main/LICENSE) [![Docs](https://img.shields.io/website?down_message=offline&label=Docs&logo=read%20the%20docs&logoColor=white&up_message=online&url=https%3A%2F%2Freactive-python.github.io%2Freactpy-django%2F)](https://reactive-python.github.io/reactpy-django/)
 
 <!--badge-end-->
 <!--intro-start-->
