@@ -34,6 +34,10 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+## [3.0.0-django-reactpy] - 2023-03-30
+
+### Changed
+
 -   `django-idom` has been renamed to `reactpy-django`! Please note that all references to the word `idom` in your code should be changed to `reactpy`. See the docs for more details.
 
 ## [3.0.0] - 2023-03-08
