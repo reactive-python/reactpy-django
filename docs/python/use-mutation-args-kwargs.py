@@ -1,6 +1,6 @@
-from idom import component
+from reactpy import component
 
-from django_idom.hooks import use_mutation
+from reactpy_django.hooks import use_mutation
 
 
 def example_mutation(value: int, other_value: bool = False):

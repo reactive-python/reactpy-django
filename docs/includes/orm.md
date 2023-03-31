@@ -8,6 +8,6 @@ These `SynchronousOnlyOperation` exceptions may be resolved in a future version 
 
 <!--orm-fetch-start-->
 
-By default, automatic recursive fetching of `ManyToMany` or `ForeignKey` fields is enabled within the default `QueryOptions.postprocessor`. This is needed to prevent `SynchronousOnlyOperation` exceptions when accessing these fields within your IDOM components.
+By default, automatic recursive fetching of `ManyToMany` or `ForeignKey` fields is enabled within the default `QueryOptions.postprocessor`. This is needed to prevent `SynchronousOnlyOperation` exceptions when accessing these fields within your ReactPy components.
 
 <!--orm-fetch-end-->

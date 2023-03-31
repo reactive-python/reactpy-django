@@ -1,6 +1,6 @@
-from idom import component, html
+from reactpy import component, html
 
-from django_idom.decorators import auth_required
+from reactpy_django.decorators import auth_required
 
 
 @component

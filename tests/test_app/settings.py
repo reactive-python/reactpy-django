@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "channels",  # Websocket library
-    "django_idom",  # Django compatible IDOM client
+    "reactpy_django",  # Django compatible ReactPy client
     "test_app",  # This test application
 ]
 MIDDLEWARE = [
@@ -140,7 +140,7 @@ LOGGING = {
         },
     },
     "loggers": {
-        "django_idom": {
+        "reactpy_django": {
             "handlers": ["console"],
             "level": "DEBUG",
         },

@@ -2,7 +2,7 @@
 
 !!! summary
 
-    Django-IDOM can be installed from PyPI to an existing **Django project** with minimal configuration.
+    ReactPy-Django can be installed from PyPI to an existing **Django project** with minimal configuration.
 
 ---
 
@@ -13,12 +13,12 @@ These docs assumes you have already created [a **Django project**](https://docs.
 ## Step 1: Install from PyPI
 
 ```bash linenums="0"
-pip install django-idom
+pip install reactpy-django
 ```
 
 ## Step 2: Configure [`settings.py`](https://docs.djangoproject.com/en/dev/topics/settings/)
 
-In your settings you will need to add `django_idom` to [`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS).
+In your settings you will need to add `reactpy_django` to [`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS).
 
 === "settings.py"
 
@@ -28,7 +28,7 @@ In your settings you will need to add `django_idom` to [`INSTALLED_APPS`](https:
 
 ??? warning "Enable Django Channels ASGI (Required)"
 
-    Django-IDOM requires ASGI Websockets from [Django Channels](https://github.com/django/channels).
+    ReactPy-Django requires ASGI Websockets from [Django Channels](https://github.com/django/channels).
 
     If you have not enabled ASGI on your **Django project** yet, you will need to install `channels[daphne]`, add `daphne` to `INSTALLED_APPS`, then set your `ASGI_APPLICATION` variable.
 
@@ -40,9 +40,9 @@ In your settings you will need to add `django_idom` to [`INSTALLED_APPS`](https:
         {% include "../../python/configure-channels.py" %}
         ```
 
-??? note "Configure IDOM settings (Optional)"
+??? note "Configure ReactPy settings (Optional)"
 
-    Below are a handful of values you can change within `settings.py` to modify the behavior of IDOM.
+    Below are a handful of values you can change within `settings.py` to modify the behavior of ReactPy.
 
     ```python
     {% include "../../python/settings.py" %}
@@ -50,7 +50,7 @@ In your settings you will need to add `django_idom` to [`INSTALLED_APPS`](https:
 
 ## Step 3: Configure [`urls.py`](https://docs.djangoproject.com/en/dev/topics/http/urls/)
 
-Add IDOM HTTP paths to your `urlpatterns`.
+Add ReactPy HTTP paths to your `urlpatterns`.
 
 === "urls.py"
 
@@ -60,7 +60,7 @@ Add IDOM HTTP paths to your `urlpatterns`.
 
 ## Step 4: Configure [`asgi.py`](https://docs.djangoproject.com/en/dev/howto/deployment/asgi/)
 
-Register IDOM's Websocket using `IDOM_WEBSOCKET_PATH`.
+Register ReactPy's Websocket using `REACTPY_WEBSOCKET_PATH`.
 
 === "asgi.py"
 
@@ -74,7 +74,7 @@ Register IDOM's Websocket using `IDOM_WEBSOCKET_PATH`.
 
 ## Step 5: Run Migrations
 
-Run Django's database migrations to initialize Django-IDOM's database table.
+Run Django's database migrations to initialize ReactPy-Django's database table.
 
 ```bash linenums="0"
 python manage.py migrate

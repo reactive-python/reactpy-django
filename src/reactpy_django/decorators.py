@@ -3,9 +3,9 @@ from __future__ import annotations
 from functools import wraps
 from typing import Callable
 
-from idom.core.types import ComponentType, VdomDict
+from reactpy.core.types import ComponentType, VdomDict
 
-from django_idom.hooks import use_scope
+from reactpy_django.hooks import use_scope
 
 
 def auth_required(
@@ -21,7 +21,7 @@ def auth_required(
     Args:
         auth_attribute: The value to check within the user object.
             This is checked in the form of `UserModel.<auth_attribute>`.
-        fallback: The component or VDOM (`idom.html` snippet) to render if the user is not authenticated.
+        fallback: The component or VDOM (`reactpy.html` snippet) to render if the user is not authenticated.
     """
 
     def decorator(component):

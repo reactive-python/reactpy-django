@@ -32,7 +32,7 @@ log.addHandler(StreamHandler(sys.stdout))
 
 
 # the name of the project
-name = "django_idom"
+name = "reactpy_django"
 
 # basic paths used to gather files
 root_dir = Path(__file__).parent
@@ -53,7 +53,7 @@ package = {
     "description": "Control the web with Python",
     "author": "Ryan Morshead",
     "author_email": "ryan.morshead@gmail.com",
-    "url": "https://github.com/idom-team/django-idom",
+    "url": "https://github.com/reactive-python/reactpy-django",
     "license": "MIT",
     "platforms": "Linux, Mac OS X, Windows",
     "keywords": ["interactive", "widgets", "DOM", "React"],

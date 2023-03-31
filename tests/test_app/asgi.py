@@ -11,7 +11,7 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-from django_idom import IDOM_WEBSOCKET_PATH
+from reactpy_django import REACTPY_WEBSOCKET_PATH
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
@@ -28,7 +28,7 @@ application = ProtocolTypeRouter(
     {
         "http": http_asgi_app,
         "websocket": SessionMiddlewareStack(
-            AuthMiddlewareStack(URLRouter([IDOM_WEBSOCKET_PATH]))
+            AuthMiddlewareStack(URLRouter([REACTPY_WEBSOCKET_PATH]))
         ),
     }
 )

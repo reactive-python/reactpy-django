@@ -1,4 +1,6 @@
 django
+sanic
+plotly
 nox
 websocket
 websockets
@@ -21,7 +23,7 @@ stylesheet
 stylesheets
 unstyled
 py
-idom
+reactpy
 asgi
 postfixed
 postprocessing
@@ -29,3 +31,7 @@ serializable
 postprocessor
 preprocessor
 middleware
+backends
+backend
+frontend
+frontends

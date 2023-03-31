@@ -1,8 +1,8 @@
 from channels.db import database_sync_to_async
 from example.models import TodoItem
-from idom import component, html
+from reactpy import component, html
 
-from django_idom.hooks import use_query
+from reactpy_django.hooks import use_query
 
 
 async def get_items():

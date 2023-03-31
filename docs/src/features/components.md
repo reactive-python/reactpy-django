@@ -8,7 +8,7 @@
 
 ## View To Component
 
-Convert any Django view into a IDOM component by using this decorator. Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/). Views can be sync or async.
+Convert any Django view into a ReactPy component by using this decorator. Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/). Views can be sync or async.
 
 === "components.py"
 
@@ -31,11 +31,11 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
     | Type | Description |
     | --- | --- |
-    | `_ViewComponentConstructor` | A function that takes `request, *args, key, **kwargs` and returns an IDOM component. All parameters are directly provided to your view, besides `key` which is used by IDOM. |
+    | `_ViewComponentConstructor` | A function that takes `request, *args, key, **kwargs` and returns an ReactPy component. All parameters are directly provided to your view, besides `key` which is used by ReactPy. |
 
 ??? Warning "Potential information exposure when using `compatibility = True`"
 
-    When using `compatibility` mode, IDOM automatically exposes a URL to your view.
+    When using `compatibility` mode, ReactPy automatically exposes a URL to your view.
 
     It is your responsibility to ensure privileged information is not leaked via this method.
 
@@ -55,10 +55,10 @@ Convert any Django view into a IDOM component by using this decorator. Compatibl
 
 ??? info "Existing limitations"
 
-    There are currently several limitations of using `view_to_component` that may be resolved in a future version of `django_idom`.
+    There are currently several limitations of using `view_to_component` that may be resolved in a future version of `reactpy_django`.
 
     - Requires manual intervention to change request methods beyond `GET`.
-    - IDOM events cannot conveniently be attached to converted view HTML.
+    - ReactPy events cannot conveniently be attached to converted view HTML.
     - Has no option to automatically intercept local anchor link (such as `#!html <a href='example/'></a>`) click events.
 
     _Please note these limitations do not exist when using `compatibility` mode._
@@ -182,7 +182,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
     | Type | Description |
     | --- | --- |
-    | `Component` | An IDOM component. |
+    | `Component` | An ReactPy component. |
 
 ??? question "Should I put `django_css` at the top of my HTML?"
 
@@ -237,7 +237,7 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
 
     | Type | Description |
     | --- | --- |
-    | `Component` | An IDOM component. |
+    | `Component` | An ReactPy component. |
 
 ??? question "Should I put `django_js` at the bottom of my HTML?"
 

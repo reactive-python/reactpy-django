@@ -1,7 +1,7 @@
-from idom import component
+from reactpy import component
 
-from django_idom.hooks import use_query
-from django_idom.types import QueryOptions
+from reactpy_django.hooks import use_query
+from reactpy_django.types import QueryOptions
 
 
 def my_postprocessor(data, example_kwarg=True):

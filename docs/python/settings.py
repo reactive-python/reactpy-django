@@ -1,15 +1,15 @@
-# IDOM requires a multiprocessing-safe and thread-safe cache.
-IDOM_CACHE = "default"
+# ReactPy requires a multiprocessing-safe and thread-safe cache.
+REACTPY_CACHE = "default"
 
-# IDOM requires a multiprocessing-safe and thread-safe database.
-IDOM_DATABASE = "default"
+# ReactPy requires a multiprocessing-safe and thread-safe database.
+REACTPY_DATABASE = "default"
 
 # Maximum seconds between reconnection attempts before giving up.
 # Use `0` to prevent component reconnection.
-IDOM_RECONNECT_MAX = 259200
+REACTPY_RECONNECT_MAX = 259200
 
-# The URL for IDOM to serve the component rendering websocket
-IDOM_WEBSOCKET_URL = "idom/"
+# The URL for ReactPy to serve the component rendering websocket
+REACTPY_WEBSOCKET_URL = "reactpy/"
 
-# Dotted path to the default `django_idom.hooks.use_query` postprocessor function, or `None`
-IDOM_DEFAULT_QUERY_POSTPROCESSOR = "django_idom.utils.django_query_postprocessor"
+# Dotted path to the default `reactpy_django.hooks.use_query` postprocessor function, or `None`
+REACTPY_DEFAULT_QUERY_POSTPROCESSOR = "reactpy_django.utils.django_query_postprocessor"

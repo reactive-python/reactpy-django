@@ -1,0 +1,13 @@
+{% load static %}
+<div id="{{ reactpy_mount_uuid }}" class="{{ class }}"></div>
+<script type="module" crossorigin="anonymous">
+  import { mountViewToElement } from "{% static 'reactpy_django/client.js' %}";
+  const mountElement = document.getElementById("{{ reactpy_mount_uuid }}");
+  mountViewToElement(
+    mountElement,
+    "{{ reactpy_websocket_url }}",
+    "{{ reactpy_web_modules_url }}",
+    "{{ reactpy_reconnect_max }}",
+    "{{ reactpy_component_path }}",
+  );
+</script>

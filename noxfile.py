@@ -15,7 +15,7 @@ POSARGS_PATTERN = re.compile(r"^(\w+)\[(.+)\]$")
 def manage(session: Session) -> None:
     """Run a manage.py command for tests/test_app"""
     session.install("-r", "requirements/test-env.txt")
-    session.install("idom[stable]")
+    session.install("reactpy[stable]")
     session.install("-e", ".")
     session.chdir("tests")
     session.run("python", "manage.py", *session.posargs)
@@ -45,7 +45,7 @@ def test_suite(session: Session) -> None:
     session.install(".[all]")
 
     session.chdir(HERE / "tests")
-    session.env["IDOM_DEBUG_MODE"] = "1"
+    session.env["REACTPY_DEBUG_MODE"] = "1"
 
     posargs = session.posargs[:]
     if "--headed" in posargs:
@@ -63,14 +63,14 @@ def test_suite(session: Session) -> None:
 def test_types(session: Session) -> None:
     install_requirements_file(session, "check-types")
     install_requirements_file(session, "pkg-deps")
-    session.run("mypy", "--show-error-codes", "src/django_idom", "tests/test_app")
+    session.run("mypy", "--show-error-codes", "src/reactpy_django", "tests/test_app")
 
 
 @nox.session
 def test_style(session: Session) -> None:
     """Check that style guidelines are being followed"""
     install_requirements_file(session, "check-style")
-    session.run("flake8", "src/django_idom", "tests")
+    session.run("flake8", "src/reactpy_django", "tests")
     session.run(
         "black",
         ".",

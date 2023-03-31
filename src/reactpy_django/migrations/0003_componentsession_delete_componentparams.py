@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("django_idom", "0002_rename_created_at_componentparams_last_accessed"),
+        ("reactpy_django", "0002_rename_created_at_componentparams_last_accessed"),
     ]
 
     operations = [

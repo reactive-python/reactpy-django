@@ -38,12 +38,18 @@ Using the following categories, list your changes in this order:
 
 -   `use_query` now supports async functions.
 -   `use_mutation` now supports async functions.
--   `django_idom.types.QueryOptions.thread_sensitive` option to customize how sync queries are executed.
--   `django_idom.hooks.use_mutation` now accepts `django_idom.types.MutationOptions` option to customize how mutations are executed.
+-   `reactpy_django.types.QueryOptions.thread_sensitive` option to customize how sync queries are executed.
+-   `reactpy_django.hooks.use_mutation` now accepts `reactpy_django.types.MutationOptions` option to customize how mutations are executed.
 
 ### Changed
 
--   The `mutate` argument on `django_idom.hooks.use_mutation` has been renamed to `mutation`.
+-   The `mutate` argument on `reactpy_django.hooks.use_mutation` has been renamed to `mutation`.
+
+## [3.0.0-reactpy] - 2023-03-30
+
+### Changed
+
+-   `django-idom` has been renamed to `reactpy-django`! Please note that all references to the word `idom` in your code should be changed to `reactpy`. See the docs for more details.
 
 ## [3.0.0] - 2023-03-08
 
@@ -257,18 +263,19 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/idom-team/django-idom/compare/3.0.0...HEAD
-[3.0.0]: https://github.com/idom-team/django-idom/compare/2.2.1...3.0.0
-[2.2.1]: https://github.com/idom-team/django-idom/compare/2.2.0...2.2.1
-[2.2.0]: https://github.com/idom-team/django-idom/compare/2.1.0...2.2.0
-[2.1.0]: https://github.com/idom-team/django-idom/compare/2.0.1...2.1.0
-[2.0.1]: https://github.com/idom-team/django-idom/compare/2.0.0...2.0.1
-[2.0.0]: https://github.com/idom-team/django-idom/compare/1.2.0...2.0.0
-[1.2.0]: https://github.com/idom-team/django-idom/compare/1.1.0...1.2.0
-[1.1.0]: https://github.com/idom-team/django-idom/compare/1.0.0...1.1.0
-[1.0.0]: https://github.com/idom-team/django-idom/compare/0.0.5...1.0.0
-[0.0.5]: https://github.com/idom-team/django-idom/compare/0.0.4...0.0.5
-[0.0.4]: https://github.com/idom-team/django-idom/compare/0.0.3...0.0.4
-[0.0.3]: https://github.com/idom-team/django-idom/compare/0.0.2...0.0.3
-[0.0.2]: https://github.com/idom-team/django-idom/compare/0.0.1...0.0.2
-[0.0.1]: https://github.com/idom-team/django-idom/releases/tag/0.0.1
+[unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.0.0-reactpy...HEAD
+[3.0.0-reactpy]: https://github.com/reactive-python/reactpy-django/compare/3.0.0...3.0.0-reactpy
+[3.0.0]: https://github.com/reactive-python/reactpy-django/compare/2.2.1...3.0.0
+[2.2.1]: https://github.com/reactive-python/reactpy-django/compare/2.2.0...2.2.1
+[2.2.0]: https://github.com/reactive-python/reactpy-django/compare/2.1.0...2.2.0
+[2.1.0]: https://github.com/reactive-python/reactpy-django/compare/2.0.1...2.1.0
+[2.0.1]: https://github.com/reactive-python/reactpy-django/compare/2.0.0...2.0.1
+[2.0.0]: https://github.com/reactive-python/reactpy-django/compare/1.2.0...2.0.0
+[1.2.0]: https://github.com/reactive-python/reactpy-django/compare/1.1.0...1.2.0
+[1.1.0]: https://github.com/reactive-python/reactpy-django/compare/1.0.0...1.1.0
+[1.0.0]: https://github.com/reactive-python/reactpy-django/compare/0.0.5...1.0.0
+[0.0.5]: https://github.com/reactive-python/reactpy-django/compare/0.0.4...0.0.5
+[0.0.4]: https://github.com/reactive-python/reactpy-django/compare/0.0.3...0.0.4
+[0.0.3]: https://github.com/reactive-python/reactpy-django/compare/0.0.2...0.0.3
+[0.0.2]: https://github.com/reactive-python/reactpy-django/compare/0.0.1...0.0.2
+[0.0.1]: https://github.com/reactive-python/reactpy-django/releases/tag/0.0.1
