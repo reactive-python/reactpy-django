@@ -45,7 +45,9 @@ Using the following categories, list your changes in this order:
 
 -   The `mutate` argument on `reactpy_django.hooks.use_mutation` has been renamed to `mutation`.
 
-### Removed
+## [3.0.1] - 2023-03-31
+
+### Changed
 
 -   `django-reactpy` database entries are no longer cleaned during Django application startup. Instead, it will occur on webpage loads if `REACTPY_RECONNECT_MAX` seconds has elapsed since the last cleaning.
 
@@ -267,7 +269,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.0.0-reactpy...HEAD
+[unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.0.1...HEAD
+[3.0.1]: https://github.com/reactive-python/reactpy-django/compare/3.0.0-reactpy...3.0.1
 [3.0.0-reactpy]: https://github.com/reactive-python/reactpy-django/compare/3.0.0...3.0.0-reactpy
 [3.0.0]: https://github.com/reactive-python/reactpy-django/compare/2.2.1...3.0.0
 [2.2.1]: https://github.com/reactive-python/reactpy-django/compare/2.2.0...2.2.1
