@@ -5,7 +5,11 @@ from django import template
 from django.urls import reverse
 
 from reactpy_django import models
-from reactpy_django.config import REACTPY_RECONNECT_MAX, REACTPY_WEBSOCKET_URL
+from reactpy_django.config import (
+    REACTPY_DATABASE,
+    REACTPY_RECONNECT_MAX,
+    REACTPY_WEBSOCKET_URL,
+)
 from reactpy_django.types import ComponentParamData
 from reactpy_django.utils import _register_component, func_has_params
 
@@ -47,7 +51,7 @@ def component(dotted_path: str, *args, **kwargs):
             params = ComponentParamData(args, kwargs)
             model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
             model.full_clean()
-            model.save()
+            model.save(using=REACTPY_DATABASE)
     except TypeError as e:
         raise TypeError(
             f"The provided parameters are incompatible with component '{dotted_path}'."
