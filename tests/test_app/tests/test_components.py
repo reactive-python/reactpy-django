@@ -1,20 +1,44 @@
 import asyncio
 import os
 import sys
+from functools import partial
 
 from channels.testing import ChannelsLiveServerTestCase
+from channels.testing.live import make_application
+from django.core.exceptions import ImproperlyConfigured
+from django.db import connections
+from django.test.utils import modify_settings
 from playwright.sync_api import TimeoutError, sync_playwright
 
 
-CLICK_DELAY = 250  # Delay in miliseconds. Needed for GitHub Actions.
+CLICK_DELAY = 250 if os.getenv("GITHUB_ACTIONS") else 25  # Delay in miliseconds.
 
 
 class ComponentTests(ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
+        # Repurposed from ChannelsLiveServerTestCase._pre_setup
+        for connection in connections.all():
+            if cls._is_in_memory_db(cls, connection):
+                raise ImproperlyConfigured(
+                    "ChannelLiveServerTestCase can not be used with in memory databases"
+                )
+        cls._live_server_modified_settings = modify_settings(
+            ALLOWED_HOSTS={"append": cls.host}
+        )
+        cls._live_server_modified_settings.enable()
+        get_application = partial(
+            make_application,
+            static_wrapper=cls.static_wrapper if cls.serve_static else None,
+        )
+        cls._server_process = cls.ProtocolServerProcess(cls.host, get_application)
+        cls._server_process.start()
+        cls._server_process.ready.wait()
+        cls._port = cls._server_process.port.value
+
+        # Playwright setup
         if sys.platform == "win32":
             asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
-        super().setUpClass()
         cls.playwright = sync_playwright().start()
         headed = bool(int(os.environ.get("PLAYWRIGHT_HEADED", 0)))
         cls.browser = cls.playwright.chromium.launch(headless=not headed)
@@ -22,18 +46,24 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super().tearDownClass()
+        # Playwright teardown
         cls.page.close()
         cls.browser.close()
         cls.playwright.stop()
 
+        # Repurposed from ChannelsLiveServerTestCase._post_teardown
+        cls._server_process.terminate()
+        cls._server_process.join()
+        cls._live_server_modified_settings.disable()
+
+    def _pre_setup(self):
+        """Handled manually in setUpClass to speed things up."""
+        pass
+
     def _post_teardown(self):
-        """Rewrite of ChannelsLiveServerTestCase._post_teardown() that does not flush the
-        database. Needed to prevent `SynchronousOnlyOperation`.
-        """
-        self._server_process.terminate()
-        self._server_process.join()
-        self._live_server_modified_settings.disable()
+        """Override to prevent TransactionTestCase from doing any database flushing.
+        Needed to prevent SynchronousOnlyOperation."""
+        pass
 
     def setUp(self):
         super().setUp()
