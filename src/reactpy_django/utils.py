@@ -339,4 +339,4 @@ def db_cleanup(immediate: bool = False):
         ComponentSession.objects.using(REACTPY_DATABASE).filter(
             last_accessed__lte=expires_by
         ).delete()
-        caches[REACTPY_CACHE].set(cache_key, now_str)
+        caches[REACTPY_CACHE].set(cache_key, now_str, timeout=None)

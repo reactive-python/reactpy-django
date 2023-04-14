@@ -14,11 +14,6 @@ class ComponentTests(ChannelsLiveServerTestCase):
     def setUpClass(cls):
         if sys.platform == "win32":
             asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
-
-        # FIXME: This is required otherwise the tests will throw a `SynchronousOnlyOperation`
-        # error when discarding the test datatabase. Potentially a `ChannelsLiveServerTestCase` bug.
-        os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
-
         super().setUpClass()
         cls.playwright = sync_playwright().start()
         headed = bool(int(os.environ.get("PLAYWRIGHT_HEADED", 0)))
@@ -31,6 +26,14 @@ class ComponentTests(ChannelsLiveServerTestCase):
         cls.page.close()
         cls.browser.close()
         cls.playwright.stop()
+
+    def _post_teardown(self):
+        """Rewrite of ChannelsLiveServerTestCase._post_teardown() that does not flush the
+        database. Needed to prevent `SynchronousOnlyOperation`.
+        """
+        self._server_process.terminate()
+        self._server_process.join()
+        self._live_server_modified_settings.disable()
 
     def setUp(self):
         super().setUp()

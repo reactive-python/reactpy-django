@@ -25,7 +25,7 @@ SRC_DIR = BASE_DIR.parent / "src"
 SECRET_KEY = "django-insecure-n!bd1#+7ufw5#9ipayu9k(lyu@za$c2ajbro7es(v8_7w1$=&c"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = "test" not in sys.argv
 ALLOWED_HOSTS = ["*"]
 
 # Application definition
@@ -78,9 +78,9 @@ DATABASES = {
         "TEST": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": os.path.join(BASE_DIR, "db_test.sqlite3"),
-            "OPTIONS": {"timeout": 20},
+            "OPTIONS": {"timeout": 100},
         },
-        "OPTIONS": {"timeout": 20},
+        "OPTIONS": {"timeout": 100},
     },
 }
 
@@ -146,7 +146,7 @@ LOGGING = {
     "loggers": {
         "reactpy_django": {
             "handlers": ["console"],
-            "level": "DEBUG",
+            "level": "DEBUG" if DEBUG else "WARNING",
         },
     },
 }
