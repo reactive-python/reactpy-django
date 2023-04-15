@@ -43,7 +43,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
         if sys.platform == "win32":
             asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
         cls.playwright = sync_playwright().start()
-        headed = bool(int(os.environ.get("PLAYWRIGHT_HEADED", 0)))
+        headed = bool(int(os.environ.get("PLAYWRIGHT_HEADED", 1)))
         cls.browser = cls.playwright.chromium.launch(headless=not headed)
         cls.page = cls.browser.new_page()
 
@@ -76,8 +76,8 @@ class ComponentTests(ChannelsLiveServerTestCase):
         pass
 
     def setUp(self):
-        super().setUp()
-        self.page.goto(self.live_server_url)
+        if self.page.url == "about:blank":
+            self.page.goto(self.live_server_url)
 
     def test_hello_world(self):
         self.page.wait_for_selector("#hello-world")
