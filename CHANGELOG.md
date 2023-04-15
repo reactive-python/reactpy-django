@@ -45,7 +45,7 @@ Using the following categories, list your changes in this order:
 
 -   The `mutate` argument on `reactpy_django.hooks.use_mutation` has been renamed to `mutation`.
 
-## [3.0.1] - 2023-03-31
+## [3.0.1] - 2023-04-06
 
 ### Changed
 
