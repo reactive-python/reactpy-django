@@ -6,6 +6,7 @@ from functools import partial
 from channels.testing import ChannelsLiveServerTestCase
 from channels.testing.live import make_application
 from django.core.exceptions import ImproperlyConfigured
+from django.core.management import call_command
 from django.db import connections
 from django.test.utils import modify_settings
 from playwright.sync_api import TimeoutError, sync_playwright
@@ -15,6 +16,8 @@ CLICK_DELAY = 250 if os.getenv("GITHUB_ACTIONS") else 25  # Delay in miliseconds
 
 
 class ComponentTests(ChannelsLiveServerTestCase):
+    databases = {"default"}
+
     @classmethod
     def setUpClass(cls):
         # Repurposed from ChannelsLiveServerTestCase._pre_setup
@@ -36,7 +39,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
         cls._server_process.ready.wait()
         cls._port = cls._server_process.port.value
 
-        # Playwright setup
+        # Open a Playwright browser window
         if sys.platform == "win32":
             asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
         cls.playwright = sync_playwright().start()
@@ -46,23 +49,30 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        # Playwright teardown
-        cls.page.close()
-        cls.browser.close()
+        # Close the Playwright browser
         cls.playwright.stop()
 
         # Repurposed from ChannelsLiveServerTestCase._post_teardown
         cls._server_process.terminate()
         cls._server_process.join()
         cls._live_server_modified_settings.disable()
+        for db_name in {"default", "reactpy"}:
+            call_command(
+                "flush",
+                verbosity=0,
+                interactive=False,
+                database=db_name,
+                reset_sequences=False,
+            )
 
     def _pre_setup(self):
-        """Handled manually in setUpClass to speed things up."""
+        """Handled manually in `setUpClass` to speed things up."""
         pass
 
     def _post_teardown(self):
-        """Override to prevent TransactionTestCase from doing any database flushing.
-        Needed to prevent SynchronousOnlyOperation."""
+        """Handled manually in `tearDownClass` to prevent TransactionTestCase from doing
+        database flushing. This is needed to prevent a `SynchronousOnlyOperation` from
+        occuring due to a bug within `ChannelsLiveServerTestCase`."""
         pass
 
     def setUp(self):

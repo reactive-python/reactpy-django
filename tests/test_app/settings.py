@@ -71,18 +71,38 @@ sys.path.append(str(SRC_DIR))
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+# WARNING: There are overrides in `test_components.py` that require no in-memory
+# databases are used for testing. Make sure all SQLite databases are on disk.
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
+        # Changing NAME is needed due to a bug related to `manage.py test` migrations
         "NAME": os.path.join(BASE_DIR, "test_db.sqlite3")
         if "test" in sys.argv
         else os.path.join(BASE_DIR, "db.sqlite3"),
         "TEST": {
             "NAME": os.path.join(BASE_DIR, "test_db.sqlite3"),
+            "OPTIONS": {"timeout": 100},
+            "DEPENDENCIES": [],
         },
         "OPTIONS": {"timeout": 100},
     },
 }
+if "test" in sys.argv:
+    DATABASES["reactpy"] = {
+        "ENGINE": "django.db.backends.sqlite3",
+        # Changing NAME is needed due to a bug related to `manage.py test` migrations
+        "NAME": os.path.join(BASE_DIR, "test_db_2.sqlite3")
+        if "test" in sys.argv
+        else os.path.join(BASE_DIR, "db_2.sqlite3"),
+        "TEST": {
+            "NAME": os.path.join(BASE_DIR, "test_db_2.sqlite3"),
+            "OPTIONS": {"timeout": 100},
+            "DEPENDENCIES": [],
+        },
+        "OPTIONS": {"timeout": 100},
+    }
+    REACTPY_DATABASE = "reactpy"
 
 # Cache
 CACHES = {
