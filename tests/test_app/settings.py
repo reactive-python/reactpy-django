@@ -82,10 +82,10 @@ DATABASES = {
         else os.path.join(BASE_DIR, "db.sqlite3"),
         "TEST": {
             "NAME": os.path.join(BASE_DIR, "test_db.sqlite3"),
-            "OPTIONS": {"timeout": 100},
+            "OPTIONS": {"timeout": 20},
             "DEPENDENCIES": [],
         },
-        "OPTIONS": {"timeout": 100},
+        "OPTIONS": {"timeout": 20},
     },
 }
 if "test" in sys.argv:
@@ -97,10 +97,10 @@ if "test" in sys.argv:
         else os.path.join(BASE_DIR, "db_2.sqlite3"),
         "TEST": {
             "NAME": os.path.join(BASE_DIR, "test_db_2.sqlite3"),
-            "OPTIONS": {"timeout": 100},
+            "OPTIONS": {"timeout": 20},
             "DEPENDENCIES": [],
         },
-        "OPTIONS": {"timeout": 100},
+        "OPTIONS": {"timeout": 20},
     }
     REACTPY_DATABASE = "reactpy"
 
