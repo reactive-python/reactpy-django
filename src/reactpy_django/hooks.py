@@ -76,26 +76,6 @@ def use_connection() -> Connection:
     return _use_connection()
 
 
-def use_query_args_1(
-    options: QueryOptions,
-    /,
-    query: Callable[_Params, _Result | None]
-    | Callable[_Params, Awaitable[_Result | None]],
-    *args: _Params.args,
-    **kwargs: _Params.kwargs,
-):
-    return options, query, args, kwargs
-
-
-def use_query_args_2(
-    query: Callable[_Params, _Result | None]
-    | Callable[_Params, Awaitable[_Result | None]],
-    *args: _Params.args,
-    **kwargs: _Params.kwargs,
-):
-    return QueryOptions(), query, args, kwargs
-
-
 @overload
 def use_query(
     options: QueryOptions,
@@ -137,11 +117,11 @@ def use_query(
     loading, set_loading = use_state(True)
     error, set_error = use_state(cast(Union[Exception, None], None))
     if isinstance(args[0], QueryOptions):
-        query_options, query, query_args, query_kwargs = use_query_args_1(
+        query_options, query, query_args, query_kwargs = _use_query_args_1(
             *args, **kwargs
         )
     else:
-        query_options, query, query_args, query_kwargs = use_query_args_2(
+        query_options, query, query_args, query_kwargs = _use_query_args_2(
             *args, **kwargs
         )
     query_ref = use_ref(query)
@@ -218,23 +198,6 @@ def use_query(
     return Query(data, loading, error, refetch)
 
 
-def use_mutation_args_1(
-    options: MutationOptions,
-    mutation: Callable[_Params, bool | None]
-    | Callable[_Params, Awaitable[bool | None]],
-    refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
-):
-    return options, mutation, refetch
-
-
-def use_mutation_args_2(
-    mutation: Callable[_Params, bool | None]
-    | Callable[_Params, Awaitable[bool | None]],
-    refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
-):
-    return MutationOptions(), mutation, refetch
-
-
 @overload
 def use_mutation(
     options: MutationOptions,
@@ -269,9 +232,9 @@ def use_mutation(*args: Any, **kwargs: Any) -> Mutation[_Params]:
     loading, set_loading = use_state(False)
     error, set_error = use_state(cast(Union[Exception, None], None))
     if isinstance(args[0], MutationOptions):
-        mutation_options, mutation, refetch = use_mutation_args_1(*args, **kwargs)
+        mutation_options, mutation, refetch = _use_mutation_args_1(*args, **kwargs)
     else:
-        mutation_options, mutation, refetch = use_mutation_args_2(*args, **kwargs)
+        mutation_options, mutation, refetch = _use_mutation_args_2(*args, **kwargs)
 
     # The main "running" function for `use_mutation`
     async def execute_mutation(exec_args, exec_kwargs) -> None:
@@ -327,3 +290,40 @@ def use_mutation(*args: Any, **kwargs: Any) -> Mutation[_Params]:
 
     # The mutation's user API
     return Mutation(schedule_mutation, loading, error, reset)
+
+
+def _use_query_args_1(
+    options: QueryOptions,
+    /,
+    query: Callable[_Params, _Result | None]
+    | Callable[_Params, Awaitable[_Result | None]],
+    *args: _Params.args,
+    **kwargs: _Params.kwargs,
+):
+    return options, query, args, kwargs
+
+
+def _use_query_args_2(
+    query: Callable[_Params, _Result | None]
+    | Callable[_Params, Awaitable[_Result | None]],
+    *args: _Params.args,
+    **kwargs: _Params.kwargs,
+):
+    return QueryOptions(), query, args, kwargs
+
+
+def _use_mutation_args_1(
+    options: MutationOptions,
+    mutation: Callable[_Params, bool | None]
+    | Callable[_Params, Awaitable[bool | None]],
+    refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
+):
+    return options, mutation, refetch
+
+
+def _use_mutation_args_2(
+    mutation: Callable[_Params, bool | None]
+    | Callable[_Params, Awaitable[bool | None]],
+    refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
+):
+    return MutationOptions(), mutation, refetch
