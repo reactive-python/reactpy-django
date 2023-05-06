@@ -27,7 +27,7 @@
         </td>
         <td>
             <a href="https://github.com/reactive-python/reactpy-django">Django</a>,
-            <a href="https://github.com/idom-team/idom-jupyter">Jupyter</a>,
+            <a href="https://github.com/reactive-python/reactpy-jupyter">Jupyter</a>,
             <a href="https://github.com/idom-team/idom-dash">Plotly-Dash</a>
         </td>
         </tr>

@@ -13,9 +13,8 @@ from typing import Any, Callable, Sequence
 
 from channels.db import database_sync_to_async
 from django.core.cache import caches
-from django.db.models import ManyToManyField, prefetch_related_objects
+from django.db.models import ManyToManyField, ManyToOneRel, prefetch_related_objects
 from django.db.models.base import Model
-from django.db.models.fields.reverse_related import ManyToOneRel
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.template import engines
@@ -65,16 +64,20 @@ async def render_view(
     elif getattr(view, "as_view", None):
         # MyPy does not know how to properly interpret this as a `View` type
         # And `isinstance(view, View)` does not work due to some weird Django internal shenanigans
-        async_cbv = database_sync_to_async(view.as_view())  # type: ignore
+        async_cbv = database_sync_to_async(view.as_view(), thread_sensitive=False)  # type: ignore
         view_or_template_view = await async_cbv(request, *args, **kwargs)
         if getattr(view_or_template_view, "render", None):  # TemplateView
-            response = await database_sync_to_async(view_or_template_view.render)()
+            response = await database_sync_to_async(
+                view_or_template_view.render, thread_sensitive=False
+            )()
         else:  # View
             response = view_or_template_view
 
     # Render Check 4: Sync function view
     else:
-        response = await database_sync_to_async(view)(request, *args, **kwargs)
+        response = await database_sync_to_async(view, thread_sensitive=False)(
+            request, *args, **kwargs
+        )
 
     return response
 
@@ -250,10 +253,8 @@ def django_query_postprocessor(
     elif isinstance(data, Model):
         prefetch_fields: list[str] = []
         for field in data._meta.get_fields():
-            # `ForeignKey` relationships will cause an `AttributeError`
-            # This is handled within the `ManyToOneRel` conditional below.
-            with contextlib.suppress(AttributeError):
-                getattr(data, field.name)
+            # Force the query to execute
+            getattr(data, field.name, None)
 
             if many_to_one and type(field) == ManyToOneRel:
                 prefetch_fields.append(field.related_name or f"{field.name}_set")
@@ -310,7 +311,7 @@ def create_cache_key(*args):
 
 
 def db_cleanup(immediate: bool = False):
-    """Deletes expired component parameters from the database.
+    """Deletes expired component sessions from the database.
     This function may be expanded in the future to include additional cleanup tasks."""
     from .config import REACTPY_CACHE, REACTPY_DATABASE, REACTPY_RECONNECT_MAX
     from .models import ComponentSession
@@ -338,4 +339,4 @@ def db_cleanup(immediate: bool = False):
         ComponentSession.objects.using(REACTPY_DATABASE).filter(
             last_accessed__lte=expires_by
         ).delete()
-        caches[REACTPY_CACHE].set(cache_key, now_str)
+        caches[REACTPY_CACHE].set(cache_key, now_str, timeout=None)

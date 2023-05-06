@@ -30,6 +30,7 @@ postprocessing
 serializable
 postprocessor
 preprocessor
+middleware
 backends
 backend
 frontend

@@ -1,25 +1,47 @@
 import asyncio
 import os
 import sys
+from functools import partial
 
 from channels.testing import ChannelsLiveServerTestCase
+from channels.testing.live import make_application
+from django.core.exceptions import ImproperlyConfigured
+from django.core.management import call_command
+from django.db import connections
+from django.test.utils import modify_settings
 from playwright.sync_api import TimeoutError, sync_playwright
 
 
-CLICK_DELAY = 250  # Delay in miliseconds. Needed for GitHub Actions.
+CLICK_DELAY = 250 if os.getenv("GITHUB_ACTIONS") else 25  # Delay in miliseconds.
 
 
 class ComponentTests(ChannelsLiveServerTestCase):
+    databases = {"default"}
+
     @classmethod
     def setUpClass(cls):
+        # Repurposed from ChannelsLiveServerTestCase._pre_setup
+        for connection in connections.all():
+            if cls._is_in_memory_db(cls, connection):
+                raise ImproperlyConfigured(
+                    "ChannelLiveServerTestCase can not be used with in memory databases"
+                )
+        cls._live_server_modified_settings = modify_settings(
+            ALLOWED_HOSTS={"append": cls.host}
+        )
+        cls._live_server_modified_settings.enable()
+        get_application = partial(
+            make_application,
+            static_wrapper=cls.static_wrapper if cls.serve_static else None,
+        )
+        cls._server_process = cls.ProtocolServerProcess(cls.host, get_application)
+        cls._server_process.start()
+        cls._server_process.ready.wait()
+        cls._port = cls._server_process.port.value
+
+        # Open a Playwright browser window
         if sys.platform == "win32":
             asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
-
-        # FIXME: This is required otherwise the tests will throw a `SynchronousOnlyOperation`
-        # error when discarding the test datatabase. Potentially a `ChannelsLiveServerTestCase` bug.
-        os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
-
-        super().setUpClass()
         cls.playwright = sync_playwright().start()
         headed = bool(int(os.environ.get("PLAYWRIGHT_HEADED", 0)))
         cls.browser = cls.playwright.chromium.launch(headless=not headed)
@@ -27,14 +49,35 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super().tearDownClass()
-        cls.page.close()
-        cls.browser.close()
+        # Close the Playwright browser
         cls.playwright.stop()
 
+        # Repurposed from ChannelsLiveServerTestCase._post_teardown
+        cls._server_process.terminate()
+        cls._server_process.join()
+        cls._live_server_modified_settings.disable()
+        for db_name in {"default", "reactpy"}:
+            call_command(
+                "flush",
+                verbosity=0,
+                interactive=False,
+                database=db_name,
+                reset_sequences=False,
+            )
+
+    def _pre_setup(self):
+        """Handled manually in `setUpClass` to speed things up."""
+        pass
+
+    def _post_teardown(self):
+        """Handled manually in `tearDownClass` to prevent TransactionTestCase from doing
+        database flushing. This is needed to prevent a `SynchronousOnlyOperation` from
+        occuring due to a bug within `ChannelsLiveServerTestCase`."""
+        pass
+
     def setUp(self):
-        super().setUp()
-        self.page.goto(self.live_server_url)
+        if self.page.url == "about:blank":
+            self.page.goto(self.live_server_url)
 
     def test_hello_world(self):
         self.page.wait_for_selector("#hello-world")
@@ -97,6 +140,9 @@ class ComponentTests(ChannelsLiveServerTestCase):
     def test_relational_query(self):
         self.page.locator("#relational-query[data-success=true]").wait_for()
 
+    def test_async_relational_query(self):
+        self.page.locator("#async-relational-query[data-success=true]").wait_for()
+
     def test_use_query_and_mutation(self):
         todo_input = self.page.wait_for_selector("#todo-input")
 
@@ -105,12 +151,33 @@ class ComponentTests(ChannelsLiveServerTestCase):
         for i in item_ids:
             todo_input.type(f"sample-{i}", delay=CLICK_DELAY)
             todo_input.press("Enter", delay=CLICK_DELAY)
-            self.page.wait_for_selector(f"#todo-item-sample-{i}")
-            self.page.wait_for_selector(f"#todo-item-sample-{i}-checkbox").click()
+            self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}")
+            self.page.wait_for_selector(
+                f"#todo-list #todo-item-sample-{i}-checkbox"
+            ).click()
             self.assertRaises(
                 TimeoutError,
                 self.page.wait_for_selector,
-                f"#todo-item-sample-{i}",
+                f"#todo-list #todo-item-sample-{i}",
+                timeout=1,
+            )
+
+    def test_async_use_query_and_mutation(self):
+        todo_input = self.page.wait_for_selector("#async-todo-input")
+
+        item_ids = list(range(5))
+
+        for i in item_ids:
+            todo_input.type(f"sample-{i}", delay=CLICK_DELAY)
+            todo_input.press("Enter", delay=CLICK_DELAY)
+            self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}")
+            self.page.wait_for_selector(
+                f"#async-todo-list #todo-item-sample-{i}-checkbox"
+            ).click()
+            self.assertRaises(
+                TimeoutError,
+                self.page.wait_for_selector,
+                f"#async-todo-list #todo-item-sample-{i}",
                 timeout=1,
             )
 

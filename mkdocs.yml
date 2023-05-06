@@ -6,7 +6,8 @@ nav:
           - Choose a Django App: get-started/choose-django-app.md
           - Create a Component: get-started/create-component.md
           - Use the Template Tag: get-started/use-template-tag.md
-          - Render Your View: get-started/render-view.md
+          - Register a View: get-started/register-view.md
+          - Run the Webserver: get-started/run-webserver.md
           - Learn More: get-started/learn-more.md
     - Reference:
           - Components: features/components.md

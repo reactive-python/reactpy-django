@@ -6,7 +6,11 @@ from django.db import DEFAULT_DB_ALIAS
 from reactpy.config import REACTPY_DEBUG_MODE
 from reactpy.core.types import ComponentConstructor
 
-from reactpy_django.types import Postprocessor, ViewComponentIframe
+from reactpy_django.types import (
+    AsyncPostprocessor,
+    SyncPostprocessor,
+    ViewComponentIframe,
+)
 from reactpy_django.utils import import_dotted_path
 
 
@@ -37,10 +41,12 @@ REACTPY_DATABASE: str = getattr(
     "REACTPY_DATABASE",
     DEFAULT_DB_ALIAS,
 )
-REACTPY_DEFAULT_QUERY_POSTPROCESSOR: Postprocessor | None = import_dotted_path(
-    getattr(
-        settings,
-        "REACTPY_DEFAULT_QUERY_POSTPROCESSOR",
-        "reactpy_django.utils.django_query_postprocessor",
+REACTPY_DEFAULT_QUERY_POSTPROCESSOR: AsyncPostprocessor | SyncPostprocessor | None = (
+    import_dotted_path(
+        getattr(
+            settings,
+            "REACTPY_DEFAULT_QUERY_POSTPROCESSOR",
+            "reactpy_django.utils.django_query_postprocessor",
+        )
     )
 )

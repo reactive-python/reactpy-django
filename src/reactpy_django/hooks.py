@@ -13,7 +13,7 @@ from typing import (
     overload,
 )
 
-from channels.db import database_sync_to_async as _database_sync_to_async
+from channels.db import database_sync_to_async
 from reactpy import use_callback, use_ref
 from reactpy.backend.hooks import use_connection as _use_connection
 from reactpy.backend.hooks import use_location as _use_location
@@ -24,6 +24,7 @@ from reactpy.core.hooks import use_effect, use_state
 from reactpy_django.types import (
     Connection,
     Mutation,
+    MutationOptions,
     Query,
     QueryOptions,
     _Params,
@@ -33,10 +34,6 @@ from reactpy_django.utils import generate_obj_name
 
 
 _logger = logging.getLogger(__name__)
-database_sync_to_async = cast(
-    Callable[..., Callable[..., Awaitable[Any]]],
-    _database_sync_to_async,
-)
 _REFETCH_CALLBACKS: DefaultDict[
     Callable[..., Any], set[Callable[[], None]]
 ] = DefaultDict(set)
@@ -82,8 +79,9 @@ def use_connection() -> Connection:
 @overload
 def use_query(
     options: QueryOptions,
-    query: Callable[_Params, _Result | None],
     /,
+    query: Callable[_Params, _Result | None]
+    | Callable[_Params, Awaitable[_Result | None]],
     *args: _Params.args,
     **kwargs: _Params.kwargs,
 ) -> Query[_Result | None]:
@@ -92,8 +90,8 @@ def use_query(
 
 @overload
 def use_query(
-    query: Callable[_Params, _Result | None],
-    /,
+    query: Callable[_Params, _Result | None]
+    | Callable[_Params, Awaitable[_Result | None]],
     *args: _Params.args,
     **kwargs: _Params.kwargs,
 ) -> Query[_Result | None]:
@@ -114,53 +112,47 @@ def use_query(
     Keyword Args:
         **kwargs: Keyword arguments to pass into `query`."""
 
-    if isinstance(args[0], QueryOptions):
-        query_options = args[0]
-        query = args[1]
-        args = args[2:]
-
-    else:
-        query_options = QueryOptions()
-        query = args[0]
-        args = args[1:]
-
-    query_ref = use_ref(query)
-    if query_ref.current is not query:
-        raise ValueError(f"Query function changed from {query_ref.current} to {query}.")
-
     should_execute, set_should_execute = use_state(True)
     data, set_data = use_state(cast(Union[_Result, None], None))
     loading, set_loading = use_state(True)
     error, set_error = use_state(cast(Union[Exception, None], None))
+    if isinstance(args[0], QueryOptions):
+        query_options, query, query_args, query_kwargs = _use_query_args_1(
+            *args, **kwargs
+        )
+    else:
+        query_options, query, query_args, query_kwargs = _use_query_args_2(
+            *args, **kwargs
+        )
+    query_ref = use_ref(query)
+    if query_ref.current is not query:
+        raise ValueError(f"Query function changed from {query_ref.current} to {query}.")
 
-    @use_callback
-    def refetch() -> None:
-        set_should_execute(True)
-        set_loading(True)
-        set_error(None)
-
-    @use_effect(dependencies=[])
-    def add_refetch_callback() -> Callable[[], None]:
-        # By tracking callbacks globally, any usage of the query function will be re-run
-        # if the user has told a mutation to refetch it.
-        _REFETCH_CALLBACKS[query].add(refetch)
-        return lambda: _REFETCH_CALLBACKS[query].remove(refetch)
-
-    @use_effect(dependencies=None)
-    @database_sync_to_async
-    def execute_query() -> None:
-        if not should_execute:
-            return
-
+    # The main "running" function for `use_query`
+    async def execute_query() -> None:
         try:
-            # Run the initial query
-            new_data = query(*args, **kwargs)
+            # Run the query
+            if asyncio.iscoroutinefunction(query):
+                new_data = await query(*query_args, **query_kwargs)
+            else:
+                new_data = await database_sync_to_async(
+                    query,
+                    thread_sensitive=query_options.thread_sensitive,
+                )(*query_args, **query_kwargs)
 
+            # Run the postprocessor
             if query_options.postprocessor:
-                new_data = query_options.postprocessor(
-                    new_data, **query_options.postprocessor_kwargs
-                )
+                if asyncio.iscoroutinefunction(query_options.postprocessor):
+                    new_data = await query_options.postprocessor(
+                        new_data, **query_options.postprocessor_kwargs
+                    )
+                else:
+                    new_data = await database_sync_to_async(
+                        query_options.postprocessor,
+                        thread_sensitive=query_options.thread_sensitive,
+                    )(new_data, **query_options.postprocessor_kwargs)
 
+        # Log any errors and set the error state
         except Exception as e:
             set_data(None)
             set_loading(False)
@@ -169,20 +161,63 @@ def use_query(
                 f"Failed to execute query: {generate_obj_name(query) or query}"
             )
             return
-        finally:
-            set_should_execute(False)
 
-        set_data(new_data)
-        set_loading(False)
+        # Query was successful
+        else:
+            set_data(new_data)
+            set_loading(False)
+            set_error(None)
+
+    # Schedule the query to be run when needed
+    @use_effect(dependencies=None)
+    def schedule_query() -> None:
+        # Make sure we don't re-execute the query unless we're told to
+        if not should_execute:
+            return
+        set_should_execute(False)
+
+        # Execute the query in the background
+        asyncio.create_task(execute_query())
+
+    # Used when the user has told us to refetch this query
+    @use_callback
+    def refetch() -> None:
+        set_should_execute(True)
+        set_loading(True)
         set_error(None)
 
+    # Track the refetch callback so we can re-execute the query
+    @use_effect(dependencies=[])
+    def add_refetch_callback() -> Callable[[], None]:
+        # By tracking callbacks globally, any usage of the query function will be re-run
+        # if the user has told a mutation to refetch it.
+        _REFETCH_CALLBACKS[query].add(refetch)
+        return lambda: _REFETCH_CALLBACKS[query].remove(refetch)
+
+    # The query's user API
     return Query(data, loading, error, refetch)
 
 
+@overload
 def use_mutation(
-    mutate: Callable[_Params, bool | None],
+    options: MutationOptions,
+    mutation: Callable[_Params, bool | None]
+    | Callable[_Params, Awaitable[bool | None]],
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
 ) -> Mutation[_Params]:
+    ...
+
+
+@overload
+def use_mutation(
+    mutation: Callable[_Params, bool | None]
+    | Callable[_Params, Awaitable[bool | None]],
+    refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
+) -> Mutation[_Params]:
+    ...
+
+
+def use_mutation(*args: Any, **kwargs: Any) -> Mutation[_Params]:
     """Hook to create, update, or delete Django ORM objects.
 
     Args:
@@ -196,37 +231,99 @@ def use_mutation(
 
     loading, set_loading = use_state(False)
     error, set_error = use_state(cast(Union[Exception, None], None))
+    if isinstance(args[0], MutationOptions):
+        mutation_options, mutation, refetch = _use_mutation_args_1(*args, **kwargs)
+    else:
+        mutation_options, mutation, refetch = _use_mutation_args_2(*args, **kwargs)
 
+    # The main "running" function for `use_mutation`
+    async def execute_mutation(exec_args, exec_kwargs) -> None:
+        # Run the mutation
+        try:
+            if asyncio.iscoroutinefunction(mutation):
+                should_refetch = await mutation(*exec_args, **exec_kwargs)
+            else:
+                should_refetch = await database_sync_to_async(
+                    mutation, thread_sensitive=mutation_options.thread_sensitive
+                )(*exec_args, **exec_kwargs)
+
+        # Log any errors and set the error state
+        except Exception as e:
+            set_loading(False)
+            set_error(e)
+            _logger.exception(
+                f"Failed to execute mutation: {generate_obj_name(mutation) or mutation}"
+            )
+
+        # Mutation was successful
+        else:
+            set_loading(False)
+            set_error(None)
+
+            # `refetch` will execute unless explicitly told not to
+            # or if `refetch` was not defined.
+            if should_refetch is not False and refetch:
+                for query in (refetch,) if callable(refetch) else refetch:
+                    for callback in _REFETCH_CALLBACKS.get(query) or ():
+                        callback()
+
+    # Schedule the mutation to be run when needed
     @use_callback
-    def call(*args: _Params.args, **kwargs: _Params.kwargs) -> None:
+    def schedule_mutation(
+        *exec_args: _Params.args, **exec_kwargs: _Params.kwargs
+    ) -> None:
+        # Set the loading state.
+        # It's okay to re-execute the mutation if we're told to. The user
+        # can use the `loading` state to prevent this.
         set_loading(True)
 
-        @database_sync_to_async
-        def execute_mutation() -> None:
-            try:
-                should_refetch = mutate(*args, **kwargs)
-            except Exception as e:
-                set_loading(False)
-                set_error(e)
-                _logger.exception(
-                    f"Failed to execute mutation: {generate_obj_name(mutate) or mutate}"
-                )
-            else:
-                set_loading(False)
-                set_error(None)
+        # Execute the mutation in the background
+        asyncio.ensure_future(
+            execute_mutation(exec_args=exec_args, exec_kwargs=exec_kwargs)
+        )
 
-                # `refetch` will execute unless explicitly told not to
-                # or if `refetch` was not defined.
-                if should_refetch is not False and refetch:
-                    for query in (refetch,) if callable(refetch) else refetch:
-                        for callback in _REFETCH_CALLBACKS.get(query) or ():
-                            callback()
-
-        asyncio.ensure_future(execute_mutation())
-
+    # Used when the user has told us to reset this mutation
     @use_callback
     def reset() -> None:
         set_loading(False)
         set_error(None)
 
-    return Mutation(call, loading, error, reset)
+    # The mutation's user API
+    return Mutation(schedule_mutation, loading, error, reset)
+
+
+def _use_query_args_1(
+    options: QueryOptions,
+    /,
+    query: Callable[_Params, _Result | None]
+    | Callable[_Params, Awaitable[_Result | None]],
+    *args: _Params.args,
+    **kwargs: _Params.kwargs,
+):
+    return options, query, args, kwargs
+
+
+def _use_query_args_2(
+    query: Callable[_Params, _Result | None]
+    | Callable[_Params, Awaitable[_Result | None]],
+    *args: _Params.args,
+    **kwargs: _Params.kwargs,
+):
+    return QueryOptions(), query, args, kwargs
+
+
+def _use_mutation_args_1(
+    options: MutationOptions,
+    mutation: Callable[_Params, bool | None]
+    | Callable[_Params, Awaitable[bool | None]],
+    refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
+):
+    return options, mutation, refetch
+
+
+def _use_mutation_args_2(
+    mutation: Callable[_Params, bool | None]
+    | Callable[_Params, Awaitable[bool | None]],
+    refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
+):
+    return MutationOptions(), mutation, refetch

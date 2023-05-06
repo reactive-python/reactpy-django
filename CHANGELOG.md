@@ -34,9 +34,22 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Added
 
-## [3.0.1] - 2023-03-31
+-   `use_query` now supports async functions.
+-   `use_mutation` now supports async functions.
+-   `reactpy_django.types.QueryOptions.thread_sensitive` option to customize how sync queries are executed.
+-   `reactpy_django.hooks.use_mutation` now accepts `reactpy_django.types.MutationOptions` option to customize how mutations are executed.
+
+### Changed
+
+-   The `mutate` argument on `reactpy_django.hooks.use_mutation` has been renamed to `mutation`.
+
+### Fixed
+
+-   Fix bug where ReactPy utilizes Django's default cache timeout, which can prematurely expire the component cache.
+
+## [3.0.1] - 2023-04-06
 
 ### Changed
 

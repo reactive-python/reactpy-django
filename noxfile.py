@@ -56,7 +56,7 @@ def test_suite(session: Session) -> None:
         posargs.append("--debug-mode")
 
     session.run("playwright", "install", "chromium")
-    session.run("python", "manage.py", "test", *posargs)
+    session.run("python", "manage.py", "test", *posargs, "-v 2")
 
 
 @nox.session

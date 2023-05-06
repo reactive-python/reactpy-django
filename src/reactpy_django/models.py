@@ -2,7 +2,7 @@ from django.db import models
 
 
 class ComponentSession(models.Model):
-    """A model for storing component parameters.
+    """A model for storing component sessions.
     All queries must be routed through `reactpy_django.config.REACTPY_DATABASE`.
     """
 

@@ -8,7 +8,8 @@ logs
 *.pyc
 .dccachea
 __pycache__
-db.sqlite3
+*.sqlite3
+*.sqlite3-journal
 media
 cache
 static-deploy

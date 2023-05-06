@@ -57,13 +57,29 @@ The function you provide into this hook must return either a `Model` or `QuerySe
         {% include "../../python/use-query-args.py" %}
         ```
 
-??? question "Why does the example `get_items` function return `TodoItem.objects.all()`?"
+??? question "Why does `get_items` in the example return `TodoItem.objects.all()`?"
 
     This was a technical design decision to based on [Apollo's `useQuery` hook](https://www.apollographql.com/docs/react/data/queries/), but ultimately helps avoid Django's `SynchronousOnlyOperation` exceptions.
 
     The `use_query` hook ensures the provided `Model` or `QuerySet` executes all [deferred](https://docs.djangoproject.com/en/dev/ref/models/instances/#django.db.models.Model.get_deferred_fields)/[lazy queries](https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy) safely prior to reaching your components.
 
-??? question "Can this hook be used for things other than the Django ORM?"
+??? question "How can I use `QueryOptions` to customize fetching behavior?"
+
+    <font size="4">**`thread_sensitive`**</font>
+
+    Whether to run your synchronous query function in thread-sensitive mode. Thread-sensitive mode is turned on by default due to Django ORM limitations. See Django's [`sync_to_async` docs](https://docs.djangoproject.com/en/dev/topics/async/#sync-to-async) docs for more information.
+
+    This setting only applies to sync query functions, and will be ignored for async functions.
+
+    === "components.py"
+
+        ```python
+        {% include "../../python/use-query-thread-sensitive.py" %}
+        ```
+
+    ---
+
+    <font size="4">**`postprocessor`**</font>
 
     {% include-markdown "../../includes/orm.md" start="<!--orm-fetch-start-->" end="<!--orm-fetch-end-->" %}
 
@@ -72,7 +88,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
     1. Want to use this hook to defer IO intensive tasks to be computed in the background
     2. Want to to utilize `use_query` with a different ORM
 
-    ... then you can disable all postprocessing behavior by modifying the `QueryOptions.postprocessor` parameter. In the example below, we will set the `postprocessor` to `None` to disable postprocessing behavior.
+    ... then you can either set a custom `postprocessor`, or disable all postprocessing behavior by modifying the `QueryOptions.postprocessor` parameter. In the example below, we will set the `postprocessor` to `None` to disable postprocessing behavior.
 
     === "components.py"
 
@@ -92,7 +108,9 @@ The function you provide into this hook must return either a `Model` or `QuerySe
         {% include "../../python/use-query-postprocessor-change.py" %}
         ```
 
-??? question "How can I prevent this hook from recursively fetching `ManyToMany` fields or `ForeignKey` relationships?"
+    ---
+
+    <font size="4">**`postprocessor_kwargs`**</font>
 
     {% include-markdown "../../includes/orm.md" start="<!--orm-fetch-start-->" end="<!--orm-fetch-end-->" %}
 
@@ -107,6 +125,18 @@ The function you provide into this hook must return either a `Model` or `QuerySe
         ```
 
     _Note: In Django's ORM design, the field name to access foreign keys is [postfixed with `_set`](https://docs.djangoproject.com/en/dev/topics/db/examples/many_to_one/) by default._
+
+??? question "Can I define async query functions?"
+
+    Async functions are supported by `use_query`. You can use them in the same way as a sync query function.
+
+    However, be mindful of Django async ORM restrictions.
+
+    === "components.py"
+
+        ```python
+        {% include "../../python/use-query-async.py" %}
+        ```
 
 ??? question "Can I make ORM calls without hooks?"
 

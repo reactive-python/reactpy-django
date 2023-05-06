@@ -16,7 +16,7 @@ def get_model_with_relationships():
 
 
 @component
-def todo_list():
+def my_component():
     query = use_query(
         QueryOptions(
             postprocessor_kwargs={"many_to_many": False, "many_to_one": False}

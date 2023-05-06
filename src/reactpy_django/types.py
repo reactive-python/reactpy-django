@@ -30,8 +30,10 @@ __all__ = [
     "Mutation",
     "Connection",
     "ViewComponentIframe",
-    "Postprocessor",
+    "AsyncPostprocessor",
+    "SyncPostprocessor",
     "QueryOptions",
+    "MutationOptions",
     "ComponentParamData",
 ]
 
@@ -79,7 +81,12 @@ class ViewComponentIframe:
     kwargs: dict
 
 
-class Postprocessor(Protocol):
+class AsyncPostprocessor(Protocol):
+    async def __call__(self, data: Any) -> Any:
+        ...
+
+
+class SyncPostprocessor(Protocol):
     def __call__(self, data: Any) -> Any:
         ...
 
@@ -90,7 +97,9 @@ class QueryOptions:
 
     from reactpy_django.config import REACTPY_DEFAULT_QUERY_POSTPROCESSOR
 
-    postprocessor: Postprocessor | None = REACTPY_DEFAULT_QUERY_POSTPROCESSOR
+    postprocessor: AsyncPostprocessor | SyncPostprocessor | None = (
+        REACTPY_DEFAULT_QUERY_POSTPROCESSOR
+    )
     """A callable that can modify the query `data` after the query has been executed.
 
     The first argument of postprocessor must be the query `data`. All proceeding arguments
@@ -105,6 +114,17 @@ class QueryOptions:
 
     postprocessor_kwargs: MutableMapping[str, Any] = field(default_factory=lambda: {})
     """Keyworded arguments directly passed into the `postprocessor` for configuration."""
+
+    thread_sensitive: bool = True
+    """Whether to run the query in thread-sensitive mode. This setting only applies to sync query functions."""
+
+
+@dataclass
+class MutationOptions:
+    """Configuration options that can be provided to `use_mutation`."""
+
+    thread_sensitive: bool = True
+    """Whether to run the mutation in thread-sensitive mode. This setting only applies to sync mutation functions."""
 
 
 @dataclass

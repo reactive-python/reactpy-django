@@ -8,7 +8,7 @@ from typing import Any, MutableMapping, Sequence
 
 import dill as pickle
 from channels.auth import login
-from channels.db import database_sync_to_async as convert_to_async
+from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from django.utils import timezone
 from reactpy.backend.hooks import ConnectionContext
@@ -35,7 +35,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         if user and user.is_authenticated:
             try:
                 await login(self.scope, user)
-                await convert_to_async(self.scope["session"].save)()
+                await database_sync_to_async(self.scope["session"].save)()
             except Exception:
                 _logger.exception("ReactPy websocket authentication has failed!")
         elif user is None:
@@ -94,7 +94,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             if func_has_params(component_constructor):
                 try:
                     # Always clean up expired entries first
-                    await convert_to_async(db_cleanup)()
+                    await database_sync_to_async(db_cleanup, thread_sensitive=False)()
 
                     # Get the queries from a DB
                     params_query = await models.ComponentSession.objects.using(
@@ -105,7 +105,9 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                         - timedelta(seconds=REACTPY_RECONNECT_MAX),
                     )
                     params_query.last_accessed = timezone.now()
-                    await convert_to_async(params_query.save)()
+                    await database_sync_to_async(
+                        params_query.save, thread_sensitive=False
+                    )()
                 except models.ComponentSession.DoesNotExist:
                     _logger.warning(
                         f"Browser has attempted to access '{dotted_path}', "

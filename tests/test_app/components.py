@@ -1,10 +1,21 @@
+import asyncio
 import inspect
 from pathlib import Path
 
+from channels.db import database_sync_to_async
 from django.http import HttpRequest
 from django.shortcuts import render
 from reactpy import component, hooks, html, web
-from test_app.models import ForiegnChild, RelationalChild, RelationalParent, TodoItem
+from test_app.models import (
+    AsyncForiegnChild,
+    AsyncRelationalChild,
+    AsyncRelationalParent,
+    AsyncTodoItem,
+    ForiegnChild,
+    RelationalChild,
+    RelationalParent,
+    TodoItem,
+)
 
 import reactpy_django
 from reactpy_django.components import view_to_component
@@ -201,10 +212,9 @@ def get_relational_parent_query():
 def get_foriegn_child_query():
     child = ForiegnChild.objects.first()
     if not child:
-        parent = RelationalParent.objects.first()
-        if not parent:
-            parent = get_relational_parent_query()
-        child = ForiegnChild.objects.create(parent=parent, text="Foriegn Child")
+        child = ForiegnChild.objects.create(
+            parent=get_relational_parent_query(), text="Foriegn Child"
+        )
         child.save()
     return child
 
@@ -227,6 +237,69 @@ def relational_query():
             "id": "relational-query",
             "data-success": bool(mtm) and bool(oto) and bool(mto) and bool(fk),
         },
+        html.p(inspect.currentframe().f_code.co_name),
+        html.div(f"Relational Parent Many To Many: {mtm}"),
+        html.div(f"Relational Parent One To One: {oto}"),
+        html.div(f"Relational Parent Many to One: {mto}"),
+        html.div(f"Relational Child Foreign Key: {fk}"),
+        html.hr(),
+    )
+
+
+async def async_get_or_create_relational_parent():
+    parent = await AsyncRelationalParent.objects.afirst()
+    if parent:
+        return parent
+
+    child_1 = await AsyncRelationalChild.objects.acreate(text="ManyToMany Child 1")
+    child_2 = await AsyncRelationalChild.objects.acreate(text="ManyToMany Child 2")
+    child_3 = await AsyncRelationalChild.objects.acreate(text="ManyToMany Child 3")
+    child_4 = await AsyncRelationalChild.objects.acreate(text="OneToOne Child")
+    parent = await AsyncRelationalParent.objects.acreate(one_to_one=child_4)
+    await parent.many_to_many.aset((child_1, child_2, child_3))
+    await parent.asave()
+    return parent
+
+
+async def async_get_relational_parent_query():
+    # Sleep to avoid race conditions in the test
+    # Also serves as a good way of testing whether things are truly async
+    await asyncio.sleep(2)
+    return await async_get_or_create_relational_parent()
+
+
+async def async_get_foriegn_child_query():
+    child = await AsyncForiegnChild.objects.afirst()
+    if not child:
+        parent = await async_get_or_create_relational_parent()
+        child = await AsyncForiegnChild.objects.acreate(
+            parent=parent, text="Foriegn Child"
+        )
+        await child.asave()
+    return child
+
+
+@component
+def async_relational_query():
+    foriegn_child = reactpy_django.hooks.use_query(async_get_foriegn_child_query)
+    relational_parent = reactpy_django.hooks.use_query(
+        async_get_relational_parent_query
+    )
+
+    if not relational_parent.data or not foriegn_child.data:
+        return
+
+    mtm = relational_parent.data.many_to_many.all()
+    oto = relational_parent.data.one_to_one
+    mto = relational_parent.data.many_to_one.all()
+    fk = foriegn_child.data.parent
+
+    return html.div(
+        {
+            "id": "async-relational-query",
+            "data-success": bool(mtm) and bool(oto) and bool(mto) and bool(fk),
+        },
+        html.p(inspect.currentframe().f_code.co_name),
         html.div(f"Relational Parent Many To Many: {mtm}"),
         html.div(f"Relational Parent One To One: {oto}"),
         html.div(f"Relational Parent Many to One: {mto}"),
@@ -256,60 +329,6 @@ def toggle_todo_mutation(item: TodoItem):
     item.save()
 
 
-@component
-def todo_list():
-    input_value, set_input_value = hooks.use_state("")
-    items = reactpy_django.hooks.use_query(get_todo_query)
-    toggle_item = reactpy_django.hooks.use_mutation(toggle_todo_mutation)
-
-    if items.error:
-        rendered_items = html.h2(f"Error when loading - {items.error}")
-    elif items.data is None:
-        rendered_items = html.h2("Loading...")
-    else:
-        rendered_items = html._(
-            html.h3("Not Done"),
-            _render_todo_items([i for i in items.data if not i.done], toggle_item),
-            html.h3("Done"),
-            _render_todo_items([i for i in items.data if i.done], toggle_item),
-        )
-
-    add_item = reactpy_django.hooks.use_mutation(
-        add_todo_mutation, refetch=get_todo_query
-    )
-
-    if add_item.loading:
-        mutation_status = html.h2("Working...")
-    elif add_item.error:
-        mutation_status = html.h2(f"Error when adding - {add_item.error}")
-    else:
-        mutation_status = ""  # type: ignore
-
-    def on_submit(event):
-        if event["key"] == "Enter":
-            add_item.execute(text=event["target"]["value"])
-            set_input_value("")
-
-    def on_change(event):
-        set_input_value(event["target"]["value"])
-
-    return html.div(
-        html.label("Add an item:"),
-        html.input(
-            {
-                "type": "text",
-                "id": "todo-input",
-                "value": input_value,
-                "on_key_press": on_submit,
-                "on_change": on_change,
-            }
-        ),
-        mutation_status,
-        rendered_items,
-        html.hr(),
-    )
-
-
 def _render_todo_items(items, toggle_item):
     return html.ul(
         [
@@ -327,6 +346,137 @@ def _render_todo_items(items, toggle_item):
             )
             for item in items
         ]
+    )
+
+
+@component
+def todo_list():
+    input_value, set_input_value = hooks.use_state("")
+    items = reactpy_django.hooks.use_query(get_todo_query)
+    toggle_item = reactpy_django.hooks.use_mutation(toggle_todo_mutation)
+    add_item = reactpy_django.hooks.use_mutation(
+        add_todo_mutation, refetch=get_todo_query
+    )
+
+    def on_submit(event):
+        if event["key"] == "Enter":
+            add_item.execute(text=event["target"]["value"])
+            set_input_value("")
+
+    def on_change(event):
+        set_input_value(event["target"]["value"])
+
+    if items.error:
+        rendered_items = html.h2(f"Error when loading - {items.error}")
+    elif items.data is None:
+        rendered_items = html.h2("Loading...")
+    else:
+        rendered_items = html._(
+            html.h3("Not Done"),
+            _render_todo_items([i for i in items.data if not i.done], toggle_item),
+            html.h3("Done"),
+            _render_todo_items([i for i in items.data if i.done], toggle_item),
+        )
+
+    if add_item.loading:
+        mutation_status = html.h2("Working...")
+    elif add_item.error:
+        mutation_status = html.h2(f"Error when adding - {add_item.error}")
+    else:
+        mutation_status = ""  # type: ignore
+
+    return html.div(
+        {"id": "todo-list"},
+        html.p(inspect.currentframe().f_code.co_name),  # type: ignore
+        html.label("Add an item:"),
+        html.input(
+            {
+                "type": "text",
+                "id": "todo-input",
+                "value": input_value,
+                "on_key_press": on_submit,
+                "on_change": on_change,
+            }
+        ),
+        mutation_status,
+        rendered_items,
+        html.hr(),
+    )
+
+
+async def async_get_todo_query():
+    return await database_sync_to_async(AsyncTodoItem.objects.all)()
+
+
+async def async_add_todo_mutation(text: str):
+    existing = await AsyncTodoItem.objects.filter(text=text).afirst()
+    if existing:
+        if existing.done:
+            existing.done = False
+            await existing.asave()
+        else:
+            return False
+    else:
+        await AsyncTodoItem(text=text, done=False).asave()
+
+
+async def async_toggle_todo_mutation(item: AsyncTodoItem):
+    item.done = not item.done
+    await item.asave()
+
+
+@component
+def async_todo_list():
+    input_value, set_input_value = hooks.use_state("")
+    items = reactpy_django.hooks.use_query(async_get_todo_query)
+    toggle_item = reactpy_django.hooks.use_mutation(async_toggle_todo_mutation)
+    add_item = reactpy_django.hooks.use_mutation(
+        async_add_todo_mutation, refetch=async_get_todo_query
+    )
+
+    async def on_submit(event):
+        if event["key"] == "Enter":
+            add_item.execute(text=event["target"]["value"])
+            set_input_value("")
+
+    async def on_change(event):
+        set_input_value(event["target"]["value"])
+
+    if items.error:
+        rendered_items = html.h2(f"Error when loading - {items.error}")
+    elif items.data is None:
+        rendered_items = html.h2("Loading...")
+    else:
+        rendered_items = html._(
+            html.h3("Not Done"),
+            _render_todo_items([i for i in items.data if not i.done], toggle_item),
+            html.h3("Done"),
+            _render_todo_items([i for i in items.data if i.done], toggle_item),
+        )
+
+    if add_item.loading:
+        mutation_status = html.h2("Working...")
+    elif add_item.error:
+        mutation_status = html.h2(f"Error when adding - {add_item.error}")
+    else:
+        mutation_status = ""  # type: ignore
+
+    return html.div(
+        {"id": "async-todo-list"},
+        html.p(inspect.currentframe().f_code.co_name),  # type: ignore
+        html.label("Add an item:"),
+        html.input(
+            {
+                "type": "text",
+                "id": "async-todo-input",
+                "value": input_value,
+                "on_key_press": on_submit,
+                "on_change": on_change,
+            }
+        ),
+        mutation_status,
+        rendered_items,
+        html.hr(),
     )
 
 

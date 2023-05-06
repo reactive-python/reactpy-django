@@ -6,7 +6,7 @@
 
 ---
 
-## Render Your View
+## Register a View
 
 We will assume you have [created a Django View](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view) before, but here's a simple example below.
 
@@ -27,8 +27,6 @@ We will add this new view into your [`urls.py`](https://docs.djangoproject.com/e
     ```python
     {% include "../../python/example/urls.py" %}
     ```
-
-Now, navigate to `http://127.0.0.1:8000/example/`. If you copy-pasted the component from the previous example, you will now see your component display "Hello World".
 
 ??? question "Which urls.py do I add my views to?"
 

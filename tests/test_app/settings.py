@@ -25,7 +25,7 @@ SRC_DIR = BASE_DIR.parent / "src"
 SECRET_KEY = "django-insecure-n!bd1#+7ufw5#9ipayu9k(lyu@za$c2ajbro7es(v8_7w1$=&c"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = "test" not in sys.argv
 ALLOWED_HOSTS = ["*"]
 
 # Application definition
@@ -71,14 +71,38 @@ sys.path.append(str(SRC_DIR))
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+# WARNING: There are overrides in `test_components.py` that require no in-memory
+# databases are used for testing. Make sure all SQLite databases are on disk.
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-        "TEST": {"NAME": os.path.join(BASE_DIR, "db_test.sqlite3")},
-        "OPTIONS": {"timeout": 5},
+        # Changing NAME is needed due to a bug related to `manage.py test` migrations
+        "NAME": os.path.join(BASE_DIR, "test_db.sqlite3")
+        if "test" in sys.argv
+        else os.path.join(BASE_DIR, "db.sqlite3"),
+        "TEST": {
+            "NAME": os.path.join(BASE_DIR, "test_db.sqlite3"),
+            "OPTIONS": {"timeout": 20},
+            "DEPENDENCIES": [],
+        },
+        "OPTIONS": {"timeout": 20},
     },
 }
+if "test" in sys.argv:
+    DATABASES["reactpy"] = {
+        "ENGINE": "django.db.backends.sqlite3",
+        # Changing NAME is needed due to a bug related to `manage.py test` migrations
+        "NAME": os.path.join(BASE_DIR, "test_db_2.sqlite3")
+        if "test" in sys.argv
+        else os.path.join(BASE_DIR, "db_2.sqlite3"),
+        "TEST": {
+            "NAME": os.path.join(BASE_DIR, "test_db_2.sqlite3"),
+            "OPTIONS": {"timeout": 20},
+            "DEPENDENCIES": [],
+        },
+        "OPTIONS": {"timeout": 20},
+    }
+    REACTPY_DATABASE = "reactpy"
 
 # Cache
 CACHES = {
@@ -142,7 +166,7 @@ LOGGING = {
     "loggers": {
         "reactpy_django": {
             "handlers": ["console"],
-            "level": "DEBUG",
+            "level": "DEBUG" if DEBUG else "WARNING",
         },
     },
 }
