@@ -257,7 +257,7 @@ async def async_get_or_create_relational_parent():
     child_4 = await AsyncRelationalChild.objects.acreate(text="OneToOne Child")
     parent = await AsyncRelationalParent.objects.acreate(one_to_one=child_4)
     await parent.many_to_many.aset((child_1, child_2, child_3))
-    await parent.asave()  # type: ignore
+    await parent.asave()
     return parent
 
 
@@ -275,7 +275,7 @@ async def async_get_foriegn_child_query():
         child = await AsyncForiegnChild.objects.acreate(
             parent=parent, text="Foriegn Child"
         )
-        await child.asave()  # type: ignore
+        await child.asave()
     return child
 
 
@@ -413,16 +413,16 @@ async def async_add_todo_mutation(text: str):
     if existing:
         if existing.done:
             existing.done = False
-            await existing.asave()  # type: ignore
+            await existing.asave()
         else:
             return False
     else:
-        await AsyncTodoItem(text=text, done=False).asave()  # type: ignore
+        await AsyncTodoItem(text=text, done=False).asave()
 
 
 async def async_toggle_todo_mutation(item: AsyncTodoItem):
     item.done = not item.done
-    await item.asave()  # type: ignore
+    await item.asave()
 
 
 @component
