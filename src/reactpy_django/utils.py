@@ -316,6 +316,7 @@ def db_cleanup(immediate: bool = False):
     from .config import REACTPY_CACHE, REACTPY_DATABASE, REACTPY_RECONNECT_MAX
     from .models import ComponentSession
 
+    clean_started_at = datetime.now()
     cache_key: str = create_cache_key("last_cleaned")
     now_str: str = datetime.strftime(timezone.now(), DATE_FORMAT)
     cleaned_at_str: str = caches[REACTPY_CACHE].get(cache_key)
@@ -340,3 +341,12 @@ def db_cleanup(immediate: bool = False):
             last_accessed__lte=expires_by
         ).delete()
         caches[REACTPY_CACHE].set(cache_key, now_str, timeout=None)
+
+    # Check if cleaning took abnormally long
+    clean_duration = datetime.now() - clean_started_at
+    if clean_duration.total_seconds() > 1:
+        _logger.warning(
+            "ReactPy has taken %s seconds to clean up expired component sessions. "
+            "This may indicate a performance issue with your system, cache, or database.",
+            clean_duration.total_seconds(),
+        )
