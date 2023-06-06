@@ -1,10 +1,8 @@
 ## Overview
 
-!!! summary
+!!! summary "Overview"
 
     Utility functions that you can use when needed.
-
----
 
 ## Django Query Postprocessor
 

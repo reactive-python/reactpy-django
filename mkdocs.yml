@@ -21,7 +21,8 @@ nav:
                 - Code: contribute/code.md
                 - Docs: contribute/docs.md
                 - Running Tests: contribute/running-tests.md
-          - Community: https://github.com/reactive-python/reactpy/discussions
+          - GitHub Discussions: https://github.com/reactive-python/reactpy-django/discussions
+          - Discord: https://discord.gg/uNb5P4hA9X
           - Changelog: changelog/index.md
 
 theme:
@@ -96,7 +97,7 @@ watch:
 site_name: ReactPy-Django Docs
 site_author: Archmonger
 site_description: React for Django developers.
-copyright: Copyright &copy; 2022 Reactive Python
+copyright: Copyright &copy; 2023 Reactive Python
 repo_url: https://github.com/reactive-python/reactpy-django
 site_url: https://reactive-python.github.io/reactpy-django
 repo_name: reactive-python/reactpy-django

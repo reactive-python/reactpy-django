@@ -1,10 +1,8 @@
 ## Overview
 
-!!! summary
+!!! summary "Overview"
 
     Select your template containing an ReactPy component, and render it using a Django view.
-
----
 
 ## Register a View
 

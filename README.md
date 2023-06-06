@@ -2,7 +2,23 @@
 
 <!--badge-start-->
 
-[![Tests](https://github.com/reactive-python/reactpy-django/workflows/Test/badge.svg?event=push)](https://github.com/reactive-python/reactpy-django/actions?query=workflow%3ATest) [![PyPI Version](https://img.shields.io/pypi/v/reactpy-django.svg?label=PyPI)](https://pypi.python.org/pypi/reactpy-django) [![License](https://img.shields.io/badge/License-MIT-purple.svg)](https://github.com/reactive-python/reactpy-django/blob/main/LICENSE) [![Docs](https://img.shields.io/website?down_message=offline&label=Docs&logo=read%20the%20docs&logoColor=white&up_message=online&url=https%3A%2F%2Freactive-python.github.io%2Freactpy-django%2F)](https://reactive-python.github.io/reactpy-django/)
+<p>
+    <a href="https://github.com/reactive-python/reactpy-django/actions?query=workflow%3ATest">
+        <img src="https://github.com/reactive-python/reactpy-django/workflows/Test/badge.svg?event=push">
+    </a>
+    <a href="https://pypi.python.org/pypi/reactpy-django">
+        <img src="https://img.shields.io/pypi/v/reactpy-django.svg?label=PyPI">
+    </a>
+    <a href="https://github.com/reactive-python/reactpy/blob/main/LICENSE">
+        <img src="https://img.shields.io/badge/License-MIT-purple.svg">
+    </a>
+    <a href="https://reactive-python.github.io/reactpy-django/">
+        <img src="https://img.shields.io/website?down_message=offline&label=Docs&logo=read%20the%20docs&logoColor=white&up_message=online&url=https%3A%2F%2Freactive-python.github.io%2Freactpy-django%2F">
+    </a>
+    <a href="https://discord.gg/uNb5P4hA9X">
+        <img src="https://img.shields.io/discord/1111078259854168116?label=Discord&logo=discord">
+    </a>
+</p>
 
 <!--badge-end-->
 <!--intro-start-->
@@ -86,10 +102,11 @@ Additionally, you can pass in `args` and `kwargs` into your component function. 
 
 Follow the links below to find out more about this project.
 
--   [Try it Now](https://mybinder.org/v2/gh/reactive-python/reactpy-jupyter/main?urlpath=lab/tree/notebooks/introduction.ipynb) - check out ReactPy in a Jupyter Notebook.
--   [Documentation](https://reactive-python.github.io/reactpy-django) - learn how to install, run, and use ReactPy.
--   [Community Forum](https://github.com/reactive-python/reactpy/discussions) - ask questions, share ideas, and show off projects.
--   [Contributor Guide](https://reactive-python.github.io/reactpy-django/contribute/code/) - see how you can help develop this project.
--   [Code of Conduct](https://github.com/reactive-python/reactpy-django/blob/main/CODE_OF_CONDUCT.md) - standards for interacting with this community.
+-   [Try ReactPy (Jupyter Notebook)](https://mybinder.org/v2/gh/reactive-python/reactpy-jupyter/main?urlpath=lab/tree/notebooks/introduction.ipynb)
+-   [Documentation](https://reactive-python.github.io/reactpy-django)
+-   [GitHub Discussions](https://github.com/reactive-python/reactpy-django/discussions)
+-   [Discord](https://discord.gg/uNb5P4hA9X)
+-   [Contributor Guide](https://reactive-python.github.io/reactpy-django/contribute/code/)
+-   [Code of Conduct](https://github.com/reactive-python/reactpy-django/blob/main/CODE_OF_CONDUCT.md)
 
 <!--resources-end-->

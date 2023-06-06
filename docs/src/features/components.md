@@ -1,10 +1,8 @@
 ## Overview
 
-!!! summary
+!!! summary "Overview"
 
     Prefabricated components can be used within your `components.py` to help simplify development.
-
----
 
 ## View To Component
 

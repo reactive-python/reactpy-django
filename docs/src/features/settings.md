@@ -1,10 +1,8 @@
 ## Overview
 
-!!! summary
+!!! summary "Overview"
 
     Your **Django project's** `settings.py` can modify the behavior of ReactPy.
-
----
 
 ## Primary Configuration
 

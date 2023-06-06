@@ -203,7 +203,7 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
--   Django-specific hooks! `use_websocket`, `use_scope`, and `use_location` are now available within the `django_idom.hooks` module.
+-   Django specific hooks! `use_websocket`, `use_scope`, and `use_location` are now available within the `django_idom.hooks` module.
 -   Documentation has been placed into a formal docs webpage.
 -   Logging for when a component fails to import, or if no components were found within Django.
 

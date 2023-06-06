@@ -31,11 +31,6 @@
 	border-color: transparent !important;
 }
 
-[data-md-color-scheme="slate"] .md-typeset .admonition.summary,
-[data-md-color-scheme="slate"] .md-typeset details.summary {
-	background: #353a45;
-}
-
 [data-md-color-scheme="slate"] .md-typeset details > .admonition-title:after,
 [data-md-color-scheme="slate"] .md-typeset details > summary:after {
 	color: var(--md-admonition-fg-color) !important;
@@ -45,6 +40,8 @@
 [data-md-color-scheme="slate"] .md-typeset .admonition.summary,
 [data-md-color-scheme="slate"] .md-typeset details.summary {
 	background: #353a45;
+	padding: 0.8rem 1.4rem;
+	border-radius: 0.8rem;
 }
 
 [data-md-color-scheme="slate"] .md-typeset details.summary > .admonition-title,
@@ -54,7 +51,19 @@
 
 [data-md-color-scheme="slate"] .md-typeset .summary .admonition-title,
 [data-md-color-scheme="slate"] .md-typeset .summary summary {
+	font-size: 1rem;
 	background: transparent;
+	padding-left: 0.6rem;
+	padding-bottom: 0;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .summary .admonition-title:before {
+	display: none;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .admonition,
+[data-md-color-scheme="slate"] .md-typeset details {
+	border-color: #ffffff17 !important;
 }
 
 /* Move the sidebars to the edges of the page */
