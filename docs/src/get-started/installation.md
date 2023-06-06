@@ -1,10 +1,8 @@
 ## Overview
 
-!!! summary
+!!! summary "Overview"
 
     ReactPy-Django can be installed from PyPI to an existing **Django project** with minimal configuration.
-
----
 
 ## Step 0: Create a Django Project
 

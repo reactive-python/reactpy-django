@@ -1,10 +1,8 @@
 ## Overview
 
-!!! summary
+!!! summary "Overview"
 
       Create a component function using our decorator.
-
----
 
 ## Create a Component
 

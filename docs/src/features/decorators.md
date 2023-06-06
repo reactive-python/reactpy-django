@@ -1,10 +1,8 @@
 ## Overview
 
-!!! summary
+!!! summary "Overview"
 
     Decorator utilities can be used within your `components.py` to help simplify development.
-
----
 
 ## Auth Required
 

@@ -1,10 +1,8 @@
 ## Overview
 
-!!! summary
+!!! summary "Overview"
 
       Set up a **Django Project** with at least one app.
-
----
 
 ## Choose a Django App
 

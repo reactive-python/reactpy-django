@@ -8,4 +8,4 @@ Additionally, the vast majority of tutorials/guides you find for ReactJS can be 
 
 === "Learn More"
 
-    [ReactPy-Django Advanced Usage](../features/components.md){ .md-button .md-button--primary} [ReactPy Core Documentation](https://reactpy.dev/docs/guides/creating-interfaces/index.html){ .md-button .md-button--primary } [Ask Questions](https://github.com/reactive-python/reactpy/discussions){ .md-button .md-button--primary }
+    [ReactPy-Django Advanced Usage](../features/components.md){ .md-button .md-button--primary} [ReactPy Core Documentation](https://reactpy.dev/docs/guides/creating-interfaces/index.html){ .md-button .md-button--primary } [Ask Questions on Discord](https://discord.gg/uNb5P4hA9X){ .md-button .md-button--primary }

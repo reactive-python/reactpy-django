@@ -1,10 +1,8 @@
 ## Overview
 
-!!! summary
+!!! summary "Overview"
 
     Template tags can be used within your Django templates such as `my-template.html` to import ReactPy features.
-
----
 
 ## Component
 

@@ -1,10 +1,8 @@
 ## Overview
 
-!!! summary
+!!! summary "Overview"
 
     You will need to set up a Python environment to preview docs changes.
-
----
 
 ## Modifying Docs
 

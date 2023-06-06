@@ -1,16 +1,14 @@
 ## Overview
 
-!!! summary
+!!! summary "Overview"
 
     Prefabricated hooks can be used within your `components.py` to help simplify development.
 
 ??? tip "Looking for standard React hooks?"
 
-    Standard hooks are contained within [`reactive-python/reactpy`](https://github.com/reactive-python/reactpy). Since `reactpy` is installed alongside `reactpy-django`, you can import them at any time.
+    The `reactpy-django` package only contains django specific hooks. Standard hooks can be found within [`reactive-python/reactpy`](https://github.com/reactive-python/reactpy). Since `reactpy` is installed alongside `reactpy-django`, you can import them at any time.
 
     Check out the [ReactPy Core docs](https://reactpy.dev/docs/reference/hooks-api.html#basic-hooks) to see what hooks are available!
-
----
 
 ## Use Query
 

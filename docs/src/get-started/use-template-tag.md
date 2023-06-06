@@ -1,10 +1,8 @@
 ## Overview
 
-!!! summary
+!!! summary "Overview"
 
        Decide where the component will be displayed by using our template tag.
-
----
 
 ## Use the Template Tag
 

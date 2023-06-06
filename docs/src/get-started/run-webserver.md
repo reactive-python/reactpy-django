@@ -1,10 +1,8 @@
 ## Overview
 
-!!! summary
+!!! summary "Overview"
 
     Run a webserver to display your Django view.
-
----
 
 ## Run the Webserver
 
