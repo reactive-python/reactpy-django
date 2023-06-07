@@ -34,7 +34,9 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)
+### Added
+
+-   Added warning if poor system/cache/database performance is detected.
 
 ## [3.1.0] - 2023-05-06
 

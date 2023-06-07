@@ -77,7 +77,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             carrier=ComponentWebsocket(self.close, self.disconnect, dotted_path),
         )
         now = timezone.now()
-        component_args: Sequence[Any] = tuple()
+        component_args: Sequence[Any] = ()
         component_kwargs: MutableMapping[str, Any] = {}
 
         # Verify the component has already been registered
