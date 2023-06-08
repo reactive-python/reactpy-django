@@ -313,7 +313,12 @@ def create_cache_key(*args):
 def db_cleanup(immediate: bool = False):
     """Deletes expired component sessions from the database.
     This function may be expanded in the future to include additional cleanup tasks."""
-    from .config import REACTPY_CACHE, REACTPY_DATABASE, REACTPY_RECONNECT_MAX
+    from .config import (
+        REACTPY_CACHE,
+        REACTPY_DATABASE,
+        REACTPY_DEBUG_MODE,
+        REACTPY_RECONNECT_MAX,
+    )
     from .models import ComponentSession
 
     clean_started_at = datetime.now()
@@ -344,7 +349,7 @@ def db_cleanup(immediate: bool = False):
 
     # Check if cleaning took abnormally long
     clean_duration = datetime.now() - clean_started_at
-    if clean_duration.total_seconds() > 1:
+    if REACTPY_DEBUG_MODE and clean_duration.total_seconds() > 1:
         _logger.warning(
             "ReactPy has taken %s seconds to clean up expired component sessions. "
             "This may indicate a performance issue with your system, cache, or database.",
