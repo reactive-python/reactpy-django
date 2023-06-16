@@ -42,7 +42,7 @@ In your settings you will need to add `reactpy_django` to [`INSTALLED_APPS`](htt
 
     Below are a handful of values you can change within `settings.py` to modify the behavior of ReactPy.
 
-    ```python
+    ```python linenums="0"
     {% include "../../python/settings.py" %}
     ```
 
@@ -64,6 +64,20 @@ Register ReactPy's Websocket using `REACTPY_WEBSOCKET_PATH`.
 
     ```python
     {% include "../../python/configure-asgi.py" %}
+    ```
+
+??? note "Add `AuthMiddlewareStack` and `SessionMiddlewareStack` (Optional)"
+
+    If you will need to...
+
+    1. Access the currently active user
+    2. Login or logout users from your components
+    3. Access Django's `Sesssion` object
+
+    ... then you will need to ensure your `REACTPY_WEBSOCKET_PATH` is wrapped with `AuthMiddlewareStack` and `SessionMiddlewareStack`.
+
+    ```python linenums="0"
+    {% include "../../python/configure-asgi-middleware.py" start="# start" %}
     ```
 
 ??? question "Where is my `asgi.py`?"
