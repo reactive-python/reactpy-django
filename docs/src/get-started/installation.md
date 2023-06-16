@@ -28,15 +28,19 @@ In your settings you will need to add `reactpy_django` to [`INSTALLED_APPS`](htt
 
     ReactPy-Django requires ASGI Websockets from [Django Channels](https://github.com/django/channels).
 
-    If you have not enabled ASGI on your **Django project** yet, you will need to install `channels[daphne]`, add `daphne` to `INSTALLED_APPS`, then set your `ASGI_APPLICATION` variable.
+    If you have not enabled ASGI on your **Django project** yet, you will need to
 
-    Read the [Django Channels Docs](https://channels.readthedocs.io/en/stable/installation.html) for more info.
+    1. Install `channels[daphne]`
+    2. Add `daphne` to `INSTALLED_APPS`
+    3. Set your `ASGI_APPLICATION` variable.
 
     === "settings.py"
 
         ```python
         {% include "../../python/configure-channels.py" %}
         ```
+
+    Consider reading the [Django Channels Docs](https://channels.readthedocs.io/en/stable/installation.html) for more info.
 
 ??? note "Configure ReactPy settings (Optional)"
 
