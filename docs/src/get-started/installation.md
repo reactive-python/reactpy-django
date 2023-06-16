@@ -66,15 +66,15 @@ Register ReactPy's Websocket using `REACTPY_WEBSOCKET_PATH`.
     {% include "../../python/configure-asgi.py" %}
     ```
 
-??? note "Add `AuthMiddlewareStack` and `SessionMiddlewareStack` (Optional)"
+??? note "Add `AuthMiddlewareStack` and `SessionMiddlewareStack` (Recommended)"
 
-    If you will need to...
+    There are many situations where you need to access the Django `User` or `Session` objects within ReactPy components. For example, if you want to:
 
     1. Access the currently active user
     2. Login or logout users from your components
     3. Access Django's `Sesssion` object
 
-    ... then you will need to ensure your `REACTPY_WEBSOCKET_PATH` is wrapped with `AuthMiddlewareStack` and `SessionMiddlewareStack`.
+    In these situations will need to ensure your `REACTPY_WEBSOCKET_PATH` is wrapped with `AuthMiddlewareStack` and/or `SessionMiddlewareStack`.
 
     ```python linenums="0"
     {% include "../../python/configure-asgi-middleware.py" start="# start" %}
