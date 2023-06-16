@@ -50,7 +50,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             try:
                 await database_sync_to_async(self.scope["session"].save)()
             except Exception:
-                _logger.exception("ReactPy websocket has failed to save the session!")
+                _logger.exception("ReactPy has failed to save scope['session']!")
         else:
             _logger.debug(
                 "ReactPy websocket is missing SessionMiddlewareStack! "
