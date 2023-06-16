@@ -1,4 +1,4 @@
-# Broken load order, only for type checking
+# Broken load order, only used for linting
 from channels.routing import ProtocolTypeRouter, URLRouter
 
 from reactpy_django import REACTPY_WEBSOCKET_PATH
