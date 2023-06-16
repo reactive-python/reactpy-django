@@ -1,3 +1,5 @@
+*By submitting this pull request you agree that all contributions to this project are made under the MIT license.*
+
 ## Description
 
 A summary of the changes.
