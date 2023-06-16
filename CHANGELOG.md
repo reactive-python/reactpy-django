@@ -41,6 +41,7 @@ Using the following categories, list your changes in this order:
 
 ### Changed
 
+-   Using `SessionMiddlewareStack` is now optional.
 -   Using `AuthMiddlewareStack` is now optional.
 
 ## [3.1.0] - 2023-05-06
