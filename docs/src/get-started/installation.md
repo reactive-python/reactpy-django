@@ -78,7 +78,7 @@ Register ReactPy's Websocket using `REACTPY_WEBSOCKET_PATH`.
     2. Login or logout the current `User`
     3. Access Django's `Sesssion` object
 
-    In these situations will need to ensure your `REACTPY_WEBSOCKET_PATH` is wrapped with `AuthMiddlewareStack` and/or `SessionMiddlewareStack`.
+    In these situations will need to ensure you are using `AuthMiddlewareStack` and/or `SessionMiddlewareStack`.
 
     ```python linenums="0"
     {% include "../../python/configure-asgi-middleware.py" start="# start" %}
