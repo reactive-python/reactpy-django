@@ -19,7 +19,6 @@ from reactpy.core.serve import serve_layout
 from reactpy_django.types import ComponentParamData, ComponentWebsocket
 from reactpy_django.utils import db_cleanup, func_has_params
 
-
 _logger = logging.getLogger(__name__)
 
 
@@ -27,7 +26,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
     """Communicates with the browser to perform actions on-demand."""
 
     async def connect(self) -> None:
-        """The user has connected."""
+        """The browser has connected."""
         await super().connect()
 
         # Authenticate the user, if possible
@@ -63,7 +62,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         )
 
     async def disconnect(self, code: int) -> None:
-        """The user has disconnected."""
+        """The browser has disconnected."""
         if self._reactpy_dispatcher_future.done():
             await self._reactpy_dispatcher_future
         else:
