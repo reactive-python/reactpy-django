@@ -41,7 +41,6 @@ Using the following categories, list your changes in this order:
 ### Added
 
 -   Added warning if poor system/cache/database performance is detected while in `DEBUG` mode.
--   Added warning if poor system/cache/database performance is detected.
 -   Added `REACTPY_AUTH_BACKEND` setting to allow for custom authentication backends.
 
 ### Changed
