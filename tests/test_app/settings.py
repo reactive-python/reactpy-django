@@ -170,3 +170,7 @@ LOGGING = {
         },
     },
 }
+
+
+# ReactPy Django Settings
+REACTPY_AUTH_BACKEND = "django.contrib.auth.backends.ModelBackend"

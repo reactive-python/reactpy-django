@@ -28,9 +28,11 @@ In your settings you will need to add `reactpy_django` to [`INSTALLED_APPS`](htt
 
     ReactPy-Django requires ASGI Websockets from [Django Channels](https://github.com/django/channels).
 
-    If you have not enabled ASGI on your **Django project** yet, you will need to install `channels[daphne]`, add `daphne` to `INSTALLED_APPS`, then set your `ASGI_APPLICATION` variable.
+    If you have not enabled ASGI on your **Django project** yet, you will need to
 
-    Read the [Django Channels Docs](https://channels.readthedocs.io/en/stable/installation.html) for more info.
+    1. Install `channels[daphne]`
+    2. Add `daphne` to `INSTALLED_APPS`
+    3. Set your `ASGI_APPLICATION` variable.
 
     === "settings.py"
 
@@ -38,11 +40,13 @@ In your settings you will need to add `reactpy_django` to [`INSTALLED_APPS`](htt
         {% include "../../python/configure-channels.py" %}
         ```
 
+    Consider reading the [Django Channels Docs](https://channels.readthedocs.io/en/stable/installation.html) for more info.
+
 ??? note "Configure ReactPy settings (Optional)"
 
     Below are a handful of values you can change within `settings.py` to modify the behavior of ReactPy.
 
-    ```python
+    ```python linenums="0"
     {% include "../../python/settings.py" %}
     ```
 
@@ -64,6 +68,20 @@ Register ReactPy's Websocket using `REACTPY_WEBSOCKET_PATH`.
 
     ```python
     {% include "../../python/configure-asgi.py" %}
+    ```
+
+??? note "Add `AuthMiddlewareStack` and `SessionMiddlewareStack` (Optional)"
+
+    There are many situations where you need to access the Django `User` or `Session` objects within ReactPy components. For example, if you want to:
+
+    1. Access the `User` that is currently logged in
+    2. Login or logout the current `User`
+    3. Access Django's `Sesssion` object
+
+    In these situations will need to ensure you are using `AuthMiddlewareStack` and/or `SessionMiddlewareStack`.
+
+    ```python linenums="0"
+    {% include "../../python/configure-asgi-middleware.py" start="# start" %}
     ```
 
 ??? question "Where is my `asgi.py`?"

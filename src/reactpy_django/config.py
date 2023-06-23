@@ -50,3 +50,8 @@ REACTPY_DEFAULT_QUERY_POSTPROCESSOR: AsyncPostprocessor | SyncPostprocessor | No
         )
     )
 )
+REACTPY_AUTH_BACKEND: str | None = getattr(
+    settings,
+    "REACTPY_AUTH_BACKEND",
+    None,
+)

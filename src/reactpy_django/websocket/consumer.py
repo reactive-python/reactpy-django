@@ -27,25 +27,43 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
     """Communicates with the browser to perform actions on-demand."""
 
     async def connect(self) -> None:
-        from django.contrib.auth.models import AbstractBaseUser
-
+        """The browser has connected."""
         await super().connect()
 
-        user: AbstractBaseUser = self.scope.get("user")
+        # Authenticate the user, if possible
+        from reactpy_django.config import REACTPY_AUTH_BACKEND
+
+        user: Any = self.scope.get("user")
         if user and user.is_authenticated:
             try:
-                await login(self.scope, user)
-                await database_sync_to_async(self.scope["session"].save)()
+                await login(self.scope, user, backend=REACTPY_AUTH_BACKEND)
             except Exception:
                 _logger.exception("ReactPy websocket authentication has failed!")
         elif user is None:
-            _logger.warning("ReactPy websocket is missing AuthMiddlewareStack!")
+            _logger.debug(
+                "ReactPy websocket is missing AuthMiddlewareStack! "
+                "Users will not be accessible within `use_scope` or `use_websocket`!"
+            )
 
+        # Save the session, if possible
+        if self.scope.get("session"):
+            try:
+                await database_sync_to_async(self.scope["session"].save)()
+            except Exception:
+                _logger.exception("ReactPy has failed to save scope['session']!")
+        else:
+            _logger.debug(
+                "ReactPy websocket is missing SessionMiddlewareStack! "
+                "Sessions will not be accessible within `use_scope` or `use_websocket`!"
+            )
+
+        # Start allowing component renders
         self._reactpy_dispatcher_future = asyncio.ensure_future(
             self._run_dispatch_loop()
         )
 
     async def disconnect(self, code: int) -> None:
+        """The browser has disconnected."""
         if self._reactpy_dispatcher_future.done():
             await self._reactpy_dispatcher_future
         else:
@@ -53,9 +71,11 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         await super().disconnect(code)
 
     async def receive_json(self, content: Any, **_) -> None:
+        """Receive a message from the browser. Typically messages are event signals."""
         await self._reactpy_recv_queue.put(content)
 
     async def _run_dispatch_loop(self):
+        """Runs the main loop that performs component rendering tasks."""
         from reactpy_django import models
         from reactpy_django.config import (
             REACTPY_DATABASE,
@@ -130,7 +150,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             )
             return
 
-        # Begin serving the ReactPy component
+        # Start the ReactPy component rendering loop
         try:
             await serve_layout(
                 Layout(ConnectionContext(component_instance, value=connection)),
