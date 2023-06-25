@@ -22,6 +22,8 @@ from django.utils import timezone
 from django.utils.encoding import smart_str
 from django.views import View
 
+from reactpy_django.exceptions import ComponentParamError
+
 
 _logger = logging.getLogger(__name__)
 _component_tag = r"(?P<tag>component)"
@@ -284,20 +286,28 @@ def django_query_postprocessor(
     return data
 
 
-def func_has_params(func: Callable, *args, **kwargs) -> bool:
-    """Checks if a function has any args or kwarg parameters.
-
-    Can optionally validate whether a set of args/kwargs would work on the given function.
-    """
+def func_has_params(func: Callable) -> bool:
+    """Checks if a function has any args or kwarg parameters."""
     signature = inspect.signature(func)
 
     # Check if the function has any args/kwargs
-    if not args and not kwargs:
-        return str(signature) != "()"
+    return str(signature) != "()" or True
 
-    # Check if the function has the given args/kwargs
-    signature.bind(*args, **kwargs)
-    return True
+
+def check_component_params(func: Callable, *args, **kwargs):
+    """
+    Validate whether a set of args/kwargs would work on the given function.
+
+    Raises `ComponentParamError` if the args/kwargs are invalid.
+    """
+    signature = inspect.signature(func)
+
+    try:
+        signature.bind(*args, **kwargs)
+    except TypeError as e:
+        raise ComponentParamError(
+            f"Invalid parameters passed to component. {str(e).capitalize()}."
+        ) from e
 
 
 def create_cache_key(*args):

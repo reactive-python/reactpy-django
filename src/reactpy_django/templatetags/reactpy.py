@@ -1,3 +1,4 @@
+from logging import getLogger
 from uuid import uuid4
 
 import dill as pickle
@@ -7,15 +8,18 @@ from django.urls import reverse
 from reactpy_django import models
 from reactpy_django.config import (
     REACTPY_DATABASE,
+    REACTPY_DEBUG_MODE,
     REACTPY_RECONNECT_MAX,
     REACTPY_WEBSOCKET_URL,
 )
+from reactpy_django.exceptions import ComponentParamError
 from reactpy_django.types import ComponentParamData
-from reactpy_django.utils import _register_component, func_has_params
+from reactpy_django.utils import _register_component, check_component_params
 
 
 REACTPY_WEB_MODULES_URL = reverse("reactpy:web_modules", args=["x"])[:-1][1:]
 register = template.Library()
+_logger = getLogger(__name__)
 
 
 @register.inclusion_tag("reactpy/component.html")
@@ -39,24 +43,56 @@ def component(dotted_path: str, *args, **kwargs):
         </body>
         </html>
     """
-    component = _register_component(dotted_path)
-    uuid = uuid4().hex
-    class_ = kwargs.pop("class", "")
-    kwargs.pop("key", "")  # `key` is effectively useless for the root node
+    # Register the component if needed
+    try:
+        component = _register_component(dotted_path)
+        uuid = uuid4().hex
+        class_ = kwargs.pop("class", "")
+        kwargs.pop("key", "")  # `key` is effectively useless for the root node
+    except Exception as e:
+        _logger.exception(
+            "An unknown error has occurred while registering component '%s'.",
+            dotted_path,
+        )
+        return {
+            "reactpy_failure": True,
+            "reactpy_debug_mode": REACTPY_DEBUG_MODE,
+            "reactpy_dotted_path": dotted_path,
+            "reactpy_error": type(e).__name__,
+        }
 
     # Store the component's args/kwargs in the database if needed
     # This will be fetched by the websocket consumer later
     try:
-        if func_has_params(component, *args, **kwargs):
-            params = ComponentParamData(args, kwargs)
-            model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
-            model.full_clean()
-            model.save(using=REACTPY_DATABASE)
-    except TypeError as e:
-        raise TypeError(
-            f"The provided parameters are incompatible with component '{dotted_path}'."
-        ) from e
+        check_component_params(component, *args, **kwargs)
+        params = ComponentParamData(args, kwargs)
+        model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
+        model.full_clean()
+        model.save(using=REACTPY_DATABASE)
+    except ComponentParamError as e:
+        _logger.exception(
+            "The provided parameters are incompatible with component '%s'.",
+            dotted_path,
+        )
+        return {
+            "reactpy_failure": True,
+            "reactpy_debug_mode": REACTPY_DEBUG_MODE,
+            "reactpy_dotted_path": dotted_path,
+            "reactpy_error": type(e).__name__,
+        }
+    except Exception as e:
+        _logger.exception(
+            "An unknown error has occurred while saving component params for '%s'.",
+            dotted_path,
+        )
+        return {
+            "reactpy_failure": True,
+            "reactpy_debug_mode": REACTPY_DEBUG_MODE,
+            "reactpy_dotted_path": dotted_path,
+            "reactpy_error": type(e).__name__,
+        }
 
+    # Return the template rendering context
     return {
         "class": class_,
         "reactpy_websocket_url": REACTPY_WEBSOCKET_URL,
