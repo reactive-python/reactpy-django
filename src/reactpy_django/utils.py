@@ -97,7 +97,7 @@ def _register_component(dotted_path: str) -> Callable:
         REACTPY_REGISTERED_COMPONENTS[dotted_path] = import_dotted_path(dotted_path)
     except AttributeError as e:
         raise ComponentDoesNotExistError(
-            f"Component {dotted_path} does not exist."
+            f"Component '{dotted_path}' does not exist."
         ) from e
     _logger.debug("ReactPy has registered component %s", dotted_path)
     return REACTPY_REGISTERED_COMPONENTS[dotted_path]
