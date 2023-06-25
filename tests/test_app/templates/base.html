@@ -8,82 +8,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
   <title>ReactPy</title>
-</head>
-
-<body>
-  <h1>ReactPy Test Page</h1>
   <style>
     iframe {
       width: 100%;
       height: 45px;
     }
   </style>
+</head>
+
+<body>
+  <h1>ReactPy Test Page</h1>
   <hr>
-  <div>{% component "test_app.components.hello_world" class="hello-world" %}</div>
+  {% component "test_app.components.hello_world" class="hello-world" %}
   <hr>
-  <div>{% component "test_app.components.button" class="button" %}</div>
+  {% component "test_app.components.button" class="button" %}
   <hr>
-  <div>{% component "test_app.components.parameterized_component" class="parametarized-component" x=123 y=456 %}</div>
+  {% component "test_app.components.parameterized_component" class="parametarized-component" x=123 y=456 %}
   <hr>
-  <div>{% component "test_app.components.object_in_templatetag" my_object %}</div>
+  {% component "test_app.components.object_in_templatetag" my_object %}
   <hr>
-  <div>{% component "test_app.components.simple_button" %}</div>
+  {% component "test_app.components.simple_button" %}
   <hr>
-  <div>{% component "test_app.components.use_connection" %}</div>
+  {% component "test_app.components.use_connection" %}
   <hr>
-  <div>{% component "test_app.components.use_scope" %}</div>
+  {% component "test_app.components.use_scope" %}
   <hr>
-  <div>{% component "test_app.components.use_location" %}</div>
+  {% component "test_app.components.use_location" %}
   <hr>
-  <div>{% component "test_app.components.use_origin" %}</div>
+  {% component "test_app.components.use_origin" %}
   <hr>
-  <div>{% component "test_app.components.django_css" %}</div>
+  {% component "test_app.components.django_css" %}
   <hr>
-  <div>{% component "test_app.components.django_js" %}</div>
+  {% component "test_app.components.django_js" %}
   <hr>
-  <div>{% component "test_app.components.unauthorized_user" %}</div>
+  {% component "test_app.components.unauthorized_user" %}
   <hr>
-  <div>{% component "test_app.components.authorized_user" %}</div>
+  {% component "test_app.components.authorized_user" %}
   <hr>
-  <div>{% component "test_app.components.relational_query" %}</div>
+  {% component "test_app.components.relational_query" %}
   <hr>
-  <div>{% component "test_app.components.async_relational_query" %}</div>
+  {% component "test_app.components.async_relational_query" %}
   <hr>
-  <div>{% component "test_app.components.todo_list" %}</div>
+  {% component "test_app.components.todo_list" %}
   <hr>
-  <div>{% component "test_app.components.async_todo_list" %}</div>
+  {% component "test_app.components.async_todo_list" %}
   <hr>
-  <div>{% component "test_app.components.view_to_component_sync_func" %}</div>
+  {% component "test_app.components.view_to_component_sync_func" %}
   <hr>
-  <div>{% component "test_app.components.view_to_component_async_func" %}</div>
+  {% component "test_app.components.view_to_component_async_func" %}
   <hr>
-  <div>{% component "test_app.components.view_to_component_sync_class" %}</div>
+  {% component "test_app.components.view_to_component_sync_class" %}
   <hr>
-  <div>{% component "test_app.components.view_to_component_async_class" %}</div>
+  {% component "test_app.components.view_to_component_async_class" %}
   <hr>
-  <div>{% component "test_app.components.view_to_component_template_view_class" %}</div>
+  {% component "test_app.components.view_to_component_template_view_class" %}
   <hr>
-  <div>{% component "test_app.components.view_to_component_script" %}</div>
+  {% component "test_app.components.view_to_component_script" %}
   <hr>
-  <div>{% component "test_app.components.view_to_component_request" %}</div>
+  {% component "test_app.components.view_to_component_request" %}
   <hr>
-  <div>{% component "test_app.components.view_to_component_args" %}</div>
+  {% component "test_app.components.view_to_component_args" %}
   <hr>
-  <div>{% component "test_app.components.view_to_component_kwargs" %}</div>
+  {% component "test_app.components.view_to_component_kwargs" %}
   <hr>
-  <div>{% component "test_app.components.view_to_component_sync_func_compatibility" %}</div>
+  {% component "test_app.components.view_to_component_sync_func_compatibility" %}
   <hr>
-  <div>{% component "test_app.components.view_to_component_async_func_compatibility" %}</div>
+  {% component "test_app.components.view_to_component_async_func_compatibility" %}
   <hr>
-  <div>{% component "test_app.components.view_to_component_sync_class_compatibility" %}</div>
+  {% component "test_app.components.view_to_component_sync_class_compatibility" %}
   <hr>
-  <div>{% component "test_app.components.view_to_component_async_class_compatibility" %}</div>
+  {% component "test_app.components.view_to_component_async_class_compatibility" %}
   <hr>
-  <div>{% component "test_app.components.view_to_component_template_view_class_compatibility" %}</div>
+  {% component "test_app.components.view_to_component_template_view_class_compatibility" %}
   <hr>
-  <div>{% component "test_app.components.view_to_component_decorator" %}</div>
+  {% component "test_app.components.view_to_component_decorator" %}
   <hr>
-  <div>{% component "test_app.components.view_to_component_decorator_args" %}</div>
+  {% component "test_app.components.view_to_component_decorator_args" %}
   <hr>
 </body>
 
