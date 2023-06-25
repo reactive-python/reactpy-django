@@ -2,5 +2,5 @@ class ComponentParamError(TypeError):
     ...
 
 
-class ComponentDoesNotExistError(TypeError):
+class ComponentDoesNotExistError(AttributeError):
     ...
