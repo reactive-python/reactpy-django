@@ -1,4 +1,4 @@
 {% block top %}{% endblock %}
 <div id="{{test_name}}" data-success="{% firstof status 'true' %}">{{ test_name }}: {% firstof status "Success" %}
 </div>
-<hr> {% block bottom %}{% endblock %}
+{% block bottom %}{% endblock %}
