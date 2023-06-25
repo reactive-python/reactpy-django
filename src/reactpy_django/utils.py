@@ -22,7 +22,7 @@ from django.utils import timezone
 from django.utils.encoding import smart_str
 from django.views import View
 
-from reactpy_django.exceptions import ComponentParamError
+from reactpy_django.exceptions import ComponentDoesNotExistError, ComponentParamError
 
 
 _logger = logging.getLogger(__name__)
@@ -93,7 +93,12 @@ def _register_component(dotted_path: str) -> Callable:
     if dotted_path in REACTPY_REGISTERED_COMPONENTS:
         return REACTPY_REGISTERED_COMPONENTS[dotted_path]
 
-    REACTPY_REGISTERED_COMPONENTS[dotted_path] = import_dotted_path(dotted_path)
+    try:
+        REACTPY_REGISTERED_COMPONENTS[dotted_path] = import_dotted_path(dotted_path)
+    except AttributeError as e:
+        raise ComponentDoesNotExistError(
+            f"Component {dotted_path} does not exist."
+        ) from e
     _logger.debug("ReactPy has registered component %s", dotted_path)
     return REACTPY_REGISTERED_COMPONENTS[dotted_path]
 

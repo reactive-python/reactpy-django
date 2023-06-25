@@ -12,7 +12,7 @@ from reactpy_django.config import (
     REACTPY_RECONNECT_MAX,
     REACTPY_WEBSOCKET_URL,
 )
-from reactpy_django.exceptions import ComponentParamError
+from reactpy_django.exceptions import ComponentDoesNotExistError, ComponentParamError
 from reactpy_django.types import ComponentParamData
 from reactpy_django.utils import _register_component, check_component_params
 
@@ -43,12 +43,24 @@ def component(dotted_path: str, *args, **kwargs):
         </body>
         </html>
     """
+
     # Register the component if needed
     try:
         component = _register_component(dotted_path)
         uuid = uuid4().hex
         class_ = kwargs.pop("class", "")
         kwargs.pop("key", "")  # `key` is effectively useless for the root node
+    except ComponentDoesNotExistError as e:
+        _logger.exception(
+            "The component '%s' does not exist or is not a valid ReactPy component.",
+            dotted_path,
+        )
+        return {
+            "reactpy_failure": True,
+            "reactpy_debug_mode": REACTPY_DEBUG_MODE,
+            "reactpy_dotted_path": dotted_path,
+            "reactpy_error": type(e).__name__,
+        }
     except Exception as e:
         _logger.exception(
             "An unknown error has occurred while registering component '%s'.",
