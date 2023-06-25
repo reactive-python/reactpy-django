@@ -50,28 +50,15 @@ def component(dotted_path: str, *args, **kwargs):
         uuid = uuid4().hex
         class_ = kwargs.pop("class", "")
         kwargs.pop("key", "")  # `key` is effectively useless for the root node
-    except ComponentDoesNotExistError as e:
-        _logger.exception(
-            "The component '%s' does not exist or is not a valid ReactPy component.",
-            dotted_path,
-        )
-        return {
-            "reactpy_failure": True,
-            "reactpy_debug_mode": REACTPY_DEBUG_MODE,
-            "reactpy_dotted_path": dotted_path,
-            "reactpy_error": type(e).__name__,
-        }
+
     except Exception as e:
-        _logger.exception(
-            "An unknown error has occurred while registering component '%s'.",
+        _logger.error(
+            f"Error while fetching '%s'. {(str(e.__cause__).capitalize())}."
+            if isinstance(e, ComponentDoesNotExistError)
+            else "An unknown error has occurred while registering component '%s'.",
             dotted_path,
         )
-        return {
-            "reactpy_failure": True,
-            "reactpy_debug_mode": REACTPY_DEBUG_MODE,
-            "reactpy_dotted_path": dotted_path,
-            "reactpy_error": type(e).__name__,
-        }
+        return failure_context(dotted_path, e)
 
     # Store the component's args/kwargs in the database if needed
     # This will be fetched by the websocket consumer later
@@ -81,28 +68,15 @@ def component(dotted_path: str, *args, **kwargs):
         model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
         model.full_clean()
         model.save(using=REACTPY_DATABASE)
-    except ComponentParamError as e:
-        _logger.exception(
-            "The provided parameters are incompatible with component '%s'.",
-            dotted_path,
-        )
-        return {
-            "reactpy_failure": True,
-            "reactpy_debug_mode": REACTPY_DEBUG_MODE,
-            "reactpy_dotted_path": dotted_path,
-            "reactpy_error": type(e).__name__,
-        }
+
     except Exception as e:
-        _logger.exception(
-            "An unknown error has occurred while saving component params for '%s'.",
+        _logger.error(
+            f"Invalid component parameters for '%s'. {(str(e.__cause__).capitalize())}."
+            if isinstance(e, ComponentParamError)
+            else "An unknown error has occurred while saving component params for '%s'.",
             dotted_path,
         )
-        return {
-            "reactpy_failure": True,
-            "reactpy_debug_mode": REACTPY_DEBUG_MODE,
-            "reactpy_dotted_path": dotted_path,
-            "reactpy_error": type(e).__name__,
-        }
+        return failure_context(dotted_path, e)
 
     # Return the template rendering context
     return {
@@ -112,4 +86,13 @@ def component(dotted_path: str, *args, **kwargs):
         "reactpy_reconnect_max": REACTPY_RECONNECT_MAX,
         "reactpy_mount_uuid": uuid,
         "reactpy_component_path": f"{dotted_path}/{uuid}/",
+    }
+
+
+def failure_context(dotted_path: str, error: Exception):
+    return {
+        "reactpy_failure": True,
+        "reactpy_debug_mode": REACTPY_DEBUG_MODE,
+        "reactpy_dotted_path": dotted_path,
+        "reactpy_error": type(error).__name__,
     }
