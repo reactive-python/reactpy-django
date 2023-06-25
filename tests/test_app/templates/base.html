@@ -85,6 +85,10 @@
   <hr>
   {% component "test_app.components.view_to_component_decorator_args" %}
   <hr>
+  <div id="component_does_not_exist_error">{% component "test_app.components.does_not_exist" %}</div>
+  <hr>
+  <div id="component_param_error">{% component "test_app.components.hello_world" invalid_param="random_value" %}</div>
+  <hr>
 </body>
 
 </html>

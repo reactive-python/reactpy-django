@@ -257,3 +257,13 @@ class ComponentTests(ChannelsLiveServerTestCase):
         self.page.locator(
             "#view_to_component_decorator_args[data-success=true]"
         ).wait_for()
+
+    def test_component_does_not_exist_error(self):
+        broken_component = self.page.locator("#component_does_not_exist_error")
+        broken_component.wait_for()
+        self.assertIn("ComponentDoesNotExistError:", broken_component.text_content())
+
+    def test_compoent_param_error(self):
+        broken_component = self.page.locator("#component_param_error")
+        broken_component.wait_for()
+        self.assertIn("ComponentParamError:", broken_component.text_content())
