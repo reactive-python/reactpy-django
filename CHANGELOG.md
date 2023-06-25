@@ -34,7 +34,13 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)
+### Added
+
+-   Component exception info will now print to the webpage when `DEBUG` is enabled.
+
+### Fixed
+
+-   Prevent exceptions within the `component` template tag from causing the whole template to fail to render.
 
 ## [3.2.0] - 2023-06-08
 
