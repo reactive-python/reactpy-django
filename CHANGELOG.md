@@ -36,7 +36,7 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
--   Component exception info will now print to the webpage when `DEBUG` is enabled.
+-   Template tag exception details are now rendered on the webpage when `DEBUG` is enabled.
 
 ### Fixed
 
