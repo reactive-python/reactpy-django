@@ -14,7 +14,7 @@ from reactpy_django.config import (
 )
 from reactpy_django.exceptions import ComponentDoesNotExistError, ComponentParamError
 from reactpy_django.types import ComponentParamData
-from reactpy_django.utils import _register_component, check_component_params
+from reactpy_django.utils import _register_component, check_component_args
 
 
 REACTPY_WEB_MODULES_URL = reverse("reactpy:web_modules", args=["x"])[:-1][1:]
@@ -52,30 +52,32 @@ def component(dotted_path: str, *args, **kwargs):
         kwargs.pop("key", "")  # `key` is effectively useless for the root node
 
     except Exception as e:
-        _logger.error(
-            f"Error while fetching '%s'. {(str(e.__cause__).capitalize())}."
-            if isinstance(e, ComponentDoesNotExistError)
-            else "An unknown error has occurred while registering component '%s'.",
-            dotted_path,
-        )
+        if isinstance(e, ComponentDoesNotExistError):
+            _logger.error(str(e))
+        else:
+            _logger.exception(
+                "An unknown error has occurred while registering component '%s'.",
+                dotted_path,
+            )
         return failure_context(dotted_path, e)
 
     # Store the component's args/kwargs in the database if needed
     # This will be fetched by the websocket consumer later
     try:
-        check_component_params(component, *args, **kwargs)
+        check_component_args(component, *args, **kwargs)
         params = ComponentParamData(args, kwargs)
         model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
         model.full_clean()
         model.save(using=REACTPY_DATABASE)
 
     except Exception as e:
-        _logger.error(
-            f"Invalid component parameters for '%s'. {(str(e.__cause__).capitalize())}."
-            if isinstance(e, ComponentParamError)
-            else "An unknown error has occurred while saving component params for '%s'.",
-            dotted_path,
-        )
+        if isinstance(e, ComponentParamError):
+            _logger.error(str(e))
+        else:
+            _logger.exception(
+                "An unknown error has occurred while saving component params for '%s'.",
+                dotted_path,
+            )
         return failure_context(dotted_path, e)
 
     # Return the template rendering context

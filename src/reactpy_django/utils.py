@@ -97,7 +97,7 @@ def _register_component(dotted_path: str) -> Callable:
         REACTPY_REGISTERED_COMPONENTS[dotted_path] = import_dotted_path(dotted_path)
     except AttributeError as e:
         raise ComponentDoesNotExistError(
-            f"Component '{dotted_path}' does not exist."
+            f"Error while fetching '{dotted_path}'. {(str(e).capitalize())}."
         ) from e
     _logger.debug("ReactPy has registered component %s", dotted_path)
     return REACTPY_REGISTERED_COMPONENTS[dotted_path]
@@ -217,7 +217,7 @@ class ComponentPreloader:
                 )
 
 
-def generate_obj_name(object: Any) -> str | None:
+def generate_obj_name(object: Any) -> str:
     """Makes a best effort to create a name for an object.
     Useful for JSON serialization of Python objects."""
     if hasattr(object, "__module__"):
@@ -225,7 +225,10 @@ def generate_obj_name(object: Any) -> str | None:
             return f"{object.__module__}.{object.__name__}"
         if hasattr(object, "__class__"):
             return f"{object.__module__}.{object.__class__.__name__}"
-    return None
+
+    with contextlib.suppress(Exception):
+        return str(object)
+    return ""
 
 
 def django_query_postprocessor(
@@ -291,15 +294,15 @@ def django_query_postprocessor(
     return data
 
 
-def func_has_params(func: Callable) -> bool:
-    """Checks if a function has any args or kwarg parameters."""
+def func_has_args(func: Callable) -> bool:
+    """Checks if a function has any args or kwarg."""
     signature = inspect.signature(func)
 
     # Check if the function has any args/kwargs
-    return str(signature) != "()" or True
+    return str(signature) != "()"
 
 
-def check_component_params(func: Callable, *args, **kwargs):
+def check_component_args(func: Callable, *args, **kwargs):
     """
     Validate whether a set of args/kwargs would work on the given function.
 
@@ -310,8 +313,9 @@ def check_component_params(func: Callable, *args, **kwargs):
     try:
         signature.bind(*args, **kwargs)
     except TypeError as e:
+        name = generate_obj_name(func)
         raise ComponentParamError(
-            f"Invalid parameters passed to component. {str(e).capitalize()}."
+            f"Invalid args for '{name}'. {str(e).capitalize()}."
         ) from e
 
 
