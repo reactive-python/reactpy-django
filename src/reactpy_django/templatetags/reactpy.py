@@ -14,7 +14,11 @@ from reactpy_django.config import (
 )
 from reactpy_django.exceptions import ComponentDoesNotExistError, ComponentParamError
 from reactpy_django.types import ComponentParamData
-from reactpy_django.utils import _register_component, check_component_args
+from reactpy_django.utils import (
+    _register_component,
+    check_component_args,
+    func_has_args,
+)
 
 
 REACTPY_WEB_MODULES_URL = reverse("reactpy:web_modules", args=["x"])[:-1][1:]
@@ -65,10 +69,11 @@ def component(dotted_path: str, *args, **kwargs):
     # This will be fetched by the websocket consumer later
     try:
         check_component_args(component, *args, **kwargs)
-        params = ComponentParamData(args, kwargs)
-        model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
-        model.full_clean()
-        model.save(using=REACTPY_DATABASE)
+        if func_has_args(component):
+            params = ComponentParamData(args, kwargs)
+            model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
+            model.full_clean()
+            model.save(using=REACTPY_DATABASE)
 
     except Exception as e:
         if isinstance(e, ComponentParamError):
