@@ -88,4 +88,8 @@ class RegexTests(TestCase):
         double_component_match = COMPONENT_REGEX.search(
             r'{% component "my.component" %} {% component "my.component" %}'
         )
+        if not double_component_match:
+            raise self.failureException(
+                f"Regex pattern {COMPONENT_REGEX.pattern} failed to match component"
+            )
         self.assertTrue(double_component_match[0] == r'{% component "my.component" %}')
