@@ -34,7 +34,7 @@
 <span class=c1># Dotted path to the Django authentication backend to use for ReactPy components</span>
 <span class=c1># This is only needed if:</span>
 <span class=c1>#   1. You are using `AuthMiddlewareStack` and...</span>
-<span class=c1>#   2. You are using Django&#39;s `AUTHENTICATION_BACKENDS` settings and...</span>
+<span class=c1>#   2. You are using Django&#39;s `AUTHENTICATION_BACKENDS` setting and...</span>
 <span class=c1>#   3. Your Django user model does not define a `backend` attribute</span>
 <span class=n>REACTPY_AUTH_BACKEND</span> <span class=o>=</span> <span class=kc>None</span>
 </code></pre></div> </details> <h2 id=step-3-configure-urlspy>Step 3: Configure <a href=https://docs.djangoproject.com/en/dev/topics/http/urls/ ><code>urls.py</code></a><a class=headerlink href=#step-3-configure-urlspy title="Permanent link">&para;</a></h2> <p>Add ReactPy HTTP paths to your <code>urlpatterns</code>.</p> <div class="tabbed-set tabbed-alternate" data-tabs=3:1><input checked=checked id=__tabbed_3_1 name=__tabbed_3 type=radio><div class=tabbed-labels><label for=__tabbed_3_1>urls.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1</span>
