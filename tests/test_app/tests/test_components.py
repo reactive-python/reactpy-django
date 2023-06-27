@@ -271,7 +271,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
         self.assertIn("ComponentParamError:", broken_component.text_content())
 
     def test_component_session_exists(self):
-        """Sssion should exist for components with args."""
+        """Session should exist for components with args/kwargs."""
         from reactpy_django.config import REACTPY_DATABASE
 
         component = self.page.locator("#parametrized-component")
@@ -285,7 +285,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
         self.assertTrue(query_exists)
 
     def test_component_session_missing(self):
-        """No session should exist for components that don't have args."""
+        """No session should exist for components that don't have args/kwargs."""
         from reactpy_django.config import REACTPY_DATABASE
 
         component = self.page.locator("#simple-button")
