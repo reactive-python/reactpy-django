@@ -1,0 +1,6 @@
+class ComponentParamError(TypeError):
+    ...
+
+
+class ComponentDoesNotExistError(AttributeError):
+    ...

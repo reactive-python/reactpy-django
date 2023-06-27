@@ -157,9 +157,7 @@ def use_query(
             set_data(None)
             set_loading(False)
             set_error(e)
-            _logger.exception(
-                f"Failed to execute query: {generate_obj_name(query) or query}"
-            )
+            _logger.exception(f"Failed to execute query: {generate_obj_name(query)}")
             return
 
         # Query was successful
@@ -252,7 +250,7 @@ def use_mutation(*args: Any, **kwargs: Any) -> Mutation[_Params]:
             set_loading(False)
             set_error(e)
             _logger.exception(
-                f"Failed to execute mutation: {generate_obj_name(mutation) or mutation}"
+                f"Failed to execute mutation: {generate_obj_name(mutation)}"
             )
 
         # Mutation was successful

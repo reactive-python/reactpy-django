@@ -17,7 +17,7 @@ from reactpy.core.layout import Layout
 from reactpy.core.serve import serve_layout
 
 from reactpy_django.types import ComponentParamData, ComponentWebsocket
-from reactpy_django.utils import db_cleanup, func_has_params
+from reactpy_django.utils import db_cleanup, func_has_args
 
 
 _logger = logging.getLogger(__name__)
@@ -111,7 +111,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
         # Fetch the component's args/kwargs from the database, if needed
         try:
-            if func_has_params(component_constructor):
+            if func_has_args(component_constructor):
                 try:
                     # Always clean up expired entries first
                     await database_sync_to_async(db_cleanup, thread_sensitive=False)()

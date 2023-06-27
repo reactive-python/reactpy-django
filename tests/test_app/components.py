@@ -26,7 +26,7 @@ from .types import TestObject
 
 @component
 def hello_world():
-    return html._(html.div({"id": "hello-world"}, "Hello World!"), html.hr())
+    return html._(html.div({"id": "hello-world"}, "Hello World!"))
 
 
 @component
@@ -42,8 +42,7 @@ def button():
             html.p(
                 {"id": "counter-num", "data-count": count}, f"Current count is: {count}"
             ),
-        ),
-        html.hr(),
+        )
     )
 
 
@@ -54,8 +53,7 @@ def parameterized_component(x, y):
         html.div(
             {"id": "parametrized-component", "data-value": total},
             f"parameterized_component: {total}",
-        ),
-        html.hr(),
+        )
     )
 
 
@@ -66,8 +64,7 @@ def object_in_templatetag(my_object: TestObject):
     return html._(
         html.div(
             {"id": co_name, "data-success": success}, f"{co_name}: ", str(my_object)
-        ),
-        html.hr(),
+        )
     )
 
 
@@ -82,11 +79,7 @@ SimpleButton = web.export(SimpleButtonModule, "SimpleButton")
 
 @component
 def simple_button():
-    return html._(
-        "simple_button:",
-        SimpleButton({"id": "simple-button"}),
-        html.hr(),
-    )
+    return html._("simple_button:", SimpleButton({"id": "simple-button"}))
 
 
 @component
@@ -100,9 +93,7 @@ def use_connection():
         and getattr(ws.carrier, "dotted_path", None)
     )
     return html.div(
-        {"id": "use-connection", "data-success": success},
-        f"use_connection: {ws}",
-        html.hr(),
+        {"id": "use-connection", "data-success": success}, f"use_connection: {ws}"
     )
 
 
@@ -110,9 +101,7 @@ def use_connection():
 def use_scope():
     scope = reactpy_django.hooks.use_scope()
     success = len(scope) >= 10 and scope["type"] == "websocket"
-    return html.div(
-        {"id": "use-scope", "data-success": success}, f"use_scope: {scope}", html.hr()
-    )
+    return html.div({"id": "use-scope", "data-success": success}, f"use_scope: {scope}")
 
 
 @component
@@ -120,9 +109,7 @@ def use_location():
     location = reactpy_django.hooks.use_location()
     success = bool(location)
     return html.div(
-        {"id": "use-location", "data-success": success},
-        f"use_location: {location}",
-        html.hr(),
+        {"id": "use-location", "data-success": success}, f"use_location: {location}"
     )
 
 
@@ -131,9 +118,7 @@ def use_origin():
     origin = reactpy_django.hooks.use_origin()
     success = bool(origin)
     return html.div(
-        {"id": "use-origin", "data-success": success},
-        f"use_origin: {origin}",
-        html.hr(),
+        {"id": "use-origin", "data-success": success}, f"use_origin: {origin}"
     )
 
 
@@ -144,7 +129,6 @@ def django_css():
         reactpy_django.components.django_css("django-css-test.css", key="test"),
         html.div({"style": {"display": "inline"}}, "django_css: "),
         html.button("This text should be blue."),
-        html.hr(),
     )
 
 
@@ -156,42 +140,27 @@ def django_js():
             {"id": "django-js", "data-success": success},
             f"django_js: {success}",
             reactpy_django.components.django_js("django-js-test.js", key="test"),
-        ),
-        html.hr(),
+        )
     )
 
 
 @component
 @reactpy_django.decorators.auth_required(
     fallback=html.div(
-        {"id": "unauthorized-user-fallback"},
-        "unauthorized_user: Success",
-        html.hr(),
+        {"id": "unauthorized-user-fallback"}, "unauthorized_user: Success"
     )
 )
 def unauthorized_user():
-    return html.div(
-        {"id": "unauthorized-user"},
-        "unauthorized_user: Fail",
-        html.hr(),
-    )
+    return html.div({"id": "unauthorized-user"}, "unauthorized_user: Fail")
 
 
 @component
 @reactpy_django.decorators.auth_required(
     auth_attribute="is_anonymous",
-    fallback=html.div(
-        {"id": "authorized-user-fallback"},
-        "authorized_user: Fail",
-        html.hr(),
-    ),
+    fallback=html.div({"id": "authorized-user-fallback"}, "authorized_user: Fail"),
 )
 def authorized_user():
-    return html.div(
-        {"id": "authorized-user"},
-        "authorized_user: Success",
-        html.hr(),
-    )
+    return html.div({"id": "authorized-user"}, "authorized_user: Success")
 
 
 def create_relational_parent() -> RelationalParent:
@@ -242,7 +211,6 @@ def relational_query():
         html.div(f"Relational Parent One To One: {oto}"),
         html.div(f"Relational Parent Many to One: {mto}"),
         html.div(f"Relational Child Foreign Key: {fk}"),
-        html.hr(),
     )
 
 
@@ -304,7 +272,6 @@ def async_relational_query():
         html.div(f"Relational Parent One To One: {oto}"),
         html.div(f"Relational Parent Many to One: {mto}"),
         html.div(f"Relational Child Foreign Key: {fk}"),
-        html.hr(),
     )
 
 
@@ -400,7 +367,6 @@ def todo_list():
         ),
         mutation_status,
         rendered_items,
-        html.hr(),
     )
 
 
@@ -476,7 +442,6 @@ def async_todo_list():
         ),
         mutation_status,
         rendered_items,
-        html.hr(),
     )
 
 
@@ -513,7 +478,6 @@ def view_to_component_sync_func_compatibility():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         _view_to_component_sync_func_compatibility(key="test"),
-        html.hr(),
     )
 
 
@@ -522,7 +486,6 @@ def view_to_component_async_func_compatibility():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         _view_to_component_async_func_compatibility(),
-        html.hr(),
     )
 
 
@@ -531,7 +494,6 @@ def view_to_component_sync_class_compatibility():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         _view_to_component_sync_class_compatibility(),
-        html.hr(),
     )
 
 
@@ -540,7 +502,6 @@ def view_to_component_async_class_compatibility():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         _view_to_component_async_class_compatibility(),
-        html.hr(),
     )
 
 
@@ -549,7 +510,6 @@ def view_to_component_template_view_class_compatibility():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         _view_to_component_template_view_class_compatibility(),
-        html.hr(),
     )
 
 

@@ -11,6 +11,8 @@ from django.db import connections
 from django.test.utils import modify_settings
 from playwright.sync_api import TimeoutError, sync_playwright
 
+from reactpy_django.models import ComponentSession
+
 
 CLICK_DELAY = 250 if os.getenv("GITHUB_ACTIONS") else 25  # Delay in miliseconds.
 
@@ -257,3 +259,41 @@ class ComponentTests(ChannelsLiveServerTestCase):
         self.page.locator(
             "#view_to_component_decorator_args[data-success=true]"
         ).wait_for()
+
+    def test_component_does_not_exist_error(self):
+        broken_component = self.page.locator("#component_does_not_exist_error")
+        broken_component.wait_for()
+        self.assertIn("ComponentDoesNotExistError:", broken_component.text_content())
+
+    def test_component_param_error(self):
+        broken_component = self.page.locator("#component_param_error")
+        broken_component.wait_for()
+        self.assertIn("ComponentParamError:", broken_component.text_content())
+
+    def test_component_session_exists(self):
+        """Session should exist for components with args/kwargs."""
+        from reactpy_django.config import REACTPY_DATABASE
+
+        component = self.page.locator("#parametrized-component")
+        component.wait_for()
+        parent = component.locator("..")
+        session_id = parent.get_attribute("id")
+        os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+        query = ComponentSession.objects.filter(uuid=session_id).using(REACTPY_DATABASE)
+        query_exists = query.exists()
+        os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
+        self.assertTrue(query_exists)
+
+    def test_component_session_missing(self):
+        """No session should exist for components that don't have args/kwargs."""
+        from reactpy_django.config import REACTPY_DATABASE
+
+        component = self.page.locator("#simple-button")
+        component.wait_for()
+        parent = component.locator("..")
+        session_id = parent.get_attribute("id")
+        os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+        query = ComponentSession.objects.filter(uuid=session_id).using(REACTPY_DATABASE)
+        query_exists = query.exists()
+        os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
+        self.assertFalse(query_exists)
