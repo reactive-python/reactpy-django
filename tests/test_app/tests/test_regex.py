@@ -83,3 +83,9 @@ class RegexTests(TestCase):
                 raise self.failureException(
                     f"Regex pattern {COMMENT_REGEX.pattern} failed to remove comment from {embedded_comment}"
                 )
+
+        # Make sure back-to-back components are not merged into one match
+        double_component_match = COMPONENT_REGEX.search(
+            r'{% component "my.component" %} {% component "my.component" %}'
+        )
+        self.assertTrue(double_component_match[0] == r'{% component "my.component" %}')
