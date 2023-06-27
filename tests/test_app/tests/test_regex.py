@@ -79,10 +79,7 @@ class RegexTests(TestCase):
                 comment -->""",
         }:  # noqa: W291
             text = COMMENT_REGEX.sub("", embedded_comment)
-            if text.strip() != '{% component "my.component" %}':
-                raise self.failureException(
-                    f"Regex pattern {COMMENT_REGEX.pattern} failed to remove comment from {embedded_comment}"
-                )
+            self.assertEquals(text.strip(), '{% component "my.component" %}')
 
         # Make sure back-to-back components are not merged into one match
         double_component_match = COMPONENT_REGEX.search(
