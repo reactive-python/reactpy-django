@@ -27,9 +27,9 @@ from reactpy_django.exceptions import ComponentDoesNotExistError, ComponentParam
 
 _logger = logging.getLogger(__name__)
 _component_tag = r"(?P<tag>component)"
-_component_path = r"(?P<path>(\"[^\"'\s]+\")|('[^\"'\s]+'))"
-_component_kwargs = r"(?P<kwargs>(.*?|\s*?)*)"
-COMMENT_REGEX = re.compile(r"(<!--)(.|\s)*?(-->)")
+_component_path = r"(?P<path>\"[^\"'\s]+\"|'[^\"'\s]+')"
+_component_kwargs = r"(?P<kwargs>[\s\S]*?)"
+COMMENT_REGEX = re.compile(r"<!--[\s\S]*?-->")
 COMPONENT_REGEX = re.compile(
     r"{%\s*"
     + _component_tag
