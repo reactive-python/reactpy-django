@@ -130,9 +130,8 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                     )()
                 except models.ComponentSession.DoesNotExist:
                     _logger.warning(
-                        f"Browser has attempted to access '{dotted_path}', "
-                        f"but the component has already expired beyond REACTPY_RECONNECT_MAX. "
-                        "If this was expected, this warning can be ignored."
+                        f"Component session for '{dotted_path}:{uuid}' not found. The "
+                        "session may have already expired beyond REACTPY_RECONNECT_MAX."
                     )
                     return
                 component_params: ComponentParamData = pickle.loads(params_query.params)

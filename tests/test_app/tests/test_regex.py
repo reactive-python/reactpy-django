@@ -41,8 +41,8 @@ class RegexTests(TestCase):
         self.assertNotRegex(r"", COMPONENT_REGEX)
         self.assertNotRegex(r'{% component " my.component " %}', COMPONENT_REGEX)
         self.assertNotRegex(
-            r"""{% component "my.component COMPONENT_REGEX)
-        self.assertNotRegex(            " %}""",
+            r"""{% component "my.component
+                         " %}""",
             COMPONENT_REGEX,
         )
         self.assertNotRegex(r'{{ component """ }}', COMPONENT_REGEX)
