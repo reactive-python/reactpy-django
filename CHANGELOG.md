@@ -36,7 +36,7 @@ Using the following categories, list your changes in this order:
 
 -   Nothing yet!
 
-## [3.2.1] - 2023-06-27
+## [3.2.1] - 2023-06-29
 
 ### Added
 
