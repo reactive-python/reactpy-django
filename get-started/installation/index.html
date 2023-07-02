@@ -3,8 +3,8 @@
 <span class=normal>2</span>
 <span class=normal>3</span>
 <span class=normal>4</span></pre></div></td><td class=code><div><pre><span></span><code><span class=n>INSTALLED_APPS</span> <span class=o>=</span> <span class=p>[</span>
-    <span class=s2>&quot;reactpy_django&quot;</span><span class=p>,</span>
     <span class=o>...</span><span class=p>,</span>
+    <span class=s2>&quot;reactpy_django&quot;</span><span class=p>,</span>
 <span class=p>]</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> <details class=warning> <summary>Enable Django Channels ASGI (Required)</summary> <p>ReactPy-Django requires ASGI Websockets from <a href=https://github.com/django/channels>Django Channels</a>.</p> <p>If you have not enabled ASGI on your <strong>Django project</strong> yet, you will need to</p> <ol> <li>Install <code>channels[daphne]</code></li> <li>Add <code>daphne</code> to <code>INSTALLED_APPS</code></li> <li>Set your <code>ASGI_APPLICATION</code> variable.</li> </ol> <div class="tabbed-set tabbed-alternate" data-tabs=2:1><input checked=checked id=__tabbed_2_1 name=__tabbed_2 type=radio><div class=tabbed-labels><label for=__tabbed_2_1>settings.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1</span>
 <span class=normal>2</span>
