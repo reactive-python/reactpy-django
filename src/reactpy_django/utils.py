@@ -24,6 +24,7 @@ from django.views import View
 
 from reactpy_django.exceptions import ComponentDoesNotExistError, ComponentParamError
 
+
 _logger = logging.getLogger(__name__)
 _component_tag = r"(?P<tag>component)"
 _component_path = r"(?P<path>\"[^\"'\s]+\"|'[^\"'\s]+')"
@@ -331,11 +332,7 @@ def create_cache_key(*args):
 def db_cleanup(immediate: bool = False):
     """Deletes expired component sessions from the database.
     This function may be expanded in the future to include additional cleanup tasks."""
-    from .config import (
-        REACTPY_CACHE,
-        REACTPY_DEBUG_MODE,
-        REACTPY_RECONNECT_MAX,
-    )
+    from .config import REACTPY_CACHE, REACTPY_DEBUG_MODE, REACTPY_RECONNECT_MAX
     from .models import ComponentSession
 
     clean_started_at = datetime.now()
