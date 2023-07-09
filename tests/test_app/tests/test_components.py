@@ -272,28 +272,24 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
     def test_component_session_exists(self):
         """Session should exist for components with args/kwargs."""
-        from reactpy_django.config import REACTPY_DATABASE
-
         component = self.page.locator("#parametrized-component")
         component.wait_for()
         parent = component.locator("..")
         session_id = parent.get_attribute("id")
         os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
-        query = ComponentSession.objects.filter(uuid=session_id).using(REACTPY_DATABASE)
+        query = ComponentSession.objects.filter(uuid=session_id)
         query_exists = query.exists()
         os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
         self.assertTrue(query_exists)
 
     def test_component_session_missing(self):
         """No session should exist for components that don't have args/kwargs."""
-        from reactpy_django.config import REACTPY_DATABASE
-
         component = self.page.locator("#simple-button")
         component.wait_for()
         parent = component.locator("..")
         session_id = parent.get_attribute("id")
         os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
-        query = ComponentSession.objects.filter(uuid=session_id).using(REACTPY_DATABASE)
+        query = ComponentSession.objects.filter(uuid=session_id)
         query_exists = query.exists()
         os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
         self.assertFalse(query_exists)

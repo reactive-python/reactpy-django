@@ -76,10 +76,10 @@ sys.path.append(str(SRC_DIR))
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        # Changing NAME is needed due to a bug related to `manage.py test` migrations
-        "NAME": os.path.join(BASE_DIR, "test_db.sqlite3")
-        if "test" in sys.argv
-        else os.path.join(BASE_DIR, "db.sqlite3"),
+        # Changing NAME is needed due to a bug related to `manage.py test`
+        "NAME": os.path.join(
+            BASE_DIR, "test_db.sqlite3" if "test" in sys.argv else "db.sqlite3"
+        ),
         "TEST": {
             "NAME": os.path.join(BASE_DIR, "test_db.sqlite3"),
             "OPTIONS": {"timeout": 20},
@@ -91,10 +91,10 @@ DATABASES = {
 if "test" in sys.argv:
     DATABASES["reactpy"] = {
         "ENGINE": "django.db.backends.sqlite3",
-        # Changing NAME is needed due to a bug related to `manage.py test` migrations
-        "NAME": os.path.join(BASE_DIR, "test_db_2.sqlite3")
-        if "test" in sys.argv
-        else os.path.join(BASE_DIR, "db_2.sqlite3"),
+        # Changing NAME is needed due to a bug related to `manage.py test`
+        "NAME": os.path.join(
+            BASE_DIR, "test_db_2.sqlite3" if "test" in sys.argv else "db_2.sqlite3"
+        ),
         "TEST": {
             "NAME": os.path.join(BASE_DIR, "test_db_2.sqlite3"),
             "OPTIONS": {"timeout": 20},
@@ -103,6 +103,8 @@ if "test" in sys.argv:
         "OPTIONS": {"timeout": 20},
     }
     REACTPY_DATABASE = "reactpy"
+DATABASE_ROUTERS = ["reactpy_django.database.Router"]
+
 
 # Cache
 CACHES = {
