@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "channels",  # Websocket library
-    "reactpy_django",  # Django compatible ReactPy client
+    "reactpy_django",  # Django compatiblity layer for ReactPy
     "test_app",  # This test application
 ]
 MIDDLEWARE = [

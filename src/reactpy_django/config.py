@@ -41,13 +41,16 @@ REACTPY_DATABASE: str = getattr(
     "REACTPY_DATABASE",
     DEFAULT_DB_ALIAS,
 )
+_default_query_postprocessor = getattr(
+    settings,
+    "REACTPY_DEFAULT_QUERY_POSTPROCESSOR",
+    None,
+)
 REACTPY_DEFAULT_QUERY_POSTPROCESSOR: AsyncPostprocessor | SyncPostprocessor | None = (
     import_dotted_path(
-        getattr(
-            settings,
-            "REACTPY_DEFAULT_QUERY_POSTPROCESSOR",
-            "reactpy_django.utils.django_query_postprocessor",
-        )
+        _default_query_postprocessor
+        if isinstance(_default_query_postprocessor, str)
+        else "reactpy_django.utils.django_query_postprocessor",
     )
 )
 REACTPY_AUTH_BACKEND: str | None = getattr(
