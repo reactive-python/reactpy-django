@@ -8,7 +8,7 @@ REACTPY_CACHE = "default"
 # Do NOT use an in-memory database.
 # DATABASE_ROUTERS is mandatory if REACTPY_DATABASE is configured
 REACTPY_DATABASE = "default"
-DATABASE_ROUTERS = ["reactpy_django.database.Router"]
+DATABASE_ROUTERS = ["reactpy_django.database.Router", ...]
 
 # Maximum seconds between reconnection attempts before giving up.
 # Use `0` to prevent component reconnection.
