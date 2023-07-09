@@ -6,7 +6,9 @@ REACTPY_CACHE = "default"
 # Database ReactPy uses to store session data.
 # ReactPy requires a multiprocessing-safe and thread-safe database.
 # Do NOT use an in-memory database.
+# DATABASE_ROUTERS is mandatory if REACTPY_DATABASE is configured
 REACTPY_DATABASE = "default"
+DATABASE_ROUTERS = ["reactpy_django.database.Router"]
 
 # Maximum seconds between reconnection attempts before giving up.
 # Use `0` to prevent component reconnection.
