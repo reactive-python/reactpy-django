@@ -1,7 +1,11 @@
+# Cache used to store ReactPy web modules.
 # ReactPy requires a multiprocessing-safe and thread-safe cache.
+# We recommend redis or python-diskcache.
 REACTPY_CACHE = "default"
 
+# Database ReactPy uses to store session data.
 # ReactPy requires a multiprocessing-safe and thread-safe database.
+# Do NOT use an in-memory database.
 REACTPY_DATABASE = "default"
 
 # Maximum seconds between reconnection attempts before giving up.
