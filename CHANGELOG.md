@@ -34,7 +34,13 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing yet!
+### Changed
+
+-   If using `settings.py:REACTPY_DATABASE`, `reactpy_django.database.Router` must now be registered in `settings.py:DATABASE_ROUTERS`.
+
+### Added
+
+-   Added system checks for a variety of common ReactPy misconfigurations.
 
 ## [3.2.1] - 2023-06-29
 
