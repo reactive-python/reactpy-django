@@ -6,7 +6,7 @@ def reactpy_warnings(app_configs, **kwargs):
     from django.conf import settings
     from django.urls import reverse
 
-    warnings: list[Error | Warning] = []
+    warnings = []
 
     # REACTPY_DATABASE is not an in-memory database.
     if (
@@ -63,7 +63,7 @@ def reactpy_warnings(app_configs, **kwargs):
 def reactpy_errors(app_configs, **kwargs):
     from django.conf import settings
 
-    errors: list[Error | Warning] = []
+    errors = []
 
     # Make sure ASGI is enabled
     if not getattr(settings, "ASGI_APPLICATION", None):
