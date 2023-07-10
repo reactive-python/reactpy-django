@@ -14,7 +14,7 @@ from reactpy_django.types import (
 from reactpy_django.utils import import_dotted_path
 
 
-# Non-user configurable settings
+# Non-configurable values
 REACTPY_DEBUG_MODE.set_current(getattr(settings, "DEBUG"))
 REACTPY_REGISTERED_COMPONENTS: dict[str, ComponentConstructor] = {}
 REACTPY_VIEW_COMPONENT_IFRAMES: dict[str, ViewComponentIframe] = {}
