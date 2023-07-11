@@ -1,6 +1,6 @@
 import asyncio
 import inspect
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 from channels.db import database_sync_to_async
@@ -27,15 +27,13 @@ from .types import TestObject
 
 @component
 def test_runner():
-    start_time, _set_start_time = hooks.use_state(datetime.now())
+    start_time, _ = hooks.use_state(datetime.now())
     count, set_count = hooks.use_state(0)
-    running = datetime.now() - start_time < timedelta(seconds=60)
     seconds_elapsed = (datetime.now() - start_time).total_seconds()
 
     @hooks.use_effect
     def run_tests():
-        if running:
-            set_count(count + 1)
+        set_count(count + 1)
 
     return html.div(
         {"id": "test-runner"},
