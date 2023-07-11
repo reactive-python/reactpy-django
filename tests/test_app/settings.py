@@ -25,7 +25,7 @@ SRC_DIR = BASE_DIR.parent / "src"
 SECRET_KEY = "django-insecure-n!bd1#+7ufw5#9ipayu9k(lyu@za$c2ajbro7es(v8_7w1$=&c"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = "test" not in sys.argv
+DEBUG = False
 ALLOWED_HOSTS = ["*"]
 
 # Application definition

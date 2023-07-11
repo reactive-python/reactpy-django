@@ -4,6 +4,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from datetime import timedelta
+from threading import Thread
 from typing import Any, MutableMapping, Sequence
 
 import dill as pickle
@@ -21,6 +22,18 @@ from reactpy_django.utils import db_cleanup, func_has_args
 
 
 _logger = logging.getLogger(__name__)
+
+
+def start_background_loop(loop: asyncio.AbstractEventLoop) -> None:
+    asyncio.set_event_loop(loop)
+    loop.run_forever()
+
+
+backhaul_loop = asyncio.new_event_loop()
+backhaul_thread = Thread(
+    target=start_background_loop, args=[backhaul_loop], daemon=True
+)
+backhaul_thread.start()
 
 
 class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
@@ -58,21 +71,20 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             )
 
         # Start allowing component renders
-        self._reactpy_dispatcher_future = asyncio.ensure_future(
-            self._run_dispatch_loop()
+        self._reactpy_dispatcher_future = asyncio.run_coroutine_threadsafe(
+            self._run_dispatch_loop(), loop=backhaul_loop
         )
 
     async def disconnect(self, code: int) -> None:
         """The browser has disconnected."""
-        if self._reactpy_dispatcher_future.done():
-            await self._reactpy_dispatcher_future
-        else:
-            self._reactpy_dispatcher_future.cancel()
+        self._reactpy_dispatcher_future.cancel()
         await super().disconnect(code)
 
     async def receive_json(self, content: Any, **_) -> None:
         """Receive a message from the browser. Typically messages are event signals."""
-        await self._reactpy_recv_queue.put(content)
+        asyncio.run_coroutine_threadsafe(
+            self._reactpy_recv_queue.put(content), loop=backhaul_loop
+        )
 
     async def _run_dispatch_loop(self):
         """Runs the main loop that performs component rendering tasks."""
