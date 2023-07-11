@@ -22,18 +22,15 @@ from reactpy_django.utils import db_cleanup, func_has_args
 
 
 _logger = logging.getLogger(__name__)
-
-
-def start_background_loop(loop: asyncio.AbstractEventLoop) -> None:
-    asyncio.set_event_loop(loop)
-    loop.run_forever()
-
-
 backhaul_loop = asyncio.new_event_loop()
-backhaul_thread = Thread(
-    target=start_background_loop, args=[backhaul_loop], daemon=True
-)
-backhaul_thread.start()
+
+
+def start_background_loop() -> None:
+    asyncio.set_event_loop(backhaul_loop)
+    backhaul_loop.run_forever()
+
+
+Thread(target=start_background_loop, daemon=True).start()
 
 
 class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
