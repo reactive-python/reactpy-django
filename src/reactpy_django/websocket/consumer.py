@@ -25,12 +25,13 @@ _logger = logging.getLogger(__name__)
 backhaul_loop = asyncio.new_event_loop()
 
 
-def start_background_loop() -> None:
+def start_backhaul_loop() -> None:
+    """Starts the asyncio event loop that will perform component rendering tasks."""
     asyncio.set_event_loop(backhaul_loop)
     backhaul_loop.run_forever()
 
 
-Thread(target=start_background_loop, daemon=True).start()
+Thread(target=start_backhaul_loop, daemon=True).start()
 
 
 class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
