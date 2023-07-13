@@ -16,10 +16,14 @@ def renders_per_second():
     rps = count / (seconds_elapsed or 0.01)
 
     return html.div(
-        {"id": "test-runner"},
         html.div(f"Total renders: {count}"),
         html.div(
             {"class_name": "rps", "data-rps": rps},
             f"Renders Per Second: {rps}",
         ),
     )
+
+
+@component
+def time_to_load():
+    return html.div({"class_name": "ttl"}, "Loaded!")
