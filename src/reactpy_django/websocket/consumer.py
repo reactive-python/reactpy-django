@@ -79,9 +79,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
     async def receive_json(self, content: Any, **_) -> None:
         """Receive a message from the browser. Typically messages are event signals."""
-        asyncio.run_coroutine_threadsafe(
-            self._reactpy_recv_queue.put(content), loop=backhaul_loop
-        )
+        await self._reactpy_recv_queue.put(content)
 
     async def _run_dispatch_loop(self):
         """Runs the main loop that performs component rendering tasks."""
