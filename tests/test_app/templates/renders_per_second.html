@@ -18,8 +18,32 @@
 
 <body>
     <h1>ReactPy Renders Per Second Test Page</h1>
+    <b>Total Renders Per Second: <b id="total-rps"></b> </b>
+
+    <script>
+        async function calculateTotalRPS() {
+            while (true) {
+                var rpsElements = document.getElementsByClassName("rps");
+                var totalRPS = 0;
+
+                for (var i = 0; i < rpsElements.length; i++) {
+                    var rpsValue = parseFloat(rpsElements[i].getAttribute("data-rps"));
+                    totalRPS += rpsValue;
+                }
+
+                document.getElementById("total-rps").textContent = totalRPS;
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+        }
+        calculateTotalRPS();
+    </script>
+
     <hr>
+    {% for x in count %}
+    <b>Worker {{x}}</b>
     {% component "test_app.performance.components.renders_per_second" %}
+    <hr>
+    {% endfor %}
 </body>
 
 </html>

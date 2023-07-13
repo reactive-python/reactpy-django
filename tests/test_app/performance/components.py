@@ -13,11 +13,13 @@ def renders_per_second():
     def run_tests():
         set_count(count + 1)
 
+    rps = count / (seconds_elapsed or 0.01)
+
     return html.div(
         {"id": "test-runner"},
         html.div(f"Total renders: {count}"),
         html.div(
-            {"class_name": "rps"},
-            f"Renders Per Second: {count / (seconds_elapsed or 0.01)}",
+            {"class_name": "rps", "data-rps": rps},
+            f"Renders Per Second: {rps}",
         ),
     )
