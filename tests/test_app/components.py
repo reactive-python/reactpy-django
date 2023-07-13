@@ -1,6 +1,5 @@
 import asyncio
 import inspect
-from datetime import datetime
 from pathlib import Path
 
 from channels.db import database_sync_to_async
@@ -23,23 +22,6 @@ from reactpy_django.components import view_to_component
 
 from . import views
 from .types import TestObject
-
-
-@component
-def test_runner():
-    start_time, _ = hooks.use_state(datetime.now())
-    count, set_count = hooks.use_state(0)
-    seconds_elapsed = (datetime.now() - start_time).total_seconds()
-
-    @hooks.use_effect
-    def run_tests():
-        set_count(count + 1)
-
-    return html.div(
-        {"id": "test-runner"},
-        html.div(f"Total renders: {count}"),
-        html.div(f"Renders Per Second: {count / (seconds_elapsed or 0.01)}"),
-    )
 
 
 @component
