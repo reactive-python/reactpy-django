@@ -18,7 +18,11 @@
 
 <body>
     <h1>ReactPy Renders Per Second Test Page</h1>
-    <b>Total Renders Per Second: <b id="total-rps"></b> </b>
+
+    <b>
+        <p>Total Renders Per Second: <b id="total-rps"></b></p>
+        <p>Total Active Components: <b id="total-active"></b></p>
+    </b>
 
     <script>
         async function calculateTotalRPS() {
@@ -32,6 +36,7 @@
                 }
 
                 document.getElementById("total-rps").textContent = totalRPS;
+                document.getElementById("total-active").textContent = rpsElements.length;
                 await new Promise(resolve => setTimeout(resolve, 100));
             }
         }
