@@ -22,9 +22,11 @@
     <b>
         <p>Total Renders Per Second: <b id="total-rps"></b></p>
         <p>Total Active Components: <b id="total-active"></b></p>
+        <p>Time To Load: <b id="time-to-load" data-num=0></b></p>
     </b>
 
     <script>
+        const start = new Date();
         async function calculateTotalRPS() {
             while (true) {
                 var rpsElements = document.getElementsByClassName("rps");
@@ -37,6 +39,13 @@
 
                 document.getElementById("total-rps").textContent = totalRPS;
                 document.getElementById("total-active").textContent = rpsElements.length;
+
+                if (document.getElementById("time-to-load").getAttribute("data-num") != rpsElements.length) {
+                    var timeToLoad = new Date() - start;
+                    document.getElementById("time-to-load").textContent = timeToLoad + " ms";
+                    document.getElementById("time-to-load").setAttribute("data-num", rpsElements.length);
+                }
+
                 await new Promise(resolve => setTimeout(resolve, 100));
             }
         }
