@@ -8,6 +8,7 @@ from .views import (
     time_to_load,
 )
 
+
 urlpatterns = [
     path("rps/", renders_per_second),
     path("rps/<int:count>", renders_per_second),

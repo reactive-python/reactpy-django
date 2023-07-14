@@ -20,11 +20,12 @@ from reactpy.core.serve import serve_layout
 from reactpy_django.types import ComponentParamData, ComponentWebsocket
 from reactpy_django.utils import db_cleanup, func_has_args
 
+
 _logger = logging.getLogger(__name__)
 backhaul_loop = asyncio.new_event_loop()
 
 
-def start_backhaul_loop() -> None:
+def start_backhaul_loop():
     """Starts the asyncio event loop that will perform component rendering tasks."""
     asyncio.set_event_loop(backhaul_loop)
     backhaul_loop.run_forever()
@@ -83,10 +84,9 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         """The browser has disconnected."""
         if self.threaded:
             self._reactpy_dispatcher_future.cancel()
-        elif self._reactpy_dispatcher_task.done():
-            await self._reactpy_dispatcher_task
         else:
             self._reactpy_dispatcher_task.cancel()
+            await self._reactpy_dispatcher_task
         await super().disconnect(code)
 
     async def receive_json(self, content: Any, **_) -> None:
