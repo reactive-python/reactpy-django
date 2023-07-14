@@ -178,3 +178,4 @@ LOGGING = {
 
 # ReactPy Django Settings
 REACTPY_AUTH_BACKEND = "django.contrib.auth.backends.ModelBackend"
+REACTPY_BACKHAUL_THREAD = "test" not in sys.argv

@@ -55,3 +55,8 @@ REACTPY_AUTH_BACKEND: str | None = getattr(
     "REACTPY_AUTH_BACKEND",
     None,
 )
+REACTPY_BACKHAUL_THREAD: bool = getattr(
+    settings,
+    "REACTPY_BACKHAUL_THREAD",
+    True,
+)
