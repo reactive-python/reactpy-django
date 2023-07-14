@@ -44,7 +44,7 @@ def events_per_second():
         html.div(f"Total events: {count}"),
         html.div(
             {"class_name": "eps", "data-eps": eps},
-            f"Events Per Second: {eps}",
+            f"Event Driven Renders Per Second: {eps}",
         ),
         html.input(
             {
