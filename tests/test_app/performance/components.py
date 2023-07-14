@@ -27,3 +27,25 @@ def renders_per_second():
 @component
 def time_to_load():
     return html.div({"class_name": "ttl"}, "Loaded!")
+
+
+@component
+def events_per_second():
+    count, set_count = hooks.use_state(0)
+    start_time, _ = hooks.use_state(datetime.now())
+    seconds_elapsed = (datetime.now() - start_time).total_seconds()
+    checked, set_checked = hooks.use_state(False)
+    eps = count / (seconds_elapsed or 0.01)
+
+    async def on_click(_):
+        set_count(count + 1)
+        set_checked(False)
+
+    return html.div(
+        html.div(f"Total events: {count}"),
+        html.div(
+            {"class_name": "eps", "data-eps": eps},
+            f"Events Per Second: {eps}",
+        ),
+        html.input({"type": "checkbox", "checked": checked, "on_click": on_click}),
+    )

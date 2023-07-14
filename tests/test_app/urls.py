@@ -31,7 +31,7 @@ admin.site.has_permission = lambda r: setattr(r, "user", AccessUser()) or True  
 
 urlpatterns = [
     path("", base_template),
-    path("performance/", include("test_app.performance.urls")),
+    path("", include("test_app.performance.urls")),
     path("reactpy/", include("reactpy_django.http.urls")),
     path("admin/", admin.site.urls),
 ]
