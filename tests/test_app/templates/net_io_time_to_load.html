@@ -11,19 +11,18 @@
 </head>
 
 <body>
-    <h1>ReactPy Renders Per Second Test Page</h1>
+    <h1>ReactPy Network IO Intensive Time To Load Per Second Test Page</h1>
 
     <b>
         <p>Total Active Components: <b id="total-active"></b></p>
         <p>Time To Load: <b id="time-to-load" data-num=0></b></p>
-        <p>Total Renders Per Second: <b id="total-rps"></b></p>
     </b>
 
     <script>
         const start = new Date();
-        async function calculateTotalRPS() {
+        async function calculateTTL() {
             while (true) {
-                let elements = document.getElementsByClassName("rps");
+                let elements = document.getElementsByClassName("ttl");
 
                 // Calculate Total Active
                 document.getElementById("total-active").textContent = elements.length;
@@ -35,24 +34,16 @@
                     document.getElementById("time-to-load").setAttribute("data-num", elements.length);
                 }
 
-                // Calculate RPS
-                let totalRPS = 0;
-                for (let i = 0; i < elements.length; i++) {
-                    let rpsValue = parseFloat(elements[i].getAttribute("data-rps"));
-                    totalRPS += rpsValue;
-                }
-                document.getElementById("total-rps").textContent = totalRPS;
-
-                await new Promise(resolve => setTimeout(resolve, 50));
+                await new Promise((resolve) => setTimeout(resolve, 50));
             }
         }
-        calculateTotalRPS();
+        calculateTTL();  
     </script>
 
     <hr>
     {% for x in count %}
     <b>Worker {{x}}</b>
-    {% component "test_app.performance.components.renders_per_second" %}
+    {% component "test_app.performance.components.net_io_time_to_load" %}
     <hr>
     {% endfor %}
 </body>

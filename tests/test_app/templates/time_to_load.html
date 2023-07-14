@@ -8,12 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
     <title>ReactPy</title>
-    <style>
-        iframe {
-            width: 100%;
-            height: 45px;
-        }
-    </style>
 </head>
 
 <body>
@@ -31,8 +25,7 @@
                 let elements = document.getElementsByClassName("ttl");
 
                 // Calculate Total Active
-                document.getElementById("total-active").textContent =
-                    elements.length;
+                document.getElementById("total-active").textContent = elements.length;
 
                 // Calculate TTL
                 if (document.getElementById("time-to-load").getAttribute("data-num") != elements.length) {

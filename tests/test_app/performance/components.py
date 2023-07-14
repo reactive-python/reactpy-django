@@ -29,6 +29,18 @@ def time_to_load():
     return html.div({"class_name": "ttl"}, "Loaded!")
 
 
+NET_IO_GIANT_STR = "@" * 10000000
+
+
+@component
+def net_io_time_to_load():
+    return html.div(
+        {"class_name": "ttl"},
+        html.div({"style": {"display": "none"}}, NET_IO_GIANT_STR),
+        html.div("Loaded!"),
+    )
+
+
 @component
 def events_per_second():
     count, set_count = hooks.use_state(0)
