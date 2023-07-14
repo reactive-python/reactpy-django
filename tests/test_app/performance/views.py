@@ -25,6 +25,14 @@ def net_io_time_to_load(request, count: int = 1):
     )
 
 
+def mixed_time_to_load(request, count: int = 1):
+    return render(
+        request,
+        "mixed_time_to_load.html",
+        {"count": range(max(count, 1))},
+    )
+
+
 def events_per_second(request, count: int = 1):
     return render(
         request,

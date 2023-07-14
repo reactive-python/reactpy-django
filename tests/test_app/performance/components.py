@@ -29,15 +29,40 @@ def time_to_load():
     return html.div({"class_name": "ttl"}, "Loaded!")
 
 
-NET_IO_GIANT_STR = "@" * 10000000
+GIANT_STR_10MB = "@" * 10000000
 
 
 @component
 def net_io_time_to_load():
     return html.div(
         {"class_name": "ttl"},
-        html.div({"style": {"display": "none"}}, NET_IO_GIANT_STR),
+        html.div({"style": {"display": "none"}}, GIANT_STR_10MB),
         html.div("Loaded!"),
+    )
+
+
+GIANT_STR_1MB = "@" * 1000000
+
+
+@component
+def mixed_time_to_load():
+    start_time, _set_start_time = hooks.use_state(datetime.now())
+    count, set_count = hooks.use_state(0)
+    seconds_elapsed = (datetime.now() - start_time).total_seconds()
+
+    @hooks.use_effect
+    def run_tests():
+        set_count(count + 1)
+
+    rps = count / (seconds_elapsed or 0.01)
+
+    return html.div(
+        html.div({"style": {"display": "none"}}, GIANT_STR_1MB),
+        html.div(f"Total renders: {count}"),
+        html.div(
+            {"class_name": "rps", "data-rps": rps},
+            f"Renders Per Second: {rps}",
+        ),
     )
 
 
