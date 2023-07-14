@@ -5,7 +5,7 @@ from reactpy import component, hooks, html
 
 @component
 def renders_per_second():
-    start_time, _ = hooks.use_state(datetime.now())
+    start_time, _set_start_time = hooks.use_state(datetime.now())
     count, set_count = hooks.use_state(0)
     seconds_elapsed = (datetime.now() - start_time).total_seconds()
 
@@ -32,14 +32,13 @@ def time_to_load():
 @component
 def events_per_second():
     count, set_count = hooks.use_state(0)
-    start_time, _ = hooks.use_state(datetime.now())
+    start_time, _set_start_time = hooks.use_state(datetime.now())
     seconds_elapsed = (datetime.now() - start_time).total_seconds()
-    checked, set_checked = hooks.use_state(False)
     eps = count / (seconds_elapsed or 0.01)
 
-    async def on_click(_):
-        set_count(count + 1)
-        set_checked(False)
+    async def event_handler(event):
+        if event["target"]["value"] != str(count):
+            set_count(count + 1)
 
     return html.div(
         html.div(f"Total events: {count}"),
@@ -47,5 +46,12 @@ def events_per_second():
             {"class_name": "eps", "data-eps": eps},
             f"Events Per Second: {eps}",
         ),
-        html.input({"type": "checkbox", "checked": checked, "on_click": on_click}),
+        html.input(
+            {
+                "type": "text",
+                "default_value": "0",
+                "data-count": str(count),
+                "on_click": event_handler,
+            }
+        ),
     )
