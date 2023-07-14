@@ -1,7 +1,9 @@
 """Anything used to construct a websocket endpoint"""
+
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import logging
 from datetime import timedelta
 from threading import Thread
@@ -174,12 +176,9 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             return
 
         # Start the ReactPy component rendering loop
-        try:
+        with contextlib.suppress(Exception):
             await serve_layout(
                 Layout(ConnectionContext(component_instance, value=connection)),
                 self.send_json,
                 self._reactpy_recv_queue.get,
             )
-        except Exception:
-            await self.close()
-            raise
