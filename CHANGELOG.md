@@ -34,7 +34,13 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing yet!
+### Added
+
+-   `REACTPY_BACKHAUL_THREAD` setting to enable/disable threading behavior.
+
+### Changed
+
+-   By default, ReactPy will now use a backhaul thread to increase performance.
 
 ## [3.2.1] - 2023-06-29
 
