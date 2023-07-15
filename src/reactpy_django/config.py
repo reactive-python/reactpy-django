@@ -16,6 +16,7 @@ from reactpy_django.types import (
 )
 from reactpy_django.utils import import_dotted_path
 
+
 _logger = logging.getLogger(__name__)
 
 
