@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views import (
-    events_per_second,
+    event_renders_per_second,
     mixed_time_to_load,
     net_io_time_to_load,
     renders_per_second,
@@ -18,6 +18,6 @@ urlpatterns = [
     path("mixed_ttl/<int:count>", mixed_time_to_load),
     path("ttl/", time_to_load),
     path("ttl/<int:count>", time_to_load),
-    path("eps/", events_per_second),
-    path("eps/<int:count>", events_per_second),
+    path("erps/", event_renders_per_second),
+    path("erps/<int:count>", event_renders_per_second),
 ]

@@ -67,11 +67,11 @@ def mixed_time_to_load():
 
 
 @component
-def events_per_second():
+def event_renders_per_second():
     count, set_count = hooks.use_state(0)
     start_time, _set_start_time = hooks.use_state(datetime.now())
     seconds_elapsed = (datetime.now() - start_time).total_seconds()
-    eps = count / (seconds_elapsed or 0.01)
+    erps = count / (seconds_elapsed or 0.01)
 
     async def event_handler(event):
         if event["target"]["value"] != str(count):
@@ -80,8 +80,8 @@ def events_per_second():
     return html.div(
         html.div(f"Total events: {count}"),
         html.div(
-            {"class_name": "eps", "data-eps": eps},
-            f"Event Driven Renders Per Second: {eps}",
+            {"class_name": "erps", "data-erps": erps},
+            f"Event Renders Per Second: {erps}",
         ),
         html.input(
             {

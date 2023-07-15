@@ -33,9 +33,9 @@ def mixed_time_to_load(request, count: int = 1):
     )
 
 
-def events_per_second(request, count: int = 1):
+def event_renders_per_second(request, count: int = 1):
     return render(
         request,
-        "events_per_second.html",
+        "events_renders_per_second.html",
         {"count": range(max(count, 1))},
     )
