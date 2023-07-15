@@ -92,3 +92,24 @@ def event_renders_per_second():
             }
         ),
     )
+
+
+@component
+def event_timing(worker_num: int):
+    clicked, set_clicked = hooks.use_state(False)
+
+    async def event_handler(_event):
+        set_clicked(True)
+
+    return html.div(
+        html.input(
+            {
+                "class_name": "et",
+                "data-clicked": clicked,
+                "data-worker-num": worker_num,
+                "value": f"Clicked: {clicked}",
+                "type": "button",
+                "on_click": event_handler,
+            },
+        ),
+    )

@@ -39,3 +39,11 @@ def event_renders_per_second(request, count: int = 1):
         "events_renders_per_second.html",
         {"count": range(max(count, 1))},
     )
+
+
+def event_timing(request, count: int = 1):
+    return render(
+        request,
+        "event_timing.html",
+        {"count": range(max(count, 1))},
+    )
