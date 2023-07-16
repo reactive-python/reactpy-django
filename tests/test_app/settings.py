@@ -25,9 +25,10 @@ SRC_DIR = BASE_DIR.parent / "src"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-n!bd1#+7ufw5#9ipayu9k(lyu@za$c2ajbro7es(v8_7w1$=&c"
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# Run with debug off whenever the server is not run with `runserver`
 DEBUG = all(
-    substring not in sys.argv[0] for substring in {"hypercorn", "uvicorn", "daphne"}
+    not sys.argv[0].endswith(substring)
+    for substring in {"hypercorn", "uvicorn", "daphne"}
 )
 ALLOWED_HOSTS = ["*"]
 
