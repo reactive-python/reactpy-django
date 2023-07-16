@@ -22,5 +22,5 @@ REACTPY_DEFAULT_QUERY_POSTPROCESSOR = "reactpy_django.utils.django_query_postpro
 REACTPY_AUTH_BACKEND = None
 
 # Whether to enable rendering ReactPy via a dedicated backhaul thread
-# This typically improves performance.
+# This allows the webserver to process traffic while during ReactPy rendering
 REACTPY_BACKHAUL_THREAD = True
