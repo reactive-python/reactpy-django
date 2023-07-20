@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import logging
+from concurrent.futures import Future
 from datetime import timedelta
 from threading import Thread
 from typing import Any, MutableMapping, Sequence
@@ -71,34 +72,31 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             )
 
         # Start the component dispatcher
+        self.dispatcher: Future | asyncio.Task
         self.threaded = REACTPY_BACKHAUL_THREAD
         if self.threaded:
             if not backhaul_thread.is_alive():
                 _logger.debug("Starting ReactPy backhaul thread.")
                 backhaul_thread.start()
-            self._reactpy_dispatcher_future = asyncio.run_coroutine_threadsafe(
-                self.run_dispatcher(), loop=backhaul_loop
+            self.dispatcher = asyncio.run_coroutine_threadsafe(
+                self.run_dispatcher(), backhaul_loop
             )
         else:
-            self._reactpy_dispatcher_task = asyncio.create_task(self.run_dispatcher())
+            self.dispatcher = asyncio.create_task(self.run_dispatcher())
 
     async def disconnect(self, code: int) -> None:
         """The browser has disconnected."""
-        if self.threaded:
-            self._reactpy_dispatcher_future.cancel()
-        else:
-            self._reactpy_dispatcher_task.cancel()
-            await self._reactpy_dispatcher_task
+        self.dispatcher.cancel()
         await super().disconnect(code)
 
     async def receive_json(self, content: Any, **_) -> None:
         """Receive a message from the browser. Typically, messages are event signals."""
         if self.threaded:
             asyncio.run_coroutine_threadsafe(
-                self._reactpy_recv_queue.put(content), loop=backhaul_loop
+                self.recv_queue.put(content), backhaul_loop
             )
         else:
-            await self._reactpy_recv_queue.put(content)
+            await self.recv_queue.put(content)
 
     async def run_dispatcher(self):
         """Runs the main loop that performs component rendering tasks."""
@@ -113,7 +111,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
         uuid = scope["url_route"]["kwargs"]["uuid"]
         search = scope["query_string"].decode()
-        self._reactpy_recv_queue: asyncio.Queue = asyncio.Queue()
+        self.recv_queue: asyncio.Queue = asyncio.Queue()
         connection = Connection(  # For `use_connection`
             scope=scope,
             location=Location(
@@ -180,5 +178,5 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             await serve_layout(
                 Layout(ConnectionContext(component_instance, value=connection)),
                 self.send_json,
-                self._reactpy_recv_queue.get,
+                self.recv_queue.get,
             )
