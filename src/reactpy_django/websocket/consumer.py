@@ -23,7 +23,6 @@ from reactpy.core.serve import serve_layout
 from reactpy_django.types import ComponentParamData, ComponentWebsocket
 from reactpy_django.utils import db_cleanup, func_has_args
 
-
 _logger = logging.getLogger(__name__)
 backhaul_loop = asyncio.new_event_loop()
 
@@ -52,11 +51,14 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             try:
                 await login(self.scope, user, backend=REACTPY_AUTH_BACKEND)
             except Exception:
-                _logger.exception("ReactPy websocket authentication has failed!")
+                await asyncio.to_thread(
+                    _logger.exception, "ReactPy websocket authentication has failed!"
+                )
         elif user is None:
-            _logger.debug(
+            await asyncio.to_thread(
+                _logger.debug,
                 "ReactPy websocket is missing AuthMiddlewareStack! "
-                "Users will not be accessible within `use_scope` or `use_websocket`!"
+                "Users will not be accessible within `use_scope` or `use_websocket`!",
             )
 
         # Save the session, if possible
@@ -64,11 +66,14 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             try:
                 await database_sync_to_async(self.scope["session"].save)()
             except Exception:
-                _logger.exception("ReactPy has failed to save scope['session']!")
+                await asyncio.to_thread(
+                    _logger.exception, "ReactPy has failed to save scope['session']!"
+                )
         else:
-            _logger.debug(
+            await asyncio.to_thread(
+                _logger.debug,
                 "ReactPy websocket is missing SessionMiddlewareStack! "
-                "Sessions will not be accessible within `use_scope` or `use_websocket`!"
+                "Sessions will not be accessible within `use_scope` or `use_websocket`!",
             )
 
         # Start the component dispatcher
@@ -76,7 +81,9 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         self.threaded = REACTPY_BACKHAUL_THREAD
         if self.threaded:
             if not backhaul_thread.is_alive():
-                _logger.debug("Starting ReactPy backhaul thread.")
+                await asyncio.to_thread(
+                    _logger.debug, "Starting ReactPy backhaul thread."
+                )
                 backhaul_thread.start()
             self.dispatcher = asyncio.run_coroutine_threadsafe(
                 self.run_dispatcher(), backhaul_loop
@@ -128,8 +135,9 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         try:
             component_constructor = REACTPY_REGISTERED_COMPONENTS[dotted_path]
         except KeyError:
-            _logger.warning(
-                f"Attempt to access invalid ReactPy component: {dotted_path!r}"
+            await asyncio.to_thread(
+                _logger.warning,
+                f"Attempt to access invalid ReactPy component: {dotted_path!r}",
             )
             return
 
@@ -153,9 +161,10 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                         params_query.save, thread_sensitive=False
                     )()
                 except models.ComponentSession.DoesNotExist:
-                    _logger.warning(
+                    await asyncio.to_thread(
+                        _logger.warning,
                         f"Component session for '{dotted_path}:{uuid}' not found. The "
-                        "session may have already expired beyond REACTPY_RECONNECT_MAX."
+                        "session may have already expired beyond REACTPY_RECONNECT_MAX.",
                     )
                     return
                 component_params: ComponentParamData = pickle.loads(params_query.params)
@@ -167,9 +176,10 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 *component_args, **component_kwargs
             )
         except Exception:
-            _logger.exception(
+            await asyncio.to_thread(
+                _logger.exception,
                 f"Failed to construct component {component_constructor} "
-                f"with parameters {component_kwargs}"
+                f"with parameters {component_kwargs}",
             )
             return
 
