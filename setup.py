@@ -13,7 +13,6 @@ from setuptools import find_packages, setup
 from setuptools.command.develop import develop
 from setuptools.command.sdist import sdist
 
-
 if sys.platform == "win32":
     from subprocess import list2cmdline
 else:
@@ -22,7 +21,7 @@ else:
         return " ".join(map(pipes.quote, cmd_list))
 
 
-log = getLogger()
+log = getLogger()  # noqa: F811
 log.addHandler(StreamHandler(sys.stdout))
 
 
