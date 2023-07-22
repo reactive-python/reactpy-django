@@ -19,3 +19,4 @@ known-first-party = ["src", "tests"]
 [tool.ruff]
 ignore = ["E501"]
 extend-exclude = ["*/migrations/*", ".venv/*", ".eggs/*", ".nox/*", "build/*"]
+line-length = 120
