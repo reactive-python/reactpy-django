@@ -41,6 +41,7 @@ Using the following categories, list your changes in this order:
 ### Changed
 
 -   By default, ReactPy will now use a backhaul thread to increase performance.
+-   Minimum Python version required is now `3.9`
 
 ## [3.2.1] - 2023-06-29
 

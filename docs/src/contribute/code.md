@@ -12,7 +12,7 @@
 
 If you plan to make code changes to this repository, you will need to install the following dependencies first:
 
--   [Python 3.8+](https://www.python.org/downloads/)
+-   [Python 3.9+](https://www.python.org/downloads/)
 -   [Git](https://git-scm.com/downloads)
 -   [NPM](https://docs.npmjs.com/try-the-latest-stable-version-of-npm) for installing and managing Javascript
 

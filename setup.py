@@ -46,7 +46,7 @@ package_dir = src_dir / name
 
 package = {
     "name": name,
-    "python_requires": ">=3.8",
+    "python_requires": ">=3.9",
     "packages": find_packages(str(src_dir)),
     "package_dir": {"": "src"},
     "description": "Control the web with Python",
@@ -65,9 +65,9 @@ package = {
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         "Topic :: Multimedia :: Graphics",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Environment :: Web Environment",
     ],
 }

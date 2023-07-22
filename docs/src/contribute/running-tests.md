@@ -10,7 +10,7 @@ This repository uses [Nox](https://nox.thea.codes/en/stable/) to run tests. For 
 
 If you plan to run tests, you will need to install the following dependencies first:
 
--   [Python 3.8+](https://www.python.org/downloads/)
+-   [Python 3.9+](https://www.python.org/downloads/)
 -   [Git](https://git-scm.com/downloads)
 
 Once done, you should clone this repository:
