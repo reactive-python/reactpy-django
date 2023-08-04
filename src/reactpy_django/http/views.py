@@ -25,7 +25,7 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
 
     # Fetch the file from cache, if available
     last_modified_time = os.stat(path).st_mtime
-    cache_key = create_cache_key("web_modules", str(path).lstrip(str(web_modules_dir)))
+    cache_key = create_cache_key("web_modules", path)
     file_contents = await caches[REACTPY_CACHE].aget(
         cache_key, version=int(last_modified_time)
     )
