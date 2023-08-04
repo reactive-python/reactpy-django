@@ -1,4 +1,6 @@
 from django.contrib import admin
+from reactpy_django.models import ComponentSession, Config
+
 from test_app.models import (
     AsyncForiegnChild,
     AsyncRelationalChild,
@@ -9,8 +11,6 @@ from test_app.models import (
     RelationalParent,
     TodoItem,
 )
-
-from reactpy_django.models import ComponentSession
 
 
 @admin.register(TodoItem)
@@ -55,4 +55,9 @@ class AsyncForiegnChildAdmin(admin.ModelAdmin):
 
 @admin.register(ComponentSession)
 class ComponentSessionAdmin(admin.ModelAdmin):
-    list_display = ("uuid", "last_accessed")
+    list_display = ["uuid", "last_accessed"]
+
+
+@admin.register(Config)
+class ConfigAdmin(admin.ModelAdmin):
+    list_display = ["pk", "cleaned_at"]

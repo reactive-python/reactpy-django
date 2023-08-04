@@ -34,7 +34,9 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing yet!
+### Changed
+
+-   A thread-safe cache is no longer required.
 
 ## [3.2.1] - 2023-06-29
 

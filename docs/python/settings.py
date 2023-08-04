@@ -1,4 +1,4 @@
-# ReactPy requires a multiprocessing-safe and thread-safe cache.
+# ReactPy benefits from a fast, well indexed cache.
 REACTPY_CACHE = "default"
 
 # ReactPy requires a multiprocessing-safe and thread-safe database.
