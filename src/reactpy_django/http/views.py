@@ -15,7 +15,7 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
     from reactpy_django.config import REACTPY_CACHE
 
     web_modules_dir = REACTPY_WEB_MODULES_DIR.current
-    path = os.path.abspath(web_modules_dir.joinpath(*file.split("/")))
+    path = os.path.abspath(web_modules_dir.joinpath(file))
 
     # Prevent attempts to walk outside of the web modules dir
     if str(web_modules_dir) != os.path.commonpath((path, web_modules_dir)):
