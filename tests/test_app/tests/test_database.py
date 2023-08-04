@@ -25,7 +25,7 @@ class RoutedDatabaseTests(TransactionTestCase):
         # Check if a component params are in the database
         self.assertEqual(ComponentSession.objects.count(), 1)
         self.assertEqual(
-            pickle.loads(ComponentSession.objects.first().params), params_1
+            pickle.loads(ComponentSession.objects.first().params), params_1  # type: ignore
         )
 
         # Force `params_1` to expire
@@ -44,7 +44,7 @@ class RoutedDatabaseTests(TransactionTestCase):
         # Make sure `params_1` has expired
         self.assertEqual(ComponentSession.objects.count(), 1)
         self.assertEqual(
-            pickle.loads(ComponentSession.objects.first().params), params_2
+            pickle.loads(ComponentSession.objects.first().params), params_2  # type: ignore
         )
 
     def _save_params_to_db(self, value: Any) -> ComponentParamData:
