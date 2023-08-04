@@ -25,23 +25,6 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
-    # REACTPY_CACHE is not an in-memory cache.
-    if getattr(settings, "CACHES", {}).get(
-        getattr(settings, "REACTPY_CACHE", "default"), {}
-    ).get("BACKEND", None) in {
-        "django.core.cache.backends.dummy.DummyCache",
-        "django.core.cache.backends.locmem.LocMemCache",
-    }:
-        warnings.append(
-            Warning(
-                "Using ReactPy with an in-memory cache can cause unexpected "
-                "behaviors.",
-                hint="Configure settings.py:CACHES[REACTPY_CACHE], to use a "
-                "multiprocessing and thread safe cache.",
-                id="reactpy_django.W002",
-            )
-        )
-
     # ReactPy URLs exist
     try:
         reverse("reactpy:web_modules", kwargs={"file": "example"})
@@ -52,7 +35,7 @@ def reactpy_warnings(app_configs, **kwargs):
                 "ReactPy URLs have not been registered.",
                 hint="""Add 'path("reactpy/", include("reactpy_django.http.urls"))' """
                 "to your application's urlpatterns.",
-                id="reactpy_django.W003",
+                id="reactpy_django.W002",
             )
         )
 
@@ -69,8 +52,7 @@ def reactpy_errors(app_configs, **kwargs):
     if not getattr(settings, "ASGI_APPLICATION", None):
         errors.append(
             Error(
-                "ASGI_APPLICATION is not defined."
-                " ReactPy requires ASGI to be enabled.",
+                "ASGI_APPLICATION is not defined, but ReactPy requires ASGI.",
                 hint="Add ASGI_APPLICATION to settings.py.",
                 id="reactpy_django.E001",
             )
