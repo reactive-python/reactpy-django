@@ -5,7 +5,7 @@ import inspect
 import logging
 import os
 import re
-from datetime import datetime, timedelta
+from datetime import timedelta
 from fnmatch import fnmatch
 from importlib import import_module
 from inspect import iscoroutinefunction
@@ -333,20 +333,20 @@ def db_cleanup(immediate: bool = False):
     from .config import REACTPY_DEBUG_MODE, REACTPY_RECONNECT_MAX
     from .models import ComponentSession, Config
 
-    clean_started_at = datetime.now()
     config = Config.load()
+    start_time = timezone.now()
     cleaned_at = config.cleaned_at
     clean_needed_by = cleaned_at + timedelta(seconds=REACTPY_RECONNECT_MAX)
-    expires_by = timezone.now() - timedelta(seconds=REACTPY_RECONNECT_MAX)
 
     # Delete expired component parameters
     if immediate or timezone.now() >= clean_needed_by:
-        ComponentSession.objects.filter(last_accessed__lte=expires_by).delete()
+        expiration_date = timezone.now() - timedelta(seconds=REACTPY_RECONNECT_MAX)
+        ComponentSession.objects.filter(last_accessed__lte=expiration_date).delete()
         config.cleaned_at = timezone.now()
         config.save()
 
     # Check if cleaning took abnormally long
-    clean_duration = datetime.now() - clean_started_at
+    clean_duration = timezone.now() - start_time
     if REACTPY_DEBUG_MODE and clean_duration.total_seconds() > 1:
         _logger.warning(
             "ReactPy has taken %s seconds to clean up expired component sessions. "
