@@ -15,28 +15,34 @@
     <span class=o>...</span><span class=p>,</span>
 <span class=p>]</span>
 <span class=n>ASGI_APPLICATION</span> <span class=o>=</span> <span class=s2>&quot;example_project.asgi.application&quot;</span>
-</code></pre></div></td></tr></table></div> </div> </div> </div> <p>Consider reading the <a href=https://channels.readthedocs.io/en/stable/installation.html>Django Channels Docs</a> for more info.</p> </details> <details class=note> <summary>Configure ReactPy settings (Optional)</summary> <p>Below are a handful of values you can change within <code>settings.py</code> to modify the behavior of ReactPy.</p> <div class=highlight><pre><span></span><code><span class=c1># ReactPy requires a multiprocessing-safe and thread-safe cache.</span>
+</code></pre></div></td></tr></table></div> </div> </div> </div> <p>Consider reading the <a href=https://channels.readthedocs.io/en/stable/installation.html>Django Channels Docs</a> for more info.</p> </details> <details class=note> <summary>Configure ReactPy settings (Optional)</summary> <p>Below are a handful of values you can change within <code>settings.py</code> to modify the behavior of ReactPy.</p> <div class=highlight><pre><span></span><code><span class=c1># Cache used to store ReactPy web modules.</span>
+<span class=c1># ReactPy requires a multiprocessing-safe and thread-safe cache.</span>
+<span class=c1># We recommend redis or python-diskcache.</span>
 <span class=n>REACTPY_CACHE</span> <span class=o>=</span> <span class=s2>&quot;default&quot;</span>
 
+<span class=c1># Database ReactPy uses to store session data.</span>
 <span class=c1># ReactPy requires a multiprocessing-safe and thread-safe database.</span>
+<span class=c1># DATABASE_ROUTERS is mandatory if REACTPY_DATABASE is configured.</span>
 <span class=n>REACTPY_DATABASE</span> <span class=o>=</span> <span class=s2>&quot;default&quot;</span>
+<span class=n>DATABASE_ROUTERS</span> <span class=o>=</span> <span class=p>[</span><span class=s2>&quot;reactpy_django.database.Router&quot;</span><span class=p>,</span> <span class=o>...</span><span class=p>]</span>
 
 <span class=c1># Maximum seconds between reconnection attempts before giving up.</span>
 <span class=c1># Use `0` to prevent component reconnection.</span>
 <span class=n>REACTPY_RECONNECT_MAX</span> <span class=o>=</span> <span class=mi>259200</span>
 
-<span class=c1># The URL for ReactPy to serve the component rendering websocket</span>
+<span class=c1># The URL for ReactPy to serve the component rendering websocket.</span>
 <span class=n>REACTPY_WEBSOCKET_URL</span> <span class=o>=</span> <span class=s2>&quot;reactpy/&quot;</span>
 
-<span class=c1># Dotted path to the default `reactpy_django.hooks.use_query` postprocessor function, or `None`</span>
+<span class=c1># Dotted path to the default `reactpy_django.hooks.use_query` postprocessor function,</span>
+<span class=c1># or `None`.</span>
 <span class=n>REACTPY_DEFAULT_QUERY_POSTPROCESSOR</span> <span class=o>=</span> <span class=s2>&quot;reactpy_django.utils.django_query_postprocessor&quot;</span>
 
-<span class=c1># Dotted path to the Django authentication backend to use for ReactPy components</span>
+<span class=c1># Dotted path to the Django authentication backend to use for ReactPy components.</span>
 <span class=c1># This is only needed if:</span>
 <span class=c1>#   1. You are using `AuthMiddlewareStack` and...</span>
 <span class=c1>#   2. You are using Django&#39;s `AUTHENTICATION_BACKENDS` setting and...</span>
 <span class=c1>#   3. Your Django user model does not define a `backend` attribute</span>
-<span class=n>REACTPY_AUTH_BACKEND</span> <span class=o>=</span> <span class=kc>None</span>
+<span class=n>REACTPY_AUTH_BACKEND</span> <span class=o>=</span> <span class=s2>&quot;django.contrib.auth.backends.ModelBackend&quot;</span>
 
 <span class=c1># Whether to enable rendering ReactPy via a dedicated backhaul thread</span>
 <span class=c1># This allows the webserver to process traffic while during ReactPy rendering</span>
@@ -51,8 +57,8 @@
 
 
 <span class=n>urlpatterns</span> <span class=o>=</span> <span class=p>[</span>
-    <span class=n>path</span><span class=p>(</span><span class=s2>&quot;reactpy/&quot;</span><span class=p>,</span> <span class=n>include</span><span class=p>(</span><span class=s2>&quot;reactpy_django.http.urls&quot;</span><span class=p>)),</span>
     <span class=o>...</span><span class=p>,</span>
+    <span class=n>path</span><span class=p>(</span><span class=s2>&quot;reactpy/&quot;</span><span class=p>,</span> <span class=n>include</span><span class=p>(</span><span class=s2>&quot;reactpy_django.http.urls&quot;</span><span class=p>)),</span>
 <span class=p>]</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> <h2 id=step-4-configure-asgipy>Step 4: Configure <a href=https://docs.djangoproject.com/en/dev/howto/deployment/asgi/ ><code>asgi.py</code></a><a class=headerlink href=#step-4-configure-asgipy title="Permanent link">&para;</a></h2> <p>Register ReactPy's Websocket using <code>REACTPY_WEBSOCKET_PATH</code>.</p> <div class="tabbed-set tabbed-alternate" data-tabs=4:1><input checked=checked id=__tabbed_4_1 name=__tabbed_4 type=radio><div class=tabbed-labels><label for=__tabbed_4_1>asgi.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 1</span>
 <span class=normal> 2</span>
@@ -99,7 +105,7 @@
         <span class=s2>&quot;websocket&quot;</span><span class=p>:</span> <span class=n>URLRouter</span><span class=p>([</span><span class=n>REACTPY_WEBSOCKET_PATH</span><span class=p>]),</span>
     <span class=p>}</span>
 <span class=p>)</span>
-</code></pre></div></td></tr></table></div> </div> </div> </div> <details class=note> <summary>Add <code>AuthMiddlewareStack</code> and <code>SessionMiddlewareStack</code> (Optional)</summary> <p>There are many situations where you need to access the Django <code>User</code> or <code>Session</code> objects within ReactPy components. For example, if you want to:</p> <ol> <li>Access the <code>User</code> that is currently logged in</li> <li>Login or logout the current <code>User</code></li> <li>Access Django's <code>Sesssion</code> object</li> </ol> <p>In these situations will need to ensure you are using <code>AuthMiddlewareStack</code> and/or <code>SessionMiddlewareStack</code>.</p> <div class=highlight><pre><span></span><code><span class=kn>from</span> <span class=nn>channels.auth</span> <span class=kn>import</span> <span class=n>AuthMiddlewareStack</span>  <span class=c1># noqa: E402</span>
+</code></pre></div></td></tr></table></div> </div> </div> </div> <details class=note> <summary>Add <code>AuthMiddlewareStack</code> and <code>SessionMiddlewareStack</code> (Optional)</summary> <p>There are many situations where you need to access the Django <code>User</code> or <code>Session</code> objects within ReactPy components. For example, if you want to:</p> <ol> <li>Access the <code>User</code> that is currently logged in</li> <li>Login or logout the current <code>User</code></li> <li>Access Django's <code>Session</code> object</li> </ol> <p>In these situations will need to ensure you are using <code>AuthMiddlewareStack</code> and/or <code>SessionMiddlewareStack</code>.</p> <div class=highlight><pre><span></span><code><span class=kn>from</span> <span class=nn>channels.auth</span> <span class=kn>import</span> <span class=n>AuthMiddlewareStack</span>  <span class=c1># noqa: E402</span>
 <span class=kn>from</span> <span class=nn>channels.sessions</span> <span class=kn>import</span> <span class=n>SessionMiddlewareStack</span>  <span class=c1># noqa: E402</span>
 
 
@@ -116,4 +122,4 @@
     <span class=p>}</span>
 <span class=p>)</span>
 </code></pre></div> </details> <details class=question> <summary>Where is my <code>asgi.py</code>?</summary> <p>If you do not have an <code>asgi.py</code>, follow the <a href=https://channels.readthedocs.io/en/stable/installation.html><code>channels</code> installation guide</a>.</p> </details> <h2 id=step-5-run-migrations>Step 5: Run Migrations<a class=headerlink href=#step-5-run-migrations title="Permanent link">&para;</a></h2> <p>Run Django's database migrations to initialize ReactPy-Django's database table.</p> <div class=highlight><pre><span></span><code>python<span class=w> </span>manage.py<span class=w> </span>migrate
-</code></pre></div> <hr> <div class=md-source-file> <small> Last update: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 23, 2023</span> </small> </div> <div class=md-source-date> <small> Authors: <span class="git-page-authors git-authors"><a href=mailto:16909269+archmonger@users.noreply.github.com>Mark</a></span> </small> </div> </article> </div> </div> <button type=button class="md-top md-icon" data-md-component=top hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg> Back to top </button> </main> <footer class=md-footer> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-copyright> <div class=md-copyright__highlight> Copyright &copy; 2023 Reactive Python </div> </div> </div> </div> </footer> </div> <div class=md-dialog data-md-component=dialog> <div class="md-dialog__inner md-typeset"></div> </div> <script id=__config type=application/json>{"base": "../..", "features": ["navigation.instant", "navigation.tabs", "navigation.top", "content.code.copy"], "search": "../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script> <script src=../../assets/javascripts/bundle.220ee61c.min.js></script> </body> </html>
+</code></pre></div> <hr> <div class=md-source-file> <small> Last update: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">August 4, 2023</span> </small> </div> <div class=md-source-date> <small> Authors: <span class="git-page-authors git-authors"><a href=mailto:16909269+archmonger@users.noreply.github.com>Mark</a></span> </small> </div> </article> </div> </div> <button type=button class="md-top md-icon" data-md-component=top hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg> Back to top </button> </main> <footer class=md-footer> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-copyright> <div class=md-copyright__highlight> Copyright &copy; 2023 Reactive Python </div> </div> </div> </div> </footer> </div> <div class=md-dialog data-md-component=dialog> <div class="md-dialog__inner md-typeset"></div> </div> <script id=__config type=application/json>{"base": "../..", "features": ["navigation.instant", "navigation.tabs", "navigation.top", "content.code.copy"], "search": "../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script> <script src=../../assets/javascripts/bundle.220ee61c.min.js></script> </body> </html>

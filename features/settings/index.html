@@ -23,28 +23,40 @@
 <span class=normal>23</span>
 <span class=normal>24</span>
 <span class=normal>25</span>
-<span class=normal>26</span></pre></div></td><td class=code><div><pre><span></span><code><span class=c1># ReactPy requires a multiprocessing-safe and thread-safe cache.</span>
+<span class=normal>26</span>
+<span class=normal>27</span>
+<span class=normal>28</span>
+<span class=normal>29</span>
+<span class=normal>30</span>
+<span class=normal>31</span>
+<span class=normal>32</span></pre></div></td><td class=code><div><pre><span></span><code><span class=c1># Cache used to store ReactPy web modules.</span>
+<span class=c1># ReactPy requires a multiprocessing-safe and thread-safe cache.</span>
+<span class=c1># We recommend redis or python-diskcache.</span>
 <span class=n>REACTPY_CACHE</span> <span class=o>=</span> <span class=s2>&quot;default&quot;</span>
 
+<span class=c1># Database ReactPy uses to store session data.</span>
 <span class=c1># ReactPy requires a multiprocessing-safe and thread-safe database.</span>
+<span class=c1># DATABASE_ROUTERS is mandatory if REACTPY_DATABASE is configured.</span>
 <span class=n>REACTPY_DATABASE</span> <span class=o>=</span> <span class=s2>&quot;default&quot;</span>
+<span class=n>DATABASE_ROUTERS</span> <span class=o>=</span> <span class=p>[</span><span class=s2>&quot;reactpy_django.database.Router&quot;</span><span class=p>,</span> <span class=o>...</span><span class=p>]</span>
 
 <span class=c1># Maximum seconds between reconnection attempts before giving up.</span>
 <span class=c1># Use `0` to prevent component reconnection.</span>
 <span class=n>REACTPY_RECONNECT_MAX</span> <span class=o>=</span> <span class=mi>259200</span>
 
-<span class=c1># The URL for ReactPy to serve the component rendering websocket</span>
+<span class=c1># The URL for ReactPy to serve the component rendering websocket.</span>
 <span class=n>REACTPY_WEBSOCKET_URL</span> <span class=o>=</span> <span class=s2>&quot;reactpy/&quot;</span>
 
-<span class=c1># Dotted path to the default `reactpy_django.hooks.use_query` postprocessor function, or `None`</span>
+<span class=c1># Dotted path to the default `reactpy_django.hooks.use_query` postprocessor function,</span>
+<span class=c1># or `None`.</span>
 <span class=n>REACTPY_DEFAULT_QUERY_POSTPROCESSOR</span> <span class=o>=</span> <span class=s2>&quot;reactpy_django.utils.django_query_postprocessor&quot;</span>
 
-<span class=c1># Dotted path to the Django authentication backend to use for ReactPy components</span>
+<span class=c1># Dotted path to the Django authentication backend to use for ReactPy components.</span>
 <span class=c1># This is only needed if:</span>
 <span class=c1>#   1. You are using `AuthMiddlewareStack` and...</span>
 <span class=c1>#   2. You are using Django&#39;s `AUTHENTICATION_BACKENDS` setting and...</span>
 <span class=c1>#   3. Your Django user model does not define a `backend` attribute</span>
-<span class=n>REACTPY_AUTH_BACKEND</span> <span class=o>=</span> <span class=kc>None</span>
+<span class=n>REACTPY_AUTH_BACKEND</span> <span class=o>=</span> <span class=s2>&quot;django.contrib.auth.backends.ModelBackend&quot;</span>
 
 <span class=c1># Whether to enable rendering ReactPy via a dedicated backhaul thread</span>
 <span class=c1># This allows the webserver to process traffic while during ReactPy rendering</span>
