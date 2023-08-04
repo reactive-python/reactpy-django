@@ -132,4 +132,14 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    # Check for dependencies
+    if "channels" not in settings.INSTALLED_APPS:
+        errors.append(
+            Error(
+                "Django Channels is not installed.",
+                hint="Add 'channels' to settings.py:INSTALLED_APPS.",
+                id="reactpy_django.E009",
+            )
+        )
+
     return errors
