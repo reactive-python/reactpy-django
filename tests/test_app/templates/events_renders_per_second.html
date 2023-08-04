@@ -1,0 +1,70 @@
+{% load static %} {% load reactpy %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
+    <title>ReactPy</title>
+</head>
+
+<body>
+    <h1>ReactPy Event Driven Renders Per Second Test Page</h1>
+
+    <b>
+        <p>Total Active Components: <b id="total-active"></b></p>
+        <p>Time To Load: <b id="time-to-load" data-num=0></b></p>
+        <p>Event Renders Per Second: <b id="total-erps"></b></p>
+        <p>Average Round-Trip Time: <b id="avg-event-rt"></b></p>
+    </b>
+
+    <script>
+        const start = new Date();
+        async function calculateERPS() {
+            while (true) {
+                let elements = document.getElementsByClassName("erps");
+
+                // Calculate Total Active
+                document.getElementById("total-active").textContent = elements.length;
+
+                // Calculate TTL
+                if (document.getElementById("time-to-load").getAttribute("data-num") != elements.length) {
+                    let timeToLoad = new Date() - start;
+                    document.getElementById("time-to-load").textContent = timeToLoad + " ms";
+                    document.getElementById("time-to-load").setAttribute("data-num", elements.length);
+                }
+
+                // Calculate EPS
+                let totalEPS = 0;
+                for (let i = 0; i < elements.length; i++) {
+                    let text_input = elements[i].parentElement.getElementsByTagName("input")[0];
+                    // Check if the server's count (`data-count`) matches the client's count (`value`)
+                    if (text_input.getAttribute("data-count") == text_input.value) {
+                        text_input.value = String(Number(text_input.value) + 1);
+                        // Server listens for `click` because `on_change` is semi-broken with reactpy
+                        text_input.click();
+                    }
+                    totalEPS += parseFloat(elements[i].getAttribute("data-erps"));
+                }
+                document.getElementById("total-erps").textContent = totalEPS;
+
+                // Calculate Average Event Round-Trip Time
+                document.getElementById("avg-event-rt").textContent = ((1000 / totalEPS) * elements.length).toFixed(4) + " ms";
+
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
+        }
+        calculateERPS();
+    </script>
+
+    <hr>
+    {% for x in count %}
+    <b>Worker {{x}}</b>
+    {% component "test_app.performance.components.event_renders_per_second" %}
+    <hr>
+    {% endfor %}
+</body>
+
+</html>

@@ -1,35 +1,35 @@
 name: Test
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-  schedule:
-    - cron: "0 0 * * *"
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+    schedule:
+        - cron: "0 0 * * *"
 
 jobs:
-  source:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.9", "3.10"]
-    steps:
-      - uses: actions/checkout@v3
-      - uses: nanasess/setup-chromedriver@master
-      - uses: actions/setup-node@v3
-        with:
-          node-version: "14"
-      - name: Use Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install Python Dependencies
-        run: pip install -r requirements/test-run.txt
-      - name: Run Tests
-        run: |
-          npm install -g npm@latest
-          npm --version
-          nox -s test
+    source:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                python-version: ["3.9", "3.10", "3.11"]
+        steps:
+            - uses: actions/checkout@v3
+            - uses: nanasess/setup-chromedriver@master
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: "14"
+            - name: Use Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v4
+              with:
+                  python-version: ${{ matrix.python-version }}
+            - name: Install Python Dependencies
+              run: pip install -r requirements/test-run.txt
+            - name: Run Tests
+              run: |
+                  npm install -g npm@latest
+                  npm --version
+                  nox -s test

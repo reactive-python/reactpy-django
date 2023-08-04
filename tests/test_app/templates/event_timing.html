@@ -1,0 +1,88 @@
+{% load static %} {% load reactpy %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
+    <title>ReactPy</title>
+</head>
+
+<body>
+    <h1>ReactPy Event Timing Test Page</h1>
+
+    <b>
+        <p>Total Active Components: <b id="total-active"></b></p>
+        <p>Time To Load: <b id="time-to-load" data-num=0></b></p>
+        <p>Total Clicked Components: <b id="total-clicked"></b></p>
+        <p>Total Responses: <b id="total-responses"></b></p>
+        <p>Average Event Timing: <b id="avg-et"></b></p>
+    </b>
+
+    <script>
+        const start = new Date();
+        let workerStartTimes = {};
+        let workerEndTimes = {};
+        async function calculateEventTiming() {
+            while (true) {
+                let elements = document.getElementsByClassName("et");
+
+                // Calculate Total Active
+                document.getElementById("total-active").textContent = elements.length;
+
+                // Calculate TTL
+                if (document.getElementById("time-to-load").getAttribute("data-num") != elements.length) {
+                    let timeToLoad = new Date() - start;
+                    document.getElementById("time-to-load").textContent = timeToLoad + " ms";
+                    document.getElementById("time-to-load").setAttribute("data-num", elements.length);
+                }
+
+                // Click on the `.et` elements that have the data attribute `data-clicked="false"`
+                // Store the start and end time for each `data-worker-num` in memory.
+                for (let i = 0; i < elements.length; i++) {
+                    let element = elements[i];
+                    let workerNum = element.getAttribute("data-worker-num");
+                    let clicked = element.getAttribute("data-clicked");
+                    // Check if we haven't stored the start time yet
+                    if (clicked != "true" && !workerStartTimes[workerNum]) {
+                        element.click();
+                        workerStartTimes[workerNum] = new Date();
+                    }
+                    // Check if we haven't stored the end time yet
+                    if (clicked == "true" && !workerEndTimes[workerNum]) {
+                        workerEndTimes[workerNum] = new Date();
+                    }
+                }
+                // Calculate the average time per button it takes for all buttons to have the attribute `data-clicked="true"`
+                // Store this result in `#avg-et`
+                let total = 0;
+                let count = 0;
+                for (const worker in Object.keys(workerStartTimes)) {
+                    if (workerEndTimes[worker]) {
+                        total += workerEndTimes[worker] - workerStartTimes[worker];
+                        count++;
+                    }
+                }
+                let avg = total / count;
+                document.getElementById("total-clicked").textContent = Object.keys(workerStartTimes).length;
+                document.getElementById("total-responses").textContent = Object.keys(workerEndTimes).length;
+                document.getElementById("avg-et").textContent = avg + " ms";
+
+
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
+        }
+        calculateEventTiming();        
+    </script>
+
+    <hr>
+    {% for x in count %}
+    <b>Worker {{x}}</b>
+    {% component "test_app.performance.components.event_timing" worker_num=x %}
+    <hr>
+    {% endfor %}
+</body>
+
+</html>
