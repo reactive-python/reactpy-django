@@ -36,10 +36,12 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
+-   Added system checks for a variety of common ReactPy misconfigurations.
 -   `REACTPY_BACKHAUL_THREAD` setting to enable/disable threading behavior.
 
 ### Changed
 
+-   If using `settings.py:REACTPY_DATABASE`, `reactpy_django.database.Router` must now be registered in `settings.py:DATABASE_ROUTERS`.
 -   By default, ReactPy will now use a backhaul thread to increase performance.
 -   Minimum Python version required is now `3.9`
 

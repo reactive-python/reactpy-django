@@ -109,7 +109,6 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         """Runs the main loop that performs component rendering tasks."""
         from reactpy_django import models
         from reactpy_django.config import (
-            REACTPY_DATABASE,
             REACTPY_RECONNECT_MAX,
             REACTPY_REGISTERED_COMPONENTS,
         )
@@ -149,9 +148,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                     await database_sync_to_async(db_cleanup, thread_sensitive=False)()
 
                     # Get the queries from a DB
-                    params_query = await models.ComponentSession.objects.using(
-                        REACTPY_DATABASE
-                    ).aget(
+                    params_query = await models.ComponentSession.objects.aget(
                         uuid=uuid,
                         last_accessed__gt=now
                         - timedelta(seconds=REACTPY_RECONNECT_MAX),

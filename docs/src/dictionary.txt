@@ -35,4 +35,6 @@ backends
 backend
 frontend
 frontends
+misconfiguration
+misconfigurations
 backhaul

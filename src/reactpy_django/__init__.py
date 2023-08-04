@@ -1,4 +1,4 @@
-from reactpy_django import components, decorators, hooks, types, utils
+from reactpy_django import checks, components, decorators, hooks, types, utils
 from reactpy_django.websocket.paths import REACTPY_WEBSOCKET_PATH
 
 
@@ -10,4 +10,5 @@ __all__ = [
     "decorators",
     "types",
     "utils",
+    "checks",
 ]
