@@ -41,5 +41,5 @@ Alternatively, if you want to only run Django related tests, you can use the fol
 
 ```bash linenums="0"
 cd tests
-python mange.py test
+python manage.py test
 ```
