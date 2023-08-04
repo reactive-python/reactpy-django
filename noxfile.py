@@ -6,7 +6,6 @@ from pathlib import Path
 import nox
 from nox.sessions import Session
 
-
 HERE = Path(__file__).parent
 POSARGS_PATTERN = re.compile(r"^(\w+)\[(.+)\]$")
 
@@ -19,14 +18,6 @@ def manage(session: Session) -> None:
     session.install("-e", ".")
     session.chdir("tests")
     session.run("python", "manage.py", *session.posargs)
-
-
-@nox.session(reuse_venv=True)
-def format(session: Session) -> None:
-    """Run automatic code formatters"""
-    install_requirements_file(session, "check-style")
-    session.run("black", ".")
-    session.run("isort", ".")
 
 
 @nox.session
@@ -70,7 +61,6 @@ def test_types(session: Session) -> None:
 def test_style(session: Session) -> None:
     """Check that style guidelines are being followed"""
     install_requirements_file(session, "check-style")
-    session.run("flake8", "src/reactpy_django", "tests")
     session.run(
         "black",
         ".",
@@ -78,7 +68,7 @@ def test_style(session: Session) -> None:
         "--extend-exclude",
         "/migrations/",
     )
-    session.run("isort", ".", "--check-only")
+    session.run("ruff", "check", ".")
 
 
 def install_requirements_file(session: Session, name: str) -> None:

@@ -330,7 +330,7 @@ def create_cache_key(*args):
 def db_cleanup(immediate: bool = False):
     """Deletes expired component sessions from the database.
     This function may be expanded in the future to include additional cleanup tasks."""
-    from .config import REACTPY_DATABASE, REACTPY_DEBUG_MODE, REACTPY_RECONNECT_MAX
+    from .config import REACTPY_DEBUG_MODE, REACTPY_RECONNECT_MAX
     from .models import ComponentSession, Config
 
     clean_started_at = datetime.now()
@@ -341,9 +341,7 @@ def db_cleanup(immediate: bool = False):
 
     # Delete expired component parameters
     if immediate or timezone.now() >= clean_needed_by:
-        ComponentSession.objects.using(REACTPY_DATABASE).filter(
-            last_accessed__lte=expires_by
-        ).delete()
+        ComponentSession.objects.filter(last_accessed__lte=expires_by).delete()
         config.cleaned_at = timezone.now()
         config.save()
 

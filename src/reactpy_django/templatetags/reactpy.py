@@ -7,7 +7,6 @@ from django.urls import reverse
 
 from reactpy_django import models
 from reactpy_django.config import (
-    REACTPY_DATABASE,
     REACTPY_DEBUG_MODE,
     REACTPY_RECONNECT_MAX,
     REACTPY_WEBSOCKET_URL,
@@ -73,7 +72,7 @@ def component(dotted_path: str, *args, **kwargs):
             params = ComponentParamData(args, kwargs)
             model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
             model.full_clean()
-            model.save(using=REACTPY_DATABASE)
+            model.save()
 
     except Exception as e:
         if isinstance(e, ComponentParamError):

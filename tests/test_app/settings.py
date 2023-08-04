@@ -9,10 +9,10 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+
 import os
 import sys
 from pathlib import Path
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,8 +24,11 @@ SRC_DIR = BASE_DIR.parent / "src"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-n!bd1#+7ufw5#9ipayu9k(lyu@za$c2ajbro7es(v8_7w1$=&c"
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = "test" not in sys.argv
+# Run with debug off whenever the server is not run with `runserver`
+DEBUG = all(
+    not sys.argv[0].endswith(substring)
+    for substring in {"hypercorn", "uvicorn", "daphne"}
+)
 ALLOWED_HOSTS = ["*"]
 
 # Application definition
@@ -38,11 +41,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "channels",  # Websocket library
-    "reactpy_django",  # Django compatible ReactPy client
+    "reactpy_django",  # Django compatiblity layer for ReactPy
     "test_app",  # This test application
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -76,10 +80,10 @@ sys.path.append(str(SRC_DIR))
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        # Changing NAME is needed due to a bug related to `manage.py test` migrations
-        "NAME": os.path.join(BASE_DIR, "test_db.sqlite3")
-        if "test" in sys.argv
-        else os.path.join(BASE_DIR, "db.sqlite3"),
+        # Changing NAME is needed due to a bug related to `manage.py test`
+        "NAME": os.path.join(
+            BASE_DIR, "test_db.sqlite3" if "test" in sys.argv else "db.sqlite3"
+        ),
         "TEST": {
             "NAME": os.path.join(BASE_DIR, "test_db.sqlite3"),
             "OPTIONS": {"timeout": 20},
@@ -91,10 +95,10 @@ DATABASES = {
 if "test" in sys.argv:
     DATABASES["reactpy"] = {
         "ENGINE": "django.db.backends.sqlite3",
-        # Changing NAME is needed due to a bug related to `manage.py test` migrations
-        "NAME": os.path.join(BASE_DIR, "test_db_2.sqlite3")
-        if "test" in sys.argv
-        else os.path.join(BASE_DIR, "db_2.sqlite3"),
+        # Changing NAME is needed due to a bug related to `manage.py test`
+        "NAME": os.path.join(
+            BASE_DIR, "test_db_2.sqlite3" if "test" in sys.argv else "db_2.sqlite3"
+        ),
         "TEST": {
             "NAME": os.path.join(BASE_DIR, "test_db_2.sqlite3"),
             "OPTIONS": {"timeout": 20},
@@ -103,6 +107,8 @@ if "test" in sys.argv:
         "OPTIONS": {"timeout": 20},
     }
     REACTPY_DATABASE = "reactpy"
+DATABASE_ROUTERS = ["reactpy_django.database.Router"]
+
 
 # Cache
 CACHES = {
@@ -174,3 +180,4 @@ LOGGING = {
 
 # ReactPy Django Settings
 REACTPY_AUTH_BACKEND = "django.contrib.auth.backends.ModelBackend"
+REACTPY_BACKHAUL_THREAD = "test" not in sys.argv
