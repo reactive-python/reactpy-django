@@ -68,16 +68,3 @@ REACTPY_BACKHAUL_THREAD: bool = getattr(
     "REACTPY_BACKHAUL_THREAD",
     True,
 )
-
-# Settings checks (separate from Django checks)
-if (
-    sys.platform == "linux"
-    and sys.argv
-    and sys.argv[0].endswith("daphne")
-    and REACTPY_BACKHAUL_THREAD
-):
-    _logger.warning(
-        "ReactPy is running on Linux with Daphne, but REACTPY_BACKHAUL_THREAD is set "
-        "to True. This configuration is known to be unstable. Either set "
-        "REACTPY_BACKHAUL_THREAD to False, or run ReactPy with a different ASGI server."
-    )

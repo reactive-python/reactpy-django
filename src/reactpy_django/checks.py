@@ -1,3 +1,5 @@
+import sys
+
 from django.core.checks import Error, Tags, Warning, register
 
 
@@ -36,6 +38,22 @@ def reactpy_warnings(app_configs, **kwargs):
                 hint="""Add 'path("reactpy/", include("reactpy_django.http.urls"))' """
                 "to your application's urlpatterns.",
                 id="reactpy_django.W002",
+            )
+        )
+
+    # Warn if REACTPY_BACKHAUL_THREAD is set to True on Linux with Daphne
+    if (
+        sys.argv
+        and sys.argv[0].endswith("daphne")
+        and getattr(settings, "REACTPY_BACKHAUL_THREAD", True)
+        and sys.platform == "linux"
+    ):
+        warnings.append(
+            Warning(
+                "REACTPY_BACKHAUL_THREAD is enabled but you running with Daphne on Linux. "
+                "This configuration is known to be unstable.",
+                hint="Set settings.py:REACTPY_BACKHAUL_THREAD to False or use a different webserver.",
+                id="reactpy_django.W003",
             )
         )
 
