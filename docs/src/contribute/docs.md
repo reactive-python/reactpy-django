@@ -8,7 +8,7 @@
 
 If you plan to make changes to this documentation, you will need to install the following dependencies first:
 
--   [Python 3.8+](https://www.python.org/downloads/)
+-   [Python 3.9+](https://www.python.org/downloads/)
 -   [Git](https://git-scm.com/downloads)
 
 Once done, you should clone this repository:

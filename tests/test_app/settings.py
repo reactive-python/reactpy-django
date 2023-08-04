@@ -9,10 +9,10 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+
 import os
 import sys
 from pathlib import Path
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,8 +24,11 @@ SRC_DIR = BASE_DIR.parent / "src"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-n!bd1#+7ufw5#9ipayu9k(lyu@za$c2ajbro7es(v8_7w1$=&c"
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = "test" not in sys.argv
+# Run with debug off whenever the server is not run with `runserver`
+DEBUG = all(
+    not sys.argv[0].endswith(substring)
+    for substring in {"hypercorn", "uvicorn", "daphne"}
+)
 ALLOWED_HOSTS = ["*"]
 
 # Application definition
@@ -43,6 +46,7 @@ INSTALLED_APPS = [
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -174,3 +178,4 @@ LOGGING = {
 
 # ReactPy Django Settings
 REACTPY_AUTH_BACKEND = "django.contrib.auth.backends.ModelBackend"
+REACTPY_BACKHAUL_THREAD = "test" not in sys.argv

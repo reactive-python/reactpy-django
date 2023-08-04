@@ -1,9 +1,13 @@
 """Anything used to construct a websocket endpoint"""
+
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import logging
+from concurrent.futures import Future
 from datetime import timedelta
+from threading import Thread
 from typing import Any, MutableMapping, Sequence
 
 import dill as pickle
@@ -19,8 +23,17 @@ from reactpy.core.serve import serve_layout
 from reactpy_django.types import ComponentParamData, ComponentWebsocket
 from reactpy_django.utils import db_cleanup, func_has_args
 
-
 _logger = logging.getLogger(__name__)
+backhaul_loop = asyncio.new_event_loop()
+
+
+def start_backhaul_loop():
+    """Starts the asyncio event loop that will perform component rendering tasks."""
+    asyncio.set_event_loop(backhaul_loop)
+    backhaul_loop.run_forever()
+
+
+backhaul_thread = Thread(target=start_backhaul_loop, daemon=True)
 
 
 class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
@@ -28,21 +41,24 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self) -> None:
         """The browser has connected."""
+        from reactpy_django.config import REACTPY_AUTH_BACKEND, REACTPY_BACKHAUL_THREAD
+
         await super().connect()
 
         # Authenticate the user, if possible
-        from reactpy_django.config import REACTPY_AUTH_BACKEND
-
         user: Any = self.scope.get("user")
         if user and user.is_authenticated:
             try:
                 await login(self.scope, user, backend=REACTPY_AUTH_BACKEND)
             except Exception:
-                _logger.exception("ReactPy websocket authentication has failed!")
+                await asyncio.to_thread(
+                    _logger.exception, "ReactPy websocket authentication has failed!"
+                )
         elif user is None:
-            _logger.debug(
+            await asyncio.to_thread(
+                _logger.debug,
                 "ReactPy websocket is missing AuthMiddlewareStack! "
-                "Users will not be accessible within `use_scope` or `use_websocket`!"
+                "Users will not be accessible within `use_scope` or `use_websocket`!",
             )
 
         # Save the session, if possible
@@ -50,31 +66,46 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             try:
                 await database_sync_to_async(self.scope["session"].save)()
             except Exception:
-                _logger.exception("ReactPy has failed to save scope['session']!")
+                await asyncio.to_thread(
+                    _logger.exception, "ReactPy has failed to save scope['session']!"
+                )
         else:
-            _logger.debug(
+            await asyncio.to_thread(
+                _logger.debug,
                 "ReactPy websocket is missing SessionMiddlewareStack! "
-                "Sessions will not be accessible within `use_scope` or `use_websocket`!"
+                "Sessions will not be accessible within `use_scope` or `use_websocket`!",
             )
 
-        # Start allowing component renders
-        self._reactpy_dispatcher_future = asyncio.ensure_future(
-            self._run_dispatch_loop()
-        )
+        # Start the component dispatcher
+        self.dispatcher: Future | asyncio.Task
+        self.threaded = REACTPY_BACKHAUL_THREAD
+        if self.threaded:
+            if not backhaul_thread.is_alive():
+                await asyncio.to_thread(
+                    _logger.debug, "Starting ReactPy backhaul thread."
+                )
+                backhaul_thread.start()
+            self.dispatcher = asyncio.run_coroutine_threadsafe(
+                self.run_dispatcher(), backhaul_loop
+            )
+        else:
+            self.dispatcher = asyncio.create_task(self.run_dispatcher())
 
     async def disconnect(self, code: int) -> None:
         """The browser has disconnected."""
-        if self._reactpy_dispatcher_future.done():
-            await self._reactpy_dispatcher_future
-        else:
-            self._reactpy_dispatcher_future.cancel()
+        self.dispatcher.cancel()
         await super().disconnect(code)
 
     async def receive_json(self, content: Any, **_) -> None:
-        """Receive a message from the browser. Typically messages are event signals."""
-        await self._reactpy_recv_queue.put(content)
+        """Receive a message from the browser. Typically, messages are event signals."""
+        if self.threaded:
+            asyncio.run_coroutine_threadsafe(
+                self.recv_queue.put(content), backhaul_loop
+            )
+        else:
+            await self.recv_queue.put(content)
 
-    async def _run_dispatch_loop(self):
+    async def run_dispatcher(self):
         """Runs the main loop that performs component rendering tasks."""
         from reactpy_django import models
         from reactpy_django.config import (
@@ -87,7 +118,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
         uuid = scope["url_route"]["kwargs"]["uuid"]
         search = scope["query_string"].decode()
-        self._reactpy_recv_queue: asyncio.Queue = asyncio.Queue()
+        self.recv_queue: asyncio.Queue = asyncio.Queue()
         connection = Connection(  # For `use_connection`
             scope=scope,
             location=Location(
@@ -104,8 +135,9 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         try:
             component_constructor = REACTPY_REGISTERED_COMPONENTS[dotted_path]
         except KeyError:
-            _logger.warning(
-                f"Attempt to access invalid ReactPy component: {dotted_path!r}"
+            await asyncio.to_thread(
+                _logger.warning,
+                f"Attempt to access invalid ReactPy component: {dotted_path!r}",
             )
             return
 
@@ -129,9 +161,10 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                         params_query.save, thread_sensitive=False
                     )()
                 except models.ComponentSession.DoesNotExist:
-                    _logger.warning(
+                    await asyncio.to_thread(
+                        _logger.warning,
                         f"Component session for '{dotted_path}:{uuid}' not found. The "
-                        "session may have already expired beyond REACTPY_RECONNECT_MAX."
+                        "session may have already expired beyond REACTPY_RECONNECT_MAX.",
                     )
                     return
                 component_params: ComponentParamData = pickle.loads(params_query.params)
@@ -143,19 +176,17 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 *component_args, **component_kwargs
             )
         except Exception:
-            _logger.exception(
+            await asyncio.to_thread(
+                _logger.exception,
                 f"Failed to construct component {component_constructor} "
-                f"with parameters {component_kwargs}"
+                f"with parameters {component_kwargs}",
             )
             return
 
         # Start the ReactPy component rendering loop
-        try:
+        with contextlib.suppress(Exception):
             await serve_layout(
                 Layout(ConnectionContext(component_instance, value=connection)),
                 self.send_json,
-                self._reactpy_recv_queue.get,
+                self.recv_queue.get,
             )
-        except Exception:
-            await self.close()
-            raise

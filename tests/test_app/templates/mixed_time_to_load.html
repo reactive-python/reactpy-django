@@ -1,0 +1,60 @@
+{% load static %} {% load reactpy %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
+    <title>ReactPy</title>
+</head>
+
+<body>
+    <h1>ReactPy IO/CPU Mixed Renders Per Second Test Page</h1>
+
+    <b>
+        <p>Total Active Components: <b id="total-active"></b></p>
+        <p>Time To Load: <b id="time-to-load" data-num=0></b></p>
+        <p>Total Renders Per Second: <b id="total-rps"></b></p>
+    </b>
+
+    <script>
+        const start = new Date();
+        async function calculateTotalRPS() {
+            while (true) {
+                let elements = document.getElementsByClassName("rps");
+
+                // Calculate Total Active
+                document.getElementById("total-active").textContent = elements.length;
+
+                // Calculate TTL
+                if (document.getElementById("time-to-load").getAttribute("data-num") != elements.length) {
+                    let timeToLoad = new Date() - start;
+                    document.getElementById("time-to-load").textContent = timeToLoad + " ms";
+                    document.getElementById("time-to-load").setAttribute("data-num", elements.length);
+                }
+
+                // Calculate RPS
+                let totalRPS = 0;
+                for (let i = 0; i < elements.length; i++) {
+                    let rpsValue = parseFloat(elements[i].getAttribute("data-rps"));
+                    totalRPS += rpsValue;
+                }
+                document.getElementById("total-rps").textContent = totalRPS;
+
+                await new Promise(resolve => setTimeout(resolve, 50));
+            }
+        }
+        calculateTotalRPS();
+    </script>
+
+    <hr>
+    {% for x in count %}
+    <b>Worker {{x}}</b>
+    {% component "test_app.performance.components.mixed_time_to_load" %}
+    <hr>
+    {% endfor %}
+</body>
+
+</html>

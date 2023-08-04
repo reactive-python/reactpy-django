@@ -13,7 +13,6 @@ from setuptools import find_packages, setup
 from setuptools.command.develop import develop
 from setuptools.command.sdist import sdist
 
-
 if sys.platform == "win32":
     from subprocess import list2cmdline
 else:
@@ -22,7 +21,7 @@ else:
         return " ".join(map(pipes.quote, cmd_list))
 
 
-log = getLogger()
+log = getLogger()  # noqa: F811
 log.addHandler(StreamHandler(sys.stdout))
 
 
@@ -47,7 +46,7 @@ package_dir = src_dir / name
 
 package = {
     "name": name,
-    "python_requires": ">=3.8",
+    "python_requires": ">=3.9",
     "packages": find_packages(str(src_dir)),
     "package_dir": {"": "src"},
     "description": "Control the web with Python",
@@ -66,9 +65,9 @@ package = {
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         "Topic :: Multimedia :: Graphics",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Environment :: Web Environment",
     ],
 }
