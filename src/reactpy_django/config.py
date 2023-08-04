@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import logging
-
 from django.conf import settings
 from django.core.cache import DEFAULT_CACHE_ALIAS
 from django.db import DEFAULT_DB_ALIAS
@@ -14,9 +12,6 @@ from reactpy_django.types import (
     ViewComponentIframe,
 )
 from reactpy_django.utils import import_dotted_path
-
-_logger = logging.getLogger(__name__)
-
 
 # Non-configurable values
 REACTPY_DEBUG_MODE.set_current(getattr(settings, "DEBUG"))
