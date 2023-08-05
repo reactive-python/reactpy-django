@@ -1,5 +1,6 @@
 import sys
 
+from django.contrib.staticfiles.finders import find
 from django.core.checks import Error, Tags, Warning, register
 
 
@@ -54,6 +55,16 @@ def reactpy_warnings(app_configs, **kwargs):
                 "This configuration is known to be unstable.",
                 hint="Set settings.py:REACTPY_BACKHAUL_THREAD to False or use a different webserver.",
                 id="reactpy_django.W003",
+            )
+        )
+
+    # Check if reactpy_django/client.js is available
+    if not find("reactpy_django/client.js"):
+        warnings.append(
+            Warning(
+                "ReactPy client.js could not be found within Django static files!",
+                hint="Check your Django static file configuration.",
+                id="reactpy_django.W004",
             )
         )
 
