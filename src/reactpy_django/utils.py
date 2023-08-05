@@ -86,7 +86,10 @@ def _register_component(dotted_path: str) -> Callable:
     """Adds a component to the mapping of registered components.
     This should only be called on startup to maintain synchronization during mulitprocessing.
     """
-    from reactpy_django.config import REACTPY_REGISTERED_COMPONENTS
+    from reactpy_django.config import (
+        REACTPY_FAILED_COMPONENTS,
+        REACTPY_REGISTERED_COMPONENTS,
+    )
 
     if dotted_path in REACTPY_REGISTERED_COMPONENTS:
         return REACTPY_REGISTERED_COMPONENTS[dotted_path]
@@ -94,6 +97,7 @@ def _register_component(dotted_path: str) -> Callable:
     try:
         REACTPY_REGISTERED_COMPONENTS[dotted_path] = import_dotted_path(dotted_path)
     except AttributeError as e:
+        REACTPY_FAILED_COMPONENTS.add(dotted_path)
         raise ComponentDoesNotExistError(
             f"Error while fetching '{dotted_path}'. {(str(e).capitalize())}."
         ) from e

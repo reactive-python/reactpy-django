@@ -9,6 +9,8 @@ def reactpy_warnings(app_configs, **kwargs):
     from django.conf import settings
     from django.urls import reverse
 
+    from reactpy_django.config import REACTPY_FAILED_COMPONENTS
+
     warnings = []
 
     # REACTPY_DATABASE is not an in-memory database.
@@ -65,6 +67,17 @@ def reactpy_warnings(app_configs, **kwargs):
                 "ReactPy client.js could not be found within Django static files!",
                 hint="Check your Django static file configuration.",
                 id="reactpy_django.W004",
+            )
+        )
+
+    # Check if any components failed to be registered
+    if REACTPY_FAILED_COMPONENTS:
+        warnings.append(
+            Warning(
+                "ReactPy failed to register the following components:\n\t+ "
+                + "\n\t+ ".join(REACTPY_FAILED_COMPONENTS),
+                hint="Check if these paths are valid, or if an exception is being raised during import.",
+                id="reactpy_django.W005",
             )
         )
 
