@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-import logging
-import sys
-
 from django.conf import settings
 from django.core.cache import DEFAULT_CACHE_ALIAS
 from django.db import DEFAULT_DB_ALIAS
@@ -16,12 +13,10 @@ from reactpy_django.types import (
 )
 from reactpy_django.utils import import_dotted_path
 
-_logger = logging.getLogger(__name__)
-
-
 # Non-configurable values
 REACTPY_DEBUG_MODE.set_current(getattr(settings, "DEBUG"))
 REACTPY_REGISTERED_COMPONENTS: dict[str, ComponentConstructor] = {}
+REACTPY_FAILED_COMPONENTS: set[str] = set()
 REACTPY_VIEW_COMPONENT_IFRAMES: dict[str, ViewComponentIframe] = {}
 
 
@@ -68,16 +63,3 @@ REACTPY_BACKHAUL_THREAD: bool = getattr(
     "REACTPY_BACKHAUL_THREAD",
     True,
 )
-
-# Settings checks (separate from Django checks)
-if (
-    sys.platform == "linux"
-    and sys.argv
-    and sys.argv[0].endswith("daphne")
-    and REACTPY_BACKHAUL_THREAD
-):
-    _logger.warning(
-        "ReactPy is running on Linux with Daphne, but REACTPY_BACKHAUL_THREAD is set "
-        "to True. This configuration is known to be unstable. Either set "
-        "REACTPY_BACKHAUL_THREAD to False, or run ReactPy with a different ASGI server."
-    )

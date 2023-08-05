@@ -210,7 +210,6 @@ def _cached_static_contents(static_path: str):
         )
 
     # Fetch the file from cache, if available
-    # Cache is preferrable to `use_memo` due to multiprocessing capabilities
     last_modified_time = os.stat(abs_path).st_mtime
     cache_key = f"reactpy_django:static_contents:{static_path}"
     file_contents = caches[REACTPY_CACHE].get(

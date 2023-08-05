@@ -5,14 +5,13 @@ import inspect
 import logging
 import os
 import re
-from datetime import datetime, timedelta
+from datetime import timedelta
 from fnmatch import fnmatch
 from importlib import import_module
 from inspect import iscoroutinefunction
 from typing import Any, Callable, Sequence
 
 from channels.db import database_sync_to_async
-from django.core.cache import caches
 from django.db.models import ManyToManyField, ManyToOneRel, prefetch_related_objects
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
@@ -23,7 +22,6 @@ from django.utils.encoding import smart_str
 from django.views import View
 
 from reactpy_django.exceptions import ComponentDoesNotExistError, ComponentParamError
-
 
 _logger = logging.getLogger(__name__)
 _component_tag = r"(?P<tag>component)"
@@ -88,7 +86,10 @@ def _register_component(dotted_path: str) -> Callable:
     """Adds a component to the mapping of registered components.
     This should only be called on startup to maintain synchronization during mulitprocessing.
     """
-    from reactpy_django.config import REACTPY_REGISTERED_COMPONENTS
+    from reactpy_django.config import (
+        REACTPY_FAILED_COMPONENTS,
+        REACTPY_REGISTERED_COMPONENTS,
+    )
 
     if dotted_path in REACTPY_REGISTERED_COMPONENTS:
         return REACTPY_REGISTERED_COMPONENTS[dotted_path]
@@ -96,6 +97,7 @@ def _register_component(dotted_path: str) -> Callable:
     try:
         REACTPY_REGISTERED_COMPONENTS[dotted_path] = import_dotted_path(dotted_path)
     except AttributeError as e:
+        REACTPY_FAILED_COMPONENTS.add(dotted_path)
         raise ComponentDoesNotExistError(
             f"Error while fetching '{dotted_path}'. {(str(e).capitalize())}."
         ) from e
@@ -266,7 +268,7 @@ def django_query_postprocessor(
             # Force the query to execute
             getattr(data, field.name, None)
 
-            if many_to_one and type(field) == ManyToOneRel:
+            if many_to_one and type(field) == ManyToOneRel:  # noqa: #E721
                 prefetch_fields.append(field.related_name or f"{field.name}_set")
 
             elif many_to_many and isinstance(field, ManyToManyField):
@@ -332,35 +334,23 @@ def create_cache_key(*args):
 def db_cleanup(immediate: bool = False):
     """Deletes expired component sessions from the database.
     This function may be expanded in the future to include additional cleanup tasks."""
-    from .config import REACTPY_CACHE, REACTPY_DEBUG_MODE, REACTPY_RECONNECT_MAX
-    from .models import ComponentSession
+    from .config import REACTPY_DEBUG_MODE, REACTPY_RECONNECT_MAX
+    from .models import ComponentSession, Config
 
-    clean_started_at = datetime.now()
-    cache_key: str = create_cache_key("last_cleaned")
-    now_str: str = datetime.strftime(timezone.now(), DATE_FORMAT)
-    cleaned_at_str: str = caches[REACTPY_CACHE].get(cache_key)
-    cleaned_at: datetime = timezone.make_aware(
-        datetime.strptime(cleaned_at_str or now_str, DATE_FORMAT)
-    )
+    config = Config.load()
+    start_time = timezone.now()
+    cleaned_at = config.cleaned_at
     clean_needed_by = cleaned_at + timedelta(seconds=REACTPY_RECONNECT_MAX)
-    expires_by: datetime = timezone.now() - timedelta(seconds=REACTPY_RECONNECT_MAX)
-
-    # Component params exist in the DB, but we don't know when they were last cleaned
-    if not cleaned_at_str and ComponentSession.objects.all():
-        _logger.warning(
-            "ReactPy has detected component sessions in the database, "
-            "but no timestamp was found in cache. This may indicate that "
-            "the cache has been cleared."
-        )
 
     # Delete expired component parameters
-    # Use timestamps in cache (`cleaned_at_str`) as a no-dependency rate limiter
-    if immediate or not cleaned_at_str or timezone.now() >= clean_needed_by:
-        ComponentSession.objects.filter(last_accessed__lte=expires_by).delete()
-        caches[REACTPY_CACHE].set(cache_key, now_str, timeout=None)
+    if immediate or timezone.now() >= clean_needed_by:
+        expiration_date = timezone.now() - timedelta(seconds=REACTPY_RECONNECT_MAX)
+        ComponentSession.objects.filter(last_accessed__lte=expiration_date).delete()
+        config.cleaned_at = timezone.now()
+        config.save()
 
     # Check if cleaning took abnormally long
-    clean_duration = datetime.now() - clean_started_at
+    clean_duration = timezone.now() - start_time
     if REACTPY_DEBUG_MODE and clean_duration.total_seconds() > 1:
         _logger.warning(
             "ReactPy has taken %s seconds to clean up expired component sessions. "

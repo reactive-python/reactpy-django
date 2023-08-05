@@ -4,7 +4,6 @@ from uuid import uuid4
 
 import dill as pickle
 from django.test import TransactionTestCase
-
 from reactpy_django import utils
 from reactpy_django.models import ComponentSession
 from reactpy_django.types import ComponentParamData
@@ -13,6 +12,11 @@ from reactpy_django.types import ComponentParamData
 class RoutedDatabaseTests(TransactionTestCase):
     databases = {"reactpy"}
 
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        utils.db_cleanup(immediate=True)
+
     def test_component_params(self):
         # Make sure the ComponentParams table is empty
         self.assertEqual(ComponentSession.objects.count(), 0)
@@ -20,7 +24,9 @@ class RoutedDatabaseTests(TransactionTestCase):
 
         # Check if a component params are in the database
         self.assertEqual(ComponentSession.objects.count(), 1)
-        self.assertEqual(pickle.loads(ComponentSession.objects.first().params), params_1)  # type: ignore
+        self.assertEqual(
+            pickle.loads(ComponentSession.objects.first().params), params_1  # type: ignore
+        )
 
         # Force `params_1` to expire
         from reactpy_django import config
@@ -37,7 +43,9 @@ class RoutedDatabaseTests(TransactionTestCase):
 
         # Make sure `params_1` has expired
         self.assertEqual(ComponentSession.objects.count(), 1)
-        self.assertEqual(pickle.loads(ComponentSession.objects.first().params), params_2)  # type: ignore
+        self.assertEqual(
+            pickle.loads(ComponentSession.objects.first().params), params_2  # type: ignore
+        )
 
     def _save_params_to_db(self, value: Any) -> ComponentParamData:
         db = list(self.databases)[0]

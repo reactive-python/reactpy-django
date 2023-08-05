@@ -15,7 +15,7 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
     from reactpy_django.config import REACTPY_CACHE
 
     web_modules_dir = REACTPY_WEB_MODULES_DIR.current
-    path = os.path.abspath(web_modules_dir.joinpath(*file.split("/")))
+    path = os.path.abspath(web_modules_dir.joinpath(file))
 
     # Prevent attempts to walk outside of the web modules dir
     if str(web_modules_dir) != os.path.commonpath((path, web_modules_dir)):
@@ -25,18 +25,18 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
 
     # Fetch the file from cache, if available
     last_modified_time = os.stat(path).st_mtime
-    cache_key = create_cache_key("web_module", str(path).lstrip(str(web_modules_dir)))
-    response = await caches[REACTPY_CACHE].aget(
+    cache_key = create_cache_key("web_modules", path)
+    file_contents = await caches[REACTPY_CACHE].aget(
         cache_key, version=int(last_modified_time)
     )
-    if response is None:
+    if file_contents is None:
         async with async_open(path, "r") as fp:
-            response = HttpResponse(await fp.read(), content_type="text/javascript")
+            file_contents = await fp.read()
         await caches[REACTPY_CACHE].adelete(cache_key)
         await caches[REACTPY_CACHE].aset(
-            cache_key, response, timeout=None, version=int(last_modified_time)
+            cache_key, file_contents, timeout=604800, version=int(last_modified_time)
         )
-    return response
+    return HttpResponse(file_contents, content_type="text/javascript")
 
 
 async def view_to_component_iframe(

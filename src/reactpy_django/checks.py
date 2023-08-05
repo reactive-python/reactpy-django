@@ -1,3 +1,6 @@
+import sys
+
+from django.contrib.staticfiles.finders import find
 from django.core.checks import Error, Tags, Warning, register
 
 
@@ -5,6 +8,8 @@ from django.core.checks import Error, Tags, Warning, register
 def reactpy_warnings(app_configs, **kwargs):
     from django.conf import settings
     from django.urls import reverse
+
+    from reactpy_django.config import REACTPY_FAILED_COMPONENTS
 
     warnings = []
 
@@ -25,23 +30,6 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
-    # REACTPY_CACHE is not an in-memory cache.
-    if getattr(settings, "CACHES", {}).get(
-        getattr(settings, "REACTPY_CACHE", "default"), {}
-    ).get("BACKEND", None) in {
-        "django.core.cache.backends.dummy.DummyCache",
-        "django.core.cache.backends.locmem.LocMemCache",
-    }:
-        warnings.append(
-            Warning(
-                "Using ReactPy with an in-memory cache can cause unexpected "
-                "behaviors.",
-                hint="Configure settings.py:CACHES[REACTPY_CACHE], to use a "
-                "multiprocessing and thread safe cache.",
-                id="reactpy_django.W002",
-            )
-        )
-
     # ReactPy URLs exist
     try:
         reverse("reactpy:web_modules", kwargs={"file": "example"})
@@ -52,7 +40,44 @@ def reactpy_warnings(app_configs, **kwargs):
                 "ReactPy URLs have not been registered.",
                 hint="""Add 'path("reactpy/", include("reactpy_django.http.urls"))' """
                 "to your application's urlpatterns.",
+                id="reactpy_django.W002",
+            )
+        )
+
+    # Warn if REACTPY_BACKHAUL_THREAD is set to True on Linux with Daphne
+    if (
+        sys.argv
+        and sys.argv[0].endswith("daphne")
+        and getattr(settings, "REACTPY_BACKHAUL_THREAD", True)
+        and sys.platform == "linux"
+    ):
+        warnings.append(
+            Warning(
+                "REACTPY_BACKHAUL_THREAD is enabled but you running with Daphne on Linux. "
+                "This configuration is known to be unstable.",
+                hint="Set settings.py:REACTPY_BACKHAUL_THREAD to False or use a different webserver.",
                 id="reactpy_django.W003",
+            )
+        )
+
+    # Check if reactpy_django/client.js is available
+    if not find("reactpy_django/client.js"):
+        warnings.append(
+            Warning(
+                "ReactPy client.js could not be found within Django static files!",
+                hint="Check your Django static file configuration.",
+                id="reactpy_django.W004",
+            )
+        )
+
+    # Check if any components failed to be registered
+    if REACTPY_FAILED_COMPONENTS:
+        warnings.append(
+            Warning(
+                "ReactPy failed to register the following components:\n\t+ "
+                + "\n\t+ ".join(REACTPY_FAILED_COMPONENTS),
+                hint="Check if these paths are valid, or if an exception is being raised during import.",
+                id="reactpy_django.W005",
             )
         )
 
@@ -69,8 +94,7 @@ def reactpy_errors(app_configs, **kwargs):
     if not getattr(settings, "ASGI_APPLICATION", None):
         errors.append(
             Error(
-                "ASGI_APPLICATION is not defined."
-                " ReactPy requires ASGI to be enabled.",
+                "ASGI_APPLICATION is not defined, but ReactPy requires ASGI.",
                 hint="Add ASGI_APPLICATION to settings.py.",
                 id="reactpy_django.E001",
             )
@@ -147,6 +171,16 @@ def reactpy_errors(app_configs, **kwargs):
                 hint="REACTPY_AUTH_BACKEND should be a string.",
                 obj=settings.REACTPY_AUTH_BACKEND,
                 id="reactpy_django.E008",
+            )
+        )
+
+    # Check for dependencies
+    if "channels" not in settings.INSTALLED_APPS:
+        errors.append(
+            Error(
+                "Django Channels is not installed.",
+                hint="Add 'channels' to settings.py:INSTALLED_APPS.",
+                id="reactpy_django.E009",
             )
         )
 

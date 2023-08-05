@@ -1,5 +1,5 @@
 # Cache used to store ReactPy web modules.
-# ReactPy requires a multiprocessing-safe and thread-safe cache.
+# ReactPy benefits from a fast, well indexed cache.
 # We recommend redis or python-diskcache.
 REACTPY_CACHE = "default"
 
