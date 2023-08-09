@@ -19,7 +19,6 @@ from reactpy_django.utils import (
     func_has_args,
 )
 
-
 REACTPY_WEB_MODULES_URL = reverse("reactpy:web_modules", args=["x"])[:-1][1:]
 register = template.Library()
 _logger = getLogger(__name__)

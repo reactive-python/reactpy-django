@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
-
 from reactpy_django.components import view_to_component
 
 

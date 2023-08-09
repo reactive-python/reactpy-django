@@ -20,7 +20,6 @@ from django.views.generic import View
 from reactpy.types import Connection as _Connection
 from typing_extensions import ParamSpec
 
-
 __all__ = [
     "_Result",
     "_Params",

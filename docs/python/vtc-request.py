@@ -1,8 +1,6 @@
 from django.http import HttpRequest, HttpResponse
 from reactpy import component, html
-
 from reactpy_django.components import view_to_component
-
 
 example_request = HttpRequest()
 example_request.method = "PUT"

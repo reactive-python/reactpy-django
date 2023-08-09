@@ -29,4 +29,4 @@ REACTPY_AUTH_BACKEND = "django.contrib.auth.backends.ModelBackend"
 
 # Whether to enable rendering ReactPy via a dedicated backhaul thread
 # This allows the webserver to process traffic while during ReactPy rendering
-REACTPY_BACKHAUL_THREAD = True
+REACTPY_BACKHAUL_THREAD = False

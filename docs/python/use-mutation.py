@@ -1,6 +1,5 @@
 from example.models import TodoItem
 from reactpy import component, html
-
 from reactpy_django.hooks import use_mutation
 
 
@@ -10,11 +9,12 @@ def add_item(text: str):
 
 @component
 def todo_list():
+    item_mutation = use_mutation(add_item)
+
     def submit_event(event):
         if event["key"] == "Enter":
             item_mutation.execute(text=event["target"]["value"])
 
-    item_mutation = use_mutation(add_item)
     if item_mutation.loading:
         mutation_status = html.h2("Adding...")
     elif item_mutation.error:

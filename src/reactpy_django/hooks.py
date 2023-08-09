@@ -32,7 +32,6 @@ from reactpy_django.types import (
 )
 from reactpy_django.utils import generate_obj_name
 
-
 _logger = logging.getLogger(__name__)
 _REFETCH_CALLBACKS: DefaultDict[
     Callable[..., Any], set[Callable[[], None]]

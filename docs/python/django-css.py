@@ -1,5 +1,4 @@
 from reactpy import component, html
-
 from reactpy_django.components import django_css
 
 

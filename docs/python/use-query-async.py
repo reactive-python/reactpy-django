@@ -1,7 +1,6 @@
 from channels.db import database_sync_to_async
 from example.models import TodoItem
 from reactpy import component, html
-
 from reactpy_django.hooks import use_query
 
 
