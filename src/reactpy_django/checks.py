@@ -2,6 +2,7 @@ import sys
 
 from django.contrib.staticfiles.finders import find
 from django.core.checks import Error, Tags, Warning, register
+from django.template import loader
 
 
 @register(Tags.compatibility)
@@ -48,7 +49,7 @@ def reactpy_warnings(app_configs, **kwargs):
     if (
         sys.argv
         and sys.argv[0].endswith("daphne")
-        and getattr(settings, "REACTPY_BACKHAUL_THREAD", True)
+        and getattr(settings, "REACTPY_BACKHAUL_THREAD", False)
         and sys.platform == "linux"
     ):
         warnings.append(
@@ -76,10 +77,46 @@ def reactpy_warnings(app_configs, **kwargs):
             Warning(
                 "ReactPy failed to register the following components:\n\t+ "
                 + "\n\t+ ".join(REACTPY_FAILED_COMPONENTS),
-                hint="Check if these paths are valid, or if an exception is being raised during import.",
+                hint="Check if these paths are valid, or if an exception is being "
+                "raised during import.",
                 id="reactpy_django.W005",
             )
         )
+
+    # Check if the reactpy/component.html template exists
+    try:
+        loader.get_template("reactpy/component.html")
+    except Exception:
+        warnings.append(
+            Warning(
+                "ReactPy HTML templates could not be found!",
+                hint="Check your settings.py:TEMPLATES configuration and make sure "
+                "ReactPy-Django is installed properly.",
+                id="reactpy_django.W006",
+            )
+        )
+
+    # Check if REACTPY_WEBSOCKET_URL doesn't end with a slash
+    REACTPY_WEBSOCKET_URL = getattr(settings, "REACTPY_WEBSOCKET_URL", "")
+    if isinstance(REACTPY_WEBSOCKET_URL, str):
+        if not REACTPY_WEBSOCKET_URL or not REACTPY_WEBSOCKET_URL.endswith("/"):
+            warnings.append(
+                Warning(
+                    "REACTPY_WEBSOCKET_URL did not end with a forward slash.",
+                    hint="Change your URL to be written in the following format: 'example_url/'",
+                    id="reactpy_django.W007",
+                )
+            )
+
+        # Check if REACTPY_WEBSOCKET_URL doesn't start with an alphanumeric character
+        if not REACTPY_WEBSOCKET_URL or not REACTPY_WEBSOCKET_URL[0].isalnum():
+            warnings.append(
+                Warning(
+                    "REACTPY_WEBSOCKET_URL did not start with an alphanumeric character.",
+                    hint="Change your URL to be written in the following format: 'example_url/'",
+                    id="reactpy_django.W008",
+                )
+            )
 
     return warnings
 
