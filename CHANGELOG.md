@@ -40,7 +40,7 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
--   Additonal system checks for ReactPy misconfigurations.
+-   Additional system checks for ReactPy misconfigurations.
 
 ### Changed
 
