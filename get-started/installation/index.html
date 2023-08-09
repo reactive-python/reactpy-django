@@ -46,15 +46,13 @@
 
 <span class=c1># Whether to enable rendering ReactPy via a dedicated backhaul thread</span>
 <span class=c1># This allows the webserver to process traffic while during ReactPy rendering</span>
-<span class=n>REACTPY_BACKHAUL_THREAD</span> <span class=o>=</span> <span class=kc>True</span>
+<span class=n>REACTPY_BACKHAUL_THREAD</span> <span class=o>=</span> <span class=kc>False</span>
 </code></pre></div> </details> <h2 id=step-3-configure-urlspy>Step 3: Configure <a href=https://docs.djangoproject.com/en/dev/topics/http/urls/ ><code>urls.py</code></a><a class=headerlink href=#step-3-configure-urlspy title="Permanent link">&para;</a></h2> <p>Add ReactPy HTTP paths to your <code>urlpatterns</code>.</p> <div class="tabbed-set tabbed-alternate" data-tabs=3:1><input checked=checked id=__tabbed_3_1 name=__tabbed_3 type=radio><div class=tabbed-labels><label for=__tabbed_3_1>urls.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1</span>
 <span class=normal>2</span>
 <span class=normal>3</span>
 <span class=normal>4</span>
 <span class=normal>5</span>
-<span class=normal>6</span>
-<span class=normal>7</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>django.urls</span> <span class=kn>import</span> <span class=n>include</span><span class=p>,</span> <span class=n>path</span>
-
+<span class=normal>6</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>django.urls</span> <span class=kn>import</span> <span class=n>include</span><span class=p>,</span> <span class=n>path</span>
 
 <span class=n>urlpatterns</span> <span class=o>=</span> <span class=p>[</span>
     <span class=o>...</span><span class=p>,</span>
@@ -79,13 +77,9 @@
 <span class=normal>17</span>
 <span class=normal>18</span>
 <span class=normal>19</span>
-<span class=normal>20</span>
-<span class=normal>21</span>
-<span class=normal>22</span>
-<span class=normal>23</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>import</span> <span class=nn>os</span>
+<span class=normal>20</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>import</span> <span class=nn>os</span>
 
 <span class=kn>from</span> <span class=nn>django.core.asgi</span> <span class=kn>import</span> <span class=n>get_asgi_application</span>
-
 
 <span class=c1># Ensure DJANGO_SETTINGS_MODULE is set properly based on your project name!</span>
 <span class=n>os</span><span class=o>.</span><span class=n>environ</span><span class=o>.</span><span class=n>setdefault</span><span class=p>(</span><span class=s2>&quot;DJANGO_SETTINGS_MODULE&quot;</span><span class=p>,</span> <span class=s2>&quot;example_project.settings&quot;</span><span class=p>)</span>
@@ -95,9 +89,7 @@
 
 
 <span class=kn>from</span> <span class=nn>channels.routing</span> <span class=kn>import</span> <span class=n>ProtocolTypeRouter</span><span class=p>,</span> <span class=n>URLRouter</span>  <span class=c1># noqa: E402</span>
-
 <span class=kn>from</span> <span class=nn>reactpy_django</span> <span class=kn>import</span> <span class=n>REACTPY_WEBSOCKET_PATH</span>  <span class=c1># noqa: E402</span>
-
 
 <span class=n>application</span> <span class=o>=</span> <span class=n>ProtocolTypeRouter</span><span class=p>(</span>
     <span class=p>{</span>
@@ -107,7 +99,6 @@
 <span class=p>)</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> <details class=note> <summary>Add <code>AuthMiddlewareStack</code> and <code>SessionMiddlewareStack</code> (Optional)</summary> <p>There are many situations where you need to access the Django <code>User</code> or <code>Session</code> objects within ReactPy components. For example, if you want to:</p> <ol> <li>Access the <code>User</code> that is currently logged in</li> <li>Login or logout the current <code>User</code></li> <li>Access Django's <code>Session</code> object</li> </ol> <p>In these situations will need to ensure you are using <code>AuthMiddlewareStack</code> and/or <code>SessionMiddlewareStack</code>.</p> <div class=highlight><pre><span></span><code><span class=kn>from</span> <span class=nn>channels.auth</span> <span class=kn>import</span> <span class=n>AuthMiddlewareStack</span>  <span class=c1># noqa: E402</span>
 <span class=kn>from</span> <span class=nn>channels.sessions</span> <span class=kn>import</span> <span class=n>SessionMiddlewareStack</span>  <span class=c1># noqa: E402</span>
-
 
 <span class=n>application</span> <span class=o>=</span> <span class=n>ProtocolTypeRouter</span><span class=p>(</span>
     <span class=p>{</span>
