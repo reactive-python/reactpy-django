@@ -97,7 +97,7 @@ def reactpy_warnings(app_configs, **kwargs):
         )
 
     # Check if REACTPY_WEBSOCKET_URL doesn't end with a slash
-    REACTPY_WEBSOCKET_URL = getattr(settings, "REACTPY_WEBSOCKET_URL", "")
+    REACTPY_WEBSOCKET_URL = getattr(settings, "REACTPY_WEBSOCKET_URL", "reactpy/")
     if isinstance(REACTPY_WEBSOCKET_URL, str):
         if not REACTPY_WEBSOCKET_URL or not REACTPY_WEBSOCKET_URL.endswith("/"):
             warnings.append(

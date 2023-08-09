@@ -5,7 +5,6 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import logging
-from concurrent.futures import Future
 from datetime import timedelta
 from threading import Thread
 from typing import Any, MutableMapping, Sequence
@@ -41,12 +40,12 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self) -> None:
         """The browser has connected."""
-        from reactpy_django.config import REACTPY_AUTH_BACKEND, REACTPY_BACKHAUL_THREAD
+        from reactpy_django.config import REACTPY_AUTH_BACKEND
 
         await super().connect()
 
         # Authenticate the user, if possible
-        user: Any = self.scope.get("user")
+        user = self.scope.get("user")
         if user and user.is_authenticated:
             try:
                 await login(self.scope, user, backend=REACTPY_AUTH_BACKEND)
@@ -77,33 +76,36 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             )
 
         # Start the component dispatcher
-        self.dispatcher: Future | asyncio.Task
-        self.threaded = REACTPY_BACKHAUL_THREAD
-        if self.threaded:
+        self.recv_queue: asyncio.Queue = asyncio.Queue()
+        self.dispatcher = asyncio.create_task(self.run_dispatcher())
+
+    async def disconnect(self, code: int) -> None:
+        """The browser has disconnected."""
+        self.dispatcher.cancel()
+        await self.dispatcher
+        await super().disconnect(code)
+
+    async def receive_json(self, content: Any, **_) -> None:
+        """Receive a message from the browser. Typically, messages are event signals."""
+        await self.recv_queue.put(content)
+
+    async def dispatch(self, message):
+        """Override the Django Channels dispatch method to allow running the ASGI
+        dispatcher in a thread."""
+        from reactpy_django.config import REACTPY_BACKHAUL_THREAD
+
+        if REACTPY_BACKHAUL_THREAD:
             if not backhaul_thread.is_alive():
                 await asyncio.to_thread(
                     _logger.debug, "Starting ReactPy backhaul thread."
                 )
                 backhaul_thread.start()
-            self.dispatcher = asyncio.run_coroutine_threadsafe(
-                self.run_dispatcher(), backhaul_loop
-            )
-        else:
-            self.dispatcher = asyncio.create_task(self.run_dispatcher())
 
-    async def disconnect(self, code: int) -> None:
-        """The browser has disconnected."""
-        self.dispatcher.cancel()
-        await super().disconnect(code)
+            return asyncio.run_coroutine_threadsafe(
+                super().dispatch(message), backhaul_loop
+            ).result()
 
-    async def receive_json(self, content: Any, **_) -> None:
-        """Receive a message from the browser. Typically, messages are event signals."""
-        if self.threaded:
-            asyncio.run_coroutine_threadsafe(
-                self.recv_queue.put(content), backhaul_loop
-            )
-        else:
-            await self.recv_queue.put(content)
+        return await super().dispatch(message)
 
     async def run_dispatcher(self):
         """Runs the main loop that performs component rendering tasks."""
@@ -117,7 +119,6 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
         uuid = scope["url_route"]["kwargs"]["uuid"]
         search = scope["query_string"].decode()
-        self.recv_queue: asyncio.Queue = asyncio.Queue()
         connection = Connection(  # For `use_connection`
             scope=scope,
             location=Location(

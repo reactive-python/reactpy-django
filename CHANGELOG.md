@@ -36,6 +36,12 @@ Using the following categories, list your changes in this order:
 
 -   Nothing (yet)!
 
+## [3.3.2] - 2023-08-09
+
+### Changed
+
+-   Changed implementation of `REACTPY_BACKHAUL_THREAD` to attempt increased performance compatibility.
+
 ## [3.3.1] - 2023-08-08
 
 ### Added
