@@ -36,7 +36,7 @@ Using the following categories, list your changes in this order:
 
 -   Nothing (yet)!
 
-## [3.3.1] - 2023-08-09
+## [3.3.1] - 2023-08-08
 
 ### Added
 
