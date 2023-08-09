@@ -42,6 +42,10 @@ Using the following categories, list your changes in this order:
 
 -   Changed implementation of `REACTPY_BACKHAUL_THREAD` to attempt increased performance compatibility.
 
+### Fixed
+
+-   Fix bug where `REACTPY_WEBSOCKET_URL` always generates a warning if unset.
+
 ## [3.3.1] - 2023-08-08
 
 ### Added
