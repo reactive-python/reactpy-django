@@ -38,6 +38,10 @@ Using the following categories, list your changes in this order:
 
 ## [3.3.2] - 2023-08-09
 
+### Added
+
+-   ReactPy Websocket will now decode messages via `orjson` resulting in an ~6% overall performance boost.
+
 ### Changed
 
 -   Changed implementation of `REACTPY_BACKHAUL_THREAD` to attempt increased performance compatibility.

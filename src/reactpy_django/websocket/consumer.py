@@ -10,6 +10,7 @@ from threading import Thread
 from typing import Any, MutableMapping, Sequence
 
 import dill as pickle
+import orjson
 from channels.auth import login
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
@@ -106,6 +107,14 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             ).result()
 
         return await super().dispatch(message)
+
+    @classmethod
+    async def decode_json(cls, text_data):
+        return orjson.loads(text_data)
+
+    @classmethod
+    async def encode_json(cls, content):
+        return orjson.dumps(content).decode()
 
     async def run_dispatcher(self):
         """Runs the main loop that performs component rendering tasks."""
