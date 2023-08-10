@@ -17,6 +17,7 @@
         <p>Total Active Components: <b id="total-active"></b></p>
         <p>Time To Load: <b id="time-to-load" data-num=0></b></p>
         <p>Total Renders Per Second: <b id="total-rps"></b></p>
+        <p>Total Renders Per Second (Estimated Minimum): <b id="min-rps"></b></p>
     </b>
 
     <script>
@@ -42,6 +43,16 @@
                     totalRPS += rpsValue;
                 }
                 document.getElementById("total-rps").textContent = totalRPS;
+
+                // Calculate Min RPS
+                let minRPS = 0;
+                for (let i = 0; i < elements.length; i++) {
+                    let rpsValue = parseFloat(elements[i].getAttribute("data-rps"));
+                    if (rpsValue < minRPS || minRPS == 0) {
+                        minRPS = rpsValue;
+                    }
+                }
+                document.getElementById("min-rps").textContent = minRPS * elements.length;
 
                 await new Promise(resolve => setTimeout(resolve, 50));
             }
