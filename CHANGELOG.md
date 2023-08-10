@@ -43,10 +43,6 @@ Using the following categories, list your changes in this order:
 -   ReactPy Websocket will now decode messages via `orjson` resulting in an ~6% overall performance boost.
 -   Built-in asyncio event loops are now patched via `nest_asyncio` to be re-enterant, resulting in an ~10% overall performance boost. This has no performance impact if you are running your webserver with `uvloop`.
 
-### Changed
-
--   Changed implementation of `REACTPY_BACKHAUL_THREAD` to attempt increased performance compatibility.
-
 ### Fixed
 
 -   Fix bug where `REACTPY_WEBSOCKET_URL` always generates a warning if unset.
