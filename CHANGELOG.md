@@ -41,13 +41,13 @@ Using the following categories, list your changes in this order:
 ### Added
 
 -   ReactPy Websocket will now decode messages via `orjson` resulting in an ~6% overall performance boost.
--   Built-in asyncio event loops are now patched via `nest_asyncio` to be re-enterant, resulting in an ~10% overall performance boost. This has no performance impact if you are running your webserver with `uvloop`.
+-   Built-in `asyncio` event loops are now patched via `nest_asyncio`, resulting in an ~10% overall performance boost on Windows. This has no performance impact if you are running your webserver with `uvloop`.
 
 ### Fixed
 
 -   Fix bug where `REACTPY_WEBSOCKET_URL` always generates a warning if unset.
--   Fixed bug where `assert f is self._write_fut` would be raised within Uvicorn on Windows when `REACTPY_BACKHAUL_THREAD = True`.
--   Fixed bug where rendering behavior would be jittery with Daphne on Windows when `REACTPY_BACKHAUL_THREAD = True`.
+-   Fixed bug where `assert f is self._write_fut` would be raised within `uvicorn` on Windows when `REACTPY_BACKHAUL_THREAD = True`.
+-   Fixed bug where rendering behavior would be jittery with `daphne` on Windows when `REACTPY_BACKHAUL_THREAD = True`.
 
 ## [3.3.1] - 2023-08-08
 
