@@ -16,7 +16,7 @@ __all__ = [
     "checks",
 ]
 # Built-in asyncio event loops can create `assert f is self._write_fut` exceptions
-# while we are using our backhaul thread, so we use this patch to fix this.
+# while we are using our backhaul thread with Uvicorn, so we use this patch to fix this.
 # This also resolves jittery rendering behaviors within Daphne. Can be demonstrated
 # using our "Renders Per Second" test page.
 with contextlib.suppress(ValueError):
