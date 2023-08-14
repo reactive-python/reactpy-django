@@ -27,6 +27,6 @@ REACTPY_DEFAULT_QUERY_POSTPROCESSOR = "reactpy_django.utils.django_query_postpro
 #   3. Your Django user model does not define a `backend` attribute
 REACTPY_AUTH_BACKEND = "django.contrib.auth.backends.ModelBackend"
 
-# Whether to enable rendering ReactPy via a dedicated backhaul thread
-# This allows the webserver to process traffic while during ReactPy rendering
+# Whether to enable rendering ReactPy via a dedicated backhaul thread.
+# This allows the webserver to process traffic while during ReactPy rendering.
 REACTPY_BACKHAUL_THREAD = False

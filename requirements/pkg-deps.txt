@@ -3,4 +3,6 @@ django >=4.1.0
 reactpy >=1.0.0, <1.1.0
 aiofile >=3.0
 dill >=0.3.5
+orjson >=3.6.0
+nest_asyncio >=1.5.0
 typing_extensions

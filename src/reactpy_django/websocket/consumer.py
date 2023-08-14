@@ -11,6 +11,7 @@ from threading import Thread
 from typing import Any, MutableMapping, Sequence
 
 import dill as pickle
+import orjson
 from channels.auth import login
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
@@ -46,7 +47,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         await super().connect()
 
         # Authenticate the user, if possible
-        user: Any = self.scope.get("user")
+        user = self.scope.get("user")
         if user and user.is_authenticated:
             try:
                 await login(self.scope, user, backend=REACTPY_AUTH_BACKEND)
@@ -104,6 +105,14 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             )
         else:
             await self.recv_queue.put(content)
+
+    @classmethod
+    async def decode_json(cls, text_data):
+        return orjson.loads(text_data)
+
+    @classmethod
+    async def encode_json(cls, content):
+        return orjson.dumps(content).decode()
 
     async def run_dispatcher(self):
         """Runs the main loop that performs component rendering tasks."""
