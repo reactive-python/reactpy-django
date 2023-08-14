@@ -5,7 +5,7 @@ import nest_asyncio
 from reactpy_django import checks, components, decorators, hooks, types, utils
 from reactpy_django.websocket.paths import REACTPY_WEBSOCKET_PATH
 
-__version__ = "3.3.1"
+__version__ = "3.3.2"
 __all__ = [
     "REACTPY_WEBSOCKET_PATH",
     "hooks",
@@ -15,9 +15,9 @@ __all__ = [
     "utils",
     "checks",
 ]
-# Built-in asyncio event loops can create `assert f is self._write_fut` exceptions
-# while we are using our backhaul thread with Uvicorn, so we use this patch to fix this.
-# This also resolves jittery rendering behaviors within Daphne. Can be demonstrated
-# using our "Renders Per Second" test page.
+
+# Fixes bugs with REACTPY_BACKHAUL_THREAD + built-in asyncio event loops.
+# Previously, Uvicorn could generate `assert f is self._write_fut` exceptions, and Daphne
+# had jittery rendering behaviors. Demonstrated using our "Renders Per Second" test page.
 with contextlib.suppress(ValueError):
     nest_asyncio.apply()
