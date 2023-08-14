@@ -44,8 +44,8 @@
 <span class=c1>#   3. Your Django user model does not define a `backend` attribute</span>
 <span class=n>REACTPY_AUTH_BACKEND</span> <span class=o>=</span> <span class=s2>&quot;django.contrib.auth.backends.ModelBackend&quot;</span>
 
-<span class=c1># Whether to enable rendering ReactPy via a dedicated backhaul thread</span>
-<span class=c1># This allows the webserver to process traffic while during ReactPy rendering</span>
+<span class=c1># Whether to enable rendering ReactPy via a dedicated backhaul thread.</span>
+<span class=c1># This allows the webserver to process traffic while during ReactPy rendering.</span>
 <span class=n>REACTPY_BACKHAUL_THREAD</span> <span class=o>=</span> <span class=kc>False</span>
 </code></pre></div> </details> <h2 id=step-3-configure-urlspy>Step 3: Configure <a href=https://docs.djangoproject.com/en/dev/topics/http/urls/ ><code>urls.py</code></a><a class=headerlink href=#step-3-configure-urlspy title="Permanent link">&para;</a></h2> <p>Add ReactPy HTTP paths to your <code>urlpatterns</code>.</p> <div class="tabbed-set tabbed-alternate" data-tabs=3:1><input checked=checked id=__tabbed_3_1 name=__tabbed_3 type=radio><div class=tabbed-labels><label for=__tabbed_3_1>urls.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1</span>
 <span class=normal>2</span>
