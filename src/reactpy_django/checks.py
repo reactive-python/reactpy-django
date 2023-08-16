@@ -49,17 +49,22 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
-    # Warn if REACTPY_BACKHAUL_THREAD is set to True on Linux with Daphne
+    # Warn if REACTPY_BACKHAUL_THREAD is set to True with Daphne
     if (
         sys.argv
-        and sys.argv[0].endswith("daphne")
+        and (
+            sys.argv[0].endswith("daphne")
+            or (
+                "runserver" in sys.argv
+                and "daphne" in getattr(settings, "INSTALLED_APPS", [])
+            )
+        )
         and getattr(settings, "REACTPY_BACKHAUL_THREAD", False)
-        and sys.platform == "linux"
     ):
         warnings.append(
             Warning(
-                "REACTPY_BACKHAUL_THREAD is enabled but you running with Daphne on Linux. "
-                "This configuration is known to be unstable.",
+                "Unstable configuration detected. REACTPY_BACKHAUL_THREAD is enabled "
+                "and you running with Daphne. ",
                 hint="Set settings.py:REACTPY_BACKHAUL_THREAD to False or use a different webserver.",
                 id="reactpy_django.W003",
             )
@@ -238,7 +243,7 @@ def reactpy_errors(app_configs, **kwargs):
         )
 
     # Check for dependencies
-    if "channels" not in settings.INSTALLED_APPS:
+    if "channels" not in getattr(settings, "INSTALLED_APPS", []):
         errors.append(
             Error(
                 "Django Channels is not installed.",
