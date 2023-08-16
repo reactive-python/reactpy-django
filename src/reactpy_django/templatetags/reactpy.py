@@ -3,13 +3,13 @@ from uuid import uuid4
 
 import dill as pickle
 from django import template
-from django.urls import reverse
+from django.urls import NoReverseMatch, reverse
 
 from reactpy_django import models
 from reactpy_django.config import (
     REACTPY_DEBUG_MODE,
     REACTPY_RECONNECT_MAX,
-    REACTPY_WEBSOCKET_URL,
+    REACTPY_URL_PREFIX,
 )
 from reactpy_django.exceptions import ComponentDoesNotExistError, ComponentParamError
 from reactpy_django.types import ComponentParamData
@@ -19,13 +19,18 @@ from reactpy_django.utils import (
     func_has_args,
 )
 
-REACTPY_WEB_MODULES_URL = reverse("reactpy:web_modules", args=["x"])[:-1][1:]
+try:
+    RESOLVED_WEB_MODULES_PATH = reverse("reactpy:web_modules", args=["/"]).strip("/")
+except NoReverseMatch:
+    RESOLVED_WEB_MODULES_PATH = ""
 register = template.Library()
 _logger = getLogger(__name__)
 
 
 @register.inclusion_tag("reactpy/component.html")
-def component(dotted_path: str, *args, **kwargs):
+def component(
+    dotted_path: str, *args, ws_host: str = "", http_host: str = "", **kwargs
+):
     """This tag is used to embed an existing ReactPy component into your HTML template.
 
     Args:
@@ -33,6 +38,14 @@ def component(dotted_path: str, *args, **kwargs):
         *args: The positional arguments to provide to the component.
 
     Keyword Args:
+        ws_host: The host domain to use for the ReactPy websocket connection. If set to None, \
+            the host will be fetched via JavaScript. \
+            Note: You typically will not need to register the ReactPy websocket path on any \
+            application(s) that do not perform component rendering.
+        http_host: The host domain to use for the ReactPy HTTP connection. If set to None, \
+            the host will be fetched via JavaScript. \
+            Note: You typically will not need to register ReactPy HTTP paths on any \
+            application(s) that do not perform component rendering.
         **kwargs: The keyword arguments to provide to the component.
 
     Example ::
@@ -85,12 +98,14 @@ def component(dotted_path: str, *args, **kwargs):
 
     # Return the template rendering context
     return {
-        "class": class_,
-        "reactpy_websocket_url": REACTPY_WEBSOCKET_URL,
-        "reactpy_web_modules_url": REACTPY_WEB_MODULES_URL,
+        "reactpy_class": class_,
+        "reactpy_uuid": uuid,
+        "reactpy_ws_host": ws_host.strip("/"),
+        "reactpy_http_host": http_host.strip("/"),
+        "reactpy_url_prefix": REACTPY_URL_PREFIX,
         "reactpy_reconnect_max": REACTPY_RECONNECT_MAX,
-        "reactpy_mount_uuid": uuid,
         "reactpy_component_path": f"{dotted_path}/{uuid}/",
+        "reactpy_resolved_web_modules_path": RESOLVED_WEB_MODULES_PATH,
     }
 
 

@@ -5,7 +5,7 @@ REACTPY_CACHE = "default"
 
 # Database ReactPy uses to store session data.
 # ReactPy requires a multiprocessing-safe and thread-safe database.
-# DATABASE_ROUTERS is mandatory if REACTPY_DATABASE is configured.
+# Configuring Django's DATABASE_ROUTERS setting is mandatory if using REACTPY_DATABASE.
 REACTPY_DATABASE = "default"
 DATABASE_ROUTERS = ["reactpy_django.database.Router", ...]
 
@@ -13,11 +13,10 @@ DATABASE_ROUTERS = ["reactpy_django.database.Router", ...]
 # Use `0` to prevent component reconnection.
 REACTPY_RECONNECT_MAX = 259200
 
-# The URL for ReactPy to serve the component rendering websocket.
-REACTPY_WEBSOCKET_URL = "reactpy/"
+# The prefix to be used for all ReactPy API URLs.
+REACTPY_URL_PREFIX = "reactpy/"
 
-# Dotted path to the default `reactpy_django.hooks.use_query` postprocessor function,
-# or `None`.
+# Dotted path to the default `reactpy_django.hooks.use_query` postprocessor function.
 REACTPY_DEFAULT_QUERY_POSTPROCESSOR = "reactpy_django.utils.django_query_postprocessor"
 
 # Dotted path to the Django authentication backend to use for ReactPy components.

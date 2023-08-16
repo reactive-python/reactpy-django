@@ -101,7 +101,6 @@ def _register_component(dotted_path: str) -> Callable:
         raise ComponentDoesNotExistError(
             f"Error while fetching '{dotted_path}'. {(str(e).capitalize())}."
         ) from e
-    _logger.debug("ReactPy has registered component %s", dotted_path)
     return REACTPY_REGISTERED_COMPONENTS[dotted_path]
 
 
@@ -204,16 +203,19 @@ class ComponentPreloader:
 
     def register_components(self, components: set[str]) -> None:
         """Registers all ReactPy components in an iterable."""
+        if components:
+            _logger.debug("ReactPy root components:")
         for component in components:
             try:
-                _logger.info("ReactPy preloader has detected component %s", component)
+                _logger.debug("\t+ %s", component)
                 _register_component(component)
             except Exception:
                 _logger.exception(
                     "\033[91m"
-                    "ReactPy failed to register component '%s'! "
+                    "ReactPy failed to register component '%s'!\n"
                     "This component path may not be valid, "
-                    "or an exception may have occurred while importing."
+                    "or an exception may have occurred while importing.\n"
+                    "See the traceback below for more information."
                     "\033[0m",
                     component,
                 )

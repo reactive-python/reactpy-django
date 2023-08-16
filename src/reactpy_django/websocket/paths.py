@@ -1,15 +1,17 @@
 from django.urls import path
 
-from reactpy_django.config import REACTPY_WEBSOCKET_URL
+from reactpy_django.config import REACTPY_URL_PREFIX
 
 from .consumer import ReactpyAsyncWebsocketConsumer
 
-REACTPY_WEBSOCKET_PATH = path(
-    f"{REACTPY_WEBSOCKET_URL}<dotted_path>/<uuid>/",
+REACTPY_WEBSOCKET_ROUTE = path(
+    f"{REACTPY_URL_PREFIX}/<dotted_path>/<uuid>/",
     ReactpyAsyncWebsocketConsumer.as_asgi(),
 )
-
 """A URL path for :class:`ReactpyAsyncWebsocketConsumer`.
 
-Required in order for ReactPy to know the websocket path.
+Required since the `reverse()` function does not exist for Django Channels, but we need
+to know the websocket path.
 """
+
+REACTPY_WEBSOCKET_PATH = REACTPY_WEBSOCKET_ROUTE

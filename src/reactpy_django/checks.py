@@ -1,8 +1,10 @@
+import contextlib
 import sys
 
 from django.contrib.staticfiles.finders import find
 from django.core.checks import Error, Tags, Warning, register
 from django.template import loader
+from django.urls import NoReverseMatch
 
 
 @register(Tags.compatibility)
@@ -10,6 +12,7 @@ def reactpy_warnings(app_configs, **kwargs):
     from django.conf import settings
     from django.urls import reverse
 
+    from reactpy_django import config
     from reactpy_django.config import REACTPY_FAILED_COMPONENTS
 
     warnings = []
@@ -40,7 +43,8 @@ def reactpy_warnings(app_configs, **kwargs):
             Warning(
                 "ReactPy URLs have not been registered.",
                 hint="""Add 'path("reactpy/", include("reactpy_django.http.urls"))' """
-                "to your application's urlpatterns.",
+                "to your application's urlpatterns. If this application does not need "
+                "to render ReactPy components, you add this warning to SILENCED_SYSTEM_CHECKS.",
                 id="reactpy_django.W002",
             )
         )
@@ -96,27 +100,49 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
-    # Check if REACTPY_WEBSOCKET_URL doesn't end with a slash
-    REACTPY_WEBSOCKET_URL = getattr(settings, "REACTPY_WEBSOCKET_URL", "reactpy/")
-    if isinstance(REACTPY_WEBSOCKET_URL, str):
-        if not REACTPY_WEBSOCKET_URL or not REACTPY_WEBSOCKET_URL.endswith("/"):
+    # DELETED W007: Check if REACTPY_WEBSOCKET_URL doesn't end with a slash
+    # DELETED W008: Check if REACTPY_WEBSOCKET_URL doesn't start with an alphanumeric character
+
+    # Removed Settings
+    if getattr(settings, "REACTPY_WEBSOCKET_URL", None):
+        warnings.append(
+            Warning(
+                "REACTPY_WEBSOCKET_URL has been removed.",
+                hint="Use REACTPY_URL_PREFIX instead.",
+                id="reactpy_django.W009",
+            )
+        )
+
+    # Check if REACTPY_URL_PREFIX is being used properly in our HTTP URLs
+    with contextlib.suppress(NoReverseMatch):
+        full_path = reverse("reactpy:web_modules", kwargs={"file": "example"}).strip(
+            "/"
+        )
+        reactpy_http_prefix = f'{full_path[: full_path.find("web_module/")].strip("/")}'
+        if reactpy_http_prefix != config.REACTPY_URL_PREFIX:
             warnings.append(
                 Warning(
-                    "REACTPY_WEBSOCKET_URL did not end with a forward slash.",
-                    hint="Change your URL to be written in the following format: 'example_url/'",
-                    id="reactpy_django.W007",
+                    "HTTP paths are not prefixed with REACTPY_URL_PREFIX. "
+                    "Some ReactPy features may not work as expected.",
+                    hint="Use one of the following solutions.\n"
+                    "\t1) Utilize REACTPY_URL_PREFIX within your urls.py:\n"
+                    f'\t     path("{config.REACTPY_URL_PREFIX}/", include("reactpy_django.http.urls"))\n'
+                    "\t2) Modify settings.py:REACTPY_URL_PREFIX to match your existing HTTP path:\n"
+                    f'\t     REACTPY_URL_PREFIX = "{reactpy_http_prefix}/"\n'
+                    "\t3) If you not rendering ReactPy components within this Python application, then "
+                    "remove HTTP and/or websocket routing.\n",
+                    id="reactpy_django.W010",
                 )
             )
 
-        # Check if REACTPY_WEBSOCKET_URL doesn't start with an alphanumeric character
-        if not REACTPY_WEBSOCKET_URL or not REACTPY_WEBSOCKET_URL[0].isalnum():
-            warnings.append(
-                Warning(
-                    "REACTPY_WEBSOCKET_URL did not start with an alphanumeric character.",
-                    hint="Change your URL to be written in the following format: 'example_url/'",
-                    id="reactpy_django.W008",
-                )
+    if not getattr(settings, "REACTPY_URL_PREFIX", "reactpy/"):
+        warnings.append(
+            Warning(
+                "REACTPY_URL_PREFIX should not be empty!",
+                hint="Change your REACTPY_URL_PREFIX to be written in the following format: '/example_url/'",
+                id="reactpy_django.W011",
             )
+        )
 
     return warnings
 
@@ -154,12 +180,12 @@ def reactpy_errors(app_configs, **kwargs):
         )
 
     # All settings in reactpy_django.conf are the correct data type
-    if not isinstance(getattr(settings, "REACTPY_WEBSOCKET_URL", ""), str):
+    if not isinstance(getattr(settings, "REACTPY_URL_PREFIX", ""), str):
         errors.append(
             Error(
-                "Invalid type for REACTPY_WEBSOCKET_URL.",
-                hint="REACTPY_WEBSOCKET_URL should be a string.",
-                obj=settings.REACTPY_WEBSOCKET_URL,
+                "Invalid type for REACTPY_URL_PREFIX.",
+                hint="REACTPY_URL_PREFIX should be a string.",
+                obj=settings.REACTPY_URL_PREFIX,
                 id="reactpy_django.E003",
             )
         )

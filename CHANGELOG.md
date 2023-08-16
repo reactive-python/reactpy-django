@@ -34,7 +34,14 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Added
+
+-   The `component` template tag now accepts `ws_host` and `http_host` arguments to override the default hostnames.
+
+### Deprecated
+
+-   `reactpy_django.REACTPY_WEBSOCKET_PATH` is deprecated. Replace with `REACTPY_WEBSOCKET_ROUTE`.
+-   `settings.py:REACTPY_WEBSOCKET_URL` is deprecated. Replace with `REACTPY_URL_PREFIX`.
 
 ## [3.3.2] - 2023-08-13
 
