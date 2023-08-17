@@ -75,9 +75,9 @@ The `component` template tag can be used to insert any number of ReactPy compone
 
 <!--reserved-sarg-end-->
 
-??? question "Can I render components on a different ASGI server?"
+??? question "Can I render components on a different server (distributed computing)?"
 
-    Yes! By using the `host` keyword argument, you can render components on a completely separate server.
+    Yes! By using the `host` keyword argument, you can render components from a completely separate ASGI server.
 
     === "my-template.html"
 
@@ -87,9 +87,13 @@ The `component` template tag can be used to insert any number of ReactPy compone
         ...
         ```
 
-        If your host is on a completely different origin ( `origin1.com != origin2.com` ) you will need to [configure CORS headers](https://pypi.org/project/django-cors-headers/) on your main application during deployment.
+    This configuration most commonly involves you deploying multiple instances of your project. But, you can also create dedicated Django project(s) that only render specific ReactPy components if you wish.
 
-        _Note: You typically will not need to register ReactPy HTTP and/or websocket paths on any application(s) that do not perform any component rendering._
+    Here's a couple of things to keep in mind:
+
+    1. If your host address are completely separate ( `origin1.com != origin2.com` ) you will need to [configure CORS headers](https://pypi.org/project/django-cors-headers/) on your main application during deployment.
+    2. You will not need to register ReactPy HTTP or websocket paths on any applications that do not perform any component rendering.
+    3. Your component will only be able to access `*args`/`**kwargs` you provide to the template tag if your applications share a common database.
 
 <!--multiple-components-start-->
 
