@@ -11,8 +11,7 @@ if (HTTP_PROTOCOL == "https:") {
 
 export function mountViewToElement(
 	mountElement,
-	reactpyWsHost,
-	reactpyHttpHost,
+	reactpyHostDomain,
 	reactpyUrlPrefix,
 	reactpyReconnectMax,
 	reactpyComponentPath,
@@ -20,8 +19,8 @@ export function mountViewToElement(
 ) {
 	// Determine the Websocket route
 	let wsOrigin;
-	if (reactpyWsHost) {
-		wsOrigin = `${WS_PROTOCOL}//${reactpyWsHost}`;
+	if (reactpyHostDomain) {
+		wsOrigin = `${WS_PROTOCOL}//${reactpyHostDomain}`;
 	} else {
 		wsOrigin = `${WS_PROTOCOL}//${window.location.host}`;
 	}
@@ -30,8 +29,8 @@ export function mountViewToElement(
 	// Determine the HTTP route
 	let httpOrigin;
 	let webModulesPath;
-	if (reactpyHttpHost) {
-		httpOrigin = `${HTTP_PROTOCOL}//${reactpyHttpHost}`;
+	if (reactpyHostDomain) {
+		httpOrigin = `${HTTP_PROTOCOL}//${reactpyHostDomain}`;
 		webModulesPath = `${reactpyUrlPrefix}/web_module`;
 	} else {
 		httpOrigin = `${HTTP_PROTOCOL}//${window.location.host}`;

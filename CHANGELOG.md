@@ -36,7 +36,7 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
--   The `component` template tag now accepts `ws_host` and `http_host` arguments to override the default host URL, allowing ReactPy websockets and HTTP to be hosted by a completely separate Django application(s).
+-   The `component` template tag now accepts a `host_domain` argument to override the default host URL, allowing ReactPy websockets and HTTP to be hosted by completely separate Django application(s).
 
 ### Changed
 

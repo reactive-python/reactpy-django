@@ -3,6 +3,7 @@ from uuid import uuid4
 
 import dill as pickle
 from django import template
+from django.http import HttpRequest
 from django.urls import NoReverseMatch, reverse
 
 from reactpy_django import models
@@ -14,9 +15,9 @@ from reactpy_django.config import (
 from reactpy_django.exceptions import ComponentDoesNotExistError, ComponentParamError
 from reactpy_django.types import ComponentParamData
 from reactpy_django.utils import (
-    _register_component,
     check_component_args,
     func_has_args,
+    register_component,
 )
 
 try:
@@ -27,9 +28,13 @@ register = template.Library()
 _logger = getLogger(__name__)
 
 
-@register.inclusion_tag("reactpy/component.html")
+@register.inclusion_tag("reactpy/component.html", takes_context=True)
 def component(
-    dotted_path: str, *args, ws_host: str = "", http_host: str = "", **kwargs
+    context: template.RequestContext,
+    dotted_path: str,
+    *args,
+    host_domain: str | None = None,
+    **kwargs,
 ):
     """This tag is used to embed an existing ReactPy component into your HTML template.
 
@@ -38,14 +43,10 @@ def component(
         *args: The positional arguments to provide to the component.
 
     Keyword Args:
-        ws_host: The host domain to use for the ReactPy websocket connection. If set to None, \
-            the host will be fetched via JavaScript. \
-            Note: You typically will not need to register the ReactPy websocket path on any \
-            application(s) that do not perform component rendering.
-        http_host: The host domain to use for the ReactPy HTTP connection. If set to None, \
-            the host will be fetched via JavaScript. \
-            Note: You typically will not need to register ReactPy HTTP paths on any \
-            application(s) that do not perform component rendering.
+        host_domain: The host domain to use for the ReactPy connections. If set to `None`, \
+            the host will be automatically configured. \
+            Note: You typically will not need to register the ReactPy HTTP and/or websocket \
+            paths on any application(s) that do not perform component rendering.
         **kwargs: The keyword arguments to provide to the component.
 
     Example ::
@@ -59,49 +60,55 @@ def component(
         </html>
     """
 
-    # Register the component if needed
-    try:
-        component = _register_component(dotted_path)
-        uuid = uuid4().hex
-        class_ = kwargs.pop("class", "")
-        kwargs.pop("key", "")  # `key` is effectively useless for the root node
+    # Determine the host domain
+    request: HttpRequest | None = context.get("request")
+    perceived_host_domain = (request.get_host() if request else "").strip("/")
+    host_domain = (host_domain or "").strip("/")
 
-    except Exception as e:
-        if isinstance(e, ComponentDoesNotExistError):
-            _logger.error(str(e))
-        else:
-            _logger.exception(
-                "An unknown error has occurred while registering component '%s'.",
-                dotted_path,
-            )
-        return failure_context(dotted_path, e)
+    # Create context variables
+    uuid = uuid4().hex
+    class_ = kwargs.pop("class", "")
+    kwargs.pop("key", "")  # `key` is effectively useless for the root node
 
-    # Store the component's args/kwargs in the database if needed
-    # This will be fetched by the websocket consumer later
-    try:
-        check_component_args(component, *args, **kwargs)
-        if func_has_args(component):
-            params = ComponentParamData(args, kwargs)
-            model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
-            model.full_clean()
-            model.save()
+    # Only handle this component if host domain is unset, or the host domains match
+    if not host_domain or (host_domain == perceived_host_domain):
+        # Register the component if needed
+        try:
+            component = register_component(dotted_path)
+        except Exception as e:
+            if isinstance(e, ComponentDoesNotExistError):
+                _logger.error(str(e))
+            else:
+                _logger.exception(
+                    "An unknown error has occurred while registering component '%s'.",
+                    dotted_path,
+                )
+            return failure_context(dotted_path, e)
 
-    except Exception as e:
-        if isinstance(e, ComponentParamError):
-            _logger.error(str(e))
-        else:
-            _logger.exception(
-                "An unknown error has occurred while saving component params for '%s'.",
-                dotted_path,
-            )
-        return failure_context(dotted_path, e)
+        # Store the component's args/kwargs in the database, if needed
+        # These will be fetched by the websocket consumer later
+        try:
+            check_component_args(component, *args, **kwargs)
+            if func_has_args(component):
+                params = ComponentParamData(args, kwargs)
+                model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
+                model.full_clean()
+                model.save()
+        except Exception as e:
+            if isinstance(e, ComponentParamError):
+                _logger.error(str(e))
+            else:
+                _logger.exception(
+                    "An unknown error has occurred while saving component params for '%s'.",
+                    dotted_path,
+                )
+            return failure_context(dotted_path, e)
 
     # Return the template rendering context
     return {
         "reactpy_class": class_,
         "reactpy_uuid": uuid,
-        "reactpy_ws_host": ws_host.strip("/"),
-        "reactpy_http_host": http_host.strip("/"),
+        "reactpy_host_domain": host_domain or perceived_host_domain,
         "reactpy_url_prefix": REACTPY_URL_PREFIX,
         "reactpy_reconnect_max": REACTPY_RECONNECT_MAX,
         "reactpy_component_path": f"{dotted_path}/{uuid}/",

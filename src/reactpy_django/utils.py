@@ -82,10 +82,8 @@ async def render_view(
     return response
 
 
-def _register_component(dotted_path: str) -> Callable:
-    """Adds a component to the mapping of registered components.
-    This should only be called on startup to maintain synchronization during mulitprocessing.
-    """
+def register_component(dotted_path: str) -> Callable:
+    """Adds a component to the list of known registered components."""
     from reactpy_django.config import (
         REACTPY_FAILED_COMPONENTS,
         REACTPY_REGISTERED_COMPONENTS,
@@ -208,7 +206,7 @@ class ComponentPreloader:
         for component in components:
             try:
                 _logger.debug("\t+ %s", component)
-                _register_component(component)
+                register_component(component)
             except Exception:
                 _logger.exception(
                     "\033[91m"
