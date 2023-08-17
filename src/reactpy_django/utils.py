@@ -299,11 +299,8 @@ def django_query_postprocessor(
 
 
 def func_has_args(func: Callable) -> bool:
-    """Checks if a function has any args or kwarg."""
-    signature = inspect.signature(func)
-
-    # Check if the function has any args/kwargs
-    return str(signature) != "()"
+    """Checks if a function has any args or kwargs."""
+    return bool(inspect.signature(func).parameters)
 
 
 def check_component_args(func: Callable, *args, **kwargs):
