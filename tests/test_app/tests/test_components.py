@@ -325,3 +325,8 @@ class ComponentTests(ChannelsLiveServerTestCase):
                 new_page.locator("#custom_host").wait_for(timeout=1000)
         finally:
             new_page.close()
+
+    def test_invalid_host_error(self):
+        broken_component = self.page.locator("#invalid_host_error")
+        broken_component.wait_for()
+        self.assertIn("InvalidHostError:", broken_component.text_content())

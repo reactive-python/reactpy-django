@@ -80,10 +80,11 @@ def component(
     # Fail if user has a method in their host
     if host.find("://") != -1:
         protocol = host.split("://")[0]
-        return failure_context(
-            dotted_path,
-            InvalidHostError(f"The provided host contains a protocol '{protocol}'."),
+        msg = (
+            f"Invalid host provided to component. Contains a protocol '{protocol}://'."
         )
+        _logger.error(msg)
+        return failure_context(dotted_path, InvalidHostError(msg))
 
     # Only handle this component if host is unset, or the hosts match
     if not host or (host == perceived_host):
