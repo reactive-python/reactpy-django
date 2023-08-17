@@ -51,16 +51,12 @@ def reactpy_warnings(app_configs, **kwargs):
 
     # Warn if REACTPY_BACKHAUL_THREAD is set to True with Daphne
     if (
-        sys.argv
-        and (
-            sys.argv[0].endswith("daphne")
-            or (
-                "runserver" in sys.argv
-                and "daphne" in getattr(settings, "INSTALLED_APPS", [])
-            )
+        sys.argv[0].endswith("daphne")
+        or (
+            "runserver" in sys.argv
+            and "daphne" in getattr(settings, "INSTALLED_APPS", [])
         )
-        and getattr(settings, "REACTPY_BACKHAUL_THREAD", False)
-    ):
+    ) and getattr(settings, "REACTPY_BACKHAUL_THREAD", False):
         warnings.append(
             Warning(
                 "Unstable configuration detected. REACTPY_BACKHAUL_THREAD is enabled "
@@ -140,12 +136,25 @@ def reactpy_warnings(app_configs, **kwargs):
                 )
             )
 
+    # Check if REACTPY_URL_PREFIX is empty
     if not getattr(settings, "REACTPY_URL_PREFIX", "reactpy/"):
         warnings.append(
             Warning(
                 "REACTPY_URL_PREFIX should not be empty!",
                 hint="Change your REACTPY_URL_PREFIX to be written in the following format: '/example_url/'",
                 id="reactpy_django.W011",
+            )
+        )
+
+    # Check if `daphne` is not in installed apps when using `runserver`
+    if "runserver" in sys.argv and "daphne" not in getattr(
+        settings, "INSTALLED_APPS", []
+    ):
+        warnings.append(
+            Warning(
+                "You have not configured runserver to use ASGI.",
+                hint="Add daphne to settings.py:INSTALLED_APPS.",
+                id="reactpy_django.W012",
             )
         )
 
@@ -242,14 +251,6 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
-    # Check for dependencies
-    if "channels" not in getattr(settings, "INSTALLED_APPS", []):
-        errors.append(
-            Error(
-                "Django Channels is not installed.",
-                hint="Add 'channels' to settings.py:INSTALLED_APPS.",
-                id="reactpy_django.E009",
-            )
-        )
+    # DELETED E009: Check if `channels` is in INSTALLED_APPS
 
     return errors
