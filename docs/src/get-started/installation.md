@@ -44,11 +44,7 @@ In your settings you will need to add `reactpy_django` to [`INSTALLED_APPS`](htt
 
 ??? note "Configure ReactPy settings (Optional)"
 
-    Below are the default values for all configurable ReactPy settings within your `settings.py`.
-
-    ```python linenums="0"
-    {% include "../../python/settings.py" %}
-    ```
+    {% include "../features/settings.md" start="<!--config-details-start-->" end="<!--config-details-end-->"  %}
 
 ## Step 3: Configure [`urls.py`](https://docs.djangoproject.com/en/dev/topics/http/urls/)
 

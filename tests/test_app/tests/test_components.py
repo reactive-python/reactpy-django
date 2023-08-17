@@ -10,9 +10,7 @@ from django.core.management import call_command
 from django.db import connections
 from django.test.utils import modify_settings
 from playwright.sync_api import TimeoutError, sync_playwright
-
 from reactpy_django.models import ComponentSession
-
 
 CLICK_DELAY = 250 if os.getenv("GITHUB_ACTIONS") else 25  # Delay in miliseconds.
 
