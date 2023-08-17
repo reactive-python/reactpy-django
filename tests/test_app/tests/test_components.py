@@ -303,17 +303,17 @@ class ComponentTests(ChannelsLiveServerTestCase):
         os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
         self.assertFalse(query_exists)
 
-    def test_custom_host_domain(self):
+    def test_custom_host(self):
         """Components that can be rendered by separate ASGI server (`self._server_process2`)."""
         new_page = self.browser.new_page()
         new_page.goto(f"{self.live_server_url}/port/{self._port2}/")
 
         try:
             # Make sure that the component is rendered by the new server
-            new_page.locator("#custom_host_domain").wait_for()
+            new_page.locator("#custom_host").wait_for()
             self.assertIn(
                 f"Server Port: {self._port2}",
-                new_page.locator("#custom_host_domain").text_content(),
+                new_page.locator("#custom_host").text_content(),
             )
 
             # Make sure that other ports are not rendering components
@@ -322,6 +322,6 @@ class ComponentTests(ChannelsLiveServerTestCase):
             random_port = tmp_sock.getsockname()[1]
             new_page.goto(f"{self.live_server_url}/port/{random_port}/")
             with self.assertRaises(TimeoutError):
-                new_page.locator("#custom_host_domain").wait_for(timeout=1000)
+                new_page.locator("#custom_host").wait_for(timeout=1000)
         finally:
             new_page.close()

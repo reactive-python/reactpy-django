@@ -39,7 +39,7 @@ def component(
     context: template.RequestContext,
     dotted_path: str,
     *args,
-    host_domain: str | None = None,
+    host: str | None = None,
     **kwargs,
 ):
     """This tag is used to embed an existing ReactPy component into your HTML template.
@@ -49,7 +49,7 @@ def component(
         *args: The positional arguments to provide to the component.
 
     Keyword Args:
-        host_domain: The host domain to use for the ReactPy connections. If set to `None`, \
+        host: The host to use for the ReactPy connections. If set to `None`, \
             the host will be automatically configured. \
             Example values include: `localhost:8000`, `example.com`, `example.com/subdir` \
             Note: You typically will not need to register the ReactPy HTTP and/or websocket \
@@ -67,26 +67,26 @@ def component(
         </html>
     """
 
-    # Determine the host domain
+    # Determine the host
     request: HttpRequest | None = context.get("request")
-    perceived_host_domain = (request.get_host() if request else "").strip("/")
-    host_domain = (host_domain or "").strip("/")
+    perceived_host = (request.get_host() if request else "").strip("/")
+    host = (host or "").strip("/")
 
     # Create context variables
     uuid = uuid4().hex
     class_ = kwargs.pop("class", "")
     kwargs.pop("key", "")  # `key` is effectively useless for the root node
 
-    # Fail if user has a method in their host_domain
-    if host_domain.find("://") != -1:
-        protocol = host_domain.split("://")[0]
+    # Fail if user has a method in their host
+    if host.find("://") != -1:
+        protocol = host.split("://")[0]
         return failure_context(
             dotted_path,
             InvalidHostError(f"The provided host contains a protocol '{protocol}'."),
         )
 
-    # Only handle this component if host domain is unset, or the host domains match
-    if not host_domain or (host_domain == perceived_host_domain):
+    # Only handle this component if host is unset, or the hosts match
+    if not host or (host == perceived_host):
         # Register the component if needed
         try:
             component = register_component(dotted_path)
@@ -123,7 +123,7 @@ def component(
     return {
         "reactpy_class": class_,
         "reactpy_uuid": uuid,
-        "reactpy_host_domain": host_domain or perceived_host_domain,
+        "reactpy_host": host or perceived_host,
         "reactpy_url_prefix": REACTPY_URL_PREFIX,
         "reactpy_reconnect_max": REACTPY_RECONNECT_MAX,
         "reactpy_component_path": f"{dotted_path}/{uuid}/",

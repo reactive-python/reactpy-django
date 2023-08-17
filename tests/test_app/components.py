@@ -591,7 +591,7 @@ def view_to_component_decorator_args(request):
 
 
 @component
-def custom_host_domain():
+def custom_host():
     scope = reactpy_django.hooks.use_scope()
     port = scope["server"][1]
 
