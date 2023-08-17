@@ -596,5 +596,6 @@ def custom_host_domain():
     port = scope["server"][1]
 
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name}, f"Server Port: {port}"
+        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
+        f"Server Port: {port}",
     )
