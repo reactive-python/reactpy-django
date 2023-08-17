@@ -51,9 +51,7 @@ def component(
     Keyword Args:
         host: The host to use for the ReactPy connections. If set to `None`, \
             the host will be automatically configured. \
-            Example values include: `localhost:8000`, `example.com`, `example.com/subdir` \
-            Note: You typically will not need to register the ReactPy HTTP and/or websocket \
-            paths on any application(s) that do not perform component rendering.
+            Example values include: `localhost:8000`, `example.com`, `example.com/subdir`
         **kwargs: The keyword arguments to provide to the component.
 
     Example ::
