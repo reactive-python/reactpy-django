@@ -20,6 +20,7 @@ from django.template import engines
 from django.utils import timezone
 from django.utils.encoding import smart_str
 from django.views import View
+from reactpy.types import ComponentConstructor
 
 from reactpy_django.exceptions import ComponentDoesNotExistError, ComponentParamError
 
@@ -82,7 +83,7 @@ async def render_view(
     return response
 
 
-def register_component(dotted_path: str) -> Callable:
+def register_component(dotted_path: str) -> ComponentConstructor:
     """Adds a component to the list of known registered components."""
     from reactpy_django.config import (
         REACTPY_FAILED_COMPONENTS,

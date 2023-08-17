@@ -37,7 +37,7 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
 
     It is your responsibility to ensure privileged information is not leaked via this method.
 
-    This can be done via directly writing conditionals into your view, or by adding decorators such as [`user_passes_test`](https://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test) to your views prior to using `view_to_component`.
+    You must implement a method to ensure only authorized users can access your view. This can be done via directly writing conditionals into your view, or by adding decorators such as [`user_passes_test`](https://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test) to your views. For example...
 
     === "Function Based View"
 
