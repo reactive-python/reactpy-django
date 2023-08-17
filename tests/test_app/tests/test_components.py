@@ -1,5 +1,6 @@
 import asyncio
 import os
+import socket
 import sys
 from functools import partial
 
@@ -39,6 +40,12 @@ class ComponentTests(ChannelsLiveServerTestCase):
         cls._server_process.ready.wait()
         cls._port = cls._server_process.port.value
 
+        # Open the second server process
+        cls._server_process2 = cls.ProtocolServerProcess(cls.host, get_application)
+        cls._server_process2.start()
+        cls._server_process2.ready.wait()
+        cls._port2 = cls._server_process2.port.value
+
         # Open a Playwright browser window
         if sys.platform == "win32":
             asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
@@ -51,6 +58,10 @@ class ComponentTests(ChannelsLiveServerTestCase):
     def tearDownClass(cls):
         # Close the Playwright browser
         cls.playwright.stop()
+
+        # Close the second server process
+        cls._server_process2.terminate()
+        cls._server_process2.join()
 
         # Repurposed from ChannelsLiveServerTestCase._post_teardown
         cls._server_process.terminate()
@@ -291,3 +302,26 @@ class ComponentTests(ChannelsLiveServerTestCase):
         query_exists = query.exists()
         os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
         self.assertFalse(query_exists)
+
+    def test_custom_host_domain(self):
+        """Components that can be rendered by separate ASGI server (`self._server_process2`)."""
+        new_page = self.browser.new_page()
+        new_page.goto(f"{self.live_server_url}/port/{self._port2}/")
+
+        try:
+            # Make sure that the component is rendered by the new server
+            new_page.locator("#custom_host_domain").wait_for()
+            self.assertIn(
+                f"Server Port: {self._port2}",
+                new_page.locator("#custom_host_domain").text_content(),
+            )
+
+            # Make sure that other ports are not rendering components
+            tmp_sock = socket.socket()
+            tmp_sock.bind(("", 0))
+            random_port = tmp_sock.getsockname()[1]
+            new_page.goto(f"{self.live_server_url}/port/{random_port}/")
+            with self.assertRaises(TimeoutError):
+                new_page.locator("#custom_host_domain").wait_for(timeout=1000)
+        finally:
+            new_page.close()

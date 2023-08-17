@@ -1,6 +1,7 @@
 import inspect
 
 from channels.db import database_sync_to_async
+from django.http import HttpRequest
 from django.shortcuts import render
 from django.views.generic import TemplateView, View
 
@@ -9,6 +10,11 @@ from .types import TestObject
 
 def base_template(request):
     return render(request, "base.html", {"my_object": TestObject(1)})
+
+
+def host_port_template(request: HttpRequest, port: int):
+    host = request.get_host().replace(str(request.get_port()), str(port))
+    return render(request, "host_port.html", {"new_host": host})
 
 
 def view_to_component_sync_func(request):
