@@ -60,7 +60,7 @@ def reactpy_warnings(app_configs, **kwargs):
         warnings.append(
             Warning(
                 "Unstable configuration detected. REACTPY_BACKHAUL_THREAD is enabled "
-                "and you running with Daphne. ",
+                "and you running with Daphne.",
                 hint="Set settings.py:REACTPY_BACKHAUL_THREAD to False or use a different webserver.",
                 id="reactpy_django.W003",
             )
@@ -130,8 +130,9 @@ def reactpy_warnings(app_configs, **kwargs):
                     f'\t     path("{config.REACTPY_URL_PREFIX}/", include("reactpy_django.http.urls"))\n'
                     "\t2) Modify settings.py:REACTPY_URL_PREFIX to match your existing HTTP path:\n"
                     f'\t     REACTPY_URL_PREFIX = "{reactpy_http_prefix}/"\n'
-                    "\t3) If you not rendering ReactPy components within this Python application, then "
-                    "remove HTTP and/or websocket routing.\n",
+                    "\t3) If you not rendering components by this ASGI application, then remove "
+                    "ReactPy HTTP and websocket routing. This is common for configurations that "
+                    "rely entirely on `host_domain` configuration in your template tag.",
                     id="reactpy_django.W010",
                 )
             )

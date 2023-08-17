@@ -40,12 +40,19 @@ Using the following categories, list your changes in this order:
 
 ### Changed
 
--   ReactPy will now provide a warning if HTTP URLs are not using the same URL prefix as websockets.
+-   ReactPy will now provide a warning if your HTTP URLs are not on the same prefix as your websockets.
+-   Cleaner logging output for detected ReactPy root components.
 
 ### Deprecated
 
 -   `reactpy_django.REACTPY_WEBSOCKET_PATH` is deprecated. Replace with `REACTPY_WEBSOCKET_ROUTE`.
 -   `settings.py:REACTPY_WEBSOCKET_URL` is deprecated. Replace with `REACTPY_URL_PREFIX`.
+
+### Removed
+
+-   Warning W007 (`REACTPY_WEBSOCKET_URL doesn't end with a slash`) has been removed. ReactPy now automatically handles slashes.
+-   Warning W008 (`REACTPY_WEBSOCKET_URL doesn't start with an alphanumeric character`) has been removed. ReactPy now automatically handles these scenarios.
+-   Error E009 (`channels is not in settings.py:INSTALLED_APPS`) has been removed. Newer versions of `channels` do not require installation via `INSTALLED_APPS` to receive an ASGI webserver.
 
 ## [3.3.2] - 2023-08-13
 

@@ -20,7 +20,7 @@ The `component` template tag can be used to insert any number of ReactPy compone
     | --- | --- | --- | --- |
     | `dotted_path` | `str` | The dotted path to the component to render. | N/A |
     | `*args` | `Any` | The positional arguments to provide to the component. | N/A |
-    | `host_domain` | `str | None` | The host domain to use for the ReactPy connections. If set to `None`, the host will be automatically configured.<br/><br/>_Note: You typically will not need to register ReactPy HTTP and/or websocket paths on any application(s) that do not perform any component rendering._ | `None` |
+    | `host_domain` | `str | None` | The host domain to use for the ReactPy connections. If set to `None`, the host will be automatically configured.<br/>Example values include: `localhost:8000`, `example.com`, `example.com/subdir`<br/>_Note: You typically will not need to register ReactPy HTTP and/or websocket paths on any application(s) that do not perform any component rendering._ | `None` |
 
     | `**kwargs` | `Any` | The keyword arguments to provide to the component. | N/A |
 

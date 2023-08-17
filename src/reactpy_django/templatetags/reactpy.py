@@ -14,7 +14,11 @@ from reactpy_django.config import (
     REACTPY_RECONNECT_MAX,
     REACTPY_URL_PREFIX,
 )
-from reactpy_django.exceptions import ComponentDoesNotExistError, ComponentParamError
+from reactpy_django.exceptions import (
+    ComponentDoesNotExistError,
+    ComponentParamError,
+    InvalidHostError,
+)
 from reactpy_django.types import ComponentParamData
 from reactpy_django.utils import (
     check_component_args,
@@ -47,6 +51,7 @@ def component(
     Keyword Args:
         host_domain: The host domain to use for the ReactPy connections. If set to `None`, \
             the host will be automatically configured. \
+            Example values include: `localhost:8000`, `example.com`, `example.com/subdir` \
             Note: You typically will not need to register the ReactPy HTTP and/or websocket \
             paths on any application(s) that do not perform component rendering.
         **kwargs: The keyword arguments to provide to the component.
@@ -71,6 +76,14 @@ def component(
     uuid = uuid4().hex
     class_ = kwargs.pop("class", "")
     kwargs.pop("key", "")  # `key` is effectively useless for the root node
+
+    # Fail if user has a method in their host_domain
+    if host_domain.find("://") != -1:
+        protocol = host_domain.split("://")[0]
+        return failure_context(
+            dotted_path,
+            InvalidHostError(f"The provided host contains a protocol '{protocol}'."),
+        )
 
     # Only handle this component if host domain is unset, or the host domains match
     if not host_domain or (host_domain == perceived_host_domain):
