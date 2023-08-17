@@ -36,7 +36,7 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
--   The `component` template tag now accepts a `host` argument to override the default host URL, allowing ReactPy websockets and HTTP to be hosted by completely separate Django application.
+-   The `component` template tag now accepts a `host` argument to override the default host URL. This allows ReactPy to be hosted by completely separate Django application.
 -   `reactpy_django.utils.register_component` has been added. This function can be used to manually register a root component that is not referenced within your Django templates.
 
 ### Changed
@@ -52,7 +52,7 @@ Using the following categories, list your changes in this order:
 ### Removed
 
 -   Warning W007 (`REACTPY_WEBSOCKET_URL doesn't end with a slash`) has been removed. ReactPy now automatically handles slashes.
--   Warning W008 (`REACTPY_WEBSOCKET_URL doesn't start with an alphanumeric character`) has been removed. ReactPy now automatically handles these scenarios.
+-   Warning W008 (`REACTPY_WEBSOCKET_URL doesn't start with an alphanumeric character`) has been removed. ReactPy now automatically handles this scenario.
 -   Error E009 (`channels is not in settings.py:INSTALLED_APPS`) has been removed. Newer versions of `channels` do not require installation via `INSTALLED_APPS` to receive an ASGI webserver.
 
 ## [3.3.2] - 2023-08-13
