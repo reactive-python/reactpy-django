@@ -318,7 +318,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
             # Make sure that other ports are not rendering components
             tmp_sock = socket.socket()
-            tmp_sock.bind(("", 0))
+            tmp_sock.bind((self._server_process.host, 0))
             random_port = tmp_sock.getsockname()[1]
             new_page.goto(f"{self.live_server_url}/port/{random_port}/")
             with self.assertRaises(TimeoutError):
