@@ -263,4 +263,19 @@ def reactpy_errors(app_configs, **kwargs):
                 id="reactpy_django.E010",
             )
         )
+
+    # Check of all values in the list are strings
+    if isinstance(getattr(settings, "REACTPY_DEFAULT_HOSTS", None), list):
+        for host in settings.REACTPY_DEFAULT_HOSTS:
+            if not isinstance(host, str):
+                errors.append(
+                    Error(
+                        f"Invalid type {type(host)} within REACTPY_DEFAULT_HOSTS.",
+                        hint="REACTPY_DEFAULT_HOSTS should be a list of strings.",
+                        obj=settings.REACTPY_DEFAULT_HOSTS,
+                        id="reactpy_django.E011",
+                    )
+                )
+                break
+
     return errors

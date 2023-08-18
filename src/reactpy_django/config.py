@@ -78,5 +78,7 @@ _default_hosts: list[str] | None = getattr(
     None,
 )
 REACTPY_DEFAULT_HOSTS: cycle[str] | None = (
-    cycle([host.strip("/") for host in _default_hosts]) if _default_hosts else None
+    cycle([host.strip("/") for host in _default_hosts if isinstance(host, str)])
+    if _default_hosts
+    else None
 )
