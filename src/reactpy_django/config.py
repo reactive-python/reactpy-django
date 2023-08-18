@@ -72,11 +72,11 @@ REACTPY_BACKHAUL_THREAD: bool = getattr(
     "REACTPY_BACKHAUL_THREAD",
     False,
 )
-_reactpy_default_hosts: list[str] | None = getattr(
+_default_hosts: list[str] | None = getattr(
     settings,
     "REACTPY_DEFAULT_HOSTS",
     None,
 )
-REACTPY_DEFAULT_HOSTS = (
-    cycle(_reactpy_default_hosts) if _reactpy_default_hosts else None
+REACTPY_DEFAULT_HOSTS: cycle[str] | None = (
+    cycle([host.strip("/") for host in _default_hosts]) if _default_hosts else None
 )
