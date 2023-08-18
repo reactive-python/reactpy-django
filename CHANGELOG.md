@@ -34,12 +34,16 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+-   Nothing (yet)!
+
+## [3.4.0] - 2023-08-18
+
 ### Added
 
 -   **Distributed Computing:** ReactPy components can now optionally be rendered by a completely separate server!
     -   `REACTPY_DEFAULT_HOSTS` setting can round-robin a list of ReactPy rendering hosts.
     -   `host` argument has been added to the `component` template tag to force components to render on a specific host.
--   `reactpy_django.utils.register_component` function to manually register root components.
+-   `reactpy_django.utils.register_component` function can manually register root components.
     -   Useful if you have dedicated ReactPy rendering application(s) that do not use HTML templates.
 
 ### Changed
@@ -358,7 +362,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.3.2...HEAD
+[unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.4.0...HEAD
+[3.4.0]: https://github.com/reactive-python/reactpy-django/compare/3.3.2...3.4.0
 [3.3.2]: https://github.com/reactive-python/reactpy-django/compare/3.3.1...3.3.2
 [3.3.1]: https://github.com/reactive-python/reactpy-django/compare/3.3.0...3.3.1
 [3.3.0]: https://github.com/reactive-python/reactpy-django/compare/3.2.1...3.3.0
