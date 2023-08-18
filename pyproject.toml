@@ -3,15 +3,13 @@ requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.mypy]
-exclude = [
-    'migrations/.*',
-]
+exclude = ['migrations/.*']
 ignore_missing_imports = true
 warn_unused_configs = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 check_untyped_defs = true
-incremental = false
+incremental = true
 
 [tool.ruff.isort]
 known-first-party = ["src", "tests"]
