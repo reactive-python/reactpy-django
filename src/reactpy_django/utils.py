@@ -203,7 +203,7 @@ class ComponentPreloader:
     def register_components(self, components: set[str]) -> None:
         """Registers all ReactPy components in an iterable."""
         if components:
-            _logger.debug("ReactPy root components:")
+            _logger.debug("Auto-detected ReactPy root components:")
         for component in components:
             try:
                 _logger.debug("\t+ %s", component)

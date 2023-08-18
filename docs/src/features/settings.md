@@ -19,11 +19,12 @@ These are ReactPy-Django's default settings values. You can modify these values 
 | `REACTPY_DEFAULT_QUERY_POSTPROCESSOR` | `#!python "reactpy_django.utils.django_query_postprocessor"` | `#!python "example_project.my_query_postprocessor"` | Dotted path to the default `reactpy_django.hooks.use_query` postprocessor function. |
 | `REACTPY_AUTH_BACKEND` | `#!python "django.contrib.auth.backends.ModelBackend"` | `#!python "example_project.auth.MyModelBackend"` | Dotted path to the Django authentication backend to use for ReactPy components. This is only needed if:<br/> 1. You are using `AuthMiddlewareStack` and...<br/> 2. You are using Django's `AUTHENTICATION_BACKENDS` setting and...<br/> 3. Your Django user model does not define a `backend` attribute. |
 | `REACTPY_BACKHAUL_THREAD` | `#!python False` | `#!python True` | Whether to render ReactPy components in a dedicated thread. This allows the webserver to process web traffic while during ReactPy rendering.<br/>Vastly improves throughput with web servers such as `hypercorn` and `uvicorn`. |
+| `REACTPY_DEFAULT_HOSTS` | `#!python None` | `#!python ["localhost:8000", "localhost:8001", "localhost:8002/subdir" ]` | Default host(s) to use for ReactPy components. ReactPy will use these hosts in a round-robin fashion, allowing for easy distributed computing.<br/>You can use the `host` argument in your [template tag](../features/template-tag.md#component) to override this default. |
 
 <!--config-details-end-->
 
 ??? question "Do I need to modify my settings?"
 
-    The default configuration of ReactPy is adequate for the majority of use cases.
+    The default configuration of ReactPy is suitable for the majority of use cases.
 
     You should only consider changing settings when the necessity arises.

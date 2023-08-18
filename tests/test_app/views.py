@@ -1,4 +1,5 @@
 import inspect
+from itertools import cycle
 
 from channels.db import database_sync_to_async
 from django.http import HttpRequest
@@ -15,6 +16,30 @@ def base_template(request):
 def host_port_template(request: HttpRequest, port: int):
     host = request.get_host().replace(str(request.get_port()), str(port))
     return render(request, "host_port.html", {"new_host": host})
+
+
+def host_port_roundrobin_template(
+    request: HttpRequest, port1: int, port2: int, count: int = 1
+):
+    from reactpy_django import config
+
+    # Override ReactPy config to use round-robin hosts
+    original = config.REACTPY_DEFAULT_HOSTS
+    config.REACTPY_DEFAULT_HOSTS = cycle(
+        [
+            f"{request.get_host().split(':')[0]}:{port1}",
+            f"{request.get_host().split(':')[0]}:{port2}",
+        ]
+    )
+    html = render(
+        request,
+        "host_port_roundrobin.html",
+        {"count": range(max(count, 1))},
+    )
+
+    # Reset ReactPy config
+    config.REACTPY_DEFAULT_HOSTS = original
+    return html
 
 
 def view_to_component_sync_func(request):

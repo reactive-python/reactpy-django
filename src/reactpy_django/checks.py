@@ -254,4 +254,13 @@ def reactpy_errors(app_configs, **kwargs):
 
     # DELETED E009: Check if `channels` is in INSTALLED_APPS
 
+    if not isinstance(getattr(settings, "REACTPY_DEFAULT_HOSTS", []), list):
+        errors.append(
+            Error(
+                "Invalid type for REACTPY_DEFAULT_HOSTS.",
+                hint="REACTPY_DEFAULT_HOSTS should be a list.",
+                obj=settings.REACTPY_DEFAULT_HOSTS,
+                id="reactpy_django.E010",
+            )
+        )
     return errors

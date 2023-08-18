@@ -36,17 +36,20 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
--   The `component` template tag now accepts a `host` argument. This allows rendering ReactPy components from a completely separate Django application.
--   `reactpy_django.utils.register_component` has been added. This function can be used to manually register a root component that is not referenced within your Django templates.
+-   **Distributed Computing:** ReactPy components can now optionally be rendered by a completely separate server!
+    -   `REACTPY_DEFAULT_HOSTS` setting can round-robin a list of ReactPy rendering hosts.
+    -   `host` argument has been added to the `component` template tag to force components to render on a specific host.
+-   `reactpy_django.utils.register_component` function to manually register root components.
+    -   Useful if you have dedicated ReactPy rendering application(s) that do not use HTML templates.
 
 ### Changed
 
 -   ReactPy will now provide a warning if your HTTP URLs are not on the same prefix as your websockets.
--   Cleaner logging output for detected ReactPy root components.
+-   Cleaner logging output for auto-detected ReactPy root components.
 
 ### Deprecated
 
--   `reactpy_django.REACTPY_WEBSOCKET_PATH` is deprecated. The similar replacement is `REACTPY_WEBSOCKET_ROUTE`.
+-   `reactpy_django.REACTPY_WEBSOCKET_PATH` is deprecated. The identical replacement is `REACTPY_WEBSOCKET_ROUTE`.
 -   `settings.py:REACTPY_WEBSOCKET_URL` is deprecated. The similar replacement is `REACTPY_URL_PREFIX`.
 
 ### Removed

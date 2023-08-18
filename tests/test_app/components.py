@@ -591,11 +591,14 @@ def view_to_component_decorator_args(request):
 
 
 @component
-def custom_host():
+def custom_host(number=0):
     scope = reactpy_django.hooks.use_scope()
     port = scope["server"][1]
 
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
+        {
+            "class_name": f"{inspect.currentframe().f_code.co_name}-{number}",  # type: ignore
+            "data-port": port,
+        },
         f"Server Port: {port}",
     )

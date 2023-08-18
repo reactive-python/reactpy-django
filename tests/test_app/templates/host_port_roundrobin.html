@@ -13,9 +13,11 @@
 <body>
     <h1>ReactPy Test Page</h1>
     <hr>
-    <b>Custom Host ({{new_host}}): </b>
-    {% component "test_app.components.custom_host" host=new_host number=0 %}
+    {% for count in count %}
+    <b>Round-Robin Host: </b>
+    {% component "test_app.components.custom_host" number=count %}
     <hr>
+    {% endfor %}
 </body>
 
 </html>

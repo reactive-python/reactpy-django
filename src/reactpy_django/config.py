@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from itertools import cycle
+
 from django.conf import settings
 from django.core.cache import DEFAULT_CACHE_ALIAS
 from django.db import DEFAULT_DB_ALIAS
@@ -69,4 +71,12 @@ REACTPY_BACKHAUL_THREAD: bool = getattr(
     settings,
     "REACTPY_BACKHAUL_THREAD",
     False,
+)
+_reactpy_default_hosts: list[str] | None = getattr(
+    settings,
+    "REACTPY_DEFAULT_HOSTS",
+    None,
+)
+REACTPY_DEFAULT_HOSTS = (
+    cycle(_reactpy_default_hosts) if _reactpy_default_hosts else None
 )

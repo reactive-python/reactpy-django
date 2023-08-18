@@ -8,23 +8,14 @@ from django import template
 from django.http import HttpRequest
 from django.urls import NoReverseMatch, reverse
 
-from reactpy_django import models
-from reactpy_django.config import (
-    REACTPY_DEBUG_MODE,
-    REACTPY_RECONNECT_MAX,
-    REACTPY_URL_PREFIX,
-)
+from reactpy_django import config, models
 from reactpy_django.exceptions import (
     ComponentDoesNotExistError,
     ComponentParamError,
     InvalidHostError,
 )
 from reactpy_django.types import ComponentParamData
-from reactpy_django.utils import (
-    check_component_args,
-    func_has_args,
-    register_component,
-)
+from reactpy_django.utils import check_component_args, func_has_args
 
 try:
     RESOLVED_WEB_MODULES_PATH = reverse("reactpy:web_modules", args=["/"]).strip("/")
@@ -68,7 +59,13 @@ def component(
     # Determine the host
     request: HttpRequest | None = context.get("request")
     perceived_host = (request.get_host() if request else "").strip("/")
-    host = (host or "").strip("/")
+    host = (
+        host
+        or (next(config.REACTPY_DEFAULT_HOSTS) if config.REACTPY_DEFAULT_HOSTS else "")
+    ).strip("/")
+
+    # Check if this this component needs to rendered by the current ASGI app
+    use_current_app = not host or host.startswith(perceived_host)
 
     # Create context variables
     uuid = uuid4().hex
@@ -84,47 +81,42 @@ def component(
         _logger.error(msg)
         return failure_context(dotted_path, InvalidHostError(msg))
 
-    # Only handle this component if host is unset, or the hosts match
-    if not host or (host == perceived_host):
-        # Register the component if needed
-        try:
-            component = register_component(dotted_path)
-        except Exception as e:
-            if isinstance(e, ComponentDoesNotExistError):
-                _logger.error(str(e))
-            else:
-                _logger.exception(
-                    "An unknown error has occurred while registering component '%s'.",
-                    dotted_path,
-                )
-            return failure_context(dotted_path, e)
+    # Fetch the component if needed
+    if use_current_app:
+        user_component = config.REACTPY_REGISTERED_COMPONENTS.get(dotted_path)
+        if not user_component:
+            msg = f"Component '{dotted_path}' is not registered as a root component. "
+            _logger.error(msg)
+            return failure_context(dotted_path, ComponentDoesNotExistError(msg))
 
-        # Store the component's args/kwargs in the database, if needed
-        # These will be fetched by the websocket consumer later
-        try:
-            check_component_args(component, *args, **kwargs)
-            if func_has_args(component):
-                params = ComponentParamData(args, kwargs)
-                model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
-                model.full_clean()
-                model.save()
-        except Exception as e:
-            if isinstance(e, ComponentParamError):
-                _logger.error(str(e))
-            else:
-                _logger.exception(
-                    "An unknown error has occurred while saving component params for '%s'.",
-                    dotted_path,
-                )
-            return failure_context(dotted_path, e)
+    # Store the component's args/kwargs in the database, if needed
+    # These will be fetched by the websocket consumer later
+    try:
+        if use_current_app:
+            check_component_args(user_component, *args, **kwargs)
+            if func_has_args(user_component):
+                save_component_params(args, kwargs, uuid)
+        # Can't guarantee args will match up if the component is rendered by a different app.
+        # So, we just store any provided args/kwargs in the database.
+        elif args or kwargs:
+            save_component_params(args, kwargs, uuid)
+    except Exception as e:
+        if isinstance(e, ComponentParamError):
+            _logger.error(str(e))
+        else:
+            _logger.exception(
+                "An unknown error has occurred while saving component params for '%s'.",
+                dotted_path,
+            )
+        return failure_context(dotted_path, e)
 
     # Return the template rendering context
     return {
         "reactpy_class": class_,
         "reactpy_uuid": uuid,
         "reactpy_host": host or perceived_host,
-        "reactpy_url_prefix": REACTPY_URL_PREFIX,
-        "reactpy_reconnect_max": REACTPY_RECONNECT_MAX,
+        "reactpy_url_prefix": config.REACTPY_URL_PREFIX,
+        "reactpy_reconnect_max": config.REACTPY_RECONNECT_MAX,
         "reactpy_component_path": f"{dotted_path}/{uuid}/",
         "reactpy_resolved_web_modules_path": RESOLVED_WEB_MODULES_PATH,
     }
@@ -133,7 +125,14 @@ def component(
 def failure_context(dotted_path: str, error: Exception):
     return {
         "reactpy_failure": True,
-        "reactpy_debug_mode": REACTPY_DEBUG_MODE,
+        "reactpy_debug_mode": config.REACTPY_DEBUG_MODE,
         "reactpy_dotted_path": dotted_path,
         "reactpy_error": type(error).__name__,
     }
+
+
+def save_component_params(args, kwargs, uuid):
+    params = ComponentParamData(args, kwargs)
+    model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
+    model.full_clean()
+    model.save()
