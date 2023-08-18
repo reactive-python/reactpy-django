@@ -152,27 +152,18 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         # Fetch the component's args/kwargs from the database, if needed
         try:
             if func_has_args(component_constructor):
-                try:
-                    # Always clean up expired entries first
-                    await database_sync_to_async(db_cleanup, thread_sensitive=False)()
+                # Always clean up expired entries first
+                await database_sync_to_async(db_cleanup, thread_sensitive=False)()
 
-                    # Get the queries from a DB
-                    params_query = await models.ComponentSession.objects.aget(
-                        uuid=uuid,
-                        last_accessed__gt=now
-                        - timedelta(seconds=REACTPY_RECONNECT_MAX),
-                    )
-                    params_query.last_accessed = timezone.now()
-                    await database_sync_to_async(
-                        params_query.save, thread_sensitive=False
-                    )()
-                except models.ComponentSession.DoesNotExist:
-                    await asyncio.to_thread(
-                        _logger.warning,
-                        f"Component session for '{dotted_path}:{uuid}' not found. The "
-                        "session may have already expired beyond REACTPY_RECONNECT_MAX.",
-                    )
-                    return
+                # Get the queries from a DB
+                params_query = await models.ComponentSession.objects.aget(
+                    uuid=uuid,
+                    last_accessed__gt=now - timedelta(seconds=REACTPY_RECONNECT_MAX),
+                )
+                params_query.last_accessed = timezone.now()
+                await database_sync_to_async(
+                    params_query.save, thread_sensitive=False
+                )()
                 component_params: ComponentParamData = pickle.loads(params_query.params)
                 component_args = component_params.args
                 component_kwargs = component_params.kwargs
@@ -181,6 +172,15 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             component_instance = component_constructor(
                 *component_args, **component_kwargs
             )
+        except models.ComponentSession.DoesNotExist:
+            await asyncio.to_thread(
+                _logger.warning,
+                f"Component session for '{dotted_path}:{uuid}' not found. The "
+                "session may have already expired beyond REACTPY_RECONNECT_MAX. "
+                "If you are using a custom host, you may have forgotten to provide "
+                "args/kwargs.",
+            )
+            return
         except Exception:
             await asyncio.to_thread(
                 _logger.exception,

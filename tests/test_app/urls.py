@@ -20,7 +20,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-from .views import base_template
+from .views import base_template, host_port_roundrobin_template, host_port_template
 
 
 class AccessUser:
@@ -31,6 +31,10 @@ admin.site.has_permission = lambda r: setattr(r, "user", AccessUser()) or True  
 
 urlpatterns = [
     path("", base_template),
+    path("port/<int:port>/", host_port_template),
+    path(
+        "roundrobin/<int:port1>/<int:port2>/<int:count>/", host_port_roundrobin_template
+    ),
     path("", include("test_app.performance.urls")),
     path("reactpy/", include("reactpy_django.http.urls")),
     path("admin/", admin.site.urls),

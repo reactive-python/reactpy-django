@@ -3,11 +3,15 @@ import contextlib
 import nest_asyncio
 
 from reactpy_django import checks, components, decorators, hooks, types, utils
-from reactpy_django.websocket.paths import REACTPY_WEBSOCKET_PATH
+from reactpy_django.websocket.paths import (
+    REACTPY_WEBSOCKET_PATH,
+    REACTPY_WEBSOCKET_ROUTE,
+)
 
 __version__ = "3.3.2"
 __all__ = [
     "REACTPY_WEBSOCKET_PATH",
+    "REACTPY_WEBSOCKET_ROUTE",
     "hooks",
     "components",
     "decorators",

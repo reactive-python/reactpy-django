@@ -37,3 +37,25 @@ This postprocessor is designed to avoid Django's `SynchronousOnlyException` by r
     | Type | Description |
     | --- | --- |
     | `QuerySet | Model` | The `Model` or `QuerySet` with all fields fetched. |
+
+## Register Component
+
+The `register_component` function is used manually register a root component with ReactPy.
+
+You should always call `register_component` within a Django [`AppConfig.ready()` method](https://docs.djangoproject.com/en/4.2/ref/applications/#django.apps.AppConfig.ready) to retain compatibility with ASGI webserver workers.
+
+=== "apps.py"
+
+    ```python
+    {% include "../../python/register-component.py" %}
+    ```
+
+??? question "Do I need to register my components?"
+
+    You typically will not need to use this function.
+
+    For security reasons, ReactPy does not allow non-registered components to be root components. However, all components contained within Django templates are automatically considered root components.
+
+    You only need to use this function if your host application does not contain any HTML templates that [reference](../features/template-tag.md#component) your components.
+
+    A common scenario where this is needed is when you are modifying the [template tag `host = ...` argument](../features/template-tag.md#component) in order to configure a dedicated Django application as a rendering server for ReactPy. On this dedicated rendering server, you would need to manually register your components.

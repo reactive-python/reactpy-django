@@ -44,11 +44,7 @@ In your settings you will need to add `reactpy_django` to [`INSTALLED_APPS`](htt
 
 ??? note "Configure ReactPy settings (Optional)"
 
-    Below are a handful of values you can change within `settings.py` to modify the behavior of ReactPy.
-
-    ```python linenums="0"
-    {% include "../../python/settings.py" %}
-    ```
+    {% include "../features/settings.md" start="<!--config-details-start-->" end="<!--config-details-end-->"  %}
 
 ## Step 3: Configure [`urls.py`](https://docs.djangoproject.com/en/dev/topics/http/urls/)
 
@@ -62,7 +58,7 @@ Add ReactPy HTTP paths to your `urlpatterns`.
 
 ## Step 4: Configure [`asgi.py`](https://docs.djangoproject.com/en/dev/howto/deployment/asgi/)
 
-Register ReactPy's Websocket using `REACTPY_WEBSOCKET_PATH`.
+Register ReactPy's Websocket using `REACTPY_WEBSOCKET_ROUTE`.
 
 === "asgi.py"
 
@@ -94,4 +90,12 @@ Run Django's database migrations to initialize ReactPy-Django's database table.
 
 ```bash linenums="0"
 python manage.py migrate
+```
+
+## Step 6: Check your configuration
+
+Run Django's check command to verify if ReactPy was set up correctly.
+
+```bash linenums="0"
+python manage.py check
 ```

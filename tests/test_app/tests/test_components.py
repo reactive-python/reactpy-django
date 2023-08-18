@@ -1,5 +1,6 @@
 import asyncio
 import os
+import socket
 import sys
 from functools import partial
 
@@ -10,11 +11,10 @@ from django.core.management import call_command
 from django.db import connections
 from django.test.utils import modify_settings
 from playwright.sync_api import TimeoutError, sync_playwright
-
 from reactpy_django.models import ComponentSession
 
-
-CLICK_DELAY = 250 if os.getenv("GITHUB_ACTIONS") else 25  # Delay in miliseconds.
+GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS")
+CLICK_DELAY = 250 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
 
 
 class ComponentTests(ChannelsLiveServerTestCase):
@@ -41,11 +41,17 @@ class ComponentTests(ChannelsLiveServerTestCase):
         cls._server_process.ready.wait()
         cls._port = cls._server_process.port.value
 
+        # Open the second server process
+        cls._server_process2 = cls.ProtocolServerProcess(cls.host, get_application)
+        cls._server_process2.start()
+        cls._server_process2.ready.wait()
+        cls._port2 = cls._server_process2.port.value
+
         # Open a Playwright browser window
         if sys.platform == "win32":
             asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
         cls.playwright = sync_playwright().start()
-        headed = bool(int(os.environ.get("PLAYWRIGHT_HEADED", 0)))
+        headed = bool(int(os.environ.get("PLAYWRIGHT_HEADED", not GITHUB_ACTIONS)))
         cls.browser = cls.playwright.chromium.launch(headless=not headed)
         cls.page = cls.browser.new_page()
 
@@ -53,6 +59,10 @@ class ComponentTests(ChannelsLiveServerTestCase):
     def tearDownClass(cls):
         # Close the Playwright browser
         cls.playwright.stop()
+
+        # Close the second server process
+        cls._server_process2.terminate()
+        cls._server_process2.join()
 
         # Repurposed from ChannelsLiveServerTestCase._post_teardown
         cls._server_process.terminate()
@@ -293,3 +303,69 @@ class ComponentTests(ChannelsLiveServerTestCase):
         query_exists = query.exists()
         os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
         self.assertFalse(query_exists)
+
+    def test_custom_host(self):
+        """Make sure that the component is rendered by a separate server."""
+        new_page = self.browser.new_page()
+        try:
+            new_page.goto(f"{self.live_server_url}/port/{self._port2}/")
+            elem = new_page.locator(".custom_host-0")
+            elem.wait_for()
+            self.assertIn(
+                f"Server Port: {self._port2}",
+                elem.text_content(),
+            )
+        finally:
+            new_page.close()
+
+    def test_custom_host_wrong_port(self):
+        """Make sure that other ports are not rendering components."""
+        new_page = self.browser.new_page()
+        try:
+            tmp_sock = socket.socket()
+            tmp_sock.bind((self._server_process.host, 0))
+            random_port = tmp_sock.getsockname()[1]
+            new_page.goto(f"{self.live_server_url}/port/{random_port}/")
+            with self.assertRaises(TimeoutError):
+                new_page.locator(".custom_host").wait_for(timeout=1000)
+        finally:
+            new_page.close()
+
+    def test_host_roundrobin(self):
+        """Verify if round-robin host selection is working."""
+        new_page = self.browser.new_page()
+        try:
+            new_page.goto(
+                f"{self.live_server_url}/roundrobin/{self._port}/{self._port2}/8"
+            )
+            elem0 = new_page.locator(".custom_host-0")
+            elem1 = new_page.locator(".custom_host-1")
+            elem2 = new_page.locator(".custom_host-2")
+            elem3 = new_page.locator(".custom_host-3")
+
+            elem0.wait_for()
+            elem1.wait_for()
+            elem2.wait_for()
+            elem3.wait_for()
+
+            current_ports = {
+                elem0.get_attribute("data-port"),
+                elem1.get_attribute("data-port"),
+                elem2.get_attribute("data-port"),
+                elem3.get_attribute("data-port"),
+            }
+            correct_ports = {
+                str(self._port),
+                str(self._port2),
+            }
+
+            # There should only be two ports in the set
+            self.assertEqual(current_ports, correct_ports)
+            self.assertEqual(len(current_ports), 2)
+        finally:
+            new_page.close()
+
+    def test_invalid_host_error(self):
+        broken_component = self.page.locator("#invalid_host_error")
+        broken_component.wait_for()
+        self.assertIn("InvalidHostError:", broken_component.text_content())

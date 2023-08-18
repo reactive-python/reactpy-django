@@ -34,7 +34,29 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Added
+
+-   **Distributed Computing:** ReactPy components can now optionally be rendered by a completely separate server!
+    -   `REACTPY_DEFAULT_HOSTS` setting can round-robin a list of ReactPy rendering hosts.
+    -   `host` argument has been added to the `component` template tag to force components to render on a specific host.
+-   `reactpy_django.utils.register_component` function to manually register root components.
+    -   Useful if you have dedicated ReactPy rendering application(s) that do not use HTML templates.
+
+### Changed
+
+-   ReactPy will now provide a warning if your HTTP URLs are not on the same prefix as your websockets.
+-   Cleaner logging output for auto-detected ReactPy root components.
+
+### Deprecated
+
+-   `reactpy_django.REACTPY_WEBSOCKET_PATH` is deprecated. The identical replacement is `REACTPY_WEBSOCKET_ROUTE`.
+-   `settings.py:REACTPY_WEBSOCKET_URL` is deprecated. The similar replacement is `REACTPY_URL_PREFIX`.
+
+### Removed
+
+-   Warning W007 (`REACTPY_WEBSOCKET_URL doesn't end with a slash`) has been removed. ReactPy now automatically handles slashes.
+-   Warning W008 (`REACTPY_WEBSOCKET_URL doesn't start with an alphanumeric character`) has been removed. ReactPy now automatically handles this scenario.
+-   Error E009 (`channels is not in settings.py:INSTALLED_APPS`) has been removed. Newer versions of `channels` do not require installation via `INSTALLED_APPS` to receive an ASGI webserver.
 
 ## [3.3.2] - 2023-08-13
 

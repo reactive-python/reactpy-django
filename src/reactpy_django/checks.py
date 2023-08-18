@@ -1,8 +1,10 @@
+import contextlib
 import sys
 
 from django.contrib.staticfiles.finders import find
 from django.core.checks import Error, Tags, Warning, register
 from django.template import loader
+from django.urls import NoReverseMatch
 
 
 @register(Tags.compatibility)
@@ -10,6 +12,7 @@ def reactpy_warnings(app_configs, **kwargs):
     from django.conf import settings
     from django.urls import reverse
 
+    from reactpy_django import config
     from reactpy_django.config import REACTPY_FAILED_COMPONENTS
 
     warnings = []
@@ -40,22 +43,24 @@ def reactpy_warnings(app_configs, **kwargs):
             Warning(
                 "ReactPy URLs have not been registered.",
                 hint="""Add 'path("reactpy/", include("reactpy_django.http.urls"))' """
-                "to your application's urlpatterns.",
+                "to your application's urlpatterns. If this application does not need "
+                "to render ReactPy components, you add this warning to SILENCED_SYSTEM_CHECKS.",
                 id="reactpy_django.W002",
             )
         )
 
-    # Warn if REACTPY_BACKHAUL_THREAD is set to True on Linux with Daphne
+    # Warn if REACTPY_BACKHAUL_THREAD is set to True with Daphne
     if (
-        sys.argv
-        and sys.argv[0].endswith("daphne")
-        and getattr(settings, "REACTPY_BACKHAUL_THREAD", False)
-        and sys.platform == "linux"
-    ):
+        sys.argv[0].endswith("daphne")
+        or (
+            "runserver" in sys.argv
+            and "daphne" in getattr(settings, "INSTALLED_APPS", [])
+        )
+    ) and getattr(settings, "REACTPY_BACKHAUL_THREAD", False):
         warnings.append(
             Warning(
-                "REACTPY_BACKHAUL_THREAD is enabled but you running with Daphne on Linux. "
-                "This configuration is known to be unstable.",
+                "Unstable configuration detected. REACTPY_BACKHAUL_THREAD is enabled "
+                "and you running with Daphne.",
                 hint="Set settings.py:REACTPY_BACKHAUL_THREAD to False or use a different webserver.",
                 id="reactpy_django.W003",
             )
@@ -96,27 +101,63 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
-    # Check if REACTPY_WEBSOCKET_URL doesn't end with a slash
-    REACTPY_WEBSOCKET_URL = getattr(settings, "REACTPY_WEBSOCKET_URL", "reactpy/")
-    if isinstance(REACTPY_WEBSOCKET_URL, str):
-        if not REACTPY_WEBSOCKET_URL or not REACTPY_WEBSOCKET_URL.endswith("/"):
+    # DELETED W007: Check if REACTPY_WEBSOCKET_URL doesn't end with a slash
+    # DELETED W008: Check if REACTPY_WEBSOCKET_URL doesn't start with an alphanumeric character
+
+    # Removed Settings
+    if getattr(settings, "REACTPY_WEBSOCKET_URL", None):
+        warnings.append(
+            Warning(
+                "REACTPY_WEBSOCKET_URL has been removed.",
+                hint="Use REACTPY_URL_PREFIX instead.",
+                id="reactpy_django.W009",
+            )
+        )
+
+    # Check if REACTPY_URL_PREFIX is being used properly in our HTTP URLs
+    with contextlib.suppress(NoReverseMatch):
+        full_path = reverse("reactpy:web_modules", kwargs={"file": "example"}).strip(
+            "/"
+        )
+        reactpy_http_prefix = f'{full_path[: full_path.find("web_module/")].strip("/")}'
+        if reactpy_http_prefix != config.REACTPY_URL_PREFIX:
             warnings.append(
                 Warning(
-                    "REACTPY_WEBSOCKET_URL did not end with a forward slash.",
-                    hint="Change your URL to be written in the following format: 'example_url/'",
-                    id="reactpy_django.W007",
+                    "HTTP paths are not prefixed with REACTPY_URL_PREFIX. "
+                    "Some ReactPy features may not work as expected.",
+                    hint="Use one of the following solutions.\n"
+                    "\t1) Utilize REACTPY_URL_PREFIX within your urls.py:\n"
+                    f'\t     path("{config.REACTPY_URL_PREFIX}/", include("reactpy_django.http.urls"))\n'
+                    "\t2) Modify settings.py:REACTPY_URL_PREFIX to match your existing HTTP path:\n"
+                    f'\t     REACTPY_URL_PREFIX = "{reactpy_http_prefix}/"\n'
+                    "\t3) If you not rendering components by this ASGI application, then remove "
+                    "ReactPy HTTP and websocket routing. This is common for configurations that "
+                    "rely entirely on `host` configuration in your template tag.",
+                    id="reactpy_django.W010",
                 )
             )
 
-        # Check if REACTPY_WEBSOCKET_URL doesn't start with an alphanumeric character
-        if not REACTPY_WEBSOCKET_URL or not REACTPY_WEBSOCKET_URL[0].isalnum():
-            warnings.append(
-                Warning(
-                    "REACTPY_WEBSOCKET_URL did not start with an alphanumeric character.",
-                    hint="Change your URL to be written in the following format: 'example_url/'",
-                    id="reactpy_django.W008",
-                )
+    # Check if REACTPY_URL_PREFIX is empty
+    if not getattr(settings, "REACTPY_URL_PREFIX", "reactpy/"):
+        warnings.append(
+            Warning(
+                "REACTPY_URL_PREFIX should not be empty!",
+                hint="Change your REACTPY_URL_PREFIX to be written in the following format: '/example_url/'",
+                id="reactpy_django.W011",
             )
+        )
+
+    # Check if `daphne` is not in installed apps when using `runserver`
+    if "runserver" in sys.argv and "daphne" not in getattr(
+        settings, "INSTALLED_APPS", []
+    ):
+        warnings.append(
+            Warning(
+                "You have not configured runserver to use ASGI.",
+                hint="Add daphne to settings.py:INSTALLED_APPS.",
+                id="reactpy_django.W012",
+            )
+        )
 
     return warnings
 
@@ -154,12 +195,12 @@ def reactpy_errors(app_configs, **kwargs):
         )
 
     # All settings in reactpy_django.conf are the correct data type
-    if not isinstance(getattr(settings, "REACTPY_WEBSOCKET_URL", ""), str):
+    if not isinstance(getattr(settings, "REACTPY_URL_PREFIX", ""), str):
         errors.append(
             Error(
-                "Invalid type for REACTPY_WEBSOCKET_URL.",
-                hint="REACTPY_WEBSOCKET_URL should be a string.",
-                obj=settings.REACTPY_WEBSOCKET_URL,
+                "Invalid type for REACTPY_URL_PREFIX.",
+                hint="REACTPY_URL_PREFIX should be a string.",
+                obj=settings.REACTPY_URL_PREFIX,
                 id="reactpy_django.E003",
             )
         )
@@ -211,14 +252,30 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
-    # Check for dependencies
-    if "channels" not in settings.INSTALLED_APPS:
+    # DELETED E009: Check if `channels` is in INSTALLED_APPS
+
+    if not isinstance(getattr(settings, "REACTPY_DEFAULT_HOSTS", []), list):
         errors.append(
             Error(
-                "Django Channels is not installed.",
-                hint="Add 'channels' to settings.py:INSTALLED_APPS.",
-                id="reactpy_django.E009",
+                "Invalid type for REACTPY_DEFAULT_HOSTS.",
+                hint="REACTPY_DEFAULT_HOSTS should be a list.",
+                obj=settings.REACTPY_DEFAULT_HOSTS,
+                id="reactpy_django.E010",
             )
         )
+
+    # Check of all values in the list are strings
+    if isinstance(getattr(settings, "REACTPY_DEFAULT_HOSTS", None), list):
+        for host in settings.REACTPY_DEFAULT_HOSTS:
+            if not isinstance(host, str):
+                errors.append(
+                    Error(
+                        f"Invalid type {type(host)} within REACTPY_DEFAULT_HOSTS.",
+                        hint="REACTPY_DEFAULT_HOSTS should be a list of strings.",
+                        obj=settings.REACTPY_DEFAULT_HOSTS,
+                        id="reactpy_django.E011",
+                    )
+                )
+                break
 
     return errors

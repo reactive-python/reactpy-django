@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from itertools import cycle
+
 from django.conf import settings
 from django.core.cache import DEFAULT_CACHE_ALIAS
 from django.db import DEFAULT_DB_ALIAS
@@ -20,13 +22,20 @@ REACTPY_FAILED_COMPONENTS: set[str] = set()
 REACTPY_VIEW_COMPONENT_IFRAMES: dict[str, ViewComponentIframe] = {}
 
 
-# Configurable through Django settings.py
+# Remove in a future release
 REACTPY_WEBSOCKET_URL = getattr(
     settings,
     "REACTPY_WEBSOCKET_URL",
     "reactpy/",
 )
-REACTPY_RECONNECT_MAX = getattr(
+
+# Configurable through Django settings.py
+REACTPY_URL_PREFIX: str = getattr(
+    settings,
+    "REACTPY_URL_PREFIX",
+    REACTPY_WEBSOCKET_URL,
+).strip("/")
+REACTPY_RECONNECT_MAX: int = getattr(
     settings,
     "REACTPY_RECONNECT_MAX",
     259200,  # Default to 3 days
@@ -62,4 +71,14 @@ REACTPY_BACKHAUL_THREAD: bool = getattr(
     settings,
     "REACTPY_BACKHAUL_THREAD",
     False,
+)
+_default_hosts: list[str] | None = getattr(
+    settings,
+    "REACTPY_DEFAULT_HOSTS",
+    None,
+)
+REACTPY_DEFAULT_HOSTS: cycle[str] | None = (
+    cycle([host.strip("/") for host in _default_hosts if isinstance(host, str)])
+    if _default_hosts
+    else None
 )

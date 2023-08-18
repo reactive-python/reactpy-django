@@ -2,10 +2,13 @@ import asyncio
 import inspect
 from pathlib import Path
 
+import reactpy_django
 from channels.db import database_sync_to_async
 from django.http import HttpRequest
 from django.shortcuts import render
 from reactpy import component, hooks, html, web
+from reactpy_django.components import view_to_component
+
 from test_app.models import (
     AsyncForiegnChild,
     AsyncRelationalChild,
@@ -16,9 +19,6 @@ from test_app.models import (
     RelationalParent,
     TodoItem,
 )
-
-import reactpy_django
-from reactpy_django.components import view_to_component
 
 from . import views
 from .types import TestObject
@@ -587,4 +587,18 @@ def view_to_component_decorator_args(request):
         request,
         "view_to_component.html",
         {"test_name": inspect.currentframe().f_code.co_name},  # type: ignore
+    )
+
+
+@component
+def custom_host(number=0):
+    scope = reactpy_django.hooks.use_scope()
+    port = scope["server"][1]
+
+    return html.div(
+        {
+            "class_name": f"{inspect.currentframe().f_code.co_name}-{number}",  # type: ignore
+            "data-port": port,
+        },
+        f"Server Port: {port}",
     )

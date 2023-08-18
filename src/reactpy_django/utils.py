@@ -20,6 +20,7 @@ from django.template import engines
 from django.utils import timezone
 from django.utils.encoding import smart_str
 from django.views import View
+from reactpy.types import ComponentConstructor
 
 from reactpy_django.exceptions import ComponentDoesNotExistError, ComponentParamError
 
@@ -82,10 +83,8 @@ async def render_view(
     return response
 
 
-def _register_component(dotted_path: str) -> Callable:
-    """Adds a component to the mapping of registered components.
-    This should only be called on startup to maintain synchronization during mulitprocessing.
-    """
+def register_component(dotted_path: str) -> ComponentConstructor:
+    """Adds a component to the list of known registered components."""
     from reactpy_django.config import (
         REACTPY_FAILED_COMPONENTS,
         REACTPY_REGISTERED_COMPONENTS,
@@ -101,7 +100,6 @@ def _register_component(dotted_path: str) -> Callable:
         raise ComponentDoesNotExistError(
             f"Error while fetching '{dotted_path}'. {(str(e).capitalize())}."
         ) from e
-    _logger.debug("ReactPy has registered component %s", dotted_path)
     return REACTPY_REGISTERED_COMPONENTS[dotted_path]
 
 
@@ -204,16 +202,19 @@ class ComponentPreloader:
 
     def register_components(self, components: set[str]) -> None:
         """Registers all ReactPy components in an iterable."""
+        if components:
+            _logger.debug("Auto-detected ReactPy root components:")
         for component in components:
             try:
-                _logger.info("ReactPy preloader has detected component %s", component)
-                _register_component(component)
+                _logger.debug("\t+ %s", component)
+                register_component(component)
             except Exception:
                 _logger.exception(
                     "\033[91m"
-                    "ReactPy failed to register component '%s'! "
+                    "ReactPy failed to register component '%s'!\n"
                     "This component path may not be valid, "
-                    "or an exception may have occurred while importing."
+                    "or an exception may have occurred while importing.\n"
+                    "See the traceback below for more information."
                     "\033[0m",
                     component,
                 )
@@ -296,15 +297,12 @@ def django_query_postprocessor(
     return data
 
 
-def func_has_args(func: Callable) -> bool:
-    """Checks if a function has any args or kwarg."""
-    signature = inspect.signature(func)
-
-    # Check if the function has any args/kwargs
-    return str(signature) != "()"
+def func_has_args(func) -> bool:
+    """Checks if a function has any args or kwargs."""
+    return bool(inspect.signature(func).parameters)
 
 
-def check_component_args(func: Callable, *args, **kwargs):
+def check_component_args(func, *args, **kwargs):
     """
     Validate whether a set of args/kwargs would work on the given function.
 

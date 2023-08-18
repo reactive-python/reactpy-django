@@ -20,6 +20,7 @@ The `component` template tag can be used to insert any number of ReactPy compone
     | --- | --- | --- | --- |
     | `dotted_path` | `str` | The dotted path to the component to render. | N/A |
     | `*args` | `Any` | The positional arguments to provide to the component. | N/A |
+    | `host` | `str | None` | The host to use for the ReactPy connections. If set to `None`, the host will be automatically configured.<br/>Example values include: `localhost:8000`, `example.com`, `example.com/subdir` | `None` |
     | `**kwargs` | `Any` | The keyword arguments to provide to the component. | N/A |
 
     <font size="4">**Returns**</font>
@@ -73,6 +74,27 @@ The `component` template tag can be used to insert any number of ReactPy compone
         ```
 
 <!--reserved-sarg-end-->
+
+??? question "Can I render components on a different server (distributed computing)?"
+
+    Yes! By using the `host` keyword argument, you can render components from a completely separate ASGI server.
+
+    === "my-template.html"
+
+        ```jinja
+        ...
+        {% component "example_project.my_app.components.do_something" host="127.0.0.1:8001" %}
+        ...
+        ```
+
+    This configuration most commonly involves you deploying multiple instances of your project. But, you can also create dedicated Django project(s) that only render specific ReactPy components if you wish.
+
+    Here's a couple of things to keep in mind:
+
+    1. If your host address are completely separate ( `origin1.com != origin2.com` ) you will need to [configure CORS headers](https://pypi.org/project/django-cors-headers/) on your main application during deployment.
+    2. You will not need to register ReactPy HTTP or websocket paths on any applications that do not perform any component rendering.
+    3. Your component will only be able to access `*args`/`**kwargs` you provide to the template tag if your applications share a common database.
+
 <!--multiple-components-start-->
 
 ??? question "Can I use multiple components on one page?"
@@ -98,7 +120,6 @@ The `component` template tag can be used to insert any number of ReactPy compone
     Additionally, in scenarios where you are trying to create a Single Page Application (SPA) within Django, you will only have one component within your `#!html <body>` tag.
 
 <!--multiple-components-end-->
-
 <!--args-kwargs-start-->
 
 ??? question "Can I use positional arguments instead of keyword arguments?"
