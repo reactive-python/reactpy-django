@@ -34,7 +34,10 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Changed
+
+-   Bumped the minimum ReactPy version to 1.0.2
+-   Prettier websocket URLs for components that do not have sessions
 
 ## [3.4.0] - 2023-08-18
 

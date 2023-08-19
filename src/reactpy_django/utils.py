@@ -302,7 +302,7 @@ def func_has_args(func) -> bool:
     return bool(inspect.signature(func).parameters)
 
 
-def check_component_args(func, *args, **kwargs):
+def validate_component_args(func, *args, **kwargs):
     """
     Validate whether a set of args/kwargs would work on the given function.
 

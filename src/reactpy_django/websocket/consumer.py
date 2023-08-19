@@ -124,7 +124,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
         scope = self.scope
         dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
-        uuid = scope["url_route"]["kwargs"]["uuid"]
+        uuid = scope["url_route"]["kwargs"].get("uuid")
         search = scope["query_string"].decode()
         self.recv_queue: asyncio.Queue = asyncio.Queue()
         connection = Connection(  # For `use_connection`
