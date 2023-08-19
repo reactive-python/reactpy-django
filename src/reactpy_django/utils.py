@@ -297,11 +297,6 @@ def django_query_postprocessor(
     return data
 
 
-def func_has_args(func) -> bool:
-    """Checks if a function has any args or kwargs."""
-    return bool(inspect.signature(func).parameters)
-
-
 def validate_component_args(func, *args, **kwargs):
     """
     Validate whether a set of args/kwargs would work on the given function.

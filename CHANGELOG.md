@@ -36,8 +36,9 @@ Using the following categories, list your changes in this order:
 
 ### Changed
 
--   Bumped the minimum ReactPy version to 1.0.2
--   Prettier websocket URLs for components that do not have sessions
+-   Bumped the minimum ReactPy version to `1.0.2`.
+-   Prettier websocket URLs for components that do not have sessions.
+-   Template tag will now only validate `args`/`kwargs` if `settings.py:DEBUG` is enabled.
 
 ## [3.4.0] - 2023-08-18
 

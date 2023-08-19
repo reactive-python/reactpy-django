@@ -16,7 +16,7 @@ from reactpy_django.exceptions import (
     InvalidHostError,
 )
 from reactpy_django.types import ComponentParamData
-from reactpy_django.utils import func_has_args, validate_component_args
+from reactpy_django.utils import validate_component_args
 
 try:
     RESOLVED_WEB_MODULES_PATH = reverse("reactpy:web_modules", args=["/"]).strip("/")
@@ -66,19 +66,17 @@ def component(
     uuid = uuid4().hex
     class_ = kwargs.pop("class", "")
     kwargs.pop("key", "")  # `key` is useless for the root node
-    component_has_args = False
-    user_component: None | ComponentConstructor = None
+    component_has_args = args or kwargs
+    user_component: ComponentConstructor | None = None
 
-    # Fail if user has a method in their host
-    if host.find("://") != -1:
-        protocol = host.split("://")[0]
-        msg = (
-            f"Invalid host provided to component. Contains a protocol '{protocol}://'."
-        )
-        _logger.error(msg)
-        return failure_context(dotted_path, InvalidHostError(msg))
+    # Validate the host
+    if host and config.REACTPY_DEBUG_MODE:
+        try:
+            validate_host(host)
+        except InvalidHostError as e:
+            return failure_context(dotted_path, e)
 
-    # Fetch the component if needed
+    # Fetch the component
     if is_local:
         user_component = config.REACTPY_REGISTERED_COMPONENTS.get(dotted_path)
         if not user_component:
@@ -86,26 +84,24 @@ def component(
             _logger.error(msg)
             return failure_context(dotted_path, ComponentDoesNotExistError(msg))
 
-    # Store the component's args/kwargs in the database, if needed
-    # These will be fetched by the websocket consumer later
-    try:
-        if use_current_app:
-            check_component_args(user_component, *args, **kwargs)
-            if func_has_args(user_component):
-                save_component_params(args, kwargs, uuid)
-        # Can't guarantee args will match up if the component is rendered by a different app.
-        # So, we just store any provided args/kwargs in the database.
-        elif args or kwargs:
-            save_component_params(args, kwargs, uuid)
-    except Exception as e:
-        if isinstance(e, ComponentParamError):
+    # Validate the component
+    if is_local and config.REACTPY_DEBUG_MODE:
+        try:
+            validate_component_args(user_component, *args, **kwargs)
+        except ComponentParamError as e:
             _logger.error(str(e))
-        else:
+            return failure_context(dotted_path, e)
+
+    # Store args & kwargs in the database (fetched by our websocket later)
+    if component_has_args:
+        try:
+            save_component_params(args, kwargs, uuid)
+        except Exception as e:
             _logger.exception(
                 "An unknown error has occurred while saving component params for '%s'.",
                 dotted_path,
             )
-        return failure_context(dotted_path, e)
+            return failure_context(dotted_path, e)
 
     # Return the template rendering context
     return {
@@ -135,3 +131,13 @@ def save_component_params(args, kwargs, uuid):
     model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
     model.full_clean()
     model.save()
+
+
+def validate_host(host: str) -> bool:
+    if "://" in host:
+        protocol = host.split("://")[0]
+        msg = (
+            f"Invalid host provided to component. Contains a protocol '{protocol}://'."
+        )
+        _logger.error(msg)
+        raise InvalidHostError(msg)
