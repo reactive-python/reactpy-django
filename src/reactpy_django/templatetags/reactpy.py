@@ -133,7 +133,7 @@ def save_component_params(args, kwargs, uuid):
     model.save()
 
 
-def validate_host(host: str) -> bool:
+def validate_host(host: str):
     if "://" in host:
         protocol = host.split("://")[0]
         msg = (
