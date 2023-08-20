@@ -7,6 +7,7 @@ import dill as pickle
 from django import template
 from django.http import HttpRequest
 from django.urls import NoReverseMatch, reverse
+from reactpy.core.types import ComponentConstructor
 
 from reactpy_django import config, models
 from reactpy_django.exceptions import (
@@ -15,7 +16,7 @@ from reactpy_django.exceptions import (
     InvalidHostError,
 )
 from reactpy_django.types import ComponentParamData
-from reactpy_django.utils import check_component_args, func_has_args
+from reactpy_django.utils import validate_component_args
 
 try:
     RESOLVED_WEB_MODULES_PATH = reverse("reactpy:web_modules", args=["/"]).strip("/")
@@ -55,60 +56,52 @@ def component(
         </body>
         </html>
     """
-
-    # Determine the host
     request: HttpRequest | None = context.get("request")
     perceived_host = (request.get_host() if request else "").strip("/")
     host = (
         host
         or (next(config.REACTPY_DEFAULT_HOSTS) if config.REACTPY_DEFAULT_HOSTS else "")
     ).strip("/")
-
-    # Check if this this component needs to rendered by the current ASGI app
-    use_current_app = not host or host.startswith(perceived_host)
-
-    # Create context variables
+    is_local = not host or host.startswith(perceived_host)
     uuid = uuid4().hex
     class_ = kwargs.pop("class", "")
-    kwargs.pop("key", "")  # `key` is effectively useless for the root node
+    kwargs.pop("key", "")  # `key` is useless for the root node
+    component_has_args = args or kwargs
+    user_component: ComponentConstructor | None = None
 
-    # Fail if user has a method in their host
-    if host.find("://") != -1:
-        protocol = host.split("://")[0]
-        msg = (
-            f"Invalid host provided to component. Contains a protocol '{protocol}://'."
-        )
-        _logger.error(msg)
-        return failure_context(dotted_path, InvalidHostError(msg))
+    # Validate the host
+    if host and config.REACTPY_DEBUG_MODE:
+        try:
+            validate_host(host)
+        except InvalidHostError as e:
+            return failure_context(dotted_path, e)
 
-    # Fetch the component if needed
-    if use_current_app:
+    # Fetch the component
+    if is_local:
         user_component = config.REACTPY_REGISTERED_COMPONENTS.get(dotted_path)
         if not user_component:
             msg = f"Component '{dotted_path}' is not registered as a root component. "
             _logger.error(msg)
             return failure_context(dotted_path, ComponentDoesNotExistError(msg))
 
-    # Store the component's args/kwargs in the database, if needed
-    # These will be fetched by the websocket consumer later
-    try:
-        if use_current_app:
-            check_component_args(user_component, *args, **kwargs)
-            if func_has_args(user_component):
-                save_component_params(args, kwargs, uuid)
-        # Can't guarantee args will match up if the component is rendered by a different app.
-        # So, we just store any provided args/kwargs in the database.
-        elif args or kwargs:
-            save_component_params(args, kwargs, uuid)
-    except Exception as e:
-        if isinstance(e, ComponentParamError):
+    # Validate the component
+    if is_local and config.REACTPY_DEBUG_MODE:
+        try:
+            validate_component_args(user_component, *args, **kwargs)
+        except ComponentParamError as e:
             _logger.error(str(e))
-        else:
+            return failure_context(dotted_path, e)
+
+    # Store args & kwargs in the database (fetched by our websocket later)
+    if component_has_args:
+        try:
+            save_component_params(args, kwargs, uuid)
+        except Exception as e:
             _logger.exception(
                 "An unknown error has occurred while saving component params for '%s'.",
                 dotted_path,
             )
-        return failure_context(dotted_path, e)
+            return failure_context(dotted_path, e)
 
     # Return the template rendering context
     return {
@@ -117,7 +110,9 @@ def component(
         "reactpy_host": host or perceived_host,
         "reactpy_url_prefix": config.REACTPY_URL_PREFIX,
         "reactpy_reconnect_max": config.REACTPY_RECONNECT_MAX,
-        "reactpy_component_path": f"{dotted_path}/{uuid}/",
+        "reactpy_component_path": f"{dotted_path}/{uuid}/"
+        if component_has_args
+        else f"{dotted_path}/",
         "reactpy_resolved_web_modules_path": RESOLVED_WEB_MODULES_PATH,
     }
 
@@ -136,3 +131,13 @@ def save_component_params(args, kwargs, uuid):
     model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
     model.full_clean()
     model.save()
+
+
+def validate_host(host: str):
+    if "://" in host:
+        protocol = host.split("://")[0]
+        msg = (
+            f"Invalid host provided to component. Contains a protocol '{protocol}://'."
+        )
+        _logger.error(msg)
+        raise InvalidHostError(msg)
