@@ -3,7 +3,6 @@ export type ReconnectOptions = {
     maxInterval: number;
     maxRetries: number;
     backoffMultiplier: number;
-    jitterMultiplier: number;
 }
 
 export type ReactPyUrls = {

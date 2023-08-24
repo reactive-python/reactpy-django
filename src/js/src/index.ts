@@ -10,8 +10,7 @@ export function mountComponent(
 	reconnectStartInterval: number,
 	reconnectMaxInterval: number,
 	reconnectMaxRetries: number,
-	reconnectBackoffMultiplier: number,
-	reconnectJitterMultiplier: number
+	reconnectBackoffMultiplier: number
 ) {
 	// Protocols
 	let httpProtocol = window.location.protocol;
@@ -50,7 +49,6 @@ export function mountComponent(
 		reconnectOptions: {
 			startInterval: reconnectStartInterval,
 			maxInterval: reconnectMaxInterval,
-			jitterMultiplier: reconnectJitterMultiplier,
 			backoffMultiplier: reconnectBackoffMultiplier,
 			maxRetries: reconnectMaxRetries,
 		},

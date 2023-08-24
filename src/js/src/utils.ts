@@ -8,15 +8,8 @@ export function createReconnectingWebSocket(props: {
 	maxInterval: number;
 	maxRetries: number;
 	backoffMultiplier: number;
-	jitterMultiplier: number;
 }) {
-	const {
-		startInterval,
-		maxInterval,
-		maxRetries,
-		backoffMultiplier,
-		jitterMultiplier,
-	} = props;
+	const { startInterval, maxInterval, maxRetries, backoffMultiplier } = props;
 	let retries = 0;
 	let interval = startInterval;
 	let everConnected = false;
@@ -43,24 +36,20 @@ export function createReconnectingWebSocket(props: {
 				console.info("ReactPy failed to connect!");
 				return;
 			}
-
 			console.info("ReactPy disconnected!");
 			if (props.onClose) {
 				props.onClose();
 			}
-
 			if (retries >= maxRetries) {
 				console.info("ReactPy connection max retries exhausted!");
 				return;
 			}
-
-			const thisInterval = addJitter(interval, jitterMultiplier);
 			console.info(
-				`ReactPy reconnecting in ${(thisInterval / 1000).toPrecision(
+				`ReactPy reconnecting in ${(interval / 1000).toPrecision(
 					4
 				)} seconds...`
 			);
-			setTimeout(connect, thisInterval);
+			setTimeout(connect, interval);
 			interval = nextInterval(interval, backoffMultiplier, maxInterval);
 			retries++;
 		};
@@ -84,11 +73,5 @@ export function nextInterval(
 			backoffMultiplier,
 		// don't exceed max interval
 		maxInterval
-	);
-}
-
-export function addJitter(interval: number, jitter: number): number {
-	return (
-		interval + (Math.random() * jitter * interval * 2 - jitter * interval)
 	);
 }

@@ -97,18 +97,13 @@ REACTPY_RECONNECT_MAX_INTERVAL: int = getattr(
     "REACTPY_RECONNECT_MAX_INTERVAL",
     60000,  # Default to 60 seconds
 )
-REACTPY_RECONNECT_JITTER_MULTIPLIER: float | int = getattr(
-    settings,
-    "REACTPY_RECONNECT_JITTER_MULTIPLIER",
-    0,  # Default to no jitter
-)
-REACTPY_RECONNECT_BACKOFF_MULTIPLIER: float | int = getattr(
-    settings,
-    "REACTPY_RECONNECT_BACKOFF_MULTIPLIER",
-    1.1,  # Default to 10% backoff
-)
 REACTPY_RECONNECT_MAX_RETRIES: int = getattr(
     settings,
     "REACTPY_RECONNECT_MAX_RETRIES",
     150,
+)
+REACTPY_RECONNECT_BACKOFF_MULTIPLIER: float | int = getattr(
+    settings,
+    "REACTPY_RECONNECT_BACKOFF_MULTIPLIER",
+    1.25,  # Default to 10% backoff
 )
