@@ -117,7 +117,7 @@ def component(
         "reactpy_reconnect_max_interval": config.REACTPY_RECONNECT_MAX_INTERVAL,
         "reactpy_reconnect_jitter_multiplier": config.REACTPY_RECONNECT_JITTER_MULTIPLIER,
         "reactpy_reconnect_backoff_multiplier": config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER,
-        "reactpy_reconnect_max_retries": config.REACTPY_RECONNECT_MAX_INTERVAL,
+        "reactpy_reconnect_max_retries": config.REACTPY_RECONNECT_MAX_RETRIES,
     }
 
 

@@ -1,4 +1,4 @@
-import {  BaseReactPyClient, ReactPyClient } from "@reactpy/client";
+import {  BaseReactPyClient, ReactPyClient, ReactPyModule } from "@reactpy/client";
 import { createReconnectingWebSocket } from "./utils";
 import { ReactPyDjangoClientProps, ReactPyUrls } from "./types";
 
@@ -25,7 +25,7 @@ export class ReactPyDjangoClient
 		this.socket.current?.send(JSON.stringify(message));
 	}
 
-	loadModule(moduleName: string) {
+	loadModule(moduleName: string): Promise<ReactPyModule> {
 		return import(`${this.urls.jsModules}/${moduleName}`);
 	}
 }

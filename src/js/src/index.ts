@@ -9,9 +9,9 @@ export function mountComponent(
 	resolvedJsModulesPath: string,
 	reconnectStartInterval: number,
 	reconnectMaxInterval: number,
-	reconnectJitterMultiplier: number,
+	reconnectMaxRetries: number,
 	reconnectBackoffMultiplier: number,
-	reconnectMaxRetries: number
+	reconnectJitterMultiplier: number
 ) {
 	// Protocols
 	let httpProtocol = window.location.protocol;

@@ -50,6 +50,7 @@ export function createReconnectingWebSocket(props: {
 			}
 
 			if (retries >= maxRetries) {
+				console.info("ReactPy connection max retries exhausted!");
 				return;
 			}
 
