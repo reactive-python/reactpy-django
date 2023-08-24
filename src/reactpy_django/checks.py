@@ -104,7 +104,7 @@ def reactpy_warnings(app_configs, **kwargs):
     # DELETED W007: Check if REACTPY_WEBSOCKET_URL doesn't end with a slash
     # DELETED W008: Check if REACTPY_WEBSOCKET_URL doesn't start with an alphanumeric character
 
-    # Removed Settings
+    # Removed REACTPY_WEBSOCKET_URL setting
     if getattr(settings, "REACTPY_WEBSOCKET_URL", None):
         warnings.append(
             Warning(
@@ -156,6 +156,16 @@ def reactpy_warnings(app_configs, **kwargs):
                 "You have not configured runserver to use ASGI.",
                 hint="Add daphne to settings.py:INSTALLED_APPS.",
                 id="reactpy_django.W012",
+            )
+        )
+
+    # Removed REACTPY_RECONNECT_MAX setting
+    if getattr(settings, "REACTPY_RECONNECT_MAX", None):
+        warnings.append(
+            Warning(
+                "REACTPY_RECONNECT_MAX has been removed.",
+                hint="Use REACTPY_SESSION_MAX_AGE as an alternative.",
+                id="reactpy_django.W013",
             )
         )
 
