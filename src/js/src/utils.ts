@@ -4,23 +4,23 @@ export function createReconnectingWebSocket(props: {
 	onOpen?: () => void;
 	onMessage: (message: MessageEvent<any>) => void;
 	onClose?: () => void;
+	startInterval?: number;
 	maxInterval?: number;
 	maxRetries?: number;
-	backoffRate?: number;
-	intervalJitter?: number;
+	backoffMultiplier?: number;
+	jitterMultiplier?: number;
 }) {
 	const {
-		maxInterval = 60000,
-		maxRetries = 50,
-		backoffRate = 1.1,
-		intervalJitter = 0.1,
+		startInterval,
+		maxInterval,
+		maxRetries,
+		backoffMultiplier,
+		jitterMultiplier,
 	} = props;
-
-	const startInterval = 750;
 	let retries = 0;
 	let interval = startInterval;
-	const closed = false;
 	let everConnected = false;
+	const closed = false;
 	const socket: { current?: WebSocket } = {};
 
 	const connect = () => {
@@ -53,14 +53,14 @@ export function createReconnectingWebSocket(props: {
 				return;
 			}
 
-			const thisInterval = addJitter(interval, intervalJitter);
+			const thisInterval = addJitter(interval, jitterMultiplier);
 			console.info(
 				`ReactPy reconnecting in ${(thisInterval / 1000).toPrecision(
 					4
 				)} seconds...`
 			);
 			setTimeout(connect, thisInterval);
-			interval = nextInterval(interval, backoffRate, maxInterval);
+			interval = nextInterval(interval, backoffMultiplier, maxInterval);
 			retries++;
 		};
 	};
@@ -74,13 +74,13 @@ export function createReconnectingWebSocket(props: {
 
 export function nextInterval(
 	currentInterval: number,
-	backoffRate: number,
+	backoffMultiplier: number,
 	maxInterval: number
 ): number {
 	return Math.min(
 		currentInterval *
-			// increase interval by backoff rate
-			backoffRate,
+			// increase interval by backoff multiplier
+			backoffMultiplier,
 		// don't exceed max interval
 		maxInterval
 	);
@@ -91,10 +91,3 @@ export function addJitter(interval: number, jitter: number): number {
 		interval + (Math.random() * jitter * interval * 2 - jitter * interval)
 	);
 }
-
-type reconnectOptions = {
-	maxInterval?: number;
-	maxRetries?: number;
-	backoffRate?: number;
-	intervalJitter?: number;
-};

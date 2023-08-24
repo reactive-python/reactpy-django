@@ -87,6 +87,11 @@ REACTPY_DEFAULT_HOSTS: cycle[str] | None = (
     if _default_hosts
     else None
 )
+REACTPY_RECONNECT_INTERVAL: int = getattr(
+    settings,
+    "REACTPY_RECONNECT_INTERVAL",
+    750,  # Default to 0.75 seconds
+)
 REACTPY_RECONNECT_MAX_INTERVAL: int = getattr(
     settings,
     "REACTPY_RECONNECT_MAX_INTERVAL",

@@ -113,6 +113,7 @@ def component(
         if component_has_args
         else f"{dotted_path}/",
         "reactpy_resolved_web_modules_path": RESOLVED_WEB_MODULES_PATH,
+        "reactpy_reconnect_interval": config.REACTPY_RECONNECT_INTERVAL,
         "reactpy_reconnect_max_interval": config.REACTPY_RECONNECT_MAX_INTERVAL,
         "reactpy_reconnect_jitter_multiplier": config.REACTPY_RECONNECT_JITTER_MULTIPLIER,
         "reactpy_reconnect_backoff_multiplier": config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER,
