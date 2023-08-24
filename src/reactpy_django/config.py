@@ -105,5 +105,5 @@ REACTPY_RECONNECT_MAX_RETRIES: int = getattr(
 REACTPY_RECONNECT_BACKOFF_MULTIPLIER: float | int = getattr(
     settings,
     "REACTPY_RECONNECT_BACKOFF_MULTIPLIER",
-    1.25,  # Default to 10% backoff
+    1.25,  # Default to 25% backoff per connection attempt
 )
