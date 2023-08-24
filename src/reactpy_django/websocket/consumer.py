@@ -105,7 +105,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             except Exception:
                 await asyncio.to_thread(
                     _logger.exception,
-                    "ReactPy has failed to update component session `last_accessed`!",
+                    "ReactPy has failed to save component session!",
                 )
 
         await super().disconnect(code)

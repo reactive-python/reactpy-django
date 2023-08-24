@@ -165,7 +165,7 @@ def reactpy_warnings(app_configs, **kwargs):
         warnings.append(
             Warning(
                 "REACTPY_RECONNECT_MAX has been removed.",
-                hint="Use REACTPY_SESSION_MAX_AGE as an alternative.",
+                hint="See the docs for the new REACTPY_RECONNECT_* settings.",
                 id="reactpy_django.W013",
             )
         )

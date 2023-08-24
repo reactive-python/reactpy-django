@@ -28,11 +28,6 @@ REACTPY_WEBSOCKET_URL = getattr(
     "REACTPY_WEBSOCKET_URL",
     "reactpy/",
 )
-REACTPY_RECONNECT_MAX: int = getattr(
-    settings,
-    "REACTPY_RECONNECT_MAX",
-    259200,  # Default to 3 days
-)
 
 # Configurable through Django settings.py
 REACTPY_URL_PREFIX: str = getattr(
@@ -43,7 +38,7 @@ REACTPY_URL_PREFIX: str = getattr(
 REACTPY_SESSION_MAX_AGE: int = getattr(
     settings,
     "REACTPY_SESSION_MAX_AGE",
-    REACTPY_RECONNECT_MAX,
+    259200,  # Default to 3 days
 )
 REACTPY_CACHE: str = getattr(
     settings,
