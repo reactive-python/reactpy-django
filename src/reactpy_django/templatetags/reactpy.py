@@ -84,7 +84,7 @@ def component(
             _logger.error(msg)
             return failure_context(dotted_path, ComponentDoesNotExistError(msg))
 
-    # Validate the component
+    # Validate the component args & kwargs
     if is_local and config.REACTPY_DEBUG_MODE:
         try:
             validate_component_args(user_component, *args, **kwargs)
@@ -109,11 +109,14 @@ def component(
         "reactpy_uuid": uuid,
         "reactpy_host": host or perceived_host,
         "reactpy_url_prefix": config.REACTPY_URL_PREFIX,
-        "reactpy_reconnect_max": config.REACTPY_RECONNECT_MAX,
         "reactpy_component_path": f"{dotted_path}/{uuid}/"
         if component_has_args
         else f"{dotted_path}/",
         "reactpy_resolved_web_modules_path": RESOLVED_WEB_MODULES_PATH,
+        "reactpy_reconnect_max_interval": config.REACTPY_RECONNECT_MAX_INTERVAL,
+        "reactpy_reconnect_jitter_multiplier": config.REACTPY_RECONNECT_JITTER_MULTIPLIER,
+        "reactpy_reconnect_backoff_multiplier": config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER,
+        "reactpy_reconnect_max_retries": config.REACTPY_RECONNECT_MAX_INTERVAL,
     }
 
 

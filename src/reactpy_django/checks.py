@@ -204,12 +204,12 @@ def reactpy_errors(app_configs, **kwargs):
                 id="reactpy_django.E003",
             )
         )
-    if not isinstance(getattr(settings, "REACTPY_RECONNECT_MAX", 0), int):
+    if not isinstance(getattr(settings, "REACTPY_SESSION_MAX_AGE", 0), int):
         errors.append(
             Error(
-                "Invalid type for REACTPY_RECONNECT_MAX.",
-                hint="REACTPY_RECONNECT_MAX should be an integer.",
-                obj=settings.REACTPY_RECONNECT_MAX,
+                "Invalid type for REACTPY_SESSION_MAX_AGE.",
+                hint="REACTPY_SESSION_MAX_AGE should be an integer.",
+                obj=settings.REACTPY_SESSION_MAX_AGE,
                 id="reactpy_django.E004",
             )
         )

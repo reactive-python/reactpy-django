@@ -31,8 +31,8 @@ class RoutedDatabaseTests(TransactionTestCase):
         # Force `params_1` to expire
         from reactpy_django import config
 
-        config.REACTPY_RECONNECT_MAX = 1
-        sleep(config.REACTPY_RECONNECT_MAX + 0.1)
+        config.REACTPY_SESSION_MAX_AGE = 1
+        sleep(config.REACTPY_SESSION_MAX_AGE + 0.1)
 
         # Create a new, non-expired component params
         params_2 = self._save_params_to_db(2)
