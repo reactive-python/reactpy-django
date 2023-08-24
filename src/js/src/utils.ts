@@ -4,11 +4,11 @@ export function createReconnectingWebSocket(props: {
 	onOpen?: () => void;
 	onMessage: (message: MessageEvent<any>) => void;
 	onClose?: () => void;
-	startInterval?: number;
-	maxInterval?: number;
-	maxRetries?: number;
-	backoffMultiplier?: number;
-	jitterMultiplier?: number;
+	startInterval: number;
+	maxInterval: number;
+	maxRetries: number;
+	backoffMultiplier: number;
+	jitterMultiplier: number;
 }) {
 	const {
 		startInterval,
