@@ -348,15 +348,15 @@ h2#overview {
 }
 
 .md-typeset .tabbed-block {
-	border-bottom-left-radius: 16px;
-	border-bottom-right-radius: 16px;
-	border-bottom: 20px solid var(--tabbed-labels-color);
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+	overflow: hidden;
 }
 
 .js .md-typeset .tabbed-labels {
 	background: var(--tabbed-labels-color);
-	border-top-left-radius: 16px;
-	border-top-right-radius: 16px;
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
 }
 
 .md-typeset .tabbed-labels > label {
