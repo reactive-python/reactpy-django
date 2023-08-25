@@ -16,7 +16,7 @@ Set up a **Django Project** with at least one app.
 
 You will now need to pick at least one **Django app** to start using ReactPy-Django on.
 
-For the following examples, we will assume the following
+For the following examples, we will assume the following:
 
 1. You have a **Django app** named `my_app`, which was created by Django's [`startapp` command](https://docs.djangoproject.com/en/dev/intro/tutorial01/#creating-the-polls-app).
 2. You have placed `my_app` directly into your **Django project** folder (`./example_project/my_app`). This is common for small projects.
