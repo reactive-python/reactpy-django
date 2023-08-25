@@ -233,6 +233,7 @@
 		margin: 0;
 		border-radius: 0 10px 10px 0;
 		font-weight: 600;
+		overflow: hidden;
 	}
 
 	.md-sidebar__scrollwrap {
