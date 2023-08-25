@@ -1,8 +1,12 @@
 ## Overview
 
-!!! summary "Overview"
+<p class="intro" markdown>
 
-    Prefabricated components can be used within your `components.py` to help simplify development.
+We supply some pre-designed that components can be used to help simplify development.
+
+</p>
+
+---
 
 ## View To Component
 

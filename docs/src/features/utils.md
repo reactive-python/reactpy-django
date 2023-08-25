@@ -1,8 +1,12 @@
 ## Overview
 
-!!! summary "Overview"
+<p class="intro" markdown>
 
-    Utility functions that you can use when needed.
+Utility functions provide various miscellaneous functionality. These are typically not used, but are available for advanced use cases.
+
+</p>
+
+---
 
 ## Django Query Postprocessor
 

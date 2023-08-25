@@ -1,8 +1,18 @@
 ## Overview
 
-!!! summary "Overview"
+<p class="intro" markdown>
 
-    Your **Django project's** `settings.py` can modify the behavior of ReactPy.
+Your **Django project's** `settings.py` can modify the behavior of ReactPy.
+
+</p>
+
+!!! note
+
+    The default configuration of ReactPy is suitable for the vast majority of use cases.
+
+    You should only consider changing settings when the necessity arises.
+
+---
 
 ## Primary Configuration
 
@@ -22,9 +32,3 @@ These are ReactPy-Django's default settings values. You can modify these values 
 | `REACTPY_DEFAULT_HOSTS` | `#!python None` | `#!python ["localhost:8000", "localhost:8001", "localhost:8002/subdir" ]` | Default host(s) to use for ReactPy components. ReactPy will use these hosts in a round-robin fashion, allowing for easy distributed computing.<br/>You can use the `host` argument in your [template tag](../features/template-tag.md#component) to override this default. |
 
 <!--config-details-end-->
-
-??? question "Do I need to modify my settings?"
-
-    The default configuration of ReactPy is suitable for the majority of use cases.
-
-    You should only consider changing settings when the necessity arises.

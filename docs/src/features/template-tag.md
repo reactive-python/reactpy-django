@@ -1,8 +1,12 @@
 ## Overview
 
-!!! summary "Overview"
+<p class="intro" markdown>
 
-    Template tags can be used within your Django templates such as `my-template.html` to import ReactPy features.
+Django template tags can be used within your HTML templates to provide ReactPy features.
+
+</p>
+
+---
 
 ## Component
 
@@ -73,7 +77,7 @@ The `component` template tag can be used to insert any number of ReactPy compone
         ...
         ```
 
-<!--reserved-sarg-end-->
+<!--reserved-arg-end-->
 
 ??? question "Can I render components on a different server (distributed computing)?"
 

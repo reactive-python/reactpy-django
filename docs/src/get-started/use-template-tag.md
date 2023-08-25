@@ -1,10 +1,14 @@
 ## Overview
 
-!!! summary "Overview"
+<p class="intro" markdown>
 
-       Decide where the component will be displayed by using our template tag.
+Decide where the component will be displayed by using our template tag.
 
-## Use the Template Tag
+</p>
+
+---
+
+## Embedding a component in a template
 
 {% include-markdown "../../../README.md" start="<!--html-header-start-->" end="<!--html-header-end-->" %}
 

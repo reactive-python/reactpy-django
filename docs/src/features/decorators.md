@@ -1,8 +1,12 @@
 ## Overview
 
-!!! summary "Overview"
+<p class="intro" markdown>
 
-    Decorator utilities can be used within your `components.py` to help simplify development.
+Decorator functions can be used within your `components.py` to help simplify development.
+
+</p>
+
+---
 
 ## Auth Required
 

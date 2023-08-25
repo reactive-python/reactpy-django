@@ -1,11 +1,17 @@
 # :confetti_ball: Congratulations :confetti_ball:
 
-If you followed the previous steps, you have now created a "Hello World" component!
+<p class="intro" markdown>
 
-The docs you are reading only covers our Django integration. To learn more about features, such as interactive events and hooks, check out the [ReactPy Core Documentation](https://reactpy.dev/docs/guides/creating-interfaces/index.html)!
+If you followed the previous steps, you have now created a "Hello World" component using ReactPy-Django!
 
-Additionally, the vast majority of tutorials/guides you find for ReactJS can be applied to ReactPy.
+</p>
 
-=== "Learn More"
+!!! info "Deep Dive"
 
-    [ReactPy-Django Advanced Usage](../features/components.md){ .md-button .md-button--primary} [ReactPy Core Documentation](https://reactpy.dev/docs/guides/creating-interfaces/index.html){ .md-button .md-button--primary } [Ask Questions on Discord](https://discord.gg/uNb5P4hA9X){ .md-button .md-button--primary }
+    The docs you are reading only covers our Django integration. To learn more, check out one of the following links:
+
+    -   [ReactPy-Django Feature Reference](../features/components.md)
+    -   [ReactPy Core Documentation](https://reactpy.dev/docs/guides/creating-interfaces/index.html)
+    -   [Ask Questions on Discord](https://discord.gg/uNb5P4hA9X)
+
+    Additionally, the vast majority of tutorials/guides you find for ReactJS can be applied to ReactPy.

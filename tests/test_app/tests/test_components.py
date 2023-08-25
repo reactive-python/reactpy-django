@@ -13,7 +13,7 @@ from django.test.utils import modify_settings
 from playwright.sync_api import TimeoutError, sync_playwright
 from reactpy_django.models import ComponentSession
 
-GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS")
+GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", False)
 CLICK_DELAY = 250 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
 
 
@@ -51,8 +51,8 @@ class ComponentTests(ChannelsLiveServerTestCase):
         if sys.platform == "win32":
             asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
         cls.playwright = sync_playwright().start()
-        headed = bool(int(os.environ.get("PLAYWRIGHT_HEADED", not GITHUB_ACTIONS)))
-        cls.browser = cls.playwright.chromium.launch(headless=not headed)
+        headless = bool(int(os.environ.get("PLAYWRIGHT_HEADLESS", GITHUB_ACTIONS)))
+        cls.browser = cls.playwright.chromium.launch(headless=headless)
         cls.page = cls.browser.new_page()
 
     @classmethod

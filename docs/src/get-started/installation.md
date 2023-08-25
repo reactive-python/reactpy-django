@@ -1,12 +1,18 @@
 ## Overview
 
-!!! summary "Overview"
+<p class="intro" markdown>
 
-    ReactPy-Django can be installed from PyPI to an existing **Django project** with minimal configuration.
+[ReactPy-Django](https://github.com/reactive-python/reactpy-django) can be used to add used to add [ReactPy](https://github.com/reactive-python/reactpy) support to an existing **Django project**. Minimal configuration is required to get started.
 
-## Step 0: Create a Django Project
+</p>
 
-These docs assumes you have already created [a **Django project**](https://docs.djangoproject.com/en/dev/intro/tutorial01/), which involves creating and installing at least one **Django app**. If not, check out this [9 minute YouTube tutorial](https://www.youtube.com/watch?v=ZsJRXS_vrw0) created by _IDG TECHtalk_.
+!!! note
+
+    These docs assumes you have already created [a **Django project**](https://docs.djangoproject.com/en/dev/intro/tutorial01/), which involves creating and installing at least one **Django app**.
+
+    If do not have a **Django project**, check out this [9 minute YouTube tutorial](https://www.youtube.com/watch?v=ZsJRXS_vrw0) created by _IDG TECHtalk_.
+
+---
 
 ## Step 1: Install from PyPI
 
