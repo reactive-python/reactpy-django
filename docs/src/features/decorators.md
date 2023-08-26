@@ -35,7 +35,7 @@ This decorator is commonly used to selectively render a component only if a user
 
     | Type | Description |
     | --- | --- |
-    | `Component` | An ReactPy component. |
+    | `Component` | A ReactPy component. |
     | `VdomDict` | An `reactpy.html` snippet. |
     | `None` | No component render. |
 

@@ -8,7 +8,7 @@ Render your template containing your ReactPy component using a Django view.
 
 !!! Note
 
-    We will assume you have [created a Django View](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view) before, but we have included a simple example below.
+    We assume you have [created a Django View](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view) before, but we have included a simple example below.
 
 ---
 
