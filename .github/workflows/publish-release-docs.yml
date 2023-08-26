@@ -16,4 +16,7 @@ jobs:
                   python-version: 3.x
             - run: pip install -r requirements/build-docs.txt
             - name: Publish ${{ github.event.release.name }} Docs
-              run: mike deploy --push --update-aliases ${{ github.event.release.name }} latest
+              run: |
+                  git config user.name github-actions
+                  git config user.email github-actions@github.com 
+                  mike deploy --push --update-aliases ${{ github.event.release.name }} latest
