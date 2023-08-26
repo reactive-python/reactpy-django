@@ -1,12 +1,18 @@
 ## Overview
 
-!!! summary "Overview"
+<p class="intro" markdown>
 
     You will need to set up a Python environment to develop ReactPy-Django.
 
-??? tip "Looking to contribute features that are not Django specific?"
+</p>
 
-    Everything within the `reactpy-django` repository must be specific to Django integration. Check out the [ReactPy Core documentation](https://reactpy.dev/docs/about/contributor-guide.html) to contribute general features such as: components, hooks, events, and more.
+!!! note
+
+    Looking to contribute features that are not Django specific?
+
+    Everything within the `reactpy-django` repository must be specific to Django integration. Check out the [ReactPy Core documentation](https://reactpy.dev/docs/about/contributor-guide.html) to contribute general features such as components, hooks, and events.
+
+---
 
 ## Modifying Code
 

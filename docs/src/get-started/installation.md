@@ -1,12 +1,18 @@
 ## Overview
 
-!!! summary "Overview"
+<p class="intro" markdown>
 
-    ReactPy-Django can be installed from PyPI to an existing **Django project** with minimal configuration.
+[ReactPy-Django](https://github.com/reactive-python/reactpy-django) can be used to add used to add [ReactPy](https://github.com/reactive-python/reactpy) support to an existing **Django project**. Minimal configuration is required to get started.
 
-## Step 0: Create a Django Project
+</p>
 
-These docs assumes you have already created [a **Django project**](https://docs.djangoproject.com/en/dev/intro/tutorial01/), which involves creating and installing at least one **Django app**. If not, check out this [9 minute YouTube tutorial](https://www.youtube.com/watch?v=ZsJRXS_vrw0) created by _IDG TECHtalk_.
+!!! note
+
+    These docs assumes you have already created [a **Django project**](https://docs.djangoproject.com/en/dev/intro/tutorial01/), which involves creating and installing at least one **Django app**.
+
+    If do not have a **Django project**, check out this [9 minute YouTube tutorial](https://www.youtube.com/watch?v=ZsJRXS_vrw0) created by _IDG TECHtalk_.
+
+---
 
 ## Step 1: Install from PyPI
 
@@ -84,7 +90,7 @@ Register ReactPy's Websocket using `REACTPY_WEBSOCKET_ROUTE`.
 
     If you do not have an `asgi.py`, follow the [`channels` installation guide](https://channels.readthedocs.io/en/stable/installation.html).
 
-## Step 5: Run Migrations
+## Step 5: Run database migrations
 
 Run Django's database migrations to initialize ReactPy-Django's database table.
 
@@ -99,3 +105,21 @@ Run Django's check command to verify if ReactPy was set up correctly.
 ```bash linenums="0"
 python manage.py check
 ```
+
+## Step 7: Create your first component!
+
+The [following steps](./choose-django-app.md) will show you how to create your first ReactPy component.
+
+Prefer a quick summary? Read the **At a Glance** section below.
+
+!!! info "At a Glance"
+
+    <font size="5">**`my_app/components.py`**</font>
+
+    {% include-markdown "../../../README.md" start="<!--py-header-start-->" end="<!--py-code-end-->" %}
+
+    ---
+
+    <font size="5">**`my_app/templates/my-template.html`**</font>
+
+    {% include-markdown "../../../README.md" start="<!--html-header-start-->" end="<!--html-code-end-->" %}

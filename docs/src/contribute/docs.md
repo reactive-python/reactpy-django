@@ -1,8 +1,12 @@
 ## Overview
 
-!!! summary "Overview"
+<p class="intro" markdown>
 
-    You will need to set up a Python environment to preview docs changes.
+You will need to set up a Python environment to create, test, and preview docs changes.
+
+</p>
+
+---
 
 ## Modifying Docs
 

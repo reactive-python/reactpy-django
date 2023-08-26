@@ -1,8 +1,12 @@
 ## Overview
 
-!!! summary "Overview"
+<p class="intro" markdown>
 
-    Decorator utilities can be used within your `components.py` to help simplify development.
+Decorator functions can be used within your `components.py` to help simplify development.
+
+</p>
+
+---
 
 ## Auth Required
 
@@ -31,7 +35,7 @@ This decorator is commonly used to selectively render a component only if a user
 
     | Type | Description |
     | --- | --- |
-    | `Component` | An ReactPy component. |
+    | `Component` | A ReactPy component. |
     | `VdomDict` | An `reactpy.html` snippet. |
     | `None` | No component render. |
 

@@ -1,8 +1,12 @@
 ## Overview
 
-!!! summary "Overview"
+<p class="intro" markdown>
 
-    Template tags can be used within your Django templates such as `my-template.html` to import ReactPy features.
+Django template tags can be used within your HTML templates to provide ReactPy features.
+
+</p>
+
+---
 
 ## Component
 
@@ -20,6 +24,8 @@ The `component` template tag can be used to insert any number of ReactPy compone
     | --- | --- | --- | --- |
     | `dotted_path` | `str` | The dotted path to the component to render. | N/A |
     | `*args` | `Any` | The positional arguments to provide to the component. | N/A |
+    | `class` | `str | None` | The HTML class to apply to the top-level component div. | `None` |
+    | `key` | `str | None` | Force the component's root node to use a [specific key value](https://reactpy.dev/docs/guides/creating-interfaces/rendering-data/index.html#organizing-items-with-keys). Using `key` within a template tag is effectively useless. | `None` |
     | `host` | `str | None` | The host to use for the ReactPy connections. If set to `None`, the host will be automatically configured.<br/>Example values include: `localhost:8000`, `example.com`, `example.com/subdir` | `None` |
     | `**kwargs` | `Any` | The keyword arguments to provide to the component. | N/A |
 
@@ -27,7 +33,7 @@ The `component` template tag can be used to insert any number of ReactPy compone
 
     | Type | Description |
     | --- | --- |
-    | `Component` | An ReactPy component. |
+    | `Component` | A ReactPy component. |
 
 <!--context-start-->
 
@@ -56,24 +62,6 @@ The `component` template tag can be used to insert any number of ReactPy compone
         ```
 
 <!--context-end-->
-<!--reserved-arg-start-->
-
-??? info "Reserved keyword arguments: `class` and `key`"
-
-    For this template tag, there are two reserved keyword arguments: `class` and `key`
-
-    -   `class` allows you to apply a HTML class to the top-level component div. This is useful for styling purposes.
-    -   `key` allows you to force the component's root node to use a [specific key value](https://reactpy.dev/docs/guides/creating-interfaces/rendering-data/index.html#organizing-items-with-keys). Using `key` within a template tag is effectively useless.
-
-    === "my-template.html"
-
-        ```jinja
-        ...
-        {% component "example.components.my_component" class="my-html-class" key=123 %}
-        ...
-        ```
-
-<!--reserved-sarg-end-->
 
 ??? question "Can I render components on a different server (distributed computing)?"
 

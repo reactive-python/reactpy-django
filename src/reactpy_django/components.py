@@ -120,7 +120,7 @@ def view_to_component(
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
 ) -> _ViewComponentConstructor | Callable[[Callable], _ViewComponentConstructor]:
-    """Converts a Django view to an ReactPy component.
+    """Converts a Django view to a ReactPy component.
 
     Keyword Args:
         view: The view function or class to convert.
@@ -134,7 +134,7 @@ def view_to_component(
 
     Returns:
         A function that takes `request: HttpRequest | None, *args: Any, key: Key | None, **kwargs: Any`
-            and returns an ReactPy component.
+            and returns a ReactPy component.
     """
 
     def decorator(view: Callable | View):

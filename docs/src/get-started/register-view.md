@@ -1,16 +1,22 @@
 ## Overview
 
-!!! summary "Overview"
+<p class="intro" markdown>
 
-    Select your template containing an ReactPy component, and render it using a Django view.
+Render your template containing your ReactPy component using a Django view.
 
-## Register a View
+</p>
 
-We will assume you have [created a Django View](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view) before, but here's a simple example below.
+!!! Note
+
+    We assume you have [created a Django View](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view) before, but we have included a simple example below.
+
+---
+
+## Creating a Django view and URL path
 
 Within your **Django app**'s `views.py` file, you will need to create a function to render the HTML template containing your ReactPy components.
 
-In this example, we will create a view that renders `my-template.html` (_from the previous step_).
+In this example, we will create a view that renders `my-template.html` ([_from the previous step_](./use-template-tag.md)).
 
 === "views.py"
 

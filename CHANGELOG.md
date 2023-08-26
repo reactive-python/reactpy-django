@@ -41,6 +41,7 @@ Using the following categories, list your changes in this order:
     -   `REACTPY_RECONNECT_MAX_INTERVAL`
     -   `REACTPY_RECONNECT_MAX_RETRIES`
     -   `REACTPY_RECONNECT_BACKOFF_MULTIPLIER`
+-   [ReactPy-Django docs](https://reactive-python.github.io/reactpy-django/) are now version controlled via [mike](https://github.com/jimporter/mike)!
 
 ### Changed
 

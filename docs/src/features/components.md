@@ -1,8 +1,12 @@
 ## Overview
 
-!!! summary "Overview"
+<p class="intro" markdown>
 
-    Prefabricated components can be used within your `components.py` to help simplify development.
+We supply some pre-designed that components can be used to help simplify development.
+
+</p>
+
+---
 
 ## View To Component
 
@@ -29,7 +33,7 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
 
     | Type | Description |
     | --- | --- |
-    | `_ViewComponentConstructor` | A function that takes `request, *args, key, **kwargs` and returns an ReactPy component. All parameters are directly provided to your view, besides `key` which is used by ReactPy. |
+    | `_ViewComponentConstructor` | A function that takes `request, *args, key, **kwargs` and returns a ReactPy component. All parameters are directly provided to your view, besides `key` which is used by ReactPy. |
 
 ??? Warning "Potential information exposure when using `compatibility = True`"
 
@@ -180,7 +184,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
     | Type | Description |
     | --- | --- |
-    | `Component` | An ReactPy component. |
+    | `Component` | A ReactPy component. |
 
 ??? question "Should I put `django_css` at the top of my HTML?"
 
@@ -235,7 +239,7 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
 
     | Type | Description |
     | --- | --- |
-    | `Component` | An ReactPy component. |
+    | `Component` | A ReactPy component. |
 
 ??? question "Should I put `django_js` at the bottom of my HTML?"
 

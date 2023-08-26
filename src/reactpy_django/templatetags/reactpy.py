@@ -65,7 +65,6 @@ def component(
     is_local = not host or host.startswith(perceived_host)
     uuid = uuid4().hex
     class_ = kwargs.pop("class", "")
-    kwargs.pop("key", "")  # `key` is useless for the root node
     component_has_args = args or kwargs
     user_component: ComponentConstructor | None = None
 
