@@ -34,7 +34,7 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
-## Added
+### Added
 
 -   More customization for reconnection behavior through new settings!
     -   `REACTPY_RECONNECT_INTERVAL`
