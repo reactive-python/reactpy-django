@@ -39,9 +39,9 @@ def test_suite(session: Session) -> None:
     session.env["REACTPY_DEBUG_MODE"] = "1"
 
     posargs = session.posargs[:]
-    if "--headed" in posargs:
-        posargs.remove("--headed")
-        session.env["PLAYWRIGHT_HEADED"] = "1"
+    if "--headless" in posargs:
+        posargs.remove("--headless")
+        session.env["PLAYWRIGHT_HEADLESS"] = "1"
 
     if "--no-debug-mode" not in posargs:
         posargs.append("--debug-mode")

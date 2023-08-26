@@ -2,6 +2,7 @@ import asyncio
 import os
 import socket
 import sys
+from distutils.util import strtobool
 from functools import partial
 
 from channels.testing import ChannelsLiveServerTestCase
@@ -13,8 +14,8 @@ from django.test.utils import modify_settings
 from playwright.sync_api import TimeoutError, sync_playwright
 from reactpy_django.models import ComponentSession
 
-GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS")
-CLICK_DELAY = 250 if GITHUB_ACTIONS else 25  # Delay in miliseconds.
+GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "False")
+CLICK_DELAY = 250 if strtobool(GITHUB_ACTIONS) else 25  # Delay in miliseconds.
 
 
 class ComponentTests(ChannelsLiveServerTestCase):
@@ -51,8 +52,8 @@ class ComponentTests(ChannelsLiveServerTestCase):
         if sys.platform == "win32":
             asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
         cls.playwright = sync_playwright().start()
-        headed = bool(int(os.environ.get("PLAYWRIGHT_HEADED", not GITHUB_ACTIONS)))
-        cls.browser = cls.playwright.chromium.launch(headless=not headed)
+        headless = strtobool(os.environ.get("PLAYWRIGHT_HEADLESS", GITHUB_ACTIONS))
+        cls.browser = cls.playwright.chromium.launch(headless=bool(headless))
         cls.page = cls.browser.new_page()
 
     @classmethod

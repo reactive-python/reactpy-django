@@ -1,8 +1,12 @@
 ## Overview
 
-!!! summary "Overview"
+<p class="intro" markdown>
 
-    You will need to set up a Python environment to run out test suite.
+You will need to set up a Python environment to run the ReactPy-Django test suite.
+
+</p>
+
+---
 
 ## Running Tests
 
@@ -29,17 +33,26 @@ By running the command below you can run the full test suite:
 nox -s test
 ```
 
-Or, if you want to run the tests in the foreground:
+Or, if you want to run the tests in the background:
 
 ```bash linenums="0"
-nox -s test -- --headed
+nox -s test -- --headless
 ```
 
-## Only Django Tests
+## Django Tests
 
-Alternatively, if you want to only run Django related tests, you can use the following command:
+If you want to only run our Django tests in your current environment, you can use the following command:
 
 ```bash linenums="0"
 cd tests
 python manage.py test
+```
+
+## Django Test Webserver
+
+If you want to manually run the Django test application, you can use the following command:
+
+```bash linenums="0"
+cd tests
+python manage.py runserver
 ```
