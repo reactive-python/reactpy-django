@@ -34,6 +34,10 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+### Added
+
+-   [ReactPy-Django docs](https://reactive-python.github.io/reactpy-django/) are now version controlled via [mike](https://github.com/jimporter/mike)!
+
 ### Changed
 
 -   Bumped the minimum ReactPy version to `1.0.2`.
