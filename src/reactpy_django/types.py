@@ -33,7 +33,7 @@ __all__ = [
     "SyncPostprocessor",
     "QueryOptions",
     "MutationOptions",
-    "ComponentParamData",
+    "ComponentParams",
 ]
 
 _Result = TypeVar("_Result", bound=Union[Model, QuerySet[Any]])
@@ -127,7 +127,7 @@ class MutationOptions:
 
 
 @dataclass
-class ComponentParamData:
+class ComponentParams:
     """Container used for serializing component parameters.
     This dataclass is pickled & stored in the database, then unpickled when needed."""
 

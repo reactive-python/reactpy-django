@@ -21,8 +21,8 @@ from reactpy.backend.types import Connection, Location
 from reactpy.core.layout import Layout
 from reactpy.core.serve import serve_layout
 
-from reactpy_django.types import ComponentParamData, ComponentWebsocket
-from reactpy_django.utils import db_cleanup
+from reactpy_django.types import ComponentParams, ComponentWebsocket
+from reactpy_django.utils import delete_expired_sessions
 
 _logger = logging.getLogger(__name__)
 backhaul_loop = asyncio.new_event_loop()
@@ -98,8 +98,19 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         """The browser has disconnected."""
         self.dispatcher.cancel()
 
-        # Update the last_accessed timestamp
         if self.component_session:
+            # Clean up expired component sessions
+            try:
+                await database_sync_to_async(
+                    delete_expired_sessions, thread_sensitive=False
+                )()
+            except Exception:
+                await asyncio.to_thread(
+                    _logger.exception,
+                    "ReactPy has failed to delete expired component sessions!",
+                )
+
+            # Update the last_accessed timestamp
             try:
                 await self.component_session.asave()
             except Exception:
@@ -149,8 +160,8 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             carrier=ComponentWebsocket(self.close, self.disconnect, dotted_path),
         )
         now = timezone.now()
-        component_args: Sequence[Any] = ()
-        component_kwargs: MutableMapping[str, Any] = {}
+        component_session_args: Sequence[Any] = ()
+        component_session_kwargs: MutableMapping[str, Any] = {}
 
         # Verify the component has already been registered
         try:
@@ -165,23 +176,18 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         # Fetch the component's args/kwargs from the database, if needed
         try:
             if uuid:
-                # Always clean up expired entries first
-                await database_sync_to_async(db_cleanup, thread_sensitive=False)()
-
                 # Get the component session from the DB
                 self.component_session = await models.ComponentSession.objects.aget(
                     uuid=uuid,
                     last_accessed__gt=now - timedelta(seconds=REACTPY_SESSION_MAX_AGE),
                 )
-                component_params: ComponentParamData = pickle.loads(
-                    self.component_session.params
-                )
-                component_args = component_params.args
-                component_kwargs = component_params.kwargs
+                params: ComponentParams = pickle.loads(self.component_session.params)
+                component_session_args = params.args
+                component_session_kwargs = params.kwargs
 
             # Generate the initial component instance
             component_instance = component_constructor(
-                *component_args, **component_kwargs
+                *component_session_args, **component_session_kwargs
             )
         except models.ComponentSession.DoesNotExist:
             await asyncio.to_thread(
@@ -196,7 +202,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             await asyncio.to_thread(
                 _logger.exception,
                 f"Failed to construct component {component_constructor} "
-                f"with args='{component_args}' kwargs='{component_kwargs}'!",
+                f"with args='{component_session_args}' kwargs='{component_session_kwargs}'!",
             )
             return
 

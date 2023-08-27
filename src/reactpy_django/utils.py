@@ -324,9 +324,10 @@ def create_cache_key(*args):
     return f"reactpy_django:{':'.join(str(arg) for arg in args)}"
 
 
-def db_cleanup(immediate: bool = False):
+def delete_expired_sessions(immediate: bool = False):
     """Deletes expired component sessions from the database.
-    This function may be expanded in the future to include additional cleanup tasks."""
+    As a performance optimization, this is only run once every REACTPY_SESSION_MAX_AGE seconds.
+    """
     from .config import REACTPY_DEBUG_MODE, REACTPY_SESSION_MAX_AGE
     from .models import ComponentSession, Config
 
@@ -343,10 +344,11 @@ def db_cleanup(immediate: bool = False):
         config.save()
 
     # Check if cleaning took abnormally long
-    clean_duration = timezone.now() - start_time
-    if REACTPY_DEBUG_MODE and clean_duration.total_seconds() > 1:
-        _logger.warning(
-            "ReactPy has taken %s seconds to clean up expired component sessions. "
-            "This may indicate a performance issue with your system, cache, or database.",
-            clean_duration.total_seconds(),
-        )
+    if REACTPY_DEBUG_MODE:
+        clean_duration = timezone.now() - start_time
+        if clean_duration.total_seconds() > 1:
+            _logger.warning(
+                "ReactPy has taken %s seconds to clean up expired component sessions. "
+                "This may indicate a performance issue with your system, cache, or database.",
+                clean_duration.total_seconds(),
+            )

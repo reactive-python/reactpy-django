@@ -15,7 +15,7 @@ from reactpy_django.exceptions import (
     ComponentParamError,
     InvalidHostError,
 )
-from reactpy_django.types import ComponentParamData
+from reactpy_django.types import ComponentParams
 from reactpy_django.utils import validate_component_args
 
 try:
@@ -129,7 +129,7 @@ def failure_context(dotted_path: str, error: Exception):
 
 
 def save_component_params(args, kwargs, uuid):
-    params = ComponentParamData(args, kwargs)
+    params = ComponentParams(args, kwargs)
     model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
     model.full_clean()
     model.save()
