@@ -10,18 +10,68 @@
 {% block tabs %}
 {{ super() }}
 <link rel="stylesheet" href="assets/css/home.css">
-<section>
-    <div class="md-grid md-typeset">
+<section class="md-typeset">
+    <div class="homepage-row first stripe">
         <img src="https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg"
             alt="Logo" class="home-logo">
         <h1>{{ config.site_name }}</h1>
         <p>{{ config.site_description }}</p>
-        <a href="{{ page.next_page.url | url }}" class="md-button md-button--primary">
-            Get Started
-        </a>
-        <a href="{{ 'features/' | url }}" class="md-button">
-            API Reference
-        </a>
+        <div>
+            <a href="{{ page.next_page.url | url }}" class="md-button md-button--primary">
+                Get Started
+            </a>
+            <a href="{{ 'features/' | url }}" class="md-button md-button--primary">
+                API Reference
+            </a>
+        </div>
+    </div>
+
+    <div class="homepage-row">
+        <h1>Create user interfaces from components</h1>
+        <p class="md-grid">
+            ReactPy lets you build user interfaces out of individual pieces called components. Create your own ReactPy
+            components like <code>thumbnail</code>, <code>like_button</code>, and <code>video</code>. Then combine
+            them into entire screens, pages, and apps.
+        </p>
+        <p>
+            Whether you work on your own or with thousands of other developers, using React feels the same. It is
+            designed to let you seamlessly combine components written by independent people, teams, and
+            organizations.
+        </p>
+    </div>
+
+    <div class="homepage-row stripe">
+        <h1>Write components with code and markup</h1>
+        <p>
+            ReactPy components are Python functions. Want to show some content conditionally? Use an
+            <code>if</code> statement. Displaying a list? Try lists with <code>map()</code>. Learning ReactPy is
+            learning
+            programming.
+        </p>
+    </div>
+
+    <div class="homepage-row">
+        <h1>Add interactivity wherever you need it</h1>
+        <p>
+            ReactPy components receive data and return what should appear on the screen. You can pass them new data in
+            response to an interaction, like when the user types into an input. ReactPy will then update the screen to
+            match the new data.
+        </p>
+        <p>
+            You don't have to build your whole page in ReactPy. Add React to your existing HTML page, and render
+            interactive ReactPy components anywhere on it.
+        </p>
+    </div>
+
+    <div class="homepage-row stripe">
+        <h1>Go full-stack with the Django framework</h1>
+        <p>
+            ReactPy is a library. It lets you put components together, but it doesn't prescribe how to do routing and
+            data fetching. To build an entire app with ReactPy, we recommend a backend framework like
+            <a href="https://www.djangoproject.com/">Django</a>
+            or
+            <a href="https://fastapi.tiangolo.com/">FastAPI</a>.
+        </p>
     </div>
 </section>
 {% endblock %}

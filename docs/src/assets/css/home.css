@@ -3,6 +3,58 @@
 	position: initial;
 }
 
+/* Hide markdown area */
+.md-main {
+	visibility: hidden;
+	height: 0;
+}
+
+.md-main * {
+	display: none;
+}
+
+/* Homepage styling */
+
 img.home-logo {
 	height: 100px;
+}
+
+.homepage-row {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	padding: 6rem 0;
+	text-align: center;
+}
+
+.homepage-row.stripe {
+	background-color: var(--md-primary-fg-color);
+	color: var(--md-primary-bg-color);
+}
+
+.homepage-row h1 {
+	max-width: 28rem;
+	font-size: 52px;
+	line-height: 1.15;
+	font-weight: 500;
+	margin-bottom: 0.55rem;
+	margin-top: -1rem;
+}
+
+.homepage-row.first h1 {
+	margin-top: 0.55rem;
+	margin-bottom: -0.75rem;
+}
+
+.homepage-row p {
+	max-width: 35rem;
+	font-size: 21px;
+	line-height: 1.5;
+	font-weight: 400;
+}
+
+.homepage-row.first p {
+	font-size: 32px;
+	font-weight: 500;
 }
