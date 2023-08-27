@@ -21,8 +21,8 @@ from reactpy.backend.types import Connection, Location
 from reactpy.core.layout import Layout
 from reactpy.core.serve import serve_layout
 
-from reactpy_django.types import ComponentParamData, ComponentWebsocket
-from reactpy_django.utils import db_cleanup
+from reactpy_django.types import ComponentParams, ComponentWebsocket
+from reactpy_django.utils import delete_expired_sessions
 
 _logger = logging.getLogger(__name__)
 backhaul_loop = asyncio.new_event_loop()
@@ -42,6 +42,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self) -> None:
         """The browser has connected."""
+        from reactpy_django import models
         from reactpy_django.config import REACTPY_AUTH_BACKEND, REACTPY_BACKHAUL_THREAD
 
         await super().connect()
@@ -80,6 +81,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         # Start the component dispatcher
         self.dispatcher: Future | asyncio.Task
         self.threaded = REACTPY_BACKHAUL_THREAD
+        self.component_session: models.ComponentSession | None = None
         if self.threaded:
             if not backhaul_thread.is_alive():
                 await asyncio.to_thread(
@@ -95,6 +97,28 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
     async def disconnect(self, code: int) -> None:
         """The browser has disconnected."""
         self.dispatcher.cancel()
+
+        if self.component_session:
+            # Clean up expired component sessions
+            try:
+                await database_sync_to_async(
+                    delete_expired_sessions, thread_sensitive=False
+                )()
+            except Exception:
+                await asyncio.to_thread(
+                    _logger.exception,
+                    "ReactPy has failed to delete expired component sessions!",
+                )
+
+            # Update the last_accessed timestamp
+            try:
+                await self.component_session.asave()
+            except Exception:
+                await asyncio.to_thread(
+                    _logger.exception,
+                    "ReactPy has failed to save component session!",
+                )
+
         await super().disconnect(code)
 
     async def receive_json(self, content: Any, **_) -> None:
@@ -118,8 +142,8 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         """Runs the main loop that performs component rendering tasks."""
         from reactpy_django import models
         from reactpy_django.config import (
-            REACTPY_RECONNECT_MAX,
             REACTPY_REGISTERED_COMPONENTS,
+            REACTPY_SESSION_MAX_AGE,
         )
 
         scope = self.scope
@@ -136,8 +160,8 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             carrier=ComponentWebsocket(self.close, self.disconnect, dotted_path),
         )
         now = timezone.now()
-        component_args: Sequence[Any] = ()
-        component_kwargs: MutableMapping[str, Any] = {}
+        component_session_args: Sequence[Any] = ()
+        component_session_kwargs: MutableMapping[str, Any] = {}
 
         # Verify the component has already been registered
         try:
@@ -152,31 +176,24 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         # Fetch the component's args/kwargs from the database, if needed
         try:
             if uuid:
-                # Always clean up expired entries first
-                await database_sync_to_async(db_cleanup, thread_sensitive=False)()
-
-                # Get the queries from a DB
-                params_query = await models.ComponentSession.objects.aget(
+                # Get the component session from the DB
+                self.component_session = await models.ComponentSession.objects.aget(
                     uuid=uuid,
-                    last_accessed__gt=now - timedelta(seconds=REACTPY_RECONNECT_MAX),
+                    last_accessed__gt=now - timedelta(seconds=REACTPY_SESSION_MAX_AGE),
                 )
-                params_query.last_accessed = timezone.now()
-                await database_sync_to_async(
-                    params_query.save, thread_sensitive=False
-                )()
-                component_params: ComponentParamData = pickle.loads(params_query.params)
-                component_args = component_params.args
-                component_kwargs = component_params.kwargs
+                params: ComponentParams = pickle.loads(self.component_session.params)
+                component_session_args = params.args
+                component_session_kwargs = params.kwargs
 
             # Generate the initial component instance
             component_instance = component_constructor(
-                *component_args, **component_kwargs
+                *component_session_args, **component_session_kwargs
             )
         except models.ComponentSession.DoesNotExist:
             await asyncio.to_thread(
                 _logger.warning,
                 f"Component session for '{dotted_path}:{uuid}' not found. The "
-                "session may have already expired beyond REACTPY_RECONNECT_MAX. "
+                "session may have already expired beyond REACTPY_SESSION_MAX_AGE. "
                 "If you are using a custom host, you may have forgotten to provide "
                 "args/kwargs.",
             )
@@ -185,7 +202,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             await asyncio.to_thread(
                 _logger.exception,
                 f"Failed to construct component {component_constructor} "
-                f"with parameters {component_kwargs}",
+                f"with args='{component_session_args}' kwargs='{component_session_kwargs}'!",
             )
             return
 

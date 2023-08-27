@@ -6,15 +6,18 @@
 {% else %}
 <div id="{{ reactpy_uuid }}" class="{{ reactpy_class }}"></div>
 <script type="module" crossorigin="anonymous">
-  import { mountViewToElement } from "{% static 'reactpy_django/client.js' %}";
+  import { mountComponent } from "{% static 'reactpy_django/client.js' %}";
   const mountElement = document.getElementById("{{ reactpy_uuid }}");
-  mountViewToElement(
+  mountComponent(
     mountElement,
     "{{ reactpy_host }}",
     "{{ reactpy_url_prefix }}",
-    "{{ reactpy_reconnect_max }}",
     "{{ reactpy_component_path }}",
     "{{ reactpy_resolved_web_modules_path }}",
+    Number("{{ reactpy_reconnect_interval }}"),
+    Number("{{ reactpy_reconnect_max_interval }}"),
+    Number("{{ reactpy_reconnect_max_retries }}"),
+    Number("{{ reactpy_reconnect_backoff_multiplier }}"),
   );
 </script>
 {% endif %}

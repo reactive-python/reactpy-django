@@ -1,4 +1,5 @@
 import contextlib
+import math
 import sys
 
 from django.contrib.staticfiles.finders import find
@@ -104,7 +105,7 @@ def reactpy_warnings(app_configs, **kwargs):
     # DELETED W007: Check if REACTPY_WEBSOCKET_URL doesn't end with a slash
     # DELETED W008: Check if REACTPY_WEBSOCKET_URL doesn't start with an alphanumeric character
 
-    # Removed Settings
+    # Removed REACTPY_WEBSOCKET_URL setting
     if getattr(settings, "REACTPY_WEBSOCKET_URL", None):
         warnings.append(
             Warning(
@@ -159,12 +160,95 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
+    # Removed REACTPY_RECONNECT_MAX setting
+    if getattr(settings, "REACTPY_RECONNECT_MAX", None):
+        warnings.append(
+            Warning(
+                "REACTPY_RECONNECT_MAX has been removed.",
+                hint="See the docs for the new REACTPY_RECONNECT_* settings.",
+                id="reactpy_django.W013",
+            )
+        )
+
+    if (
+        isinstance(config.REACTPY_RECONNECT_INTERVAL, int)
+        and config.REACTPY_RECONNECT_INTERVAL > 30000
+    ):
+        warnings.append(
+            Warning(
+                "REACTPY_RECONNECT_INTERVAL is set to >30 seconds. Are you sure this is intentional? "
+                "This may cause unexpected delays between reconnection.",
+                hint="Check your value for REACTPY_RECONNECT_INTERVAL or suppress this warning.",
+                id="reactpy_django.W014",
+            )
+        )
+
+    if (
+        isinstance(config.REACTPY_RECONNECT_MAX_RETRIES, int)
+        and config.REACTPY_RECONNECT_MAX_RETRIES > 5000
+    ):
+        warnings.append(
+            Warning(
+                "REACTPY_RECONNECT_MAX_RETRIES is set to a very large value. Are you sure this is intentional? "
+                "This may leave your clients attempting reconnections for a long time.",
+                hint="Check your value for REACTPY_RECONNECT_MAX_RETRIES or suppress this warning.",
+                id="reactpy_django.W015",
+            )
+        )
+
+    # Check if the value is too large (greater than 50)
+    if (
+        isinstance(config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER, (int, float))
+        and config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER > 100
+    ):
+        warnings.append(
+            Warning(
+                "REACTPY_RECONNECT_BACKOFF_MULTIPLIER is set to a very large value. Are you sure this is intentional?",
+                hint="Check your value for REACTPY_RECONNECT_BACKOFF_MULTIPLIER or suppress this warning.",
+                id="reactpy_django.W016",
+            )
+        )
+
+    if (
+        isinstance(config.REACTPY_RECONNECT_MAX_INTERVAL, int)
+        and isinstance(config.REACTPY_RECONNECT_INTERVAL, int)
+        and isinstance(config.REACTPY_RECONNECT_MAX_RETRIES, int)
+        and isinstance(config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER, (int, float))
+        and config.REACTPY_RECONNECT_INTERVAL > 0
+        and config.REACTPY_RECONNECT_MAX_INTERVAL > 0
+        and config.REACTPY_RECONNECT_MAX_RETRIES > 0
+        and config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER > 1
+        and (
+            config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER
+            ** config.REACTPY_RECONNECT_MAX_RETRIES
+        )
+        * config.REACTPY_RECONNECT_INTERVAL
+        < config.REACTPY_RECONNECT_MAX_INTERVAL
+    ):
+        max_value = math.floor(
+            (
+                config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER
+                ** config.REACTPY_RECONNECT_MAX_RETRIES
+            )
+            * config.REACTPY_RECONNECT_INTERVAL
+        )
+        warnings.append(
+            Warning(
+                "Your current ReactPy configuration can never reach REACTPY_RECONNECT_MAX_INTERVAL. At most you will reach "
+                f"{max_value} miliseconds, which is less than {config.REACTPY_RECONNECT_MAX_INTERVAL} (REACTPY_RECONNECT_MAX_INTERVAL).",
+                hint="Check your ReactPy REACTPY_RECONNECT_* settings.",
+                id="reactpy_django.W017",
+            )
+        )
+
     return warnings
 
 
 @register(Tags.compatibility)
 def reactpy_errors(app_configs, **kwargs):
     from django.conf import settings
+
+    from reactpy_django import config
 
     errors = []
 
@@ -204,12 +288,12 @@ def reactpy_errors(app_configs, **kwargs):
                 id="reactpy_django.E003",
             )
         )
-    if not isinstance(getattr(settings, "REACTPY_RECONNECT_MAX", 0), int):
+    if not isinstance(getattr(settings, "REACTPY_SESSION_MAX_AGE", 0), int):
         errors.append(
             Error(
-                "Invalid type for REACTPY_RECONNECT_MAX.",
-                hint="REACTPY_RECONNECT_MAX should be an integer.",
-                obj=settings.REACTPY_RECONNECT_MAX,
+                "Invalid type for REACTPY_SESSION_MAX_AGE.",
+                hint="REACTPY_SESSION_MAX_AGE should be an integer.",
+                obj=settings.REACTPY_SESSION_MAX_AGE,
                 id="reactpy_django.E004",
             )
         )
@@ -277,5 +361,102 @@ def reactpy_errors(app_configs, **kwargs):
                     )
                 )
                 break
+
+    if not isinstance(config.REACTPY_RECONNECT_INTERVAL, int):
+        errors.append(
+            Error(
+                "Invalid type for REACTPY_RECONNECT_INTERVAL.",
+                hint="REACTPY_RECONNECT_INTERVAL should be an integer.",
+                id="reactpy_django.E012",
+            )
+        )
+
+    if (
+        isinstance(config.REACTPY_RECONNECT_INTERVAL, int)
+        and config.REACTPY_RECONNECT_INTERVAL < 0
+    ):
+        errors.append(
+            Error(
+                "Invalid value for REACTPY_RECONNECT_INTERVAL.",
+                hint="REACTPY_RECONNECT_INTERVAL should be a positive integer.",
+                id="reactpy_django.E013",
+            )
+        )
+
+    if not isinstance(config.REACTPY_RECONNECT_MAX_INTERVAL, int):
+        errors.append(
+            Error(
+                "Invalid type for REACTPY_RECONNECT_MAX_INTERVAL.",
+                hint="REACTPY_RECONNECT_MAX_INTERVAL should be an integer.",
+                id="reactpy_django.E014",
+            )
+        )
+
+    if (
+        isinstance(config.REACTPY_RECONNECT_MAX_INTERVAL, int)
+        and config.REACTPY_RECONNECT_MAX_INTERVAL < 0
+    ):
+        errors.append(
+            Error(
+                "Invalid value for REACTPY_RECONNECT_MAX_INTERVAL.",
+                hint="REACTPY_RECONNECT_MAX_INTERVAL should be a positive integer.",
+                id="reactpy_django.E015",
+            )
+        )
+
+    if (
+        isinstance(config.REACTPY_RECONNECT_MAX_INTERVAL, int)
+        and isinstance(config.REACTPY_RECONNECT_INTERVAL, int)
+        and config.REACTPY_RECONNECT_MAX_INTERVAL < config.REACTPY_RECONNECT_INTERVAL
+    ):
+        errors.append(
+            Error(
+                "REACTPY_RECONNECT_MAX_INTERVAL is less than REACTPY_RECONNECT_INTERVAL.",
+                hint="REACTPY_RECONNECT_MAX_INTERVAL should be greater than or equal to REACTPY_RECONNECT_INTERVAL.",
+                id="reactpy_django.E016",
+            )
+        )
+
+    if not isinstance(config.REACTPY_RECONNECT_MAX_RETRIES, int):
+        errors.append(
+            Error(
+                "Invalid type for REACTPY_RECONNECT_MAX_RETRIES.",
+                hint="REACTPY_RECONNECT_MAX_RETRIES should be an integer.",
+                id="reactpy_django.E017",
+            )
+        )
+
+    if (
+        isinstance(config.REACTPY_RECONNECT_MAX_RETRIES, int)
+        and config.REACTPY_RECONNECT_MAX_RETRIES < 0
+    ):
+        errors.append(
+            Error(
+                "Invalid value for REACTPY_RECONNECT_MAX_RETRIES.",
+                hint="REACTPY_RECONNECT_MAX_RETRIES should be a positive integer.",
+                id="reactpy_django.E018",
+            )
+        )
+
+    if not isinstance(config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER, (int, float)):
+        errors.append(
+            Error(
+                "Invalid type for REACTPY_RECONNECT_BACKOFF_MULTIPLIER.",
+                hint="REACTPY_RECONNECT_BACKOFF_MULTIPLIER should be an integer or float.",
+                id="reactpy_django.E019",
+            )
+        )
+
+    if (
+        isinstance(config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER, (int, float))
+        and config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER < 1
+    ):
+        errors.append(
+            Error(
+                "Invalid value for REACTPY_RECONNECT_BACKOFF_MULTIPLIER.",
+                hint="REACTPY_RECONNECT_BACKOFF_MULTIPLIER should be greater than or equal to 1.",
+                id="reactpy_django.E020",
+            )
+        )
 
     return errors

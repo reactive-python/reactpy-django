@@ -36,6 +36,11 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
+-   More customization for reconnection behavior through new settings!
+    -   `REACTPY_RECONNECT_INTERVAL`
+    -   `REACTPY_RECONNECT_MAX_INTERVAL`
+    -   `REACTPY_RECONNECT_MAX_RETRIES`
+    -   `REACTPY_RECONNECT_BACKOFF_MULTIPLIER`
 -   [ReactPy-Django docs](https://reactive-python.github.io/reactpy-django/) are now version controlled via [mike](https://github.com/jimporter/mike)!
 
 ### Changed
@@ -43,6 +48,14 @@ Using the following categories, list your changes in this order:
 -   Bumped the minimum ReactPy version to `1.0.2`.
 -   Prettier websocket URLs for components that do not have sessions.
 -   Template tag will now only validate `args`/`kwargs` if `settings.py:DEBUG` is enabled.
+-   Bumped the minimum `@reactpy/client` version to `0.3.1`
+-   Use TypeScript instead of JavaScript for this repository.
+-   Bumped minimum Django version to `4.2`.
+    -   Note: ReactPy-Django will continue bumping minimum Django requirements to versions that increase async support. This "latest-only" trend will continue until Django has all async features that ReactPy benefits from. After this point, ReactPy-Django will begin supporting all maintained Django versions.
+
+### Removed
+
+-   `settings.py:REACTPY_RECONNECT_MAX` is removed. See the docs for the new `REACTPY_RECONNECT_*` settings.
 
 ## [3.4.0] - 2023-08-18
 

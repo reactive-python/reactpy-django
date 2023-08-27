@@ -35,9 +35,9 @@ REACTPY_URL_PREFIX: str = getattr(
     "REACTPY_URL_PREFIX",
     REACTPY_WEBSOCKET_URL,
 ).strip("/")
-REACTPY_RECONNECT_MAX: int = getattr(
+REACTPY_SESSION_MAX_AGE: int = getattr(
     settings,
-    "REACTPY_RECONNECT_MAX",
+    "REACTPY_SESSION_MAX_AGE",
     259200,  # Default to 3 days
 )
 REACTPY_CACHE: str = getattr(
@@ -81,4 +81,24 @@ REACTPY_DEFAULT_HOSTS: cycle[str] | None = (
     cycle([host.strip("/") for host in _default_hosts if isinstance(host, str)])
     if _default_hosts
     else None
+)
+REACTPY_RECONNECT_INTERVAL: int = getattr(
+    settings,
+    "REACTPY_RECONNECT_INTERVAL",
+    750,  # Default to 0.75 seconds
+)
+REACTPY_RECONNECT_MAX_INTERVAL: int = getattr(
+    settings,
+    "REACTPY_RECONNECT_MAX_INTERVAL",
+    60000,  # Default to 60 seconds
+)
+REACTPY_RECONNECT_MAX_RETRIES: int = getattr(
+    settings,
+    "REACTPY_RECONNECT_MAX_RETRIES",
+    150,
+)
+REACTPY_RECONNECT_BACKOFF_MULTIPLIER: float | int = getattr(
+    settings,
+    "REACTPY_RECONNECT_BACKOFF_MULTIPLIER",
+    1.25,  # Default to 25% backoff per connection attempt
 )
