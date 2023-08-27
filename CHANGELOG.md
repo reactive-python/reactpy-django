@@ -34,6 +34,10 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+-   Nothing (yet)!
+
+## [3.5.0] - 2023-08-26
+
 ### Added
 
 -   More customization for reconnection behavior through new settings!
@@ -49,8 +53,8 @@ Using the following categories, list your changes in this order:
 -   Prettier websocket URLs for components that do not have sessions.
 -   Template tag will now only validate `args`/`kwargs` if `settings.py:DEBUG` is enabled.
 -   Bumped the minimum `@reactpy/client` version to `0.3.1`
+-   Bumped the minimum Django version to `4.2`.
 -   Use TypeScript instead of JavaScript for this repository.
--   Bumped minimum Django version to `4.2`.
     -   Note: ReactPy-Django will continue bumping minimum Django requirements to versions that increase async support. This "latest-only" trend will continue until Django has all async features that ReactPy benefits from. After this point, ReactPy-Django will begin supporting all maintained Django versions.
 
 ### Removed
@@ -383,7 +387,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.4.0...HEAD
+[unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.5.0...HEAD
+[3.5.0]: https://github.com/reactive-python/reactpy-django/compare/3.4.0...3.5.0
 [3.4.0]: https://github.com/reactive-python/reactpy-django/compare/3.3.2...3.4.0
 [3.3.2]: https://github.com/reactive-python/reactpy-django/compare/3.3.1...3.3.2
 [3.3.1]: https://github.com/reactive-python/reactpy-django/compare/3.3.0...3.3.1

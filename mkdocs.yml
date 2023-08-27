@@ -103,6 +103,7 @@ watch:
     - mkdocs.yml
     - README.md
     - CHANGELOG.md
+    - .mailmap
 
 site_name: ReactPy-Django
 site_author: Archmonger
