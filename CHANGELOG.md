@@ -51,7 +51,7 @@ Using the following categories, list your changes in this order:
 -   Bumped the minimum `@reactpy/client` version to `0.3.1`
 -   Use TypeScript instead of JavaScript for this repository.
 -   Bumped minimum Django version to `4.2`.
-    -   Note: Moving forward, ReactPy-Django will only support Django's latest versions to increase async support (and performance). This latest-only trend will continue until Django has all async features that ReactPy requires.
+    -   Note: ReactPy-Django will continue bumping minimum Django requirements to versions that increase async support. This "latest-only" trend will continue until Django has all async features that ReactPy benefits from. After this point, ReactPy-Django will begin supporting all maintained Django versions.
 
 ### Removed
 
