@@ -1,20 +1,3 @@
-/* Application header should be static for the landing page */
-.md-header {
-	position: initial;
-}
-
-/* Hide markdown area */
-.md-main {
-	visibility: hidden;
-	height: 0;
-}
-
-.md-main * {
-	display: none;
-}
-
-/* Homepage styling */
-
 img.home-logo {
 	height: 100px;
 }

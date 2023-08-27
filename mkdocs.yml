@@ -2,28 +2,22 @@
 nav:
     - Home: index.md
     - Get Started:
-          - Install ReactPy-Django: get-started/installation.md
-          - Choose a Django App: get-started/choose-django-app.md
-          - Create a Component: get-started/create-component.md
-          - Use the Template Tag: get-started/use-template-tag.md
-          - Register a View: get-started/register-view.md
-          - Run the Webserver: get-started/run-webserver.md
-          - Learn More: get-started/learn-more.md
+          - Add ReactPy to a Project: learn/add-reactpy-to-a-project.md
+          - Your First Component: learn/your-first-component.md
     - Reference:
-          - Components: features/components.md
-          - Hooks: features/hooks.md
-          - Decorators: features/decorators.md
-          - Utilities: features/utils.md
-          - Template Tag: features/template-tag.md
-          - Settings: features/settings.md
+          - Components: reference/components.md
+          - Hooks: reference/hooks.md
+          - Decorators: reference/decorators.md
+          - Utilities: reference/utils.md
+          - Template Tag: reference/template-tag.md
+          - Settings: reference/settings.md
     - About:
           - Contribute:
-                - Code: contribute/code.md
-                - Docs: contribute/docs.md
-                - Running Tests: contribute/running-tests.md
+                - Code: about/code.md
+                - Docs: about/docs.md
           - GitHub Discussions: https://github.com/reactive-python/reactpy-django/discussions
           - Discord: https://discord.gg/uNb5P4hA9X
-          - Changelog: changelog/index.md
+          - Changelog: about/changelog.md
 
 theme:
     name: material
@@ -97,6 +91,7 @@ extra_javascript:
 
 extra_css:
     - assets/css/main.css
+    - assets/css/home.css
 
 watch:
     - docs
@@ -107,7 +102,7 @@ watch:
 
 site_name: ReactPy-Django
 site_author: Archmonger
-site_description: It's React, but in Python for Django developers.
+site_description: It's React, but in Python. Now for Django developers.
 copyright: Copyright &copy; 2023 Reactive Python
 repo_url: https://github.com/reactive-python/reactpy-django
 site_url: https://reactive-python.github.io/reactpy-django

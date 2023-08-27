@@ -60,6 +60,6 @@ You should always call `register_component` within a Django [`AppConfig.ready()`
 
     For security reasons, ReactPy does not allow non-registered components to be root components. However, all components contained within Django templates are automatically considered root components.
 
-    You only need to use this function if your host application does not contain any HTML templates that [reference](../features/template-tag.md#component) your components.
+    You only need to use this function if your host application does not contain any HTML templates that [reference](../reference/template-tag.md#component) your components.
 
-    A common scenario where this is needed is when you are modifying the [template tag `host = ...` argument](../features/template-tag.md#component) in order to configure a dedicated Django application as a rendering server for ReactPy. On this dedicated rendering server, you would need to manually register your components.
+    A common scenario where this is needed is when you are modifying the [template tag `host = ...` argument](../reference/template-tag.md#component) in order to configure a dedicated Django application as a rendering server for ReactPy. On this dedicated rendering server, you would need to manually register your components.

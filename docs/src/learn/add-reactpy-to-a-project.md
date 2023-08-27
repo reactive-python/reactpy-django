@@ -2,7 +2,7 @@
 
 <p class="intro" markdown>
 
-[ReactPy-Django](https://github.com/reactive-python/reactpy-django) can be used to add used to add [ReactPy](https://github.com/reactive-python/reactpy) support to an existing **Django project**. Minimal configuration is required to get started.
+If you want to add some interactivity to your existing **Django project**, you don't have to rewrite it in ReactPy. Use [ReactPy-Django](https://github.com/reactive-python/reactpy-django) to add [ReactPy](https://github.com/reactive-python/reactpy) to your existing stack, and render interactive components anywhere.
 
 </p>
 
@@ -16,13 +16,15 @@
 
 ## Step 1: Install from PyPI
 
+Run the following command to install [`reactpy-django`](https://pypi.org/project/reactpy-django/) in your Python environment.
+
 ```bash linenums="0"
 pip install reactpy-django
 ```
 
-## Step 2: Configure [`settings.py`](https://docs.djangoproject.com/en/dev/topics/settings/)
+## Step 2: Configure `settings.py`
 
-In your settings you will need to add `reactpy_django` to [`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS).
+Add `reactpy_django` to [`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS) in your [`settings.py`](https://docs.djangoproject.com/en/dev/topics/settings/) file.
 
 === "settings.py"
 
@@ -50,11 +52,11 @@ In your settings you will need to add `reactpy_django` to [`INSTALLED_APPS`](htt
 
 ??? note "Configure ReactPy settings (Optional)"
 
-    {% include "../features/settings.md" start="<!--config-details-start-->" end="<!--config-details-end-->"  %}
+    {% include "../reference/settings.md" start="<!--config-details-start-->" end="<!--config-details-end-->"  %}
 
-## Step 3: Configure [`urls.py`](https://docs.djangoproject.com/en/dev/topics/http/urls/)
+## Step 3: Configure `urls.py`
 
-Add ReactPy HTTP paths to your `urlpatterns`.
+Add ReactPy HTTP paths to your `urlpatterns` in your [`urls.py`](https://docs.djangoproject.com/en/dev/topics/http/urls/) file.
 
 === "urls.py"
 
@@ -62,9 +64,9 @@ Add ReactPy HTTP paths to your `urlpatterns`.
     {% include "../../python/configure-urls.py" %}
     ```
 
-## Step 4: Configure [`asgi.py`](https://docs.djangoproject.com/en/dev/howto/deployment/asgi/)
+## Step 4: Configure `asgi.py`
 
-Register ReactPy's Websocket using `REACTPY_WEBSOCKET_ROUTE`.
+Register ReactPy's WebSocket using `REACTPY_WEBSOCKET_ROUTE` in your [`asgi.py`](https://docs.djangoproject.com/en/dev/howto/deployment/asgi/) file.
 
 === "asgi.py"
 
@@ -92,7 +94,7 @@ Register ReactPy's Websocket using `REACTPY_WEBSOCKET_ROUTE`.
 
 ## Step 5: Run database migrations
 
-Run Django's database migrations to initialize ReactPy-Django's database table.
+Run Django's [`migrate` command](https://docs.djangoproject.com/en/dev/topics/migrations/) to initialize ReactPy-Django's database table.
 
 ```bash linenums="0"
 python manage.py migrate
@@ -100,19 +102,19 @@ python manage.py migrate
 
 ## Step 6: Check your configuration
 
-Run Django's check command to verify if ReactPy was set up correctly.
+Run Django's [`check` command](https://docs.djangoproject.com/en/dev/ref/django-admin/#check) to verify if ReactPy was set up correctly.
 
 ```bash linenums="0"
 python manage.py check
 ```
 
-## Step 7: Create your first component!
+## Step 7: Create your first component
 
-The [following steps](./choose-django-app.md) will show you how to create your first ReactPy component.
+The [next step](./your-first-component.md) will show you how to create your first ReactPy component.
 
 Prefer a quick summary? Read the **At a Glance** section below.
 
-!!! info "At a Glance"
+!!! info "At a Glance: Your First Component"
 
     <font size="5">**`my_app/components.py`**</font>
 
