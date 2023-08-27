@@ -1,0 +1,8 @@
+/* Application header should be static for the landing page */
+.md-header {
+	position: initial;
+}
+
+img.home-logo {
+	height: 100px;
+}
