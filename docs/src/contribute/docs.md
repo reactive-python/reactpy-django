@@ -37,7 +37,7 @@ Finally, to verify that everything is working properly, you can manually run the
 mkdocs serve
 ```
 
-Navigate to `http://127.0.0.1:8000` to view a preview of the documentation.
+Navigate to [`http://127.0.0.1:8000`](http://127.0.0.1:8000) to view a preview of the documentation.
 
 ## GitHub Pull Request
 

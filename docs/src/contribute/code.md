@@ -45,7 +45,7 @@ cd tests
 python manage.py runserver
 ```
 
-Navigate to `http://127.0.0.1:8000` to see if the tests are rendering correctly.
+Navigate to [`http://127.0.0.1:8000`](http://127.0.0.1:8000) to see if the tests are rendering correctly.
 
 ## GitHub Pull Request
 
