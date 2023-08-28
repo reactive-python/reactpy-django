@@ -1,0 +1,130 @@
+.md-header {
+	border: 0 solid transparent;
+	border-bottom-width: 1px;
+}
+
+.md-header--shadow {
+	box-shadow: none;
+	border-color: rgb(255 255 255 / 5%);
+	transition: border-color 0.35s cubic-bezier(0.1, 0.7, 0.1, 1);
+}
+
+.md-header__title {
+	display: none;
+}
+
+/* Mobile Styling */
+@media screen and (max-width: 76.1875em) {
+	label.md-header__button.md-icon[for="__drawer"] {
+		order: 1;
+	}
+	.md-header__button.md-logo {
+		display: initial;
+		order: 2;
+		margin-right: auto;
+	}
+	.md-header__button[for="__search"] {
+		order: 3;
+	}
+	.md-header__option[data-md-component="palette"] {
+		order: 4;
+	}
+	.md-header__source {
+		display: initial;
+		order: 5;
+	}
+	.md-header__source .md-source__repository {
+		display: none;
+	}
+}
+
+/* Desktop Styling */
+@media screen and (min-width: 76.1875em) {
+	/* Nav container */
+	nav.md-header__inner {
+		display: contents;
+	}
+	header.md-header {
+		display: flex;
+		align-items: center;
+	}
+
+	/* Logo */
+	.md-header__button.md-logo {
+		order: 1;
+		padding-right: 0.2rem;
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+	.md-header__button.md-logo img {
+		height: 2rem;
+	}
+
+	/* Search */
+	.md-search {
+		order: 2;
+		width: 100%;
+		margin-right: 0.6rem;
+	}
+	.md-search__inner {
+		width: 100%;
+		float: unset !important;
+	}
+	.md-search__form {
+		border-radius: 9999px;
+	}
+	[data-md-toggle="search"]:checked ~ .md-header .md-header__option {
+		max-width: unset;
+		opacity: unset;
+		transition: unset;
+	}
+
+	/* Tabs */
+	.md-tabs {
+		order: 3;
+		min-width: -webkit-fit-content;
+		min-width: -moz-fit-content;
+		min-width: fit-content;
+		width: -webkit-fit-content;
+		width: -moz-fit-content;
+		width: fit-content;
+		z-index: -1;
+		overflow: visible;
+	}
+	li.md-tabs__item.md-tabs__item--active {
+		background: #00b0f026;
+		border-radius: 9999px;
+		color: var(--md-typeset-a-color);
+	}
+	a.md-tabs__link {
+		margin: 0;
+	}
+	.md-tabs__item {
+		height: 1.8rem;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+	}
+
+	/* Dark/Light Selector */
+	.md-header__option[data-md-component="palette"] {
+		order: 4;
+	}
+
+	/* GitHub info */
+	.md-header__source {
+		order: 5;
+		margin-left: 0 !important;
+	}
+}
+
+/* Ultrawide Desktop Styles */
+@media screen and (min-width: 1919px) {
+	.md-search {
+		order: 2;
+		width: 100%;
+		max-width: 34.4rem;
+		margin: 0 auto;
+	}
+}

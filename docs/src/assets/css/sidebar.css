@@ -30,7 +30,7 @@
 	}
 }
 
-/* Sidebar styling */
+/* Desktop Styling */
 @media screen and (min-width: 76.1875em) {
 	.md-nav--lifted > .md-nav__list > .md-nav__item--active > .md-nav__link {
 		text-transform: uppercase;
@@ -64,7 +64,7 @@
 		height: 100%;
 		opacity: 0.2;
 		z-index: -1;
-		background-color: grey;
+		background: grey;
 	}
 
 	.md-nav__item .md-nav__link--active:before {
@@ -76,7 +76,7 @@
 		height: 100%;
 		opacity: 0.15;
 		z-index: -1;
-		background-color: var(--md-typeset-a-color);
+		background: var(--md-typeset-a-color);
 	}
 
 	.md-nav__link {

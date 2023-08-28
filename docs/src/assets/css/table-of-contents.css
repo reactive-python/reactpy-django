@@ -19,7 +19,7 @@
 		height: 100%;
 		opacity: 0.15;
 		z-index: -1;
-		background-color: var(--md-typeset-a-color);
+		background: var(--md-typeset-a-color);
 	}
 
 	[data-md-component="toc"] .md-nav__link {

@@ -8,7 +8,6 @@
 
 <!-- Override the tabs block to create the homepage -->
 {% block tabs %}
-{{ super() }}
 <style>
     /* Application header should be static for the landing page */
     .md-header {
@@ -26,12 +25,12 @@
     }
 </style>
 <section class="md-typeset">
-    <div class="homepage-row first stripe">
+    <div class="home-row first">
         <img src="https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg"
             alt="Logo" class="home-logo">
         <h1>{{ config.site_name }}</h1>
         <p>{{ config.site_description }}</p>
-        <div>
+        <div class="home-btns">
             <a href="{{ page.next_page.url | url }}" class="md-button md-button--primary">
                 Get Started
             </a>
@@ -41,7 +40,7 @@
         </div>
     </div>
 
-    <div class="homepage-row">
+    <div class="home-row stripe">
         <h1>Create user interfaces from components</h1>
         <p class="md-grid">
             ReactPy lets you build user interfaces out of individual pieces called components. Create your own ReactPy
@@ -55,7 +54,7 @@
         </p>
     </div>
 
-    <div class="homepage-row stripe">
+    <div class="home-row">
         <h1>Write components with code and markup</h1>
         <p>
             ReactPy components are Python functions. Want to show some content conditionally? Use an
@@ -65,7 +64,7 @@
         </p>
     </div>
 
-    <div class="homepage-row">
+    <div class="home-row stripe">
         <h1>Add interactivity wherever you need it</h1>
         <p>
             ReactPy components receive data and return what should appear on the screen. You can pass them new data in
@@ -78,7 +77,7 @@
         </p>
     </div>
 
-    <div class="homepage-row stripe">
+    <div class="home-row">
         <h1>Go full-stack with the Django framework</h1>
         <p>
             ReactPy is a library. It lets you put components together, but it doesn't prescribe how to do routing and

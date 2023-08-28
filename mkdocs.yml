@@ -39,8 +39,10 @@ theme:
     features:
         - navigation.instant
         - navigation.tabs
+        - navigation.tabs.sticky
         - navigation.top
         - content.code.copy
+        - search.highlight
     icon:
         repo: fontawesome/brands/github
     logo: https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg
@@ -95,8 +97,10 @@ extra_css:
     - assets/css/button.css
     - assets/css/admonition.css
     - assets/css/sidebar.css
+    - assets/css/navbar.css
     - assets/css/table-of-contents.css
     - assets/css/code.css
+    - assets/css/footer.css
 
 watch:
     - docs

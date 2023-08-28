@@ -2,7 +2,7 @@
 	border-color: #404756;
 	border-radius: 9999px;
 	color: #fff;
-	transition: color 125ms, background-color 125ms, border-color 125ms,
+	transition: color 125ms, background 125ms, border-color 125ms,
 		transform 125ms;
 }
 
@@ -20,7 +20,7 @@
 .md-typeset .md-button.md-button--primary:focus,
 .md-typeset .md-button.md-button--primary:hover {
 	border-color: transparent;
-	background-color: var(--reactpy-color-darker);
+	background: var(--reactpy-color-darker);
 }
 
 .md-typeset .md-button:focus {

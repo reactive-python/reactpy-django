@@ -56,7 +56,7 @@
 
 [data-md-color-scheme="slate"] .md-typeset .note .admonition-title:before {
 	font-size: 1.1rem;
-	background-color: rgb(68 172 153);
+	background: rgb(68 172 153);
 }
 
 .md-typeset .note > .admonition-title:before,
@@ -81,7 +81,7 @@
 
 [data-md-color-scheme="slate"] .md-typeset .warning .admonition-title:before {
 	font-size: 1.1rem;
-	background-color: rgb(219 125 39);
+	background: rgb(219 125 39);
 }
 
 /* Colors for "info" admonition */
@@ -100,7 +100,7 @@
 
 [data-md-color-scheme="slate"] .md-typeset .info .admonition-title:before {
 	font-size: 1.1rem;
-	background-color: rgb(136 145 236);
+	background: rgb(136 145 236);
 }
 
 /* Colors for "example" admonition */
@@ -115,7 +115,7 @@
 }
 
 [data-md-color-scheme="slate"] .md-typeset .example .admonition-title:before {
-	background-color: rgb(246 247 249);
+	background: rgb(246 247 249);
 }
 
 [data-md-color-scheme="slate"] .md-typeset .admonition.example code {
