@@ -92,7 +92,7 @@
 		overflow: visible;
 	}
 	li.md-tabs__item.md-tabs__item--active {
-		background: #00b0f026;
+		background: var(--reactpy-color-opacity-10);
 		border-radius: 9999px;
 		color: var(--md-typeset-a-color);
 	}

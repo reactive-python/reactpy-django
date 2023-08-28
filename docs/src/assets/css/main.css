@@ -1,6 +1,10 @@
 /* Variable overrides */
 :root {
 	--code-max-height: 17.25rem;
+	--reactpy-color: #58b962;
+	--reactpy-color-dark: #42914a;
+	--reactpy-color-darker: #34743b;
+	--reactpy-color-opacity-10: rgb(88 185 98 / 10%);
 }
 
 [data-md-color-scheme="slate"] {
@@ -13,14 +17,12 @@
 	--md-code-bg-color: #16181d;
 	--md-primary-fg-color: var(--md-default-bg-color);
 	--md-default-fg-color--light: #fff;
-	--md-typeset-a-color: #00b0f0;
+	--md-typeset-a-color: var(--reactpy-color);
 	--md-code-hl-comment-color: hsla(var(--md-hue), 75%, 90%, 0.43);
-	--tabbed-labels-color: rgb(52 58 70);
-	--reactpy-color: #58b962;
-	--reactpy-color-dark: #42914a;
-	--reactpy-color-darker: #34743b;
+	--md-accent-fg-color: var(--reactpy-color-dark);
 	--md-footer-bg-color: var(--md-default-bg-color);
 	--md-footer-bg-color--dark: var(--md-default-bg-color);
+	--tabbed-labels-color: rgb(52 58 70);
 }
 
 [data-md-color-scheme="default"] {

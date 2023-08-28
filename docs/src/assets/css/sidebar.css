@@ -60,9 +60,8 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		opacity: 0.15;
 		z-index: -1;
-		background: var(--md-typeset-a-color);
+		background: var(--reactpy-color-opacity-10);
 	}
 
 	.md-nav__link {
