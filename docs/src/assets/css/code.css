@@ -1,0 +1,36 @@
+/* Code blocks */
+.md-typeset pre > code {
+	border-radius: 16px;
+}
+
+.md-typeset .highlighttable .linenos {
+	max-height: var(--code-max-height);
+	overflow: hidden;
+}
+
+.md-typeset .tabbed-block .highlighttable code {
+	border-radius: 0;
+}
+
+.md-typeset .tabbed-block {
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+	overflow: hidden;
+}
+
+.js .md-typeset .tabbed-labels {
+	background: var(--tabbed-labels-color);
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
+}
+
+.md-typeset .tabbed-labels > label {
+	font-weight: 400;
+	font-size: 0.7rem;
+	padding-top: 0.55em;
+	padding-bottom: 0.35em;
+}
+
+.md-typeset pre > code {
+	max-height: var(--code-max-height);
+}
