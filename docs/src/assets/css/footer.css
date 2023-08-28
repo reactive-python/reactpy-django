@@ -1,3 +1,15 @@
 .md-footer {
 	border-top: 1px solid rgb(255 255 255 / 5%);
 }
+
+.md-copyright {
+	width: 100%;
+}
+
+.md-copyright__highlight {
+	width: 100%;
+}
+
+.legal-footer-right {
+	float: right;
+}
