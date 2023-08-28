@@ -2,7 +2,7 @@
 nav:
     - Home: index.md
     - Get Started:
-          - Add ReactPy to a Project: learn/add-reactpy-to-a-project.md
+          - Add ReactPy to a Django Project: learn/add-reactpy-to-a-django-project.md
           - Your First Component: learn/your-first-component.md
     - Reference:
           - Components: reference/components.md
