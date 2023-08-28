@@ -14,7 +14,7 @@
 }
 
 /* Mobile Styling */
-@media screen and (max-width: 76.1875em) {
+@media screen and (max-width: 60em) {
 	label.md-header__button.md-icon[for="__drawer"] {
 		order: 1;
 	}
@@ -39,7 +39,7 @@
 }
 
 /* Desktop Styling */
-@media screen and (min-width: 76.1875em) {
+@media screen and (min-width: 60em) {
 	/* Nav container */
 	nav.md-header__inner {
 		display: contents;

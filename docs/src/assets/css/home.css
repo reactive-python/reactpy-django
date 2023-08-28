@@ -51,7 +51,7 @@ img.home-logo {
 }
 
 /* Desktop Styling */
-@media screen and (min-width: 76.1875em) {
+@media screen and (min-width: 60em) {
 	.home-row {
 		text-align: center;
 	}
@@ -64,7 +64,7 @@ img.home-logo {
 }
 
 /* Mobile Styling */
-@media screen and (max-width: 76.1875em) {
+@media screen and (max-width: 60em) {
 	.home-row {
 		padding: 4rem 0.8rem;
 	}

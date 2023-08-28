@@ -22,6 +22,8 @@
 	background: var(--tabbed-labels-color);
 	border-top-left-radius: 8px;
 	border-top-right-radius: 8px;
+	margin: 0;
+	padding-left: 0.8rem;
 }
 
 .md-typeset .tabbed-labels > label {

@@ -1,4 +1,4 @@
-/* Move the sidebars to the edges of the page */
+/* Move the sidebar and TOC to the edge of the page */
 .md-main__inner.md-grid {
 	margin-left: 0;
 	margin-right: 0;
@@ -15,23 +15,9 @@
 	margin-left: auto;
 }
 
-.md-content {
-	max-width: 56rem;
-}
-
-/* Maintain content positioning even if sidebars are disabled */
-@media screen and (min-width: 76.1875em) {
-	.md-sidebar {
-		display: block;
-	}
-
-	.md-sidebar[hidden] {
-		visibility: hidden;
-	}
-}
-
 /* Desktop Styling */
 @media screen and (min-width: 76.1875em) {
+	/* Made the sidebar buttons look React-like */
 	.md-nav--lifted > .md-nav__list > .md-nav__item--active > .md-nav__link {
 		text-transform: uppercase;
 	}
@@ -110,5 +96,14 @@
 	.md-nav__item--nested .md-nav__item .md-nav__item .md-nav__link {
 		font-weight: 400;
 		padding-left: 1.25rem;
+	}
+
+	/* Maintain content positioning even if sidebar or TOC is disabled */
+	.md-sidebar {
+		display: block;
+	}
+
+	.md-sidebar[hidden] {
+		visibility: hidden;
 	}
 }
