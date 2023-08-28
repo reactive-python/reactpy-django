@@ -19,7 +19,7 @@
 }
 
 .js .md-typeset .tabbed-labels {
-	background: var(--tabbed-labels-color);
+	background: var(--code-tab-color);
 	border-top-left-radius: 8px;
 	border-top-right-radius: 8px;
 	margin: 0;

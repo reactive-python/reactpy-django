@@ -22,11 +22,11 @@
 	--md-accent-fg-color: var(--reactpy-color-dark);
 	--md-footer-bg-color: var(--md-default-bg-color);
 	--md-footer-bg-color--dark: var(--md-default-bg-color);
-	--tabbed-labels-color: rgb(52 58 70);
+	--code-tab-color: rgb(52 58 70);
 }
 
 [data-md-color-scheme="default"] {
-	--tabbed-labels-color: #7d829e26;
+	--code-tab-color: #7d829e26;
 }
 
 /* Font changes */
