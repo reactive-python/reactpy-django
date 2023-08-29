@@ -8,7 +8,7 @@ Components are one of the core concepts of ReactPy. They are the foundation upon
 
 !!! note
 
-    If you have reached this point, you should have already [installed ReactPy-Django](../learn/add-reactpy-to-a-project.md) through the previous steps.
+    If you have reached this point, you should have already [installed ReactPy-Django](../learn/add-reactpy-to-a-django-project.md) through the previous steps.
 
 ---
 
