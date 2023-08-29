@@ -34,7 +34,9 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Added
+
+-   Warning if the position of `INSTALLED_APPS['reactpy_django']` looks suspicious
 
 ## [3.5.0] - 2023-08-26
 
