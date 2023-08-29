@@ -1,55 +1,67 @@
 :root {
 	--code-max-height: 17.25rem;
+	--md-code-backdrop: rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+		rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.03) 0px 0.8px 2px 0px,
+		rgba(0, 0, 0, 0.047) 0px 2.7px 6.7px 0px,
+		rgba(0, 0, 0, 0.08) 0px 12px 30px 0px;
 }
-
 [data-md-color-scheme="slate"] {
 	--md-code-hl-color: #ffffcf1c;
 	--md-code-bg-color: #16181d;
 	--md-code-hl-comment-color: hsla(var(--md-hue), 75%, 90%, 0.43);
 	--code-tab-color: rgb(52 58 70);
 }
-
 [data-md-color-scheme="default"] {
 	--md-code-hl-color: #ffffcf1c;
 	--md-code-bg-color: rgba(208, 211, 220, 0.4);
 	--md-code-fg-color: rgb(64, 71, 86);
-	--code-tab-color: #7d829e26;
+	--code-tab-color: #fff;
+}
+[data-md-color-scheme="default"] .md-typeset .highlight > pre > code,
+[data-md-color-scheme="default"] .md-typeset .highlight > table.highlighttable {
+	--md-code-bg-color: #fff;
 }
 
+/* All code blocks */
 .md-typeset pre > code {
-	border-radius: 16px;
+	max-height: var(--code-max-height);
 }
 
+/* Code blocks with no line number */
+.md-typeset .highlight > pre > code {
+	border-radius: 16px;
+	max-height: var(--code-max-height);
+	box-shadow: var(--md-code-backdrop);
+}
+
+/* Code blocks with line numbers */
 .md-typeset .highlighttable .linenos {
 	max-height: var(--code-max-height);
 	overflow: hidden;
 }
-
-.md-typeset .tabbed-block .highlighttable code {
-	border-radius: 0;
-}
-
-.md-typeset .tabbed-block {
-	border-bottom-left-radius: 8px;
-	border-bottom-right-radius: 8px;
+.md-typeset .highlighttable:not(:has(.tabbed-set)) {
+	box-shadow: var(--md-code-backdrop);
+	border-radius: 8px;
 	overflow: hidden;
 }
 
-.js .md-typeset .tabbed-labels {
+/* Tabbed code blocks */
+.md-typeset .tabbed-set {
+	box-shadow: var(--md-code-backdrop);
+	border-radius: 8px;
+	overflow: hidden;
+}
+.md-typeset .tabbed-set .tabbed-block {
+	overflow: hidden;
+}
+.js .md-typeset .tabbed-set .tabbed-labels {
 	background: var(--code-tab-color);
-	border-top-left-radius: 8px;
-	border-top-right-radius: 8px;
 	margin: 0;
 	padding-left: 0.8rem;
 }
-
-.md-typeset .tabbed-labels > label {
+.md-typeset .tabbed-set .tabbed-labels > label {
 	font-weight: 400;
 	font-size: 0.7rem;
 	padding-top: 0.55em;
 	padding-bottom: 0.35em;
-}
-
-.md-typeset pre > code {
-	max-height: var(--code-max-height);
 }

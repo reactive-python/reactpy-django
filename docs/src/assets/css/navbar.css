@@ -105,7 +105,7 @@
 		border-radius: 9999px;
 		color: var(--md-typeset-a-color);
 	}
-	a.md-tabs__link {
+	.md-tabs__link {
 		margin: 0;
 	}
 	.md-tabs__item {

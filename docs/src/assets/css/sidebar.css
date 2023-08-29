@@ -1,3 +1,7 @@
+:root {
+	--sizebar-font-size: 0.62rem;
+}
+
 /* Move the sidebar and TOC to the edge of the page */
 .md-main__inner.md-grid {
 	margin-left: 0;
@@ -68,8 +72,9 @@
 		padding: 0.5rem 0.5rem 0.5rem 1rem;
 		margin: 0;
 		border-radius: 0 10px 10px 0;
-		font-weight: 600;
+		font-weight: 500;
 		overflow: hidden;
+		font-size: var(--sizebar-font-size);
 	}
 
 	.md-sidebar__scrollwrap {
