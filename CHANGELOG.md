@@ -36,7 +36,7 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
--   Warning if the position of `INSTALLED_APPS['reactpy_django']` looks suspicious
+-   Warning W018 (`Suspicious position of 'reactpy_django' in INSTALLED_APPS`) has been added.
 
 ## [3.5.0] - 2023-08-26
 

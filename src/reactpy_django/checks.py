@@ -70,7 +70,7 @@ def reactpy_warnings(app_configs, **kwargs):
         warnings.append(
             Warning(
                 "ReactPy client.js could not be found within Django static files!",
-                hint="Check all Django settings and installed apps related to static files.",
+                hint="Check all static files related Django settings and INSTALLED_APPS.",
                 id="reactpy_django.W004",
             )
         )
@@ -239,7 +239,6 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
-    # Raise warning if `reactpy_django` is less than half way down installed apps
     position_to_beat = 0
     for app in INSTALLED_APPS:
         if app.startswith("django.contrib."):
@@ -250,8 +249,8 @@ def reactpy_warnings(app_configs, **kwargs):
     ):
         warnings.append(
             Warning(
-                "Suspicious position of INSTALLED_APPS['reactpy_django'].",
-                hint="Move 'reactpy_django' below all 'django.contrib.*' apps, or suppress this warning if you know what you're doing.",
+                "The position of 'reactpy_django' in INSTALLED_APPS is suspicious.",
+                hint="Move 'reactpy_django' below all 'django.contrib.*' apps, or suppress this warning.",
                 id="reactpy_django.W018",
             )
         )
