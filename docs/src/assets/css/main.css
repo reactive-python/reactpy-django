@@ -1,6 +1,5 @@
 /* Variable overrides */
 :root {
-	--code-max-height: 17.25rem;
 	--reactpy-color: #58b962;
 	--reactpy-color-dark: #42914a;
 	--reactpy-color-darker: #34743b;
@@ -8,25 +7,22 @@
 }
 
 [data-md-color-scheme="slate"] {
-	--md-code-hl-color: #ffffcf1c;
-	--md-hue: 225;
 	--md-default-bg-color: rgb(35 39 47);
 	--md-default-bg-color--light: hsla(var(--md-hue), 15%, 16%, 0.54);
 	--md-default-bg-color--lighter: hsla(var(--md-hue), 15%, 16%, 0.26);
 	--md-default-bg-color--lightest: hsla(var(--md-hue), 15%, 16%, 0.07);
-	--md-code-bg-color: #16181d;
 	--md-primary-fg-color: var(--md-default-bg-color);
 	--md-default-fg-color--light: #fff;
 	--md-typeset-a-color: var(--reactpy-color);
-	--md-code-hl-comment-color: hsla(var(--md-hue), 75%, 90%, 0.43);
 	--md-accent-fg-color: var(--reactpy-color-dark);
-	--md-footer-bg-color: var(--md-default-bg-color);
-	--md-footer-bg-color--dark: var(--md-default-bg-color);
-	--code-tab-color: rgb(52 58 70);
 }
 
 [data-md-color-scheme="default"] {
-	--code-tab-color: #7d829e26;
+	--md-primary-fg-color: var(--md-default-bg-color);
+	--md-default-fg-color--light: #000;
+	--md-typeset-color: rgb(35, 39, 47);
+	--md-typeset-a-color: var(--reactpy-color);
+	--md-accent-fg-color: var(--reactpy-color-dark);
 }
 
 /* Font changes */

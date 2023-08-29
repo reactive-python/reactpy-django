@@ -28,14 +28,15 @@ theme:
           toggle:
               icon: material/white-balance-sunny
               name: Switch to light mode
-          primary: light blue
-          accent: light blue
+          primary: red # We use red to indicate that something is unthemed
+          accent: red
         - media: "(prefers-color-scheme: light)"
           scheme: default
           toggle:
               icon: material/weather-night
               name: Switch to dark mode
-          primary: black
+          primary: white
+          accent: red
     features:
         - navigation.instant
         - navigation.tabs

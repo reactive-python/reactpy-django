@@ -1,4 +1,21 @@
-/* Code blocks */
+:root {
+	--code-max-height: 17.25rem;
+}
+
+[data-md-color-scheme="slate"] {
+	--md-code-hl-color: #ffffcf1c;
+	--md-code-bg-color: #16181d;
+	--md-code-hl-comment-color: hsla(var(--md-hue), 75%, 90%, 0.43);
+	--code-tab-color: rgb(52 58 70);
+}
+
+[data-md-color-scheme="default"] {
+	--md-code-hl-color: #ffffcf1c;
+	--md-code-bg-color: rgba(208, 211, 220, 0.4);
+	--md-code-fg-color: rgb(64, 71, 86);
+	--code-tab-color: #7d829e26;
+}
+
 .md-typeset pre > code {
 	border-radius: 16px;
 }

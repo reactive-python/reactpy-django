@@ -1,3 +1,11 @@
+[data-md-color-scheme="slate"] {
+	--md-header-border-color: rgb(255 255 255 / 5%);
+}
+
+[data-md-color-scheme="default"] {
+	--md-header-border-color: rgb(0 0 0 / 7%);
+}
+
 .md-header {
 	border: 0 solid transparent;
 	border-bottom-width: 1px;
@@ -5,7 +13,7 @@
 
 .md-header--shadow {
 	box-shadow: none;
-	border-color: rgb(255 255 255 / 5%);
+	border-color: var(--md-header-border-color);
 	transition: border-color 0.35s cubic-bezier(0.1, 0.7, 0.1, 1);
 }
 
@@ -90,6 +98,7 @@
 		width: fit-content;
 		z-index: -1;
 		overflow: visible;
+		border: none !important;
 	}
 	li.md-tabs__item.md-tabs__item--active {
 		background: var(--reactpy-color-opacity-10);

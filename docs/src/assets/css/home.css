@@ -1,3 +1,23 @@
+[data-md-color-scheme="slate"] {
+	--stripe-bg-color: conic-gradient(
+		from 90deg at -10% 100%,
+		#2b303b 0deg,
+		#2b303b 90deg,
+		#16181d 1turn
+	);
+	--stripe-border-color: rgba(246, 247, 249, 0.1);
+}
+
+[data-md-color-scheme="default"] {
+	--stripe-bg-color: conic-gradient(
+		from 90deg at -10% 100%,
+		#bcc1cd 0deg,
+		#bcc1cd 90deg,
+		#fff 1turn
+	);
+	--stripe-border-color: rgba(35, 39, 47, 0.1);
+}
+
 img.home-logo {
 	height: 120px;
 }
@@ -11,13 +31,8 @@ img.home-logo {
 }
 
 .home-row.stripe {
-	background: conic-gradient(
-		from 90deg at -10% 100%,
-		#2b303b 0deg,
-		#2b303b 90deg,
-		#16181d 1turn
-	);
-	border: 0 solid rgba(246, 247, 249, 0.1);
+	background: var(--stripe-bg-color);
+	border: 0 solid var(--stripe-border-color);
 	border-top-width: 1px;
 	border-bottom-width: 1px;
 }
