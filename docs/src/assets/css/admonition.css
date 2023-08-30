@@ -1,5 +1,6 @@
 [data-md-color-scheme="slate"] {
 	--admonition-border-color: transparent;
+	--admonition-expanded-border-color: rgba(255, 255, 255, 0.1);
 	--note-bg-color: rgb(43 110 98/ 0.2);
 	--terminal-bg-color: #0c0c0c;
 	--terminal-title-bg-color: #000;
@@ -9,6 +10,7 @@
 }
 [data-md-color-scheme="default"] {
 	--admonition-border-color: rgba(0, 0, 0, 0.08);
+	--admonition-expanded-border-color: var(--admonition-border-color);
 	--note-bg-color: rgb(244 251 249);
 	--terminal-bg-color: rgb(64 71 86);
 	--terminal-title-bg-color: rgb(35 39 47);
@@ -33,7 +35,11 @@
 
 .md-typeset .admonition:focus-within,
 .md-typeset details:focus-within {
-	box-shadow: var(--md-shadow-z1) !important;
+	box-shadow: none !important;
+}
+
+.md-typeset details[open] {
+	border-color: var(--admonition-expanded-border-color) !important;
 }
 
 /* 
