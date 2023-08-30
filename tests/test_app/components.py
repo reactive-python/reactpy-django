@@ -8,6 +8,7 @@ from django.http import HttpRequest
 from django.shortcuts import render
 from reactpy import component, hooks, html, web
 from reactpy_django.components import view_to_component
+from reactpy_django.types import QueryOptions
 
 from test_app.models import (
     AsyncForiegnChild,
@@ -602,3 +603,17 @@ def custom_host(number=0):
         },
         f"Server Port: {port}",
     )
+
+
+@component
+def broken_postprocessor_query():
+    relational_parent = reactpy_django.hooks.use_query(
+        QueryOptions(postprocessor=None), get_relational_parent_query
+    )
+
+    if not relational_parent.data:
+        return
+
+    mtm = relational_parent.data.many_to_many.all()
+
+    return html.div(f"This should have failed! Something went wrong: {mtm}")

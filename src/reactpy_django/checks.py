@@ -330,12 +330,12 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
     if not isinstance(
-        getattr(settings, "REACTPY_DEFAULT_QUERY_POSTPROCESSOR", ""), str
+        getattr(settings, "REACTPY_DEFAULT_QUERY_POSTPROCESSOR", ""), (str, type(None))
     ):
         errors.append(
             Error(
                 "Invalid type for REACTPY_DEFAULT_QUERY_POSTPROCESSOR.",
-                hint="REACTPY_DEFAULT_QUERY_POSTPROCESSOR should be a string.",
+                hint="REACTPY_DEFAULT_QUERY_POSTPROCESSOR should be a string or None.",
                 obj=settings.REACTPY_DEFAULT_QUERY_POSTPROCESSOR,
                 id="reactpy_django.E007",
             )
