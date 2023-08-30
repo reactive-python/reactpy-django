@@ -295,13 +295,13 @@ You can expect this hook to provide strings such as `/reactpy/my_path`.
 
     | Type | Description |
     | --- | --- |
-    | `Location` | A object containing the current URL's `pathname` and `search` query. |
+    | `Location` | An object containing the current URL's `pathname` and `search` query. |
 
 ??? info "This hook's behavior will be changed in a future update"
 
-    This hook will be updated to return the browser's currently active path. This change will come in alongside ReactPy URL routing support.
+    This hook will be updated to return the browser's currently active HTTP path. This change will come in alongside ReactPy URL routing support.
 
-    Check out [reactive-python/reactpy-router#2](https://github.com/idom-team/idom-router/issues/2) for more information.
+    Check out [reactive-python/reactpy-django#147](https://github.com/reactive-python/reactpy-django/issues/147) for more information.
 
 ## Use Origin
 

@@ -112,9 +112,7 @@ Now you can navigate to your **Django project** URL that contains a ReactPy comp
 
 If you copy-pasted our example component, you will now see your component display "Hello World".
 
-!!! warning "Pitfall"
-
-    Do not use `manage.py runserver` for production.
+??? warning "Do not use `manage.py runserver` for production"
 
     This command is only intended for development purposes. For production deployments make sure to read [Django's documentation](https://docs.djangoproject.com/en/dev/howto/deployment/).
 
