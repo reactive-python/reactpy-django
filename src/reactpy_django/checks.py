@@ -17,6 +17,7 @@ def reactpy_warnings(app_configs, **kwargs):
     from reactpy_django.config import REACTPY_FAILED_COMPONENTS
 
     warnings = []
+    INSTALLED_APPS: list[str] = getattr(settings, "INSTALLED_APPS", [])
 
     # REACTPY_DATABASE is not an in-memory database.
     if (
@@ -53,10 +54,7 @@ def reactpy_warnings(app_configs, **kwargs):
     # Warn if REACTPY_BACKHAUL_THREAD is set to True with Daphne
     if (
         sys.argv[0].endswith("daphne")
-        or (
-            "runserver" in sys.argv
-            and "daphne" in getattr(settings, "INSTALLED_APPS", [])
-        )
+        or ("runserver" in sys.argv and "daphne" in INSTALLED_APPS)
     ) and getattr(settings, "REACTPY_BACKHAUL_THREAD", False):
         warnings.append(
             Warning(
@@ -72,7 +70,7 @@ def reactpy_warnings(app_configs, **kwargs):
         warnings.append(
             Warning(
                 "ReactPy client.js could not be found within Django static files!",
-                hint="Check your Django static file configuration.",
+                hint="Check all static files related Django settings and INSTALLED_APPS.",
                 id="reactpy_django.W004",
             )
         )
@@ -238,6 +236,22 @@ def reactpy_warnings(app_configs, **kwargs):
                 f"{max_value} miliseconds, which is less than {config.REACTPY_RECONNECT_MAX_INTERVAL} (REACTPY_RECONNECT_MAX_INTERVAL).",
                 hint="Check your ReactPy REACTPY_RECONNECT_* settings.",
                 id="reactpy_django.W017",
+            )
+        )
+
+    position_to_beat = 0
+    for app in INSTALLED_APPS:
+        if app.startswith("django.contrib."):
+            position_to_beat = INSTALLED_APPS.index(app)
+    if (
+        "reactpy_django" in INSTALLED_APPS
+        and INSTALLED_APPS.index("reactpy_django") < position_to_beat
+    ):
+        warnings.append(
+            Warning(
+                "The position of 'reactpy_django' in INSTALLED_APPS is suspicious.",
+                hint="Move 'reactpy_django' below all 'django.contrib.*' apps, or suppress this warning.",
+                id="reactpy_django.W018",
             )
         )
 
