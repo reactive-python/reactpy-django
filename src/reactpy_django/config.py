@@ -53,15 +53,20 @@ REACTPY_DATABASE: str = getattr(
 _default_query_postprocessor = getattr(
     settings,
     "REACTPY_DEFAULT_QUERY_POSTPROCESSOR",
-    None,
+    "UNSET",
 )
-REACTPY_DEFAULT_QUERY_POSTPROCESSOR: AsyncPostprocessor | SyncPostprocessor | None = (
-    import_dotted_path(
-        _default_query_postprocessor
-        if isinstance(_default_query_postprocessor, str)
-        else "reactpy_django.utils.django_query_postprocessor",
+REACTPY_DEFAULT_QUERY_POSTPROCESSOR: AsyncPostprocessor | SyncPostprocessor | None
+if _default_query_postprocessor is None:
+    REACTPY_DEFAULT_QUERY_POSTPROCESSOR = None
+else:
+    REACTPY_DEFAULT_QUERY_POSTPROCESSOR = import_dotted_path(
+        "reactpy_django.utils.django_query_postprocessor"
+        if (
+            _default_query_postprocessor == "UNSET"
+            or not isinstance(_default_query_postprocessor, str)
+        )
+        else _default_query_postprocessor
     )
-)
 REACTPY_AUTH_BACKEND: str | None = getattr(
     settings,
     "REACTPY_AUTH_BACKEND",
