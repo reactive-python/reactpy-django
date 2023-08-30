@@ -105,7 +105,7 @@ class QueryOptions:
     are optional `postprocessor_kwargs` (see below). This postprocessor function must return
     the modified `data`.
 
-    If set to `None`, REACTPY_DEFAULT_QUERY_POSTPROCESSOR is used.
+    If unset, REACTPY_DEFAULT_QUERY_POSTPROCESSOR is used.
 
     ReactPy's default django_query_postprocessor prevents Django's lazy query execution, and
     additionally can be configured via `postprocessor_kwargs` to recursively fetch

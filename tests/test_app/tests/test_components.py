@@ -370,3 +370,8 @@ class ComponentTests(ChannelsLiveServerTestCase):
         broken_component = self.page.locator("#invalid_host_error")
         broken_component.wait_for()
         self.assertIn("InvalidHostError:", broken_component.text_content())
+
+    def test_broken_postprocessor_query(self):
+        broken_component = self.page.locator("#broken_postprocessor_query pre")
+        broken_component.wait_for()
+        self.assertIn("SynchronousOnlyOperation:", broken_component.text_content())
