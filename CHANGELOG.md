@@ -34,7 +34,9 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Changed
+
+-   The default postprocessor will be now disabled when `REACTPY_DEFAULT_QUERY_POSTPROCESSOR` is set to `None`.
 
 ## [3.5.0] - 2023-08-26
 
