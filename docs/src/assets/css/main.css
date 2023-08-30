@@ -20,6 +20,8 @@
 [data-md-color-scheme="default"] {
 	--md-primary-fg-color: var(--md-default-bg-color);
 	--md-default-fg-color--light: #000;
+	--md-default-fg-color--lighter: #000;
+	--md-default-fg-color--lightest: #202020;
 	--md-typeset-color: rgb(35, 39, 47);
 	--md-typeset-a-color: var(--reactpy-color);
 	--md-accent-fg-color: var(--reactpy-color-dark);

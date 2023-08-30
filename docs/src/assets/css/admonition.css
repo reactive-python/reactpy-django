@@ -1,8 +1,26 @@
-/* General admonition styling */
-/* TODO: Write this in a way that supports the light theme */
-[data-md-color-scheme="slate"] .md-typeset details,
-[data-md-color-scheme="slate"] .md-typeset .admonition {
-	border-color: transparent !important;
+[data-md-color-scheme="slate"] {
+	--admonition-border-color: transparent;
+	--note-bg-color: rgb(43 110 98/ 0.2);
+	--terminal-bg-color: #0c0c0c;
+	--terminal-title-bg-color: #000;
+	--deep-dive-bg-color: rgb(43 52 145 / 0.2);
+	--you-will-learn-bg-color: #353a45;
+	--pitfall-bg-color: rgb(182 87 0 / 0.2);
+}
+[data-md-color-scheme="default"] {
+	--admonition-border-color: rgba(0, 0, 0, 0.08);
+	--note-bg-color: rgb(244 251 249);
+	--terminal-bg-color: rgb(64 71 86);
+	--terminal-title-bg-color: rgb(35 39 47);
+	--deep-dive-bg-color: rgb(243 244 253);
+	--you-will-learn-bg-color: rgb(246, 247, 249);
+	--pitfall-bg-color: rgb(254, 245, 231);
+}
+
+.md-typeset details,
+.md-typeset .admonition {
+	border-color: var(--admonition-border-color) !important;
+	box-shadow: none;
 }
 
 .md-typeset :is(.admonition, details) {
@@ -18,43 +36,49 @@
 	box-shadow: var(--md-shadow-z1) !important;
 }
 
-/* Colors for "summary" admonition */
-[data-md-color-scheme="slate"] .md-typeset .admonition.summary {
-	background: #353a45;
+/* 
+Admonition: "summary" 
+React Name: "You will learn"
+*/
+.md-typeset .admonition.summary {
+	background: var(--you-will-learn-bg-color);
 	padding: 0.8rem 1.4rem;
 	border-radius: 0.8rem;
 }
 
-[data-md-color-scheme="slate"] .md-typeset .summary .admonition-title {
+.md-typeset .summary .admonition-title {
 	font-size: 1rem;
 	background: transparent;
 	padding-left: 0.6rem;
 	padding-bottom: 0;
 }
 
-[data-md-color-scheme="slate"] .md-typeset .summary .admonition-title:before {
+.md-typeset .summary .admonition-title:before {
 	display: none;
 }
 
-[data-md-color-scheme="slate"] .md-typeset .admonition.summary {
+.md-typeset .admonition.summary {
 	border-color: #ffffff17 !important;
 }
 
-/* Colors for "note" admonition */
-[data-md-color-scheme="slate"] .md-typeset .admonition.note {
-	background: rgb(43 110 98/ 0.2);
+/* 
+Admonition: "note" 
+React Name: "Note"
+*/
+.md-typeset .admonition.note {
+	background: var(--note-bg-color);
 	padding: 0.8rem 1.4rem;
 	border-radius: 0.8rem;
 }
 
-[data-md-color-scheme="slate"] .md-typeset .note .admonition-title {
+.md-typeset .note .admonition-title {
 	font-size: 1rem;
 	background: transparent;
 	padding-bottom: 0;
 	color: rgb(68 172 153);
 }
 
-[data-md-color-scheme="slate"] .md-typeset .note .admonition-title:before {
+.md-typeset .note .admonition-title:before {
 	font-size: 1.1rem;
 	background: rgb(68 172 153);
 }
@@ -65,60 +89,72 @@
 	mask-image: var(--md-admonition-icon--abstract);
 }
 
-/* Colors for "warning" admonition */
-[data-md-color-scheme="slate"] .md-typeset .admonition.warning {
-	background: rgb(182 87 0 / 0.2);
+/* 
+Admonition: "warning" 
+React Name: "Pitfall"
+*/
+.md-typeset .admonition.warning {
+	background: var(--pitfall-bg-color);
 	padding: 0.8rem 1.4rem;
 	border-radius: 0.8rem;
 }
 
-[data-md-color-scheme="slate"] .md-typeset .warning .admonition-title {
+.md-typeset .warning .admonition-title {
 	font-size: 1rem;
 	background: transparent;
 	padding-bottom: 0;
 	color: rgb(219 125 39);
 }
 
-[data-md-color-scheme="slate"] .md-typeset .warning .admonition-title:before {
+.md-typeset .warning .admonition-title:before {
 	font-size: 1.1rem;
 	background: rgb(219 125 39);
 }
 
-/* Colors for "info" admonition */
-[data-md-color-scheme="slate"] .md-typeset .admonition.info {
-	background: rgb(43 52 145 / 0.2);
+/* 
+Admonition: "info" 
+React Name: "Deep Dive"
+*/
+.md-typeset .admonition.info {
+	background: var(--deep-dive-bg-color);
 	padding: 0.8rem 1.4rem;
 	border-radius: 0.8rem;
 }
 
-[data-md-color-scheme="slate"] .md-typeset .info .admonition-title {
+.md-typeset .info .admonition-title {
 	font-size: 1rem;
 	background: transparent;
 	padding-bottom: 0;
 	color: rgb(136 145 236);
 }
 
-[data-md-color-scheme="slate"] .md-typeset .info .admonition-title:before {
+.md-typeset .info .admonition-title:before {
 	font-size: 1.1rem;
 	background: rgb(136 145 236);
 }
 
-/* Colors for "example" admonition */
-[data-md-color-scheme="slate"] .md-typeset .admonition.example {
-	background: rgb(94 104 126);
+/* 
+Admonition: "example" 
+React Name: "Terminal"
+*/
+.md-typeset .admonition.example {
+	background: var(--terminal-bg-color);
 	border-radius: 0.4rem;
+	overflow: hidden;
+	border: none;
 }
 
-[data-md-color-scheme="slate"] .md-typeset .example .admonition-title {
-	background: rgb(78 87 105);
+.md-typeset .example .admonition-title {
+	background: var(--terminal-title-bg-color);
 	color: rgb(246 247 249);
 }
 
-[data-md-color-scheme="slate"] .md-typeset .example .admonition-title:before {
+.md-typeset .example .admonition-title:before {
 	background: rgb(246 247 249);
 }
 
-[data-md-color-scheme="slate"] .md-typeset .admonition.example code {
+.md-typeset .admonition.example code {
 	background: transparent;
 	color: #fff;
+	box-shadow: none;
 }

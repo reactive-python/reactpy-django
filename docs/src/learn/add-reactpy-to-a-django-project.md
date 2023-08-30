@@ -32,7 +32,7 @@ Add `reactpy_django` to [`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev
     {% include "../../python/configure-installed-apps.py" %}
     ```
 
-??? warning "Enable Django Channels ASGI (Required)"
+!!! warning "Enable Django Channels ASGI (Required)"
 
     ReactPy-Django requires ASGI Websockets from [Django Channels](https://github.com/django/channels).
 
