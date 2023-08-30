@@ -39,7 +39,7 @@
 	max-height: var(--code-max-height);
 	overflow: hidden;
 }
-.md-typeset .highlighttable:not(:has(.tabbed-set)) {
+.md-typeset .highlighttable {
 	box-shadow: var(--md-code-backdrop);
 	border-radius: 8px;
 	overflow: hidden;
@@ -64,4 +64,7 @@
 	font-size: 0.7rem;
 	padding-top: 0.55em;
 	padding-bottom: 0.35em;
+}
+.md-typeset .tabbed-set .highlighttable {
+	border-radius: 0;
 }
