@@ -34,6 +34,10 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+### Added
+
+-   Warning W018 (`Suspicious position of 'reactpy_django' in INSTALLED_APPS`) has been added.
+
 ### Changed
 
 -   The default postprocessor will be now disabled when `REACTPY_DEFAULT_QUERY_POSTPROCESSOR` is set to `None`.
