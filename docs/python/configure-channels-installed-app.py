@@ -1,0 +1,4 @@
+INSTALLED_APPS = [
+    "daphne",
+    ...,
+]

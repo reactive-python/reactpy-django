@@ -32,23 +32,24 @@ Add `reactpy_django` to [`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev
     {% include "../../python/configure-installed-apps.py" %}
     ```
 
-??? warning "Enable Django Channels ASGI (Required)"
+??? warning "Enable ASGI and Django Channels (Required)"
 
-    ReactPy-Django requires ASGI Websockets from [Django Channels](https://github.com/django/channels).
+    ReactPy-Django requires Django ASGI and [Django Channels](https://github.com/django/channels) WebSockets.
 
-    If you have not enabled ASGI on your **Django project** yet, you will need to
+    If you have not enabled ASGI on your **Django project** yet, here is a summary of the [`django`](https://docs.djangoproject.com/en/dev/howto/deployment/asgi/) and [`channels`](https://channels.readthedocs.io/en/stable/installation.html) installation docs:
 
     1. Install `channels[daphne]`
     2. Add `daphne` to `INSTALLED_APPS`
-    3. Set your `ASGI_APPLICATION` variable.
 
-    === "settings.py"
-
-        ```python
-        {% include "../../python/configure-channels.py" %}
+        ```python linenums="0"
+        {% include "../../python/configure-channels-installed-app.py" %}
         ```
 
-    Consider reading the [Django Channels Docs](https://channels.readthedocs.io/en/stable/installation.html) for more info.
+    3. Set your `ASGI_APPLICATION` variable.
+
+        ```python linenums="0"
+        {% include "../../python/configure-channels-asgi-app.py" %}
+        ```
 
 ??? note "Configure ReactPy settings (Optional)"
 
