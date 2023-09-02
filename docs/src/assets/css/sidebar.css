@@ -2,21 +2,21 @@
 	--sizebar-font-size: 0.62rem;
 }
 
-/* Move the sidebar and TOC to the edge of the page */
-.md-main__inner.md-grid {
-	margin-left: 0;
-	margin-right: 0;
-	max-width: unset;
-	display: grid;
-	grid-template-columns: auto 1fr auto;
-}
-
-.md-content {
-	justify-self: center;
-}
-
 /* Desktop Styling */
 @media screen and (min-width: 76.1875em) {
+	/* Move the sidebar and TOC to the edge of the page */
+	.md-main__inner.md-grid {
+		margin-left: 0;
+		margin-right: 0;
+		max-width: unset;
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+	}
+
+	.md-content {
+		justify-self: center;
+		width: 100%;
+	}
 	/* Made the sidebar buttons look React-like */
 	.md-nav--lifted > .md-nav__list > .md-nav__item--active > .md-nav__link {
 		text-transform: uppercase;
