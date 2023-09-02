@@ -94,7 +94,6 @@ extra_javascript:
 
 extra_css:
     - assets/css/main.css
-    - assets/css/home.css
     - assets/css/button.css
     - assets/css/admonition.css
     - assets/css/sidebar.css
@@ -102,6 +101,7 @@ extra_css:
     - assets/css/table-of-contents.css
     - assets/css/code.css
     - assets/css/footer.css
+    - assets/css/home.css
 
 watch:
     - docs
