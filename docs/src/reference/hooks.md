@@ -16,9 +16,9 @@ Prefabricated hooks can be used within your `components.py` to help simplify dev
 
 ## Use Query
 
-The `use_query` hook is used fetch Django ORM queries.
+This hook is used [read](https://www.sumologic.com/glossary/crud/) data from the Django ORM.
 
-The function you provide into this hook must return either a `Model` or `QuerySet`.
+The query function you provide must return either a `#!python Model` or `#!python QuerySet`.
 
 === "components.py"
 
@@ -38,20 +38,20 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `options` | `QueryOptions | None` | An optional `QueryOptions` object that can modify how the query is executed. | None |
-    | `query` | `Callable[_Params, _Result | None]` | A callable that returns a Django `Model` or `QuerySet`. | N/A |
-    | `*args` | `_Params.args` | Positional arguments to pass into `query`. | N/A |
-    | `**kwargs` | `_Params.kwargs` | Keyword arguments to pass into `query`. | N/A |
+    | `#!python options` | `#!python QueryOptions | None` | An optional `#!python QueryOptions` object that can modify how the query is executed. | `#!python None` |
+    | `#!python query` | `#!python Callable[_Params, _Result | None]` | A callable that returns a Django `#!python Model` or `#!python QuerySet`. | N/A |
+    | `#!python *args` | `#!python _Params.args` | Positional arguments to pass into `#!python query`. | N/A |
+    | `#!python **kwargs` | `#!python _Params.kwargs` | Keyword arguments to pass into `#!python query`. | N/A |
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
-    | `Query[_Result | None]` | An object containing `loading`/`error` states, your `data` (if the query has successfully executed), and a `refetch` callable that can be used to re-run the query. |
+    | `#!python Query[_Result | None]` | An object containing `#!python loading`/`#!python error` states, your `#!python data` (if the query has successfully executed), and a `#!python refetch` callable that can be used to re-run the query. |
 
 ??? question "How can I provide arguments to my query function?"
 
-    `*args` and `**kwargs` can be provided to your query function via `use_query` parameters.
+    `#!python *args` and `#!python **kwargs` can be provided to your query function via `#!python use_query` parameters.
 
     === "components.py"
 
@@ -59,17 +59,17 @@ The function you provide into this hook must return either a `Model` or `QuerySe
         {% include "../../python/use-query-args.py" %}
         ```
 
-??? question "Why does `get_items` in the example return `TodoItem.objects.all()`?"
+??? question "Why does `#!python get_items` in the example return `#!python TodoItem.objects.all()`?"
 
-    This was a technical design decision to based on [Apollo's `useQuery` hook](https://www.apollographql.com/docs/react/data/queries/), but ultimately helps avoid Django's `SynchronousOnlyOperation` exceptions.
+    This was a technical design decision to based on [Apollo's `#!javascript useQuery` hook](https://www.apollographql.com/docs/react/data/queries/), but ultimately helps avoid Django's `#!python SynchronousOnlyOperation` exceptions.
 
-    The `use_query` hook ensures the provided `Model` or `QuerySet` executes all [deferred](https://docs.djangoproject.com/en/dev/ref/models/instances/#django.db.models.Model.get_deferred_fields)/[lazy queries](https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy) safely prior to reaching your components.
+    The `#!python use_query` hook ensures the provided `#!python Model` or `#!python QuerySet` executes all [deferred](https://docs.djangoproject.com/en/dev/ref/models/instances/#django.db.models.Model.get_deferred_fields)/[lazy queries](https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy) safely prior to reaching your components.
 
-??? question "How can I use `QueryOptions` to customize fetching behavior?"
+??? question "How can I use `#!python QueryOptions` to customize fetching behavior?"
 
-    <font size="4">**`thread_sensitive`**</font>
+    <font size="4">**`#!python thread_sensitive`**</font>
 
-    Whether to run your synchronous query function in thread-sensitive mode. Thread-sensitive mode is turned on by default due to Django ORM limitations. See Django's [`sync_to_async` docs](https://docs.djangoproject.com/en/dev/topics/async/#sync-to-async) docs for more information.
+    Whether to run your synchronous query function in thread-sensitive mode. Thread-sensitive mode is turned on by default due to Django ORM limitations. See Django's [`#!python sync_to_async` docs](https://docs.djangoproject.com/en/dev/topics/async/#sync-to-async) docs for more information.
 
     This setting only applies to sync query functions, and will be ignored for async functions.
 
@@ -81,16 +81,16 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     ---
 
-    <font size="4">**`postprocessor`**</font>
+    <font size="4">**`#!python postprocessor`**</font>
 
     {% include-markdown "../../includes/orm.md" start="<!--orm-fetch-start-->" end="<!--orm-fetch-end-->" %}
 
     However, if you...
 
     1. Want to use this hook to defer IO intensive tasks to be computed in the background
-    2. Want to to utilize `use_query` with a different ORM
+    2. Want to to utilize `#!python use_query` with a different ORM
 
-    ... then you can either set a custom `postprocessor`, or disable all postprocessing behavior by modifying the `QueryOptions.postprocessor` parameter. In the example below, we will set the `postprocessor` to `None` to disable postprocessing behavior.
+    ... then you can either set a custom `#!python postprocessor`, or disable all postprocessing behavior by modifying the `#!python QueryOptions.postprocessor` parameter. In the example below, we will set the `#!python postprocessor` to `#!python None` to disable postprocessing behavior.
 
     === "components.py"
 
@@ -98,11 +98,11 @@ The function you provide into this hook must return either a `Model` or `QuerySe
         {% include "../../python/use-query-postprocessor-disable.py" %}
         ```
 
-    If you wish to create a custom `postprocessor`, you will need to create a callable.
+    If you wish to create a custom `#!python postprocessor`, you will need to create a callable.
 
-    The first argument of `postprocessor` must be the query `data`. All proceeding arguments
-    are optional `postprocessor_kwargs` (see below). This `postprocessor` must return
-    the modified `data`.
+    The first argument of `#!python postprocessor` must be the query `#!python data`. All proceeding arguments
+    are optional `#!python postprocessor_kwargs` (see below). This `#!python postprocessor` must return
+    the modified `#!python data`.
 
     === "components.py"
 
@@ -112,13 +112,13 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
     ---
 
-    <font size="4">**`postprocessor_kwargs`**</font>
+    <font size="4">**`#!python postprocessor_kwargs`**</font>
 
     {% include-markdown "../../includes/orm.md" start="<!--orm-fetch-start-->" end="<!--orm-fetch-end-->" %}
 
-    However, if you have deep nested trees of relational data, this may not be a desirable behavior. In these scenarios, you may prefer to manually fetch these relational fields using a second `use_query` hook.
+    However, if you have deep nested trees of relational data, this may not be a desirable behavior. In these scenarios, you may prefer to manually fetch these relational fields using a second `#!python use_query` hook.
 
-    You can disable the prefetching behavior of the default `postprocessor` (located at `reactpy_django.utils.django_query_postprocessor`) via the `QueryOptions.postprocessor_kwargs` parameter.
+    You can disable the prefetching behavior of the default `#!python postprocessor` (located at `#!python reactpy_django.utils.django_query_postprocessor`) via the `#!python QueryOptions.postprocessor_kwargs` parameter.
 
     === "components.py"
 
@@ -130,7 +130,7 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
 ??? question "Can I define async query functions?"
 
-    Async functions are supported by `use_query`. You can use them in the same way as a sync query function.
+    Async functions are supported by `#!python use_query`. You can use them in the same way as a sync query function.
 
     However, be mindful of Django async ORM restrictions.
 
@@ -146,9 +146,9 @@ The function you provide into this hook must return either a `Model` or `QuerySe
 
 ## Use Mutation
 
-The `use_mutation` hook is used to create, update, or delete Django ORM objects.
+This hook is used to [create, update, or delete](https://www.sumologic.com/glossary/crud/) Django ORM objects.
 
-The function you provide into this hook will have no return value.
+The mutation function you provide should have no return value.
 
 === "components.py"
 
@@ -168,18 +168,18 @@ The function you provide into this hook will have no return value.
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `mutate` | `Callable[_Params, bool | None]` | A callable that performs Django ORM create, update, or delete functionality. If this function returns `False`, then your `refetch` function will not be used. | N/A |
-    | `refetch` | `Callable[..., Any] | Sequence[Callable[..., Any]] | None` | A `query` function (used by the `use_query` hook) or a sequence of `query` functions that will be called if the mutation succeeds. This is useful for refetching data after a mutation has been performed. | `None` |
+    | `#!python mutate` | `#!python Callable[_Params, bool | None]` | A callable that performs Django ORM create, update, or delete functionality. If this function returns `#!python False`, then your `#!python refetch` function will not be used. | N/A |
+    | `#!python refetch` | `#!python Callable[..., Any] | Sequence[Callable[..., Any]] | None` | A `#!python query` function (used by the `#!python use_query` hook) or a sequence of `#!python query` functions that will be called if the mutation succeeds. This is useful for refetching data after a mutation has been performed. | `#!python None` |
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
-    | `Mutation[_Params]` | An object containing `loading`/`error` states, a `reset` callable that will set `loading`/`error` states to defaults, and a `execute` callable that will run the query. |
+    | `#!python Mutation[_Params]` | An object containing `#!python loading`/`#!python error` states, a `#!python reset` callable that will set `#!python loading`/`#!python error` states to defaults, and a `#!python execute` callable that will run the query. |
 
 ??? question "How can I provide arguments to my mutation function?"
 
-    `*args` and `**kwargs` can be provided to your mutation function via `mutation.execute` parameters.
+    `#!python *args` and `#!python **kwargs` can be provided to your mutation function via #!python mutation.execute` parameters.
 
     === "components.py"
 
@@ -187,13 +187,13 @@ The function you provide into this hook will have no return value.
         {% include "../../python/use-mutation-args-kwargs.py" %}
         ```
 
-??? question "Can `use_mutation` trigger a refetch of `use_query`?"
+??? question "Can `#!python use_mutation` trigger a refetch of `#!python use_query`?"
 
-    Yes, `use_mutation` can queue a refetch of a `use_query` via the `refetch=...` argument.
+    Yes, `#!python use_mutation` can queue a refetch of a `#!python use_query` via the `#!python refetch=...` argument.
 
-    The example below is a merge of the `use_query` and `use_mutation` examples above with the addition of a `refetch` argument on `use_mutation`.
+    The example below is a merge of the `#!python use_query` and `#!python use_mutation` examples above with the addition of a `#!python use_mutation(refetch=...)` argument.
 
-    Please note that any `use_query` hooks that use `get_items` will be refetched upon a successful mutation.
+    Please note that any `#!python use_query` hooks that use `#!python get_items` will be refetched upon a successful mutation.
 
     === "components.py"
 
@@ -207,11 +207,11 @@ The function you provide into this hook will have no return value.
         {% include "../../python/example/models.py" %}
         ```
 
-??? question "Can I make a failed `use_mutation` try again?"
+??? question "Can I make a failed `#!python use_mutation` try again?"
 
-    Yes, a `use_mutation` can be re-performed by calling `reset()` on your `use_mutation` instance.
+    Yes, a `#!python use_mutation` can be re-performed by calling `#!python reset()` on your `#!python use_mutation` instance.
 
-    For example, take a look at `reset_event` below.
+    For example, take a look at `#!python reset_event` below.
 
     === "components.py"
 
@@ -231,7 +231,7 @@ The function you provide into this hook will have no return value.
 
 ## Use Connection
 
-You can fetch the Django Channels [websocket](https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer) at any time by using `use_connection`.
+This hook is used to fetch the Django Channels [WebSocket](https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer).
 
 === "components.py"
 
@@ -243,17 +243,17 @@ You can fetch the Django Channels [websocket](https://channels.readthedocs.io/en
 
     <font size="4">**Parameters**</font>
 
-    `None`
+    `#!python None`
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
-    | `Connection` | The component's websocket. |
+    | `#!python Connection` | The component's WebSocket. |
 
 ## Use Scope
 
-This is a shortcut that returns the Websocket's [`scope`](https://channels.readthedocs.io/en/stable/topics/consumers.html#scope).
+This is a shortcut that returns the WebSocket's [`#!python scope`](https://channels.readthedocs.io/en/stable/topics/consumers.html#scope).
 
 === "components.py"
 
@@ -265,17 +265,17 @@ This is a shortcut that returns the Websocket's [`scope`](https://channels.readt
 
     <font size="4">**Parameters**</font>
 
-    `None`
+    `#!python None`
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
-    | `MutableMapping[str, Any]` | The websocket's `scope`. |
+    | `#!python MutableMapping[str, Any]` | The WebSocket's `#!python scope`. |
 
 ## Use Location
 
-This is a shortcut that returns the Websocket's `path`.
+This is a shortcut that returns the WebSocket's `#!python path`.
 
 You can expect this hook to provide strings such as `/reactpy/my_path`.
 
@@ -289,13 +289,13 @@ You can expect this hook to provide strings such as `/reactpy/my_path`.
 
     <font size="4">**Parameters**</font>
 
-    `None`
+    `#!python None`
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
-    | `Location` | An object containing the current URL's `pathname` and `search` query. |
+    | `#!python Location` | An object containing the current URL's `#!python pathname` and `#!python search` query. |
 
 ??? info "This hook's behavior will be changed in a future update"
 
@@ -305,7 +305,7 @@ You can expect this hook to provide strings such as `/reactpy/my_path`.
 
 ## Use Origin
 
-This is a shortcut that returns the Websocket's `origin`.
+This is a shortcut that returns the WebSocket's `#!python origin`.
 
 You can expect this hook to provide strings such as `http://example.com`.
 
@@ -319,10 +319,10 @@ You can expect this hook to provide strings such as `http://example.com`.
 
     <font size="4">**Parameters**</font>
 
-    `None`
+    `#!python None`
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
-    | `str | None` | A string containing the browser's current origin, obtained from websocket headers (if available). |
+    | `#!python str | None` | A string containing the browser's current origin, obtained from WebSocket headers (if available). |

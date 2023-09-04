@@ -10,12 +10,21 @@
 	--md-code-bg-color: #16181d;
 	--md-code-hl-comment-color: hsla(var(--md-hue), 75%, 90%, 0.43);
 	--code-tab-color: rgb(52 58 70);
+	--md-code-hl-name-color: #aadafc;
+	--md-code-hl-string-color: hsl(21 49% 63% / 1);
+	--md-code-hl-keyword-color: hsl(289.67deg 35% 60%);
+	--md-code-hl-constant-color: hsl(213.91deg 68% 61%);
+	--md-code-hl-number-color: #bfd9ab;
+	--func-and-decorator-color: #dcdcae;
+	--module-import-color: #60c4ac;
 }
 [data-md-color-scheme="default"] {
 	--md-code-hl-color: #ffffcf1c;
 	--md-code-bg-color: rgba(208, 211, 220, 0.4);
 	--md-code-fg-color: rgb(64, 71, 86);
 	--code-tab-color: #fff;
+	--func-and-decorator-color: var(--md-code-hl-function-color);
+	--module-import-color: #e153e5;
 }
 [data-md-color-scheme="default"] .md-typeset .highlight > pre > code,
 [data-md-color-scheme="default"] .md-typeset .highlight > table.highlighttable {
@@ -67,4 +76,35 @@
 }
 .md-typeset .tabbed-set .highlighttable {
 	border-radius: 0;
+}
+
+/* Code hightlighting colors */
+
+/* Module imports */
+.highlight .nc,
+.highlight .ne,
+.highlight .nn,
+.highlight .nv {
+	color: var(--module-import-color);
+}
+
+/* Function def name and decorator */
+.highlight .nd,
+.highlight .nf {
+	color: var(--func-and-decorator-color);
+}
+
+/* None type */
+.highlight .kc {
+	color: var(--md-code-hl-constant-color);
+}
+
+/* Keywords such as def and return */
+.highlight .k {
+	color: var(--md-code-hl-constant-color);
+}
+
+/* HTML tags */
+.highlight .nt {
+	color: var(--md-code-hl-constant-color);
 }

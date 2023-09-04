@@ -56,7 +56,7 @@ Using the following categories, list your changes in this order:
 ### Changed
 
 -   Bumped the minimum ReactPy version to `1.0.2`.
--   Prettier websocket URLs for components that do not have sessions.
+-   Prettier WebSocket URLs for components that do not have sessions.
 -   Template tag will now only validate `args`/`kwargs` if `settings.py:DEBUG` is enabled.
 -   Bumped the minimum `@reactpy/client` version to `0.3.1`
 -   Bumped the minimum Django version to `4.2`.
@@ -79,7 +79,7 @@ Using the following categories, list your changes in this order:
 
 ### Changed
 
--   ReactPy will now provide a warning if your HTTP URLs are not on the same prefix as your websockets.
+-   ReactPy will now provide a warning if your HTTP URLs are not on the same prefix as your WebSockets.
 -   Cleaner logging output for auto-detected ReactPy root components.
 
 ### Deprecated
@@ -91,14 +91,14 @@ Using the following categories, list your changes in this order:
 
 -   Warning W007 (`REACTPY_WEBSOCKET_URL doesn't end with a slash`) has been removed. ReactPy now automatically handles slashes.
 -   Warning W008 (`REACTPY_WEBSOCKET_URL doesn't start with an alphanumeric character`) has been removed. ReactPy now automatically handles this scenario.
--   Error E009 (`channels is not in settings.py:INSTALLED_APPS`) has been removed. Newer versions of `channels` do not require installation via `INSTALLED_APPS` to receive an ASGI webserver.
+-   Error E009 (`channels is not in settings.py:INSTALLED_APPS`) has been removed. Newer versions of `channels` do not require installation via `INSTALLED_APPS` to receive an ASGI web server.
 
 ## [3.3.2] - 2023-08-13
 
 ### Added
 
--   ReactPy Websocket will now decode messages via `orjson` resulting in an ~6% overall performance improvement.
--   Built-in `asyncio` event loops are now patched via `nest_asyncio`, resulting in an ~10% overall performance improvement. This has no performance impact if you are running your webserver with `uvloop`.
+-   ReactPy WebSocket will now decode messages via `orjson` resulting in an ~6% overall performance improvement.
+-   Built-in `asyncio` event loops are now patched via `nest_asyncio`, resulting in an ~10% overall performance improvement. This has no performance impact if you are running your web server with `uvloop`.
 
 ### Fixed
 

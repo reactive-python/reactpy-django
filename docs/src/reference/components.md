@@ -24,24 +24,24 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `view` | `Callable | View` | The view function or class to convert. | N/A |
-    | `compatibility` | `bool` | If True, the component will be rendered in an iframe. When using compatibility mode `tranforms`, `strict_parsing`, `request`, `args`, and `kwargs` arguments will be ignored. | `False` |
-    | `transforms` | `Sequence[Callable[[VdomDict], Any]]` | A list of functions that transforms the newly generated VDOM. The functions will be called on each VDOM node. | `tuple` |
-    | `strict_parsing` | `bool` | If True, an exception will be generated if the HTML does not perfectly adhere to HTML5. | `True` |
+    | `#!python view` | `#!python Callable | View` | The view function or class to convert. | N/A |
+    | `#!python compatibility` | `#!python bool` | If `#!python True`, the component will be rendered in an iframe. When using compatibility mode `#!python tranforms`, `#!python strict_parsing`, `#!python request`, `#!python args`, and `#!python kwargs` arguments will be ignored. | `#!python False` |
+    | `#!python transforms` | `#!python Sequence[Callable[[VdomDict], Any]]` | A list of functions that transforms the newly generated VDOM. The functions will be called on each VDOM node. | `#!python tuple` |
+    | `#!python strict_parsing` | `#!python bool` | If `#!python True`, an exception will be generated if the HTML does not perfectly adhere to HTML5. | `#!python True` |
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
-    | `_ViewComponentConstructor` | A function that takes `request, *args, key, **kwargs` and returns a ReactPy component. All parameters are directly provided to your view, besides `key` which is used by ReactPy. |
+    | `#!python _ViewComponentConstructor` | A function that takes `#!python request, *args, key, **kwargs` and returns a ReactPy component. All parameters are directly provided to your view, besides `#!python key` which is used by ReactPy. |
 
-??? Warning "Potential information exposure when using `compatibility = True`"
+??? Warning "Potential information exposure when using `#!python compatibility = True`"
 
-    When using `compatibility` mode, ReactPy automatically exposes a URL to your view.
+    When using `#!python compatibility` mode, ReactPy automatically exposes a URL to your view.
 
     It is your responsibility to ensure privileged information is not leaked via this method.
 
-    You must implement a method to ensure only authorized users can access your view. This can be done via directly writing conditionals into your view, or by adding decorators such as [`user_passes_test`](https://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test) to your views. For example...
+    You must implement a method to ensure only authorized users can access your view. This can be done via directly writing conditionals into your view, or by adding decorators such as [`#!python user_passes_test`](https://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test) to your views. For example...
 
     === "Function Based View"
 
@@ -57,17 +57,17 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
 
 ??? info "Existing limitations"
 
-    There are currently several limitations of using `view_to_component` that may be resolved in a future version of `reactpy_django`.
+    There are currently several limitations of using `#!python view_to_component` that may be resolved in a future version.
 
     - Requires manual intervention to change request methods beyond `GET`.
     - ReactPy events cannot conveniently be attached to converted view HTML.
     - Has no option to automatically intercept local anchor link (such as `#!html <a href='example/'></a>`) click events.
 
-    _Please note these limitations do not exist when using `compatibility` mode._
+    _Please note these limitations do not exist when using `#!python compatibility` mode._
 
 ??? question "How do I use this for Class Based Views?"
 
-    You can simply pass your Class Based View directly into `view_to_component`.
+    You can simply pass your Class Based View directly into `#!python view_to_component`.
 
     === "components.py"
 
@@ -77,7 +77,7 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
 
 ??? question "How do I transform views from external libraries?"
 
-    In order to convert external views, you can utilize `view_to_component` as a function, rather than a decorator.
+    In order to convert external views, you can utilize `#!python view_to_component` as a function, rather than a decorator.
 
     === "components.py"
 
@@ -85,11 +85,11 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
         {% include "../../python/vtc-func.py" %}
         ```
 
-??? question "How do I provide `request`, `args`, and `kwargs` to a view?"
+??? question "How do I provide `#!python request`, `#!python args`, and `#!python kwargs` to a view?"
 
-    <font size="4">**`Request`**</font>
+    <font size="4">**`#!python Request`**</font>
 
-    You can use the `request` parameter to provide the view a custom request object.
+    You can use the `#!python request` parameter to provide the view a custom request object.
 
     === "components.py"
 
@@ -99,9 +99,9 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
 
     ---
 
-    <font size="4">**`args` and `kwargs`**</font>
+    <font size="4">**`#!python args` and `#!python kwargs`**</font>
 
-    You can use the `args` and `kwargs` parameters to provide positional and keyworded arguments to a view.
+    You can use the `#!python args` and `#!python kwargs` parameters to provide positional and keyworded arguments to a view.
 
     === "components.py"
 
@@ -109,15 +109,15 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
         {% include "../../python/vtc-args-kwargs.py" %}
         ```
 
-??? question "How do I use `strict_parsing`, `compatibility`, and `transforms`?"
+??? question "How do I use `#!python strict_parsing`, `#!python compatibility`, and `#!python transforms`?"
 
-    <font size="4">**`strict_parsing`**</font>
+    <font size="4">**`#!python strict_parsing`**</font>
 
     By default, an exception will be generated if your view's HTML does not perfectly adhere to HTML5.
 
     However, there are some circumstances where you may not have control over the original HTML, so you may be unable to fix it. Or you may be relying on non-standard HTML tags such as `#!html <my-tag> Hello World </my-tag>`.
 
-    In these scenarios, you may want to rely on best-fit parsing by setting the `strict_parsing` parameter to `False`.
+    In these scenarios, you may want to rely on best-fit parsing by setting the `#!python strict_parsing` parameter to `#!python False`.
 
     === "components.py"
 
@@ -129,11 +129,11 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
 
     ---
 
-    <font size="4">**`compatibility`**</font>
+    <font size="4">**`#!python compatibility`**</font>
 
     For views that rely on HTTP responses other than `GET` (such as `PUT`, `POST`, `PATCH`, etc), you should consider using compatibility mode to render your view within an iframe.
 
-    Any view can be rendered within compatibility mode. However, the `transforms`, `strict_parsing`, `request`, `args`, and `kwargs` arguments do not apply to compatibility mode.
+    Any view can be rendered within compatibility mode. However, the `#!python transforms`, `#!python strict_parsing`, `#!python request`, `#!python args`, and `#!python kwargs` arguments do not apply to compatibility mode.
 
 
 
@@ -143,17 +143,17 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
         {% include "../../python/vtc-compatibility.py" %}
         ```
 
-    _Note: By default the `compatibility` iframe is unstyled, and thus won't look pretty until you add some CSS._
+    _Note: By default the `#!python compatibility` iframe is unstyled, and thus won't look pretty until you add some CSS._
 
     ---
 
-    <font size="4">**`transforms`**</font>
+    <font size="4">**`#!python transforms`**</font>
 
-    After your view has been turned into [VDOM](https://reactpy.dev/docs/reference/specifications.html#vdom) (python dictionaries), `view_to_component` will call your `transforms` functions on every VDOM node.
+    After your view has been turned into [VDOM](https://reactpy.dev/docs/reference/specifications.html#vdom) (python dictionaries), `#!python view_to_component` will call your `#!python transforms` functions on every VDOM node.
 
     This allows you to modify your view prior to rendering.
 
-    For example, if you are trying to modify the text of a node with a certain `id`, you can create a transform like such:
+    For example, if you are trying to modify the text of a node with a certain `#!python id`, you can create a transform like such:
 
     === "components.py"
 
@@ -177,22 +177,22 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `static_path` | `str` | The path to the static file. This path is identical to what you would use on a `static` template tag. | N/A |
-    | `key` | `Key | None` | A key to uniquely identify this component which is unique amongst a component's immediate siblings | `None` |
+    | `#!python static_path` | `#!python str` | The path to the static file. This path is identical to what you would use on a `static` template tag. | N/A |
+    | `#!python key` | `#!python Key | None` | A key to uniquely identify this component which is unique amongst a component's immediate siblings | `#!python None` |
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
-    | `Component` | A ReactPy component. |
+    | `#!python Component` | A ReactPy component. |
 
-??? question "Should I put `django_css` at the top of my HTML?"
+??? question "Should I put `#!python django_css` at the top of my HTML?"
 
     Yes, if the stylesheet contains styling for your component.
 
-??? question "Can I load static CSS using `html.link` instead?"
+??? question "Can I load static CSS using `#!python html.link` instead?"
 
-    While you can load stylesheets with `html.link`, keep in mind that loading this way **does not** ensure load order. Thus, your stylesheet will be loaded after your component is displayed. This would likely cause unintended visual behavior, so use this at your own discretion.
+    While you can load stylesheets with `#!python html.link`, keep in mind that loading this way **does not** ensure load order. Thus, your stylesheet will be loaded after your component is displayed. This would likely cause unintended visual behavior, so use this at your own discretion.
 
     Here's an example on what you should avoid doing for Django static files:
 
@@ -202,9 +202,9 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
 ??? question "How do I load external CSS?"
 
-    `django_css` can only be used with local static files.
+    `#!python django_css` can only be used with local static files.
 
-    For external CSS, substitute `django_css` with `html.link`.
+    For external CSS, substitute `#!python django_css` with `#!python html.link`.
 
     ```python
     {% include "../../python/django-css-external-link.py" %}
@@ -214,7 +214,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
     Traditionally, stylesheets are loaded in your `#!html <head>` using the `#!jinja {% load static %}` template tag.
 
-    To help improve webpage load times, you can use the `django_css` component to defer loading your stylesheet until it is needed.
+    To help improve webpage load times, you can use the `#!python django_css` component to defer loading your stylesheet until it is needed.
 
 ## Django JS
 
@@ -232,22 +232,22 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `static_path` | `str` | The path to the static file. This path is identical to what you would use on a `static` template tag. | N/A |
-    | `key` | `Key | None` | A key to uniquely identify this component which is unique amongst a component's immediate siblings | `None` |
+    | `#!python static_path` | `#!python str` | The path to the static file. This path is identical to what you would use on a `static` template tag. | N/A |
+    | `#!python key` | `#!python Key | None` | A key to uniquely identify this component which is unique amongst a component's immediate siblings | `#!python None` |
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
-    | `Component` | A ReactPy component. |
+    | `#!python Component` | A ReactPy component. |
 
-??? question "Should I put `django_js` at the bottom of my HTML?"
+??? question "Should I put `#!python django_js` at the bottom of my HTML?"
 
     Yes, if your scripts are reliant on the contents of the component.
 
-??? question "Can I load static JavaScript using `html.script` instead?"
+??? question "Can I load static JavaScript using `#!python html.script` instead?"
 
-    While you can load JavaScript with `html.script`, keep in mind that loading this way **does not** ensure load order. Thus, your JavaScript will likely be loaded at an arbitrary time after your component is displayed.
+    While you can load JavaScript with `#!python html.script`, keep in mind that loading this way **does not** ensure load order. Thus, your JavaScript will likely be loaded at an arbitrary time after your component is displayed.
 
     Here's an example on what you should avoid doing for Django static files:
 
@@ -257,9 +257,9 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
 
 ??? question "How do I load external JS?"
 
-    `django_js` can only be used with local static files.
+    `#!python django_js` can only be used with local static files.
 
-    For external JavaScript, substitute `django_js` with `html.script`.
+    For external JavaScript, substitute `#!python django_js` with `#!python html.script`.
 
     ```python
     {% include "../../python/django-js-remote-script.py" %}
@@ -269,4 +269,4 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
 
     Traditionally, JavaScript is loaded in your `#!html <head>` using the `#!jinja {% load static %}` template tag.
 
-    To help improve webpage load times, you can use the `django_js` component to defer loading your JavaScript until it is needed.
+    To help improve webpage load times, you can use the `#!python django_js` component to defer loading your JavaScript until it is needed.

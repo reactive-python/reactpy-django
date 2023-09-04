@@ -60,7 +60,7 @@ def reactpy_warnings(app_configs, **kwargs):
             Warning(
                 "Unstable configuration detected. REACTPY_BACKHAUL_THREAD is enabled "
                 "and you running with Daphne.",
-                hint="Set settings.py:REACTPY_BACKHAUL_THREAD to False or use a different webserver.",
+                hint="Set settings.py:REACTPY_BACKHAUL_THREAD to False or use a different web server.",
                 id="reactpy_django.W003",
             )
         )

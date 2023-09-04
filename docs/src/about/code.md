@@ -44,7 +44,7 @@ pip install -e . -r requirements.txt
 
     If you receive errors related to this during installation, follow the instructions in your console errors.
 
-Finally, to verify that everything is working properly, you can manually run the test webserver.
+Finally, to verify that everything is working properly, you can manually run the test web server.
 
 ```bash linenums="0"
 cd tests
@@ -84,7 +84,7 @@ cd tests
 python manage.py test
 ```
 
-## Running Django test webserver
+## Running Django test web server
 
 If you want to manually run the Django test application, you can use the following command:
 

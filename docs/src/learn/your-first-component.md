@@ -31,7 +31,7 @@ You will need a file to start creating ReactPy components.
 
 We recommend creating a `components.py` file within your chosen **Django app** to start out. For this example, the file path will look like this: `./example_project/my_app/components.py`.
 
-Within this file, you can define your component functions and then add ReactPy's `#!python @component` decorator.
+Within this file, you can define your component functions using ReactPy's `#!python @component` decorator.
 
 === "components.py"
 
@@ -43,7 +43,7 @@ Within this file, you can define your component functions and then add ReactPy's
 
       We recommend creating a `components.py` for small **Django apps**. If your app has a lot of components, you should consider breaking them apart into individual modules such as `components/navbar.py`.
 
-      Ultimately, components are referenced by Python dotted path in `my-template.html` ([_see next step_](#embedding-in-a-template)). So, at minimum your component path needs to be valid to Python's `importlib`.
+      Ultimately, components are referenced by Python dotted path in `my-template.html` ([_see next step_](#embedding-in-a-template)). This path must be valid to Python's `#!python importlib`.
 
 ??? question "What does the decorator actually do?"
 
@@ -58,9 +58,9 @@ Within this file, you can define your component functions and then add ReactPy's
 
 ## Embedding in a template
 
-{% include-markdown "../../../README.md" start="<!--html-header-start-->" end="<!--html-header-end-->" %}
+In your **Django app**'s HTML template, you can now embed your ReactPy component using the `#!jinja {% component %}` template tag. Within this tag, you will need to type in the dotted path to the component.
 
-Additionally, you can pass in `args` and `kwargs` into your component function. After reading the code below, pay attention to how the function definition for `hello_world` ([_from the previous step_](#defining-a-component)) accepts a `recipient` argument.
+Additionally, you can pass in `#!python args` and `#!python kwargs` into your component function. After reading the code below, pay attention to how the function definition for `#!python hello_world` ([_from the previous step_](#defining-a-component)) accepts a `#!python recipient` argument.
 
 === "my-template.html"
 
@@ -72,7 +72,7 @@ Additionally, you can pass in `args` and `kwargs` into your component function. 
 
 ??? question "Where is my templates folder?"
 
-       If you do not have a `templates` folder in your **Django app**, you can simply create one! Keep in mind, templates within this folder will not be detected by Django unless you [add the corresponding **Django app** to `settings.py:INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/applications/#configuring-applications).
+       If you do not have a `./templates/` folder in your **Django app**, you can simply create one! Keep in mind, templates within this folder will not be detected by Django unless you [add the corresponding **Django app** to `settings.py:INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/applications/#configuring-applications).
 
 ## Setting up a Django view
 
@@ -102,7 +102,7 @@ We will add this new view into your [`urls.py`](https://docs.djangoproject.com/e
 
 ## Viewing your component
 
-To test your new Django view, run the following command to start up a development webserver.
+To test your new Django view, run the following command to start up a development web server.
 
 ```bash linenums="0"
 python manage.py runserver

@@ -81,8 +81,6 @@ def hello_world(recipient: str):
 
 In your **Django app**'s HTML template, you can now embed your ReactPy component using the `component` template tag. Within this tag, you will need to type in the dotted path to the component.
 
-<!--html-header-end-->
-
 Additionally, you can pass in `args` and `kwargs` into your component function. After reading the code below, pay attention to how the function definition for `hello_world` (_from the previous example_) accepts a `recipient` argument.
 
 <!--html-code-start-->
