@@ -17,8 +17,18 @@
 	transition: border-color 0.35s cubic-bezier(0.1, 0.7, 0.1, 1);
 }
 
-.md-header__title {
+/* Version selector */
+.md-header__topic .md-ellipsis,
+.md-header__title [data-md-component="header-topic"] {
 	display: none;
+}
+
+[dir="ltr"] .md-version__current {
+	margin: 0;
+}
+
+.md-version__list {
+	margin: 0.2rem -0.8rem;
 }
 
 /* Mobile Styling */
@@ -31,15 +41,18 @@
 		order: 2;
 		margin-right: auto;
 	}
-	.md-header__button[for="__search"] {
+	.md-header__title {
 		order: 3;
 	}
-	.md-header__option[data-md-component="palette"] {
+	.md-header__button[for="__search"] {
 		order: 4;
+	}
+	.md-header__option[data-md-component="palette"] {
+		order: 5;
 	}
 	.md-header__source {
 		display: initial;
-		order: 5;
+		order: 6;
 	}
 	.md-header__source .md-source__repository {
 		display: none;
@@ -68,9 +81,20 @@
 		height: 2rem;
 	}
 
+	/* Version selector */
+	[dir="ltr"] .md-header__title {
+		order: 2;
+		margin: 0;
+		margin-right: 0.8rem;
+		margin-left: 0.2rem;
+	}
+	.md-header__topic {
+		position: relative;
+	}
+
 	/* Search */
 	.md-search {
-		order: 2;
+		order: 3;
 		width: 100%;
 		margin-right: 0.6rem;
 	}
@@ -89,7 +113,7 @@
 
 	/* Tabs */
 	.md-tabs {
-		order: 3;
+		order: 4;
 		min-width: -webkit-fit-content;
 		min-width: -moz-fit-content;
 		min-width: fit-content;
@@ -118,12 +142,12 @@
 
 	/* Dark/Light Selector */
 	.md-header__option[data-md-component="palette"] {
-		order: 4;
+		order: 5;
 	}
 
 	/* GitHub info */
 	.md-header__source {
-		order: 5;
+		order: 6;
 		margin-left: 0 !important;
 	}
 }
