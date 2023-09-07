@@ -2,8 +2,8 @@ django
 sanic
 plotly
 nox
-websocket
-websockets
+WebSocket
+WebSockets
 changelog
 async
 pre
@@ -16,7 +16,6 @@ refetched
 refetching
 html
 jupyter
-webserver
 iframe
 keyworded
 stylesheet
