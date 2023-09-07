@@ -59,6 +59,7 @@
 	box-shadow: var(--md-code-backdrop);
 	border-radius: 8px;
 	overflow: hidden;
+	border: 1px solid var(--md-default-fg-color--lightest);
 }
 .md-typeset .tabbed-set .tabbed-block {
 	overflow: hidden;

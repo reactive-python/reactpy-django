@@ -16,6 +16,7 @@
         --row-bg-color: conic-gradient(from -90deg at 110% 100%, #2b303b 0deg, #16181d 90deg, #16181d 1turn);
         --stripe-border-color: rgba(246, 247, 249, 0.1);
         --code-block-filter: none;
+        --home-tabbed-set-bg-color: #1f1f1f;
     }
 
     [data-md-color-scheme="default"] {
@@ -27,6 +28,7 @@
         --stripe-border-color: rgba(35, 39, 47, 0.1);
         --code-block-filter: invert(1) contrast(1.3) hue-rotate(180deg) saturate(2);
         --code-tab-color: rgb(246 247 249);
+        --home-tabbed-set-bg-color: #fff;
     }
 
     /* Application header should be static for the landing page */
@@ -66,10 +68,11 @@
             components like <code>thumbnail</code>, <code>like_button</code>, and <code>video</code>. Then combine
             them into entire screens, pages, and apps.
         </p>
-        <div class="code-container">
-            {% with image="create-user-interfaces.png", num=1 %}
+        <div class="example-container">
+            {% with image="create-user-interfaces.png", class="pop-left" %}
             {% include "home-code-examples/code-block.html" %}
             {% endwith %}
+            {% include "home-code-examples/create-user-interfaces-demo.html" %}
         </div>
         <p>
             Whether you work on your own or with thousands of other developers, using React feels the same. It is
@@ -86,10 +89,12 @@
             <a href="https://www.w3schools.com/python/python_lists_comprehension.asp">list comprehension</a>.
             Learning ReactPy is learning programming.
         </p>
-        <div class="code-container">
-            {% with image="write-components-with-python.png", num=2 %}
+        <div class="example-container">
+            {% with image="write-components-with-python.png", class="pop-left" %}
             {% include "home-code-examples/code-block.html" %}
             {% endwith %}
+            {% include "home-code-examples/write-components-with-python-demo.html" %}
+
         </div>
     </div>
 
@@ -100,10 +105,11 @@
             response to an interaction, like when the user types into an input. ReactPy will then update the screen to
             match the new data.
         </p>
-        <div class="code-container">
-            {% with image="add-interactivity.png", num=3 %}
+        <div class="example-container">
+            {% with image="add-interactivity.png" %}
             {% include "home-code-examples/code-block.html" %}
             {% endwith %}
+            {% include "home-code-examples/add-interactivity-demo.html" %}
         </div>
         <p>
             You don't have to build your whole page in ReactPy. Add React to your existing HTML page, and render
