@@ -87,6 +87,7 @@
 		margin: 0;
 		margin-right: 0.8rem;
 		margin-left: 0.2rem;
+		flex-grow: 0;
 	}
 	.md-header__topic {
 		position: relative;
