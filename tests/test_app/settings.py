@@ -24,7 +24,7 @@ SRC_DIR = BASE_DIR.parent / "src"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-n!bd1#+7ufw5#9ipayu9k(lyu@za$c2ajbro7es(v8_7w1$=&c"
 
-# Run in production mode when using a real webserver
+# Run in production mode when using a real web server
 DEBUG = all(
     not sys.argv[0].endswith(substring)
     for substring in {"hypercorn", "uvicorn", "daphne"}

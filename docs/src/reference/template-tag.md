@@ -10,7 +10,7 @@ Django template tags can be used within your HTML templates to provide ReactPy f
 
 ## Component
 
-The `component` template tag can be used to insert any number of ReactPy components onto your page.
+This template tag can be used to insert any number of ReactPy components onto your page.
 
 === "my-template.html"
 
@@ -22,18 +22,18 @@ The `component` template tag can be used to insert any number of ReactPy compone
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `dotted_path` | `str` | The dotted path to the component to render. | N/A |
-    | `*args` | `Any` | The positional arguments to provide to the component. | N/A |
-    | `class` | `str | None` | The HTML class to apply to the top-level component div. | `None` |
-    | `key` | `str | None` | Force the component's root node to use a [specific key value](https://reactpy.dev/docs/guides/creating-interfaces/rendering-data/index.html#organizing-items-with-keys). Using `key` within a template tag is effectively useless. | `None` |
-    | `host` | `str | None` | The host to use for the ReactPy connections. If set to `None`, the host will be automatically configured.<br/>Example values include: `localhost:8000`, `example.com`, `example.com/subdir` | `None` |
-    | `**kwargs` | `Any` | The keyword arguments to provide to the component. | N/A |
+    | `#!python dotted_path` | `#!python str` | The dotted path to the component to render. | N/A |
+    | `#!python *args` | `#!python Any` | The positional arguments to provide to the component. | N/A |
+    | `#!python class` | `#!python str | None` | The HTML class to apply to the top-level component div. | `#!python None` |
+    | `#!python key` | `#!python str | None` | Force the component's root node to use a [specific key value](https://reactpy.dev/docs/guides/creating-interfaces/rendering-data/index.html#organizing-items-with-keys). Using `#!python key` within a template tag is effectively useless. | `#!python None` |
+    | `#!python host` | `#!python str | None` | The host to use for the ReactPy connections. If set to `#!python None`, the host will be automatically configured.<br/>Example values include: `localhost:8000`, `example.com`, `example.com/subdir` | `#!python None` |
+    | `#!python **kwargs` | `#!python Any` | The keyword arguments to provide to the component. | N/A |
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
-    | `Component` | A ReactPy component. |
+    | `#!python Component` | A ReactPy component. |
 
 <!--context-start-->
 
@@ -65,7 +65,7 @@ The `component` template tag can be used to insert any number of ReactPy compone
 
 ??? question "Can I render components on a different server (distributed computing)?"
 
-    Yes! By using the `host` keyword argument, you can render components from a completely separate ASGI server.
+    Yes! By using the `#!python host` keyword argument, you can render components from a completely separate ASGI server.
 
     === "my-template.html"
 
@@ -80,8 +80,8 @@ The `component` template tag can be used to insert any number of ReactPy compone
     Here's a couple of things to keep in mind:
 
     1. If your host address are completely separate ( `origin1.com != origin2.com` ) you will need to [configure CORS headers](https://pypi.org/project/django-cors-headers/) on your main application during deployment.
-    2. You will not need to register ReactPy HTTP or websocket paths on any applications that do not perform any component rendering.
-    3. Your component will only be able to access `*args`/`**kwargs` you provide to the template tag if your applications share a common database.
+    2. You will not need to register ReactPy HTTP or WebSocket paths on any applications that do not perform any component rendering.
+    3. Your component will only be able to access `#!python *args`/`#!python **kwargs` you provide to the template tag if your applications share a common database.
 
 <!--multiple-components-start-->
 
@@ -112,7 +112,7 @@ The `component` template tag can be used to insert any number of ReactPy compone
 
 ??? question "Can I use positional arguments instead of keyword arguments?"
 
-    You can use any combination of `*args`/`**kwargs` in your template tag.
+    You can use any combination of `#!python *args`/`#!python **kwargs` in your template tag.
 
     === "my-template.html"
 

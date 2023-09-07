@@ -14,7 +14,7 @@
 
 ---
 
-## Modifying Code
+## Creating an environment
 
 If you plan to make code changes to this repository, you will need to install the following dependencies first:
 
@@ -38,7 +38,13 @@ Then, by running the command below you can:
 pip install -e . -r requirements.txt
 ```
 
-Finally, to verify that everything is working properly, you can manually run the test webserver.
+!!! warning "Pitfall"
+
+    Some of our development dependencies require a C++ compiler, which is not installed by default on Windows.
+
+    If you receive errors related to this during installation, follow the instructions in your console errors.
+
+Finally, to verify that everything is working properly, you can manually run the test web server.
 
 ```bash linenums="0"
 cd tests
@@ -47,6 +53,42 @@ python manage.py runserver
 
 Navigate to [`http://127.0.0.1:8000`](http://127.0.0.1:8000) to see if the tests are rendering correctly.
 
-## GitHub Pull Request
+## Creating a pull request
 
 {% include-markdown "../../includes/pr.md" %}
+
+## Running the full test suite
+
+!!! note
+
+    This repository uses [Nox](https://nox.thea.codes/en/stable/) to run tests. For a full test of available scripts run `nox -l`.
+
+By running the command below you can run the full test suite:
+
+```bash linenums="0"
+nox -s test
+```
+
+Or, if you want to run the tests in the background:
+
+```bash linenums="0"
+nox -s test -- --headless
+```
+
+## Running Django tests
+
+If you want to only run our Django tests in your current environment, you can use the following command:
+
+```bash linenums="0"
+cd tests
+python manage.py test
+```
+
+## Running Django test web server
+
+If you want to manually run the Django test application, you can use the following command:
+
+```bash linenums="0"
+cd tests
+python manage.py runserver
+```

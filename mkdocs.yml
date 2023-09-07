@@ -2,28 +2,22 @@
 nav:
     - Home: index.md
     - Get Started:
-          - Install ReactPy-Django: get-started/installation.md
-          - Choose a Django App: get-started/choose-django-app.md
-          - Create a Component: get-started/create-component.md
-          - Use the Template Tag: get-started/use-template-tag.md
-          - Register a View: get-started/register-view.md
-          - Run the Webserver: get-started/run-webserver.md
-          - Learn More: get-started/learn-more.md
+          - Add ReactPy to a Django Project: learn/add-reactpy-to-a-django-project.md
+          - Your First Component: learn/your-first-component.md
     - Reference:
-          - Components: features/components.md
-          - Hooks: features/hooks.md
-          - Decorators: features/decorators.md
-          - Utilities: features/utils.md
-          - Template Tag: features/template-tag.md
-          - Settings: features/settings.md
+          - Components: reference/components.md
+          - Hooks: reference/hooks.md
+          - Decorators: reference/decorators.md
+          - Utilities: reference/utils.md
+          - Template Tag: reference/template-tag.md
+          - Settings: reference/settings.md
     - About:
           - Contribute:
-                - Code: contribute/code.md
-                - Docs: contribute/docs.md
-                - Running Tests: contribute/running-tests.md
+                - Code: about/code.md
+                - Docs: about/docs.md
           - GitHub Discussions: https://github.com/reactive-python/reactpy-django/discussions
           - Discord: https://discord.gg/uNb5P4hA9X
-          - Changelog: changelog/index.md
+          - Changelog: about/changelog.md
 
 theme:
     name: material
@@ -34,19 +28,22 @@ theme:
           toggle:
               icon: material/white-balance-sunny
               name: Switch to light mode
-          primary: light blue
-          accent: light blue
+          primary: red # We use red to indicate that something is unthemed
+          accent: red
         - media: "(prefers-color-scheme: light)"
           scheme: default
           toggle:
               icon: material/weather-night
               name: Switch to dark mode
-          primary: black
+          primary: white
+          accent: red
     features:
         - navigation.instant
         - navigation.tabs
+        - navigation.tabs.sticky
         - navigation.top
         - content.code.copy
+        - search.highlight
     icon:
         repo: fontawesome/brands/github
     logo: https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg
@@ -93,10 +90,18 @@ extra:
         provider: mike
 
 extra_javascript:
-    - static/js/extra.js
+    - assets/js/main.js
 
 extra_css:
-    - static/css/extra.css
+    - assets/css/main.css
+    - assets/css/button.css
+    - assets/css/admonition.css
+    - assets/css/sidebar.css
+    - assets/css/navbar.css
+    - assets/css/table-of-contents.css
+    - assets/css/code.css
+    - assets/css/footer.css
+    - assets/css/home.css
 
 watch:
     - docs
@@ -107,8 +112,8 @@ watch:
 
 site_name: ReactPy-Django
 site_author: Archmonger
-site_description: React for Django developers.
-copyright: Copyright &copy; 2023 Reactive Python
+site_description: It's React, but in Python. Now for Django developers.
+copyright: Copyright &copy; 2023 Reactive Python.<div class="legal-footer-right">This project has no affiliation to ReactJS or Meta Platforms, Inc.</div>
 repo_url: https://github.com/reactive-python/reactpy-django
 site_url: https://reactive-python.github.io/reactpy-django
 repo_name: reactive-python/reactpy-django
