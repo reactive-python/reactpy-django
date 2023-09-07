@@ -32,7 +32,7 @@ Using the following categories, list your changes in this order:
 
 <!--changelog-start-->
 
-## [Unreleased]
+## [3.5.1] - 2023-09-07
 
 ### Added
 
@@ -41,6 +41,7 @@ Using the following categories, list your changes in this order:
 ### Changed
 
 -   The default postprocessor can now disabled by setting `REACTPY_DEFAULT_QUERY_POSTPROCESSOR` to `None`.
+-   Massive overhaul of docs styling.
 
 ## [3.5.0] - 2023-08-26
 
@@ -393,7 +394,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.5.0...HEAD
+[unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.5.1...HEAD
+[3.5.1]: https://github.com/reactive-python/reactpy-django/compare/3.5.0...3.5.1
 [3.5.0]: https://github.com/reactive-python/reactpy-django/compare/3.4.0...3.5.0
 [3.4.0]: https://github.com/reactive-python/reactpy-django/compare/3.3.2...3.4.0
 [3.3.2]: https://github.com/reactive-python/reactpy-django/compare/3.3.1...3.3.2
