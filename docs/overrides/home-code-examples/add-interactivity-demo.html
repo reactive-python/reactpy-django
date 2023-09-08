@@ -134,6 +134,7 @@
                     </svg>
                 </button>
             </div>
+            <p class="no-match"></p>
         </div>
 
         <script>
@@ -159,6 +160,12 @@
                     }
                     document.querySelector(".browser-viewport h2").innerText =
                         numVids + " Videos";
+
+                    if (search && numVids == 0) {
+                        document.querySelector(".browser-viewport .no-match").innerText = `No matches for “${search}”`;
+                    } else {
+                        document.querySelector(".browser-viewport .no-match").innerText = "";
+                    }
                 });
         </script>
     </div>
