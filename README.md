@@ -107,7 +107,7 @@ Follow the links below to find out more about this project.
 -   [Documentation](https://reactive-python.github.io/reactpy-django)
 -   [GitHub Discussions](https://github.com/reactive-python/reactpy-django/discussions)
 -   [Discord](https://discord.gg/uNb5P4hA9X)
--   [Contributor Guide](https://reactive-python.github.io/reactpy-django/latest/contribute/code/)
+-   [Contributor Guide](https://reactive-python.github.io/reactpy-django/latest/about/code/)
 -   [Code of Conduct](https://github.com/reactive-python/reactpy-django/blob/main/CODE_OF_CONDUCT.md)
 
 <!--resources-end-->
