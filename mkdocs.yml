@@ -112,7 +112,7 @@ watch:
 
 site_name: ReactPy-Django
 site_author: Archmonger
-site_description: It's React, but in Python. Now for Django developers.
+site_description: It's React, but in Python. Now with Django integration.
 copyright: Copyright &copy; 2023 Reactive Python.<div class="legal-footer-right">This project has no affiliation to ReactJS or Meta Platforms, Inc.</div>
 repo_url: https://github.com/reactive-python/reactpy-django
 site_url: https://reactive-python.github.io/reactpy-django
