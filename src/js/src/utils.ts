@@ -68,9 +68,8 @@ export function nextInterval(
 	maxInterval: number
 ): number {
 	return Math.min(
-		currentInterval *
-			// increase interval by backoff multiplier
-			backoffMultiplier,
+		// increase interval by backoff multiplier
+		currentInterval * backoffMultiplier,
 		// don't exceed max interval
 		maxInterval
 	);
