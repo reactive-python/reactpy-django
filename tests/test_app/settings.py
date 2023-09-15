@@ -159,6 +159,7 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
+
 # Logging
 LOG_LEVEL = "WARNING"
 if DEBUG and ("test" not in sys.argv):

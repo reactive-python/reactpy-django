@@ -8,7 +8,7 @@ from reactpy import component, html
 def preload_string():
     scope = reactpy_django.hooks.use_scope()
 
-    sleep(1)
+    sleep(0.5)
     return (
         "preload_string: Fully Rendered"
         if scope.get("type") == "websocket"
@@ -23,7 +23,6 @@ def preload_vdom():
     if scope.get("type") == "http":
         return html.div("preload_vdom: Preloaded")
 
-    sleep(1)
     return html.div("preload_vdom: Fully Rendered")
 
 
@@ -38,5 +37,4 @@ def preload_component():
     if scope.get("type") == "http":
         return inner("preload_component: Preloaded")
 
-    sleep(1)
-    return inner("preload_component: Fully Rendered ")
+    return inner("preload_component: Fully Rendered")

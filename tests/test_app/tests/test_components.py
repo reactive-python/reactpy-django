@@ -4,6 +4,7 @@ import socket
 import sys
 from distutils.util import strtobool
 from functools import partial
+from time import sleep
 
 from channels.testing import ChannelsLiveServerTestCase
 from channels.testing.live import make_application
@@ -375,3 +376,34 @@ class ComponentTests(ChannelsLiveServerTestCase):
         broken_component = self.page.locator("#broken_postprocessor_query pre")
         broken_component.wait_for()
         self.assertIn("SynchronousOnlyOperation:", broken_component.text_content())
+
+    def test_preload(self):
+        """Verify if round-robin host selection is working."""
+        new_page = self.browser.new_page()
+        try:
+            new_page.goto(f"{self.live_server_url}/preload/")
+            string = new_page.locator("#preload_string")
+            vdom = new_page.locator("#preload_vdom")
+            component = new_page.locator("#preload_component")
+
+            string.wait_for()
+            vdom.wait_for()
+            component.wait_for()
+
+            # Check if the preload occurred
+            self.assertEqual(string.all_inner_texts(), ["preload_string: Preloaded"])
+            self.assertEqual(vdom.all_inner_texts(), ["preload_vdom: Preloaded"])
+            self.assertEqual(
+                component.all_inner_texts(), ["preload_component: Preloaded"]
+            )
+
+            sleep(1)
+            self.assertEqual(
+                string.all_inner_texts(), ["preload_string: Fully Rendered"]
+            )
+            self.assertEqual(vdom.all_inner_texts(), ["preload_vdom: Fully Rendered"])
+            self.assertEqual(
+                component.all_inner_texts(), ["preload_component: Fully Rendered"]
+            )
+        finally:
+            new_page.close()

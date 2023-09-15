@@ -174,7 +174,3 @@ def view_to_component_kwargs(request, success="false"):
             "status": success,
         },
     )
-
-
-def preload(request):
-    return render(request, "preload.html", {})
