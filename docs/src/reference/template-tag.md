@@ -37,11 +37,11 @@ This template tag can be used to insert any number of ReactPy components onto yo
 
 <!--context-start-->
 
-??? warning "Do not use context variables for the ReactPy component name"
+??? warning "Do not use context variables for the component path"
 
-    Our preprocessor relies on the template tag containing a string.
+    The ReactPy component finder (`#!python reactpy_django.utils.RootComponentFinder`) requires that your component path is a string.
 
-    **Do not** use Django template/context variables for the component path. Failure to follow this warning can result in unexpected behavior.
+    **Do not** use Django template/context variables for the component path. Failure to follow this warning can result in unexpected behavior, such as components that will not render.
 
     For example, **do not** do the following:
 
@@ -52,7 +52,7 @@ This template tag can be used to insert any number of ReactPy components onto yo
         {% component "example_project.my_app.components.hello_world" recipient="World" %}
 
         <!-- This is bad -->
-        {% component dont_do_this recipient="World" %}
+        {% component my_variable recipient="World" %}
         ```
 
     === "views.py"

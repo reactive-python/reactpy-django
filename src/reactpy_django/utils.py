@@ -119,8 +119,8 @@ def import_dotted_path(dotted_path: str) -> Callable:
     return getattr(module, component_name)
 
 
-class ComponentPreloader:
-    """Preloads all ReactPy components found within Django templates.
+class RootComponentFinder:
+    """Searches Django templates to find and register all root components.
     This should only be `run` once on startup to maintain synchronization during mulitprocessing.
     """
 

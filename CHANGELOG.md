@@ -40,6 +40,10 @@ Using the following categories, list your changes in this order:
     -   `settings.py:REACTPY_PRERENDER` can be set to `True` to enable this behavior by default
     -   Or, you can enable it on individual components via the template tag: `{% component "..." prerender="True" %}`
 
+### Changed
+
+-   Renamed undocumented utility function `reactpy_django.utils.ComponentPreloader` to `reactpy_django.utils.RootComponentFinder`.
+
 ## [3.5.1] - 2023-09-07
 
 ### Added
