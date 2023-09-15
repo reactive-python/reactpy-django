@@ -32,6 +32,14 @@ Using the following categories, list your changes in this order:
 
 <!--changelog-start-->
 
+## [Unreleased]
+
+### Added
+
+-   ReactPy components can now use SEO compatible rendering!
+    -   `settings.py:REACTPY_PRELOAD_DEFAULT` can be set to `True` to enable this behavior by default
+    -   Or, you can enable it on individual components via the template tag: `{% component "..." preload="True" %}`
+
 ## [3.5.1] - 2023-09-07
 
 ### Added
