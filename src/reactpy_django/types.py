@@ -51,7 +51,7 @@ class ComponentWebsocket:
     dotted_path: str
 
 
-Connection = _Connection[ComponentWebsocket | HttpRequest]
+Connection = _Connection[Union[ComponentWebsocket, HttpRequest]]
 
 
 @dataclass

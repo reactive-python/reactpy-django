@@ -67,7 +67,8 @@ def use_origin() -> str | None:
             )
             return f"{scope['scheme']}://{host}" if host else None
     except Exception:
-        return None
+        _logger.info("Failed to get origin")
+    return None
 
 
 def use_scope() -> dict[str, Any]:
