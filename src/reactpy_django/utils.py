@@ -11,6 +11,7 @@ from importlib import import_module
 from inspect import iscoroutinefunction
 from typing import Any, Callable, Sequence
 
+from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from django.db.models import ManyToManyField, ManyToOneRel, prefetch_related_objects
 from django.db.models.base import Model
@@ -20,6 +21,7 @@ from django.template import engines
 from django.utils import timezone
 from django.utils.encoding import smart_str
 from django.views import View
+from reactpy.core.layout import Layout
 from reactpy.types import ComponentConstructor
 
 from reactpy_django.exceptions import ComponentDoesNotExistError, ComponentParamError
@@ -352,3 +354,19 @@ def delete_expired_sessions(immediate: bool = False):
                 "This may indicate a performance issue with your system, cache, or database.",
                 clean_duration.total_seconds(),
             )
+
+
+class SyncLayout(Layout):
+    """Sync adapter for ReactPy's `Layout`. Allows it to be used in Django template tags.
+    This can be removed when Django supports async template tags.
+    """
+
+    def __enter__(self):
+        async_to_sync(self.__aenter__)()
+        return self
+
+    def __exit__(self, *_):
+        async_to_sync(self.__aexit__)(*_)
+
+    def render(self):
+        return async_to_sync(super().render)()

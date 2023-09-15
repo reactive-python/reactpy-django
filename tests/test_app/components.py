@@ -1,6 +1,7 @@
 import asyncio
 import inspect
 from pathlib import Path
+from time import sleep
 
 import reactpy_django
 from channels.db import database_sync_to_async
@@ -617,3 +618,41 @@ def broken_postprocessor_query():
     mtm = relational_parent.data.many_to_many.all()
 
     return html.div(f"This should have failed! Something went wrong: {mtm}")
+
+
+@component
+def preload_string():
+    scope = reactpy_django.hooks.use_scope()
+
+    sleep(1)
+    return (
+        "Render Stage: Final"
+        if scope.get("type") == "websocket"
+        else "Render Stage: Preload"
+    )
+
+
+@component
+def preload_vdom():
+    scope = reactpy_django.hooks.use_scope()
+
+    if scope.get("type") == "http":
+        return html.div("Render Stage: Preload")
+
+    sleep(1)
+    return html.div("Render Stage: Final")
+
+
+@component
+def preload_component():
+    scope = reactpy_django.hooks.use_scope()
+
+    @component
+    def inner(value):
+        return html.div(value)
+
+    if scope.get("type") == "http":
+        return inner("Render Stage: Preload")
+
+    sleep(1)
+    return inner("Render Stage: Final")
