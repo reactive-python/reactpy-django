@@ -4,12 +4,12 @@ import { Layout } from "@reactpy/client/src/components";
 import { ReactPyDjangoClient } from "./client";
 
 export function mount(element: HTMLElement, client: ReactPyDjangoClient): void {
-  const preloadElement = document.getElementById(element.id + "-preload");
-  if (preloadElement) {
+  const prerenderElement = document.getElementById(element.id + "-prerender");
+  if (prerenderElement) {
     element.hidden = true;
     client.onMessage("layout-update", ({ path, model }) => {
-      if (preloadElement) {
-        preloadElement.replaceWith(element);
+      if (prerenderElement) {
+        prerenderElement.replaceWith(element);
         element.hidden = false;
       }
     });

@@ -5,29 +5,29 @@ from reactpy import component, html
 
 
 @component
-def preload_string():
+def prerender_string():
     scope = reactpy_django.hooks.use_scope()
 
     sleep(0.5)
     return (
-        "preload_string: Fully Rendered"
+        "prerender_string: Fully Rendered"
         if scope.get("type") == "websocket"
-        else "preload_string: Preloaded"
+        else "prerender_string: Prerendered"
     )
 
 
 @component
-def preload_vdom():
+def prerender_vdom():
     scope = reactpy_django.hooks.use_scope()
 
     if scope.get("type") == "http":
-        return html.div("preload_vdom: Preloaded")
+        return html.div("prerender_vdom: Prerendered")
 
-    return html.div("preload_vdom: Fully Rendered")
+    return html.div("prerender_vdom: Fully Rendered")
 
 
 @component
-def preload_component():
+def prerender_component():
     scope = reactpy_django.hooks.use_scope()
 
     @component
@@ -35,6 +35,6 @@ def preload_component():
         return html.div(value)
 
     if scope.get("type") == "http":
-        return inner("preload_component: Preloaded")
+        return inner("prerender_component: Prerendered")
 
-    return inner("preload_component: Fully Rendered")
+    return inner("prerender_component: Fully Rendered")

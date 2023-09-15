@@ -473,11 +473,11 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
-    if not isinstance(config.REACTPY_PRELOAD, bool):
+    if not isinstance(config.REACTPY_PRERENDER, bool):
         errors.append(
             Error(
-                "Invalid type for REACTPY_PRELOAD.",
-                hint="REACTPY_PRELOAD should be a boolean.",
+                "Invalid type for REACTPY_PRERENDER.",
+                hint="REACTPY_PRERENDER should be a boolean.",
                 id="reactpy_django.E021",
             )
         )

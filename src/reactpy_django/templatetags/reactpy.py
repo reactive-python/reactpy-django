@@ -37,7 +37,7 @@ def component(
     dotted_path: str,
     *args,
     host: str | None = None,
-    preload: str = str(config.REACTPY_PRELOAD),
+    prerender: str = str(config.REACTPY_PRERENDER),
     **kwargs,
 ):
     """This tag is used to embed an existing ReactPy component into your HTML template.
@@ -73,7 +73,7 @@ def component(
     class_ = kwargs.pop("class", "")
     component_has_args = args or kwargs
     user_component: ComponentConstructor | None = None
-    _preload_html = ""
+    _prerender_html = ""
 
     # Validate the host
     if host and config.REACTPY_DEBUG_MODE:
@@ -109,24 +109,24 @@ def component(
             )
             return failure_context(dotted_path, e)
 
-    # Preload the component, if requested
-    if strtobool(preload):
+    # Pre-render the component, if requested
+    if strtobool(prerender):
         if not is_local:
-            msg = "Cannot preload non-local components."
+            msg = "Cannot pre-render non-local components."
             _logger.error(msg)
             return failure_context(dotted_path, ComponentDoesNotExistError(msg))
         if not user_component:
-            msg = "Cannot preload component that is not registered."
+            msg = "Cannot pre-render component that is not registered."
             _logger.error(msg)
             return failure_context(dotted_path, ComponentDoesNotExistError(msg))
         if not request:
             msg = (
-                "Cannot preload component without a HTTP request. Are you missing the "
+                "Cannot pre-render component without a HTTP request. Are you missing the "
                 "request context processor in settings.py:TEMPLATES['OPTIONS']['context_processors']?"
             )
             _logger.error(msg)
             return failure_context(dotted_path, ComponentCarrierError(msg))
-        _preload_html = preload_component(user_component, args, kwargs, request)
+        _prerender_html = prerender_component(user_component, args, kwargs, request)
 
     # Return the template rendering context
     return {
@@ -142,7 +142,7 @@ def component(
         "reactpy_reconnect_max_interval": config.REACTPY_RECONNECT_MAX_INTERVAL,
         "reactpy_reconnect_backoff_multiplier": config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER,
         "reactpy_reconnect_max_retries": config.REACTPY_RECONNECT_MAX_RETRIES,
-        "reactpy_preload_html": _preload_html,
+        "reactpy_prerender_html": _prerender_html,
     }
 
 
@@ -172,7 +172,7 @@ def validate_host(host: str):
         raise InvalidHostError(msg)
 
 
-def preload_component(
+def prerender_component(
     user_component: ComponentConstructor, args, kwargs, request: HttpRequest
 ):
     search = request.GET.urlencode()
