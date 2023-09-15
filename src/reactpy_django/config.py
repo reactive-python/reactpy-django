@@ -107,8 +107,8 @@ REACTPY_RECONNECT_BACKOFF_MULTIPLIER: float | int = getattr(
     "REACTPY_RECONNECT_BACKOFF_MULTIPLIER",
     1.25,  # Default to 25% backoff per connection attempt
 )
-REACTPY_PRELOAD_DEFAULT: bool = getattr(
+REACTPY_PRELOAD: bool = getattr(
     settings,
-    "REACTPY_PRELOAD_DEFAULT",
+    "REACTPY_PRELOAD",
     False,
 )

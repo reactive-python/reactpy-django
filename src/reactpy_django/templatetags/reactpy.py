@@ -37,7 +37,7 @@ def component(
     dotted_path: str,
     *args,
     host: str | None = None,
-    preload: str = str(config.REACTPY_PRELOAD_DEFAULT),
+    preload: str = str(config.REACTPY_PRELOAD),
     **kwargs,
 ):
     """This tag is used to embed an existing ReactPy component into your HTML template.
