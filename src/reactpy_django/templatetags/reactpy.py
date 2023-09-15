@@ -9,7 +9,7 @@ from django import template
 from django.http import HttpRequest
 from django.urls import NoReverseMatch, reverse
 from reactpy.backend.hooks import ConnectionContext
-from reactpy.backend.types import Connection
+from reactpy.backend.types import Connection, Location
 from reactpy.core.types import ComponentConstructor
 from reactpy.utils import vdom_to_html
 
@@ -174,12 +174,15 @@ def validate_host(host: str):
 def preload_component(
     user_component: ComponentConstructor, args, kwargs, request: HttpRequest
 ):
+    search = request.GET.urlencode()
     with SyncLayout(
         ConnectionContext(
             user_component(*args, **kwargs),
             value=Connection(
                 scope=getattr(request, "scope", {}),
-                location=request.path,
+                location=Location(
+                    pathname=request.path, search=f"?{search}" if search else ""
+                ),
                 carrier=request,
             ),
         )
