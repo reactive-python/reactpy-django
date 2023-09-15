@@ -15,6 +15,7 @@ from reactpy.utils import vdom_to_html
 
 from reactpy_django import config, models
 from reactpy_django.exceptions import (
+    ComponentCarrierError,
     ComponentDoesNotExistError,
     ComponentParamError,
     InvalidHostError,
@@ -121,10 +122,10 @@ def component(
         if not request:
             msg = (
                 "Cannot preload component without a HTTP request. Are you missing the "
+                "request context processor in settings.py:TEMPLATES['OPTIONS']['context_processors']?"
             )
-            "request context processor in settings.py:TEMPLATES['OPTIONS']['context_processors']?"
             _logger.error(msg)
-            return failure_context(dotted_path, ComponentDoesNotExistError(msg))
+            return failure_context(dotted_path, ComponentCarrierError(msg))
         _preload_html = preload_component(user_component, args, kwargs, request)
 
     # Return the template rendering context
