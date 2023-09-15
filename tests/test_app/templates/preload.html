@@ -12,13 +12,18 @@
 
 <body>
     <h1>ReactPy Preload Test Page</h1>
-
     <hr>
-    {% component "test_app.components.preload_string" class="preload-string" preload="true" %}
+    <div id="preload_string">
+        {% component "test_app.preload.components.preload_string" class="preload-string" preload="true" %}
+    </div>
     <hr>
-    {% component "test_app.components.preload_vdom" class="preload-vdom" preload="true" %}
+    <div id="preload_vdom">
+        {% component "test_app.preload.components.preload_vdom" class="preload-vdom" preload="true" %}
+    </div>
     <hr>
-    {% component "test_app.components.preload_component" class="preload-component" preload="true" %}
+    <div clas="preload_component">
+        {% component "test_app.preload.components.preload_component" class="preload-component" preload="true" %}
+    </div>
     <hr>
 </body>
 

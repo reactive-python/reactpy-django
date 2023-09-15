@@ -5,7 +5,7 @@
 {% endif %}
 
 {% if not reactpy_failure %}
-{% if reactpy_preload %}<div id="{{ reactpy_uuid }}-preload">{{ reactpy_preload|safe }}</div>{% endif %}
+{% if reactpy_preload_html %}<div id="{{ reactpy_uuid }}-preload">{{ reactpy_preload_html|safe }}</div>{% endif %}
 <div id="{{ reactpy_uuid }}" class="{{ reactpy_class }}"></div>
 <script type="module" crossorigin="anonymous">
   import { mountComponent } from "{% static 'reactpy_django/client.js' %}";

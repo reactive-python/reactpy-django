@@ -1,4 +1,4 @@
-import { mount } from "@reactpy/client";
+import { mount } from "./mount";
 import { ReactPyDjangoClient } from "./client";
 
 export function mountComponent(

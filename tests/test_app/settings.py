@@ -177,6 +177,10 @@ LOGGING = {
             "handlers": ["console"],
             "level": LOG_LEVEL,
         },
+        "reactpy": {
+            "handlers": ["console"],
+            "level": LOG_LEVEL,
+        },
     },
 }
 

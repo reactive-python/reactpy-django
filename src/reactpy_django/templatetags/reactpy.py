@@ -9,6 +9,7 @@ from django import template
 from django.http import HttpRequest
 from django.urls import NoReverseMatch, reverse
 from reactpy.backend.hooks import ConnectionContext
+from reactpy.backend.types import Connection
 from reactpy.core.types import ComponentConstructor
 from reactpy.utils import vdom_to_html
 
@@ -35,7 +36,7 @@ def component(
     dotted_path: str,
     *args,
     host: str | None = None,
-    preload: str = "False",
+    preload: str = str(config.REACTPY_PRELOAD_DEFAULT),
     **kwargs,
 ):
     """This tag is used to embed an existing ReactPy component into your HTML template.
@@ -71,8 +72,7 @@ def component(
     class_ = kwargs.pop("class", "")
     component_has_args = args or kwargs
     user_component: ComponentConstructor | None = None
-    preload = strtobool(preload)
-    _preloaded_html = ""
+    _preload_html = ""
 
     # Validate the host
     if host and config.REACTPY_DEBUG_MODE:
@@ -108,8 +108,8 @@ def component(
             )
             return failure_context(dotted_path, e)
 
-    # Preload if requested
-    if preload:
+    # Preload the component, if requested
+    if strtobool(preload):
         if not is_local:
             msg = "Cannot preload non-local components."
             _logger.error(msg)
@@ -125,7 +125,7 @@ def component(
             "request context processor in settings.py:TEMPLATES['OPTIONS']['context_processors']?"
             _logger.error(msg)
             return failure_context(dotted_path, ComponentDoesNotExistError(msg))
-        _preloaded_html = preload_component(user_component, args, kwargs, request)
+        _preload_html = preload_component(user_component, args, kwargs, request)
 
     # Return the template rendering context
     return {
@@ -141,7 +141,7 @@ def component(
         "reactpy_reconnect_max_interval": config.REACTPY_RECONNECT_MAX_INTERVAL,
         "reactpy_reconnect_backoff_multiplier": config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER,
         "reactpy_reconnect_max_retries": config.REACTPY_RECONNECT_MAX_RETRIES,
-        "reactpy_preload": _preloaded_html,
+        "reactpy_preload_html": _preload_html,
     }
 
 
@@ -175,7 +175,14 @@ def preload_component(
     user_component: ComponentConstructor, args, kwargs, request: HttpRequest
 ):
     with SyncLayout(
-        ConnectionContext(user_component(*args, **kwargs), value=request)
+        ConnectionContext(
+            user_component(*args, **kwargs),
+            value=Connection(
+                scope=getattr(request, "scope", {}),
+                location=request.path,
+                carrier=request,
+            ),
+        )
     ) as layout:
         vdom_tree = layout.render()["model"]
 
