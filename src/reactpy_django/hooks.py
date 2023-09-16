@@ -48,16 +48,27 @@ def use_origin() -> str | None:
     this will be None."""
     scope = _use_scope()
     try:
-        return next(
-            (
-                header[1].decode("utf-8")
-                for header in scope["headers"]
-                if header[0] == b"origin"
-            ),
-            None,
-        )
+        if scope["type"] == "websocket":
+            return next(
+                (
+                    header[1].decode("utf-8")
+                    for header in scope["headers"]
+                    if header[0] == b"origin"
+                ),
+                None,
+            )
+        if scope["type"] == "http":
+            host = next(
+                (
+                    header[1].decode("utf-8")
+                    for header in scope["headers"]
+                    if header[0] == b"host"
+                )
+            )
+            return f"{scope['scheme']}://{host}" if host else None
     except Exception:
-        return None
+        _logger.info("Failed to get origin")
+    return None
 
 
 def use_scope() -> dict[str, Any]:

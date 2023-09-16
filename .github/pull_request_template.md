@@ -1,5 +1,3 @@
-*By submitting this pull request you agree that all contributions to this project are made under the MIT license.*
-
 ## Description
 
 A summary of the changes.
@@ -8,6 +6,9 @@ A summary of the changes.
 
 Please update this checklist as you complete each item:
 
--   [ ] Tests have been included for all bug fixes or added functionality.
--   [ ] The changelog has been updated with any significant changes, if necessary.
--   [ ] GitHub Issues which may be closed by this PR have been linked.
+-   [ ] Tests have been developed for bug fixes or new functionality.
+-   [ ] The changelog has been updated, if necessary.
+-   [ ] Documentation has been updated, if necessary.
+-   [ ] GitHub Issues closed by this PR have been linked.
+
+<sub>By submitting this pull request you agree that all contributions comply with this project's open source license(s).</sub>

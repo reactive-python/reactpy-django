@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
-from reactpy_django.utils import ComponentPreloader
+from reactpy_django.utils import RootComponentFinder
 
 
 class ReactPyConfig(AppConfig):
@@ -8,4 +8,4 @@ class ReactPyConfig(AppConfig):
 
     def ready(self):
         # Populate the ReactPy component registry when Django is ready
-        ComponentPreloader().run()
+        RootComponentFinder().run()

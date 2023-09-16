@@ -53,6 +53,8 @@ Add `#!python "reactpy_django"` to [`INSTALLED_APPS`](https://docs.djangoproject
 
 ??? note "Configure ReactPy settings (Optional)"
 
+    {% include "../reference/settings.md" start="<!--intro-start-->" end="<!--intro-end-->"  %}
+
     {% include "../reference/settings.md" start="<!--config-table-start-->" end="<!--config-table-end-->"  %}
 
 ## Step 3: Configure `urls.py`
