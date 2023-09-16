@@ -6,7 +6,7 @@ Prefabricated hooks can be used within your `components.py` to help simplify dev
 
 </p>
 
-!!! note
+!!! abstract "Note"
 
     Looking for standard React hooks?
 

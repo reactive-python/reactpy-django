@@ -29,6 +29,15 @@
 		border-radius: 10px 0 0 10px;
 		font-weight: 400;
 	}
+
+	[data-md-component="toc"]
+		.md-nav__item
+		.md-nav__list
+		.md-nav__item
+		.md-nav__link {
+		padding-left: 1.25rem;
+	}
+
 	[dir="ltr"] .md-sidebar__inner {
 		padding: 0;
 	}

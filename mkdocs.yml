@@ -46,6 +46,8 @@ theme:
         - search.highlight
     icon:
         repo: fontawesome/brands/github
+        admonition:
+            note: fontawesome/solid/note-sticky
     logo: https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg
     favicon: https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg
 

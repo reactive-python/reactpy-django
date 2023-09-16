@@ -27,7 +27,7 @@ This template tag can be used to insert any number of ReactPy components onto yo
     | `#!python class` | `#!python str | None` | The HTML class to apply to the top-level component div. | `#!python None` |
     | `#!python key` | `#!python Any` | Force the component's root node to use a [specific key value](https://reactpy.dev/docs/guides/creating-interfaces/rendering-data/index.html#organizing-items-with-keys). Using `#!python key` within a template tag is effectively useless. | `#!python None` |
     | `#!python host` | `#!python str | None` | The host to use for the ReactPy connections. If unset, the host will be automatically configured.<br/>Example values include: `localhost:8000`, `example.com`, `example.com/subdir` | `#!python None` |
-    | `#!python prerender` | `#!python str` | If `#!python "True"`, the component will pre-rendered, which enables SEO compatibility and increases perceived responsiveness. | `#!python "False"` |
+    | `#!python prerender` | `#!python str` | If `#!python "True"`, the component will pre-rendered, which enables SEO compatibility and reduces perceived latency. | `#!python "False"` |
     | `#!python **kwargs` | `#!python Any` | The keyword arguments to provide to the component. | N/A |
 
     <font size="4">**Returns**</font>
