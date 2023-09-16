@@ -54,7 +54,7 @@ This function is used manually register a root component with ReactPy.
 
 ??? warning "Only use this within `#!python MyAppConfig.ready()`"
 
-    You should always call `#!python register_component` within a Django [`#!python MyAppConfig.ready()` method](https://docs.djangoproject.com/en/4.2/ref/applications/#django.apps.AppConfig.ready). This ensures you will retain multiprocessing compatibility, such as with ASGI web server workers.
+    You should always call `#!python register_component` within a Django [`#!python MyAppConfig.ready()` method](https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.AppConfig.ready). This ensures you will retain multiprocessing compatibility, such as with ASGI web server workers.
 
 ??? question "Do I need to use this?"
 
