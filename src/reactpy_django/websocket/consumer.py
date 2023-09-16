@@ -34,7 +34,9 @@ def start_backhaul_loop():
     backhaul_loop.run_forever()
 
 
-backhaul_thread = Thread(target=start_backhaul_loop, daemon=True)
+backhaul_thread = Thread(
+    target=start_backhaul_loop, daemon=True, name="ReactPyBackhaul"
+)
 
 
 class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
