@@ -1,0 +1,30 @@
+{% load static %} {% load reactpy %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
+    <title>ReactPy</title>
+</head>
+
+<body>
+    <h1>ReactPy Prerender Test Page</h1>
+    <hr>
+    <div id="prerender_string">
+        {% component "test_app.prerender.components.prerender_string" class="prerender-string" prerender="true" %}
+    </div>
+    <hr>
+    <div id="prerender_vdom">
+        {% component "test_app.prerender.components.prerender_vdom" class="prerender-vdom" prerender="true" %}
+    </div>
+    <hr>
+    <div id="prerender_component">
+        {% component "test_app.prerender.components.prerender_component" class="prerender-component" prerender="true" %}
+    </div>
+    <hr>
+</body>
+
+</html>

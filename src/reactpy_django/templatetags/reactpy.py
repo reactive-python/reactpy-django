@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from distutils.util import strtobool
 from logging import getLogger
 from uuid import uuid4
 
@@ -7,16 +8,20 @@ import dill as pickle
 from django import template
 from django.http import HttpRequest
 from django.urls import NoReverseMatch, reverse
+from reactpy.backend.hooks import ConnectionContext
+from reactpy.backend.types import Connection, Location
 from reactpy.core.types import ComponentConstructor
+from reactpy.utils import vdom_to_html
 
 from reactpy_django import config, models
 from reactpy_django.exceptions import (
+    ComponentCarrierError,
     ComponentDoesNotExistError,
     ComponentParamError,
     InvalidHostError,
 )
 from reactpy_django.types import ComponentParams
-from reactpy_django.utils import validate_component_args
+from reactpy_django.utils import SyncLayout, validate_component_args
 
 try:
     RESOLVED_WEB_MODULES_PATH = reverse("reactpy:web_modules", args=["/"]).strip("/")
@@ -32,6 +37,7 @@ def component(
     dotted_path: str,
     *args,
     host: str | None = None,
+    prerender: str = str(config.REACTPY_PRERENDER),
     **kwargs,
 ):
     """This tag is used to embed an existing ReactPy component into your HTML template.
@@ -41,9 +47,14 @@ def component(
         *args: The positional arguments to provide to the component.
 
     Keyword Args:
+        class: The HTML class to apply to the top-level component div.
+        key: Force the component's root node to use a specific key value. Using \
+            key within a template tag is effectively useless.
         host: The host to use for the ReactPy connections. If set to `None`, \
             the host will be automatically configured. \
             Example values include: `localhost:8000`, `example.com`, `example.com/subdir`
+        prerender: Configures whether to pre-render this component, which \
+            enables SEO compatibility and increases perceived responsiveness.
         **kwargs: The keyword arguments to provide to the component.
 
     Example ::
@@ -67,6 +78,7 @@ def component(
     class_ = kwargs.pop("class", "")
     component_has_args = args or kwargs
     user_component: ComponentConstructor | None = None
+    _prerender_html = ""
 
     # Validate the host
     if host and config.REACTPY_DEBUG_MODE:
@@ -102,6 +114,25 @@ def component(
             )
             return failure_context(dotted_path, e)
 
+    # Pre-render the component, if requested
+    if strtobool(prerender):
+        if not is_local:
+            msg = "Cannot pre-render non-local components."
+            _logger.error(msg)
+            return failure_context(dotted_path, ComponentDoesNotExistError(msg))
+        if not user_component:
+            msg = "Cannot pre-render component that is not registered."
+            _logger.error(msg)
+            return failure_context(dotted_path, ComponentDoesNotExistError(msg))
+        if not request:
+            msg = (
+                "Cannot pre-render component without a HTTP request. Are you missing the "
+                "request context processor in settings.py:TEMPLATES['OPTIONS']['context_processors']?"
+            )
+            _logger.error(msg)
+            return failure_context(dotted_path, ComponentCarrierError(msg))
+        _prerender_html = prerender_component(user_component, args, kwargs, request)
+
     # Return the template rendering context
     return {
         "reactpy_class": class_,
@@ -116,6 +147,7 @@ def component(
         "reactpy_reconnect_max_interval": config.REACTPY_RECONNECT_MAX_INTERVAL,
         "reactpy_reconnect_backoff_multiplier": config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER,
         "reactpy_reconnect_max_retries": config.REACTPY_RECONNECT_MAX_RETRIES,
+        "reactpy_prerender_html": _prerender_html,
     }
 
 
@@ -143,3 +175,24 @@ def validate_host(host: str):
         )
         _logger.error(msg)
         raise InvalidHostError(msg)
+
+
+def prerender_component(
+    user_component: ComponentConstructor, args, kwargs, request: HttpRequest
+):
+    search = request.GET.urlencode()
+    with SyncLayout(
+        ConnectionContext(
+            user_component(*args, **kwargs),
+            value=Connection(
+                scope=getattr(request, "scope", {}),
+                location=Location(
+                    pathname=request.path, search=f"?{search}" if search else ""
+                ),
+                carrier=request,
+            ),
+        )
+    ) as layout:
+        vdom_tree = layout.render()["model"]
+
+    return vdom_to_html(vdom_tree)

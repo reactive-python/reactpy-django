@@ -28,7 +28,7 @@ Then, by running the command below you can:
 -   Self-host a test server for the documentation
 
 ```bash linenums="0"
-pip install -e . -r requirements.txt --upgrade
+pip install -r requirements.txt --upgrade
 ```
 
 Finally, to verify that everything is working properly, you can manually run the docs preview web server.

@@ -1,9 +1,11 @@
 {% load static %}
-{% if reactpy_failure %}
-{% if reactpy_debug_mode %}
+
+{% if reactpy_failure and reactpy_debug_mode %}
 <b>{% firstof reactpy_error "UnknownError" %}:</b> "{% firstof reactpy_dotted_path "UnknownPath" %}"
 {% endif %}
-{% else %}
+
+{% if not reactpy_failure %}
+{% if reactpy_prerender_html %}<div id="{{ reactpy_uuid }}-prerender">{{ reactpy_prerender_html|safe }}</div>{% endif %}
 <div id="{{ reactpy_uuid }}" class="{{ reactpy_class }}"></div>
 <script type="module" crossorigin="anonymous">
   import { mountComponent } from "{% static 'reactpy_django/client.js' %}";

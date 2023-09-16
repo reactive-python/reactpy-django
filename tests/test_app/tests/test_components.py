@@ -4,6 +4,7 @@ import socket
 import sys
 from distutils.util import strtobool
 from functools import partial
+from time import sleep
 
 from channels.testing import ChannelsLiveServerTestCase
 from channels.testing.live import make_application
@@ -375,3 +376,36 @@ class ComponentTests(ChannelsLiveServerTestCase):
         broken_component = self.page.locator("#broken_postprocessor_query pre")
         broken_component.wait_for()
         self.assertIn("SynchronousOnlyOperation:", broken_component.text_content())
+
+    def test_prerender(self):
+        """Verify if round-robin host selection is working."""
+        new_page = self.browser.new_page()
+        try:
+            new_page.goto(f"{self.live_server_url}/prerender/")
+            string = new_page.locator("#prerender_string")
+            vdom = new_page.locator("#prerender_vdom")
+            component = new_page.locator("#prerender_component")
+
+            string.wait_for()
+            vdom.wait_for()
+            component.wait_for()
+
+            # Check if the prerender occurred
+            self.assertEqual(
+                string.all_inner_texts(), ["prerender_string: Prerendered"]
+            )
+            self.assertEqual(vdom.all_inner_texts(), ["prerender_vdom: Prerendered"])
+            self.assertEqual(
+                component.all_inner_texts(), ["prerender_component: Prerendered"]
+            )
+
+            sleep(1)
+            self.assertEqual(
+                string.all_inner_texts(), ["prerender_string: Fully Rendered"]
+            )
+            self.assertEqual(vdom.all_inner_texts(), ["prerender_vdom: Fully Rendered"])
+            self.assertEqual(
+                component.all_inner_texts(), ["prerender_component: Fully Rendered"]
+            )
+        finally:
+            new_page.close()

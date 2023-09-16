@@ -1,9 +1,11 @@
 [data-md-color-scheme="slate"] {
 	--md-header-border-color: rgb(255 255 255 / 5%);
+	--md-version-bg-color: #ffffff0d;
 }
 
 [data-md-color-scheme="default"] {
 	--md-header-border-color: rgb(0 0 0 / 7%);
+	--md-version-bg-color: #ae58ee2e;
 }
 
 .md-header {
@@ -28,12 +30,20 @@
 }
 
 .md-version__list {
-	margin: 0.2rem -0.8rem;
+	margin: 0;
+	left: 0;
+	right: 0;
+	top: 2.5rem;
 }
 
-[dir="ltr"] .md-header__title.md-header__title--active {
-	margin: 0;
-	transition: margin 0.35s ease;
+.md-version {
+	background: var(--md-version-bg-color);
+	border-radius: 999px;
+	padding: 0 0.8rem;
+	margin: 0.3rem 0;
+	height: 1.8rem;
+	display: flex;
+	font-size: 0.7rem;
 }
 
 /* Mobile Styling */
@@ -96,6 +106,12 @@
 	}
 	.md-header__topic {
 		position: relative;
+	}
+	.md-header__title--active .md-header__topic {
+		transform: none;
+		opacity: 1;
+		pointer-events: auto;
+		z-index: 4;
 	}
 
 	/* Search */

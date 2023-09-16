@@ -3,7 +3,7 @@
 	--reactpy-color: #58b962;
 	--reactpy-color-dark: #42914a;
 	--reactpy-color-darker: #34743b;
-	--reactpy-color-opacity-10: rgb(88 185 98 / 10%);
+	--reactpy-color-opacity-10: rgba(88, 185, 98, 0.1);
 }
 
 [data-md-color-accent="red"] {
@@ -12,7 +12,7 @@
 }
 
 [data-md-color-scheme="slate"] {
-	--md-default-bg-color: rgb(35 39 47);
+	--md-default-bg-color: rgb(35, 39, 47);
 	--md-default-bg-color--light: hsla(var(--md-hue), 15%, 16%, 0.54);
 	--md-default-bg-color--lighter: hsla(var(--md-hue), 15%, 16%, 0.26);
 	--md-default-bg-color--lightest: hsla(var(--md-hue), 15%, 16%, 0.07);

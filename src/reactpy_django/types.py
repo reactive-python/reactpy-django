@@ -16,6 +16,7 @@ from typing import (
 
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 from django.views.generic import View
 from reactpy.types import Connection as _Connection
 from typing_extensions import ParamSpec
@@ -50,7 +51,7 @@ class ComponentWebsocket:
     dotted_path: str
 
 
-Connection = _Connection[ComponentWebsocket]
+Connection = _Connection[Union[ComponentWebsocket, HttpRequest]]
 
 
 @dataclass

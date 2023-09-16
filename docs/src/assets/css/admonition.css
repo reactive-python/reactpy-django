@@ -1,20 +1,20 @@
 [data-md-color-scheme="slate"] {
 	--admonition-border-color: transparent;
 	--admonition-expanded-border-color: rgba(255, 255, 255, 0.1);
-	--note-bg-color: rgb(43 110 98/ 0.2);
+	--note-bg-color: rgba(43, 110, 98, 0.2);
 	--terminal-bg-color: #0c0c0c;
 	--terminal-title-bg-color: #000;
-	--deep-dive-bg-color: rgb(43 52 145 / 0.2);
+	--deep-dive-bg-color: rgba(43, 52, 145, 0.2);
 	--you-will-learn-bg-color: #353a45;
-	--pitfall-bg-color: rgb(182 87 0 / 0.2);
+	--pitfall-bg-color: rgba(182, 87, 0, 0.2);
 }
 [data-md-color-scheme="default"] {
 	--admonition-border-color: rgba(0, 0, 0, 0.08);
 	--admonition-expanded-border-color: var(--admonition-border-color);
-	--note-bg-color: rgb(244 251 249);
-	--terminal-bg-color: rgb(64 71 86);
-	--terminal-title-bg-color: rgb(35 39 47);
-	--deep-dive-bg-color: rgb(243 244 253);
+	--note-bg-color: rgb(244, 251, 249);
+	--terminal-bg-color: rgb(64, 71, 86);
+	--terminal-title-bg-color: rgb(35, 39, 47);
+	--deep-dive-bg-color: rgb(243, 244, 253);
 	--you-will-learn-bg-color: rgb(246, 247, 249);
 	--pitfall-bg-color: rgb(254, 245, 231);
 }
@@ -81,12 +81,12 @@ React Name: "Note"
 	font-size: 1rem;
 	background: transparent;
 	padding-bottom: 0;
-	color: rgb(68 172 153);
+	color: rgb(68, 172, 153);
 }
 
 .md-typeset .note .admonition-title:before {
 	font-size: 1.1rem;
-	background: rgb(68 172 153);
+	background: rgb(68, 172, 153);
 }
 
 .md-typeset .note > .admonition-title:before,
@@ -109,12 +109,12 @@ React Name: "Pitfall"
 	font-size: 1rem;
 	background: transparent;
 	padding-bottom: 0;
-	color: rgb(219 125 39);
+	color: rgb(219, 125, 39);
 }
 
 .md-typeset .warning .admonition-title:before {
 	font-size: 1.1rem;
-	background: rgb(219 125 39);
+	background: rgb(219, 125, 39);
 }
 
 /* 
@@ -131,12 +131,12 @@ React Name: "Deep Dive"
 	font-size: 1rem;
 	background: transparent;
 	padding-bottom: 0;
-	color: rgb(136 145 236);
+	color: rgb(136, 145, 236);
 }
 
 .md-typeset .info .admonition-title:before {
 	font-size: 1.1rem;
-	background: rgb(136 145 236);
+	background: rgb(136, 145, 236);
 }
 
 /* 
@@ -152,11 +152,11 @@ React Name: "Terminal"
 
 .md-typeset .example .admonition-title {
 	background: var(--terminal-title-bg-color);
-	color: rgb(246 247 249);
+	color: rgb(246, 247, 249);
 }
 
 .md-typeset .example .admonition-title:before {
-	background: rgb(246 247 249);
+	background: rgb(246, 247, 249);
 }
 
 .md-typeset .admonition.example code {

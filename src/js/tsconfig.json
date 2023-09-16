@@ -3,5 +3,14 @@
         "target": "ES2017",
         "module": "esnext",
         "moduleResolution": "node",
+        "jsx": "react",
     },
+    "paths": {
+        "react": [
+            "./node_modules/preact/compat/"
+        ],
+        "react-dom": [
+            "./node_modules/preact/compat/"
+        ]
+    }
 }

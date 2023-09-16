@@ -25,8 +25,9 @@ This template tag can be used to insert any number of ReactPy components onto yo
     | `#!python dotted_path` | `#!python str` | The dotted path to the component to render. | N/A |
     | `#!python *args` | `#!python Any` | The positional arguments to provide to the component. | N/A |
     | `#!python class` | `#!python str | None` | The HTML class to apply to the top-level component div. | `#!python None` |
-    | `#!python key` | `#!python str | None` | Force the component's root node to use a [specific key value](https://reactpy.dev/docs/guides/creating-interfaces/rendering-data/index.html#organizing-items-with-keys). Using `#!python key` within a template tag is effectively useless. | `#!python None` |
-    | `#!python host` | `#!python str | None` | The host to use for the ReactPy connections. If set to `#!python None`, the host will be automatically configured.<br/>Example values include: `localhost:8000`, `example.com`, `example.com/subdir` | `#!python None` |
+    | `#!python key` | `#!python Any` | Force the component's root node to use a [specific key value](https://reactpy.dev/docs/guides/creating-interfaces/rendering-data/index.html#organizing-items-with-keys). Using `#!python key` within a template tag is effectively useless. | `#!python None` |
+    | `#!python host` | `#!python str | None` | The host to use for the ReactPy connections. If unset, the host will be automatically configured.<br/>Example values include: `localhost:8000`, `example.com`, `example.com/subdir` | `#!python None` |
+    | `#!python prerender` | `#!python str` | If `#!python "True"`, the component will pre-rendered, which enables SEO compatibility and increases perceived responsiveness. | `#!python "False"` |
     | `#!python **kwargs` | `#!python Any` | The keyword arguments to provide to the component. | N/A |
 
     <font size="4">**Returns**</font>
@@ -37,11 +38,11 @@ This template tag can be used to insert any number of ReactPy components onto yo
 
 <!--context-start-->
 
-??? warning "Do not use context variables for the ReactPy component name"
+??? warning "Do not use context variables for the component path"
 
-    Our preprocessor relies on the template tag containing a string.
+    The ReactPy component finder (`#!python reactpy_django.utils.RootComponentFinder`) requires that your component path is a string.
 
-    **Do not** use Django template/context variables for the component path. Failure to follow this warning can result in unexpected behavior.
+    **Do not** use Django template/context variables for the component path. Failure to follow this warning can result in unexpected behavior, such as components that will not render.
 
     For example, **do not** do the following:
 
@@ -52,7 +53,7 @@ This template tag can be used to insert any number of ReactPy components onto yo
         {% component "example_project.my_app.components.hello_world" recipient="World" %}
 
         <!-- This is bad -->
-        {% component dont_do_this recipient="World" %}
+        {% component my_variable recipient="World" %}
         ```
 
     === "views.py"
@@ -81,7 +82,7 @@ This template tag can be used to insert any number of ReactPy components onto yo
 
     1. If your host address are completely separate ( `origin1.com != origin2.com` ) you will need to [configure CORS headers](https://pypi.org/project/django-cors-headers/) on your main application during deployment.
     2. You will not need to register ReactPy HTTP or WebSocket paths on any applications that do not perform any component rendering.
-    3. Your component will only be able to access `#!python *args`/`#!python **kwargs` you provide to the template tag if your applications share a common database.
+    3. Your component will only be able to access your template tag's `#!python *args`/`#!python **kwargs` if your applications share a common database.
 
 <!--multiple-components-start-->
 
