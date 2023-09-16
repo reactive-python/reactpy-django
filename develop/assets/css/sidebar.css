@@ -2,6 +2,10 @@
 	--sizebar-font-size: 0.62rem;
 }
 
+.md-nav__link {
+	word-break: break-word;
+}
+
 /* Desktop Styling */
 @media screen and (min-width: 76.1875em) {
 	/* Move the sidebar and TOC to the edge of the page */
