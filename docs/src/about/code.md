@@ -35,7 +35,7 @@ Then, by running the command below you can:
 -   Download, build, and install Javascript dependencies
 
 ```bash linenums="0"
-pip install -e . -r requirements.txt
+pip install -e . -r requirements.txt --verbose --upgrade
 ```
 
 !!! warning "Pitfall"

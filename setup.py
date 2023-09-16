@@ -9,7 +9,7 @@ from distutils import log
 from logging import StreamHandler, getLogger
 from pathlib import Path
 
-from setuptools import find_packages, setup
+from setuptools import find_namespace_packages, setup
 from setuptools.command.develop import develop
 from setuptools.command.sdist import sdist
 
@@ -47,7 +47,7 @@ package_dir = src_dir / name
 package = {
     "name": name,
     "python_requires": ">=3.9",
-    "packages": find_packages(str(src_dir)),
+    "packages": find_namespace_packages(str(src_dir)),
     "package_dir": {"": "src"},
     "description": "It's React, but in Python. Now with Django integration.",
     "author": "Mark Bakhit",
@@ -137,9 +137,8 @@ def build_javascript_first(cls):
                 log.info(f"> {list2cmdline(args_list)}")
                 subprocess.run(args_list, cwd=js_dir, check=True)
             except Exception:
-                log.error("Failed to update NPM")
                 log.error(traceback.format_exc())
-                raise
+                log.error("Failed to update NPM, continuing anyway...")
 
             log.info("Installing Javascript...")
             try:
@@ -147,8 +146,8 @@ def build_javascript_first(cls):
                 log.info(f"> {list2cmdline(args_list)}")
                 subprocess.run(args_list, cwd=js_dir, check=True)
             except Exception:
-                log.error("Failed to install Javascript")
                 log.error(traceback.format_exc())
+                log.error("Failed to install Javascript")
                 raise
 
             log.info("Building Javascript...")
@@ -157,8 +156,8 @@ def build_javascript_first(cls):
                 log.info(f"> {list2cmdline(args_list)}")
                 subprocess.run(args_list, cwd=js_dir, check=True)
             except Exception:
-                log.error("Failed to build Javascript")
                 log.error(traceback.format_exc())
+                log.error("Failed to build Javascript")
                 raise
 
             log.info("Successfully built Javascript")
