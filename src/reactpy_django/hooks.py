@@ -3,34 +3,45 @@ from __future__ import annotations
 import asyncio
 import logging
 from typing import (
+    TYPE_CHECKING,
     Any,
     Awaitable,
     Callable,
+    Coroutine,
     DefaultDict,
+    Generic,
     Sequence,
+    Type,
     Union,
     cast,
     overload,
 )
 
+import dill as pickle
 from channels.db import database_sync_to_async
-from reactpy import use_callback, use_ref
+from reactpy import use_callback, use_effect, use_ref, use_state
 from reactpy.backend.hooks import use_connection as _use_connection
 from reactpy.backend.hooks import use_location as _use_location
 from reactpy.backend.hooks import use_scope as _use_scope
 from reactpy.backend.types import Location
-from reactpy.core.hooks import use_effect, use_state
 
+from reactpy_django.exceptions import UserNotFoundError
 from reactpy_django.types import (
     Connection,
     Mutation,
     MutationOptions,
     Query,
     QueryOptions,
+    UserData,
     _Params,
     _Result,
+    _Type,
 )
 from reactpy_django.utils import generate_obj_name
+
+if TYPE_CHECKING:
+    from django.contrib.auth.models import AbstractUser
+
 
 _logger = logging.getLogger(__name__)
 _REFETCH_CALLBACKS: DefaultDict[
@@ -335,3 +346,63 @@ def _use_mutation_args_2(
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
 ):
     return MutationOptions(), mutation, refetch
+
+
+def use_user() -> AbstractUser | None:
+    """Get the current `User` object from either the WebSocket or HTTP request."""
+    connection = use_connection()
+    return connection.scope.get("user") or getattr(connection.carrier, "user", None)
+
+
+async def get_user_data(user: AbstractUser | None, default: Any, user_data_model):
+    """Get the current user's `UserState` query."""
+    from reactpy_django.models import UserDataModel
+
+    if user is None:
+        raise ValueError("No user is available.")
+
+    user_data_model = user_data_model or UserDataModel
+
+    model, _ = await user_data_model.objects.aget_or_create(user=user)
+
+    if not model.data:
+        if asyncio.iscoroutinefunction(default):
+            default = await default()
+        elif callable(default):
+            default = default()
+        model.data = pickle.dumps(default)
+        model.save()
+
+    return pickle.loads(model.data)
+
+
+def set_user_data(user: AbstractUser, user_data_model):
+    from reactpy_django.models import UserDataModel
+
+    user_data_model = user_data_model or UserDataModel
+
+    async def mutation(data: Any):
+        """Set the current user's `UserState` query."""
+        model, _ = await user_data_model.objects.aget_or_create(user=user)
+        model.data = pickle.dumps(data)
+        model.save()
+
+    return mutation
+
+
+# TODO: Make user_data_model generic construct
+
+
+def use_user_data(
+    default_data: _Type | Callable[[], _Type] | Callable[[], Awaitable[_Type]],
+    user_data_model,
+) -> UserData[_Type]:
+    user = use_user()
+
+    if user is None:
+        raise UserNotFoundError("No user is available.")
+
+    data = use_query(get_user_data, user, default_data, user_data_model)
+    set_data = use_mutation(set_user_data(user, user_data_model), refetch=get_user_data)
+
+    return UserData(cast(Query[_Type | None], data), set_data)

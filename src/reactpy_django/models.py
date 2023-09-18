@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -23,5 +24,12 @@ class Config(models.Model):
 
     @classmethod
     def load(cls):
-        obj, created = cls.objects.get_or_create(pk=1)
+        obj, _ = cls.objects.get_or_create(pk=1)
         return obj
+
+
+class UserDataModel(models.Model):
+    """A model for storing `user_state` data."""
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # type: ignore
+    data = models.BinaryField(blank=True)  # type: ignore

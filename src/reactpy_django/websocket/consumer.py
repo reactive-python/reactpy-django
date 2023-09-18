@@ -8,7 +8,7 @@ import logging
 from concurrent.futures import Future
 from datetime import timedelta
 from threading import Thread
-from typing import Any, MutableMapping, Sequence
+from typing import TYPE_CHECKING, Any, MutableMapping, Sequence
 
 import dill as pickle
 import orjson
@@ -23,6 +23,9 @@ from reactpy.core.serve import serve_layout
 
 from reactpy_django.types import ComponentParams, ComponentWebsocket
 from reactpy_django.utils import delete_expired_sessions
+
+if TYPE_CHECKING:
+    from django.contrib.auth.models import AbstractUser
 
 _logger = logging.getLogger(__name__)
 backhaul_loop = asyncio.new_event_loop()
@@ -48,8 +51,8 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         await super().connect()
 
         # Authenticate the user, if possible
-        user = self.scope.get("user")
-        if user and user.is_authenticated:
+        user: AbstractUser | None = self.scope.get("user")
+        if user and getattr(user, "is_authenticated", False):
             try:
                 await login(self.scope, user, backend=REACTPY_AUTH_BACKEND)
             except Exception:

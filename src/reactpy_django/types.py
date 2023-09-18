@@ -7,6 +7,7 @@ from typing import (
     Callable,
     Generic,
     MutableMapping,
+    NamedTuple,
     Optional,
     Protocol,
     Sequence,
@@ -40,6 +41,7 @@ __all__ = [
 _Result = TypeVar("_Result", bound=Union[Model, QuerySet[Any]])
 _Params = ParamSpec("_Params")
 _Data = TypeVar("_Data")
+_Type = TypeVar("_Type")
 
 
 @dataclass
@@ -134,3 +136,9 @@ class ComponentParams:
 
     args: Sequence
     kwargs: MutableMapping[str, Any]
+
+
+@dataclass
+class UserData(Generic[_Type]):
+    data: Query[_Type | None]
+    set_data: Mutation[_Type]
