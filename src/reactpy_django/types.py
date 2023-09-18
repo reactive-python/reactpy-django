@@ -7,7 +7,6 @@ from typing import (
     Callable,
     Generic,
     MutableMapping,
-    NamedTuple,
     Optional,
     Protocol,
     Sequence,

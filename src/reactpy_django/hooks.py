@@ -390,7 +390,7 @@ def set_user_data(user: AbstractUser, user_data_model):
     return mutation
 
 
-# TODO: Make user_data_model generic construct
+# TODO: Make user_data_model generic protocol
 
 
 def use_user_data(
