@@ -81,7 +81,7 @@ This template tag can be used to insert any number of ReactPy components onto yo
     Here's a couple of things to keep in mind:
 
     1. If your host address are completely separate ( `origin1.com != origin2.com` ) you will need to [configure CORS headers](https://pypi.org/project/django-cors-headers/) on your main application during deployment.
-    2. You will not need to register ReactPy HTTP or WebSocket paths on any applications that do not perform any component rendering.
+    2. You will not need to register ReactPy WebSocket or HTTP paths on any applications that do not perform any component rendering.
     3. Your component will only be able to access your template tag's `#!python *args`/`#!python **kwargs` if your applications share a common database.
 
 <!--multiple-components-start-->

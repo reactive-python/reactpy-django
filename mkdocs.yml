@@ -90,6 +90,9 @@ extra:
     generator: false
     version:
         provider: mike
+    analytics:
+        provider: google
+        property: G-4KFQN2LWBG
 
 extra_javascript:
     - assets/js/main.js

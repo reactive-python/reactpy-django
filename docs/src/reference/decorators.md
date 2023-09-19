@@ -10,7 +10,7 @@ Decorator functions can be used within your `components.py` to help simplify dev
 
 ## Auth Required
 
-You can limit access to a component to users with a specific `#!python auth_attribute` by using this decorator (with or without parentheses).
+You can limit component access to users with a specific `#!python auth_attribute` by using this decorator (with or without parentheses).
 
 By default, this decorator checks if the user is logged in and not deactivated (`#!python is_active`).
 
