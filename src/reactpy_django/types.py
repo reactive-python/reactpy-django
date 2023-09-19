@@ -3,11 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import (
     Any,
-    Awaitable,
     Callable,
     Generic,
     MutableMapping,
-    Optional,
     Protocol,
     Sequence,
     TypeVar,
@@ -21,11 +19,12 @@ from django.views.generic import View
 from reactpy.types import Connection as _Connection
 from typing_extensions import ParamSpec
 
+from reactpy_django.websocket.consumer import ReactpyAsyncWebsocketConsumer
+
 __all__ = [
     "_Result",
     "_Params",
     "_Data",
-    "ComponentWebsocket",
     "Query",
     "Mutation",
     "Connection",
@@ -43,16 +42,7 @@ _Data = TypeVar("_Data")
 _Type = TypeVar("_Type")
 
 
-@dataclass
-class ComponentWebsocket:
-    """Carrier type for the `use_connection` hook."""
-
-    close: Callable[[Optional[int]], Awaitable[None]]
-    disconnect: Callable[[int], Awaitable[None]]
-    dotted_path: str
-
-
-Connection = _Connection[Union[ComponentWebsocket, HttpRequest]]
+Connection = _Connection[Union[ReactpyAsyncWebsocketConsumer, HttpRequest]]
 
 
 @dataclass

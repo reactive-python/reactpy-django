@@ -21,7 +21,7 @@ from reactpy.backend.types import Connection, Location
 from reactpy.core.layout import Layout
 from reactpy.core.serve import serve_layout
 
-from reactpy_django.types import ComponentParams, ComponentWebsocket
+from reactpy_django.types import ComponentParams
 from reactpy_django.utils import delete_expired_sessions
 
 if TYPE_CHECKING:
@@ -150,7 +150,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         )
 
         scope = self.scope
-        dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
+        self.dotted_path = dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
         uuid = scope["url_route"]["kwargs"].get("uuid")
         search = scope["query_string"].decode()
         self.recv_queue: asyncio.Queue = asyncio.Queue()
@@ -160,7 +160,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 pathname=scope["path"],
                 search=f"?{search}" if (search and (search != "undefined")) else "",
             ),
-            carrier=ComponentWebsocket(self.close, self.disconnect, dotted_path),
+            carrier=self,
         )
         now = timezone.now()
         component_session_args: Sequence[Any] = ()
