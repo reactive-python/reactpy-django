@@ -10,8 +10,8 @@ from reactpy.core.types import ComponentConstructor
 
 from reactpy_django.types import (
     AsyncPostprocessor,
+    IframeComponent,
     SyncPostprocessor,
-    ViewComponentIframe,
 )
 from reactpy_django.utils import import_dotted_path
 
@@ -19,7 +19,7 @@ from reactpy_django.utils import import_dotted_path
 REACTPY_DEBUG_MODE.set_current(getattr(settings, "DEBUG"))
 REACTPY_REGISTERED_COMPONENTS: dict[str, ComponentConstructor] = {}
 REACTPY_FAILED_COMPONENTS: set[str] = set()
-REACTPY_VIEW_COMPONENT_IFRAMES: dict[str, ViewComponentIframe] = {}
+REACTPY_REGISTERED_IFRAMES: dict[str, IframeComponent] = {}
 
 
 # Remove in a future release

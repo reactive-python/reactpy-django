@@ -18,6 +18,7 @@ from django.db.models.base import Model
 from django.db.models.query import QuerySet
 from django.http import HttpRequest
 from django.views.generic import View
+from reactpy.types import ComponentType
 from reactpy.types import Connection as _Connection
 from typing_extensions import ParamSpec
 
@@ -29,7 +30,7 @@ __all__ = [
     "Query",
     "Mutation",
     "Connection",
-    "ViewComponentIframe",
+    "IframeComponent",
     "AsyncPostprocessor",
     "SyncPostprocessor",
     "QueryOptions",
@@ -75,10 +76,8 @@ class Mutation(Generic[_Params]):
 
 
 @dataclass
-class ViewComponentIframe:
+class IframeComponent:
     view: View | Callable
-    args: Sequence
-    kwargs: dict
 
 
 class AsyncPostprocessor(Protocol):
@@ -134,3 +133,10 @@ class ComponentParams:
 
     args: Sequence
     kwargs: MutableMapping[str, Any]
+
+
+class ViewComponentConstructor(Protocol):
+    def __call__(
+        self, request: HttpRequest | None = None, *args: Any, **kwargs: Any
+    ) -> ComponentType:
+        ...

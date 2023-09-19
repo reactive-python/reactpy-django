@@ -10,7 +10,9 @@ We supply some pre-designed that components can be used to help simplify develop
 
 ## View To Component
 
-Convert any Django view into a ReactPy component by using this decorator. Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/). Views can be sync or async.
+Automatically convert a Django view into a ReactPy component.
+
+Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/). These views can be sync or async.
 
 === "components.py"
 
@@ -25,7 +27,7 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
     | `#!python view` | `#!python Callable | View` | The view function or class to convert. | N/A |
-    | `#!python compatibility` | `#!python bool` | If `#!python True`, the component will be rendered in an iframe. When using compatibility mode `#!python tranforms`, `#!python strict_parsing`, `#!python request`, `#!python args`, and `#!python kwargs` arguments will be ignored. | `#!python False` |
+    | `#!python compatibility` | `#!python bool` | If `#!python True`, the component will be rendered in an `iframe`. When using compatibility mode `#!python tranforms`, `#!python strict_parsing`, `#!python request`, `#!python args`, and `#!python kwargs` arguments will be ignored. | `#!python False` |
     | `#!python transforms` | `#!python Sequence[Callable[[VdomDict], Any]]` | A list of functions that transforms the newly generated VDOM. The functions will be called on each VDOM node. | `#!python tuple` |
     | `#!python strict_parsing` | `#!python bool` | If `#!python True`, an exception will be generated if the HTML does not perfectly adhere to HTML5. | `#!python True` |
 
@@ -35,26 +37,6 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
     | --- | --- |
     | `#!python _ViewComponentConstructor` | A function that takes `#!python request, *args, key, **kwargs` and returns a ReactPy component. All parameters are directly provided to your view, besides `#!python key` which is used by ReactPy. |
 
-??? Warning "Potential information exposure when using `#!python compatibility = True`"
-
-    When using `#!python compatibility` mode, ReactPy automatically exposes a URL to your view.
-
-    It is your responsibility to ensure privileged information is not leaked via this method.
-
-    You must implement a method to ensure only authorized users can access your view. This can be done via directly writing conditionals into your view, or by adding decorators such as [`#!python user_passes_test`](https://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test) to your views. For example...
-
-    === "Function Based View"
-
-        ```python
-        {% include "../../python/vtc-fbv-compat.py" %}
-        ```
-
-    === "Class Based View"
-
-        ```python
-        {% include "../../python/vtc-cbv-compatibility.py" %}
-        ```
-
 ??? info "Existing limitations"
 
     There are currently several limitations of using `#!python view_to_component` that may be resolved in a future version.
@@ -63,7 +45,43 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
     - ReactPy events cannot conveniently be attached to converted view HTML.
     - Has no option to automatically intercept local anchor link (such as `#!html <a href='example/'></a>`) click events.
 
-    _Please note these limitations do not exist when using `#!python compatibility` mode._
+??? question "How do I customize this component's behavior?"
+
+    This component accepts several `kwargs` that can be used to customize its behavior.
+
+    Below are all the `kwargs` that can be used.
+
+    ---
+
+    <font size="4">**`#!python strict_parsing`**</font>
+
+    By default, an exception will be generated if your view's HTML does not perfectly adhere to HTML5.
+
+    However, there are some circumstances where you may not have control over the original HTML, so you may be unable to fix it. Or you may be relying on non-standard HTML tags such as `#!html <my-tag> Hello World </my-tag>`.
+
+    In these scenarios, you may want to rely on best-fit parsing by setting the `#!python strict_parsing` parameter to `#!python False`. This uses `libxml2` recovery algorithm, which is designed to be similar to how web browsers would attempt to parse non-standard or broken HTML.
+
+    === "components.py"
+
+        ```python
+        {% include "../../python/vtc-strict-parsing.py" %}
+        ```
+
+    ---
+
+    <font size="4">**`#!python transforms`**</font>
+
+    After your view has been turned into [VDOM](https://reactpy.dev/docs/reference/specifications.html#vdom) (python dictionaries), `#!python view_to_component` will call your `#!python transforms` functions on every VDOM node.
+
+    This allows you to modify your view prior to rendering.
+
+    For example, if you are trying to modify the text of a node with a certain `#!python id`, you can create a transform like such:
+
+    === "components.py"
+
+        ```python
+        {% include "../../python/vtc-transforms.py" %}
+        ```
 
 ??? question "How do I use this for Class Based Views?"
 
@@ -109,57 +127,71 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
         {% include "../../python/vtc-args-kwargs.py" %}
         ```
 
-??? question "How do I use `#!python strict_parsing`, `#!python compatibility`, and `#!python transforms`?"
+## View To Iframe
 
-    <font size="4">**`#!python strict_parsing`**</font>
+Automatically convert a Django view into an `iframe`.
 
-    By default, an exception will be generated if your view's HTML does not perfectly adhere to HTML5.
+The contents of this `iframe` is handled entirely by traditional Django view rendering. While this solution is compatible with more views than `view_to_component`, it comes with different limitations.
 
-    However, there are some circumstances where you may not have control over the original HTML, so you may be unable to fix it. Or you may be relying on non-standard HTML tags such as `#!html <my-tag> Hello World </my-tag>`.
+Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/). These views can be sync or async.
 
-    In these scenarios, you may want to rely on best-fit parsing by setting the `#!python strict_parsing` parameter to `#!python False`.
+=== "components.py"
 
-    === "components.py"
+    ```python
+    {% include "../../python/vtc-compatibility.py" %}
+    ```
 
-        ```python
-        {% include "../../python/vtc-strict-parsing.py" %}
-        ```
+??? example "See Interface"
 
-    _Note: Best-fit parsing is designed to be similar to how web browsers would handle non-standard or broken HTML._
+    <font size="4">**Parameters**</font>
 
-    ---
+    | Name | Type | Description | Default |
+    | --- | --- | --- | --- |
 
-    <font size="4">**`#!python compatibility`**</font>
+    <font size="4">**Returns**</font>
 
-    For views that rely on HTTP responses other than `GET` (such as `PUT`, `POST`, `PATCH`, etc), you should consider using compatibility mode to render your view within an iframe.
+    | Type | Description |
+    | --- | --- |
+    | `#!python _ViewComponentConstructor` | A function that takes `#!python request, *args, key, **kwargs` and returns a ReactPy component. All parameters are directly provided to your view, besides `#!python key` which is used by ReactPy. |
 
-    Any view can be rendered within compatibility mode. However, the `#!python transforms`, `#!python strict_parsing`, `#!python request`, `#!python args`, and `#!python kwargs` arguments do not apply to compatibility mode.
+??? Warning "Potential information exposure when using this component"
 
+    When using this component, ReactPy automatically exposes a URL to your view.
 
+    It is your responsibility to ensure privileged information is not leaked via this method.
 
-    === "components.py"
+    You must implement a method to ensure only authorized users can access your view. This can be done via directly writing conditionals into your view, or by adding decorators such as [`#!python user_passes_test`](https://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test) to your views. For example...
 
-        ```python
-        {% include "../../python/vtc-compatibility.py" %}
-        ```
-
-    _Note: By default the `#!python compatibility` iframe is unstyled, and thus won't look pretty until you add some CSS._
-
-    ---
-
-    <font size="4">**`#!python transforms`**</font>
-
-    After your view has been turned into [VDOM](https://reactpy.dev/docs/reference/specifications.html#vdom) (python dictionaries), `#!python view_to_component` will call your `#!python transforms` functions on every VDOM node.
-
-    This allows you to modify your view prior to rendering.
-
-    For example, if you are trying to modify the text of a node with a certain `#!python id`, you can create a transform like such:
-
-    === "components.py"
+    === "Function Based View"
 
         ```python
-        {% include "../../python/vtc-transforms.py" %}
+        {% include "../../python/vtc-fbv-compat.py" %}
         ```
+
+    === "Class Based View"
+
+        ```python
+        {% include "../../python/vtc-cbv-compatibility.py" %}
+        ```
+
+??? info "Existing limitations"
+
+    There are currently several limitations of using `#!python view_to_iframe` that may be resolved in a future version.
+
+    - Inability to signal events back to the parent component.
+    - You must ensure all `view_to_iframe` components are manually loaded during Django startup to ensure multiprocessing compatibility. This usually involves import the file where you define your `view_to_iframe` functions within your `MyAppConfig.ready` method.
+    - The `iframe` component will always load **after** the parent component.
+    - CSS styling restrictions inherent to `iframe` elements.
+
+??? Question "Why do my converted components look ugly?"
+
+    The `iframe` generated by this component is unstyled, and thus won't look pretty until you add some CSS.
+
+    We recommend removing the `border`, and configuring a `height` and `width`.
+
+??? question "How do I provide `#!python args` and `#!python kwargs` to a view?"
+
+    ...
 
 ## Django CSS
 

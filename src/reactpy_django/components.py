@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Any, Callable, Protocol, Sequence, Union, cast, overload
+from typing import Any, Callable, Sequence, Union, cast, overload
+from warnings import warn
 
 from django.contrib.staticfiles.finders import find
 from django.core.cache import caches
@@ -10,17 +11,10 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.views import View
 from reactpy import component, hooks, html, utils
-from reactpy.types import ComponentType, Key, VdomDict
+from reactpy.types import Key, VdomDict
 
-from reactpy_django.types import ViewComponentIframe
+from reactpy_django.types import IframeComponent, ViewComponentConstructor
 from reactpy_django.utils import generate_obj_name, render_view
-
-
-class _ViewComponentConstructor(Protocol):
-    def __call__(
-        self, request: HttpRequest | None = None, *args: Any, **kwargs: Any
-    ) -> ComponentType:
-        ...
 
 
 @component
@@ -33,8 +27,6 @@ def _view_to_component(
     args: Sequence | None,
     kwargs: dict | None,
 ):
-    from reactpy_django.config import REACTPY_VIEW_COMPONENT_IFRAMES
-
     converted_view, set_converted_view = hooks.use_state(
         cast(Union[VdomDict, None], None)
     )
@@ -72,16 +64,14 @@ def _view_to_component(
 
     # Render in compatibility mode, if needed
     if compatibility:
-        dotted_path = f"{view.__module__}.{view.__name__}".replace("<", "").replace(">", "")  # type: ignore
-        REACTPY_VIEW_COMPONENT_IFRAMES[dotted_path] = ViewComponentIframe(
-            view, _args, _kwargs
+        # Warn the user that compatibility mode is deprecated
+        warn(
+            "view_to_component(compatibility=True) is deprecated and will be removed in a future version. "
+            "Please use `view_to_iframe_component` instead.",
+            DeprecationWarning,
         )
-        return html.iframe(
-            {
-                "src": reverse("reactpy:view_to_component", args=[dotted_path]),
-                "loading": "lazy",
-            }
-        )
+
+        return view_to_iframe(view)(_args, **_kwargs)
 
     # Return the view if it's been rendered via the `async_render` hook
     return converted_view
@@ -96,7 +86,7 @@ def view_to_component(
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-) -> _ViewComponentConstructor:
+) -> ViewComponentConstructor:
     ...
 
 
@@ -108,7 +98,7 @@ def view_to_component(
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-) -> Callable[[Callable], _ViewComponentConstructor]:
+) -> Callable[[Callable], ViewComponentConstructor]:
     ...
 
 
@@ -119,7 +109,7 @@ def view_to_component(
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-) -> _ViewComponentConstructor | Callable[[Callable], _ViewComponentConstructor]:
+) -> ViewComponentConstructor | Callable[[Callable], ViewComponentConstructor]:
     """Converts a Django view to a ReactPy component.
 
     Keyword Args:
@@ -161,6 +151,26 @@ def view_to_component(
         return wrapper
 
     return decorator(view) if view else decorator
+
+
+def view_to_iframe(view: Callable | View):
+    from reactpy_django.config import REACTPY_REGISTERED_IFRAMES
+
+    dotted_path = f"{view.__module__}.{view.__name__}".replace("<", "").replace(">", "")  # type: ignore
+    REACTPY_REGISTERED_IFRAMES[dotted_path] = IframeComponent(view)
+
+    @component
+    def _view_to_iframe(*args: Any, **kwargs: Any):
+        return html.iframe(
+            {
+                "src": reverse(
+                    "reactpy:view_to_iframe", args=[dotted_path, *args], kwargs=kwargs
+                ),
+                "loading": "lazy",
+            }
+        )
+
+    return _view_to_iframe
 
 
 @component
