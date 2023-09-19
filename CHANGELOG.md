@@ -44,6 +44,10 @@ Using the following categories, list your changes in this order:
 
 -   Renamed undocumented utility function `reactpy_django.utils.ComponentPreloader` to `reactpy_django.utils.RootComponentFinder`.
 
+### Deprecated
+
+-   The `compatibility` argument on `reactpy_django.components.view_to_component` is deprecated. Use `view_to_iframe_component` instead.
+
 ## [3.5.1] - 2023-09-07
 
 ### Added
