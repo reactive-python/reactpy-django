@@ -345,10 +345,13 @@ def _use_mutation_args_2(
     return MutationOptions(), mutation, refetch
 
 
-def use_user() -> AbstractUser | None:
+def use_user() -> AbstractUser:
     """Get the current `User` object from either the WebSocket or HTTP request."""
     connection = use_connection()
-    return connection.scope.get("user") or getattr(connection.carrier, "user", None)
+    user = connection.scope.get("user") or getattr(connection.carrier, "user", None)
+    if user is None:
+        raise UserNotFoundError("No user is available in the current environment.")
+    return user
 
 
 async def get_user_data(user: AbstractUser | None, default: Any, user_data_model):
@@ -395,10 +398,6 @@ def use_user_data(
     user_data_model,
 ) -> UserData[_Type]:
     user = use_user()
-
-    if user is None:
-        raise UserNotFoundError("No user is available.")
-
     data = use_query(get_user_data, user, default_data, user_data_model)
     set_data = use_mutation(set_user_data(user, user_data_model), refetch=get_user_data)
 

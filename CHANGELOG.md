@@ -44,6 +44,10 @@ Using the following categories, list your changes in this order:
 
 -   Renamed undocumented utility function `reactpy_django.utils.ComponentPreloader` to `reactpy_django.utils.RootComponentFinder`.
 
+### Deprecated
+
+-   `reactpy_django.decorators.auth_required` is deprecated. An equivalent to this decorator's default is `@reactpy_django.decorators.user_passes_test(lambda user: user.is_active)`.
+
 ## [3.5.1] - 2023-09-07
 
 ### Added
