@@ -229,11 +229,11 @@ def use_mutation(*args: Any, **kwargs: Any) -> Mutation[_Params]:
     """Hook to create, update, or delete Django ORM objects.
 
     Args:
-        mutate: A callable that performs Django ORM create, update, or delete
-            functionality. If this function returns `False`, then your `refetch`
+        mutate: A callable that performs Django ORM create, update, or delete \
+            functionality. If this function returns `False`, then your `refetch` \
             function will not be used.
-        refetch: A `query` function (used by the `use_query` hook) or a sequence of `query`
-            functions that will be called if the mutation succeeds. This is useful for
+        refetch: A `query` function (used by the `use_query` hook) or a sequence of `query` \
+            functions that will be called if the mutation succeeds. This is useful for \
             refetching data after a mutation has been performed.
     """
 
