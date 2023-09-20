@@ -40,7 +40,7 @@ This template tag can be used to insert any number of ReactPy components onto yo
 
 ??? warning "Do not use context variables for the component path"
 
-    The ReactPy component finder (`#!python reactpy_django.utils.RootComponentFinder`) requires that your component path is a string.
+    The ReactPy component finder requires that your component path is a string.
 
     **Do not** use Django template/context variables for the component path. Failure to follow this warning can result in unexpected behavior, such as components that will not render.
 
