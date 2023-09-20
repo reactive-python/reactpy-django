@@ -101,6 +101,7 @@ extra_css:
     - assets/css/main.css
     - assets/css/button.css
     - assets/css/admonition.css
+    - assets/css/banner.css
     - assets/css/sidebar.css
     - assets/css/navbar.css
     - assets/css/table-of-contents.css
