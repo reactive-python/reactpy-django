@@ -16,9 +16,9 @@ Prefabricated hooks can be used within your `components.py` to help simplify dev
 
 ## Use Query
 
-This hook is used [read](https://www.sumologic.com/glossary/crud/) data, typically from the Django ORM.
+This hook is used to execute functions in the background and return the result, typically to [read](https://www.sumologic.com/glossary/crud/) data the Django ORM.
 
-The [default postprocessor](../reference/utils.md#django-query-postprocessor) expects your query function to return either a Django `#!python Model` or `#!python QuerySet`. The postprocessor needs to be changed to perform other types of queries. Query functions can be sync or async.
+The [default postprocessor](../reference/utils.md#django-query-postprocessor) expects your query function to return either a Django `#!python Model` or `#!python QuerySet`. The postprocessor needs to be changed to execute other types of queries. Query functions can be sync or async.
 
 === "components.py"
 
@@ -61,9 +61,9 @@ The [default postprocessor](../reference/utils.md#django-query-postprocessor) ex
 
 ??? question "How can I customize this hook's behavior?"
 
-    This hook accepts a `#!python options = ...` parameter that can be used to customize its behavior. You can provide a `#!python reactpy_django.types.QueryOptions` object to this parameter to customize the hook's behavior.
+    This hook accepts a `#!python options: QueryOptions` parameter that can be used to customize behavior.
 
-    Below are the settings that can be modified via `#!python QueryOptions`.
+    Below are the settings that can be modified via these `#!python QueryOptions`.
 
     ---
 
@@ -158,7 +158,7 @@ The [default postprocessor](../reference/utils.md#django-query-postprocessor) ex
 
 ## Use Mutation
 
-This hook is used to [create, update, or delete](https://www.sumologic.com/glossary/crud/) data, typically from the Django ORM.
+This hook is used to modify data in the background, typically to [create/update/delete](https://www.sumologic.com/glossary/crud/) data from the Django ORM.
 
 The mutation function you provide should have no return value. Mutation functions can be sync or async.
 
@@ -201,9 +201,9 @@ The mutation function you provide should have no return value. Mutation function
 
 ??? question "How can I customize this hook's behavior?"
 
-    This hook accepts a `#!python options = ...` parameter that can be used to customize its behavior. You can provide a `#!python reactpy_django.types.MutationOptions` object to this parameter to customize the hook's behavior.
+    This hook accepts a `#!python options: MutationOptions` parameter that can be used to customize behavior.
 
-    Below are the settings that can be modified via `#!python MutationOptions`.
+    Below are the settings that can be modified via these `#!python MutationOptions`.
 
     ---
 
@@ -331,7 +331,7 @@ You can expect this hook to provide strings such as `/reactpy/my_path`.
 
 ??? info "This hook's behavior will be changed in a future update"
 
-    This hook will be updated to always return the browser's currently active HTTP path. This change will come in alongside ReactPy URL routing support.
+    This hook will be updated to return the browser's currently active HTTP path. This change will come in alongside ReactPy URL routing support.
 
     Check out [reactive-python/reactpy-django#147](https://github.com/reactive-python/reactpy-django/issues/147) for more information.
 

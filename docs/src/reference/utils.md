@@ -62,4 +62,4 @@ This function is used manually register a root component with ReactPy.
 
     For security reasons, ReactPy requires all root components to be registered. However, all components contained within Django templates are automatically registered.
 
-    This function is needed when you have configured your [`host`](../reference/template-tag.md#component) to a dedicated Django rendering application that doesn't have templates. On this dedicated rendering server, you would need to manually register your components.
+    This function is needed when you have configured your [`host`](../reference/template-tag.md#component) to a dedicated Django rendering application that doesn't have templates.
