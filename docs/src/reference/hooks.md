@@ -181,7 +181,7 @@ Mutation functions can `#!python return False` to prevent executing your `#!pyth
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
     | `#!python mutate` | `#!python Callable[_Params, bool | None]` | A callable that performs Django ORM create, update, or delete functionality. If this function returns `#!python False`, then your `#!python refetch` function will not be used. | N/A |
-    | `#!python refetch` | `#!python Callable[..., Any] | Sequence[Callable[..., Any]] | None` | A query function (the function typically provided to your `#!python use_query` hook) or a sequence of query functions that need a `refetch` if the mutation succeeds. This is useful for refetching data after a mutation has been performed. | `#!python None` |
+    | `#!python refetch` | `#!python Callable[..., Any] | Sequence[Callable[..., Any]] | None` | A query function (the function you provide to your `#!python use_query` hook) or a sequence of query functions that need a `refetch` if the mutation succeeds. This is useful for refreshing data after a mutation has been performed. | `#!python None` |
 
     <font size="4">**Returns**</font>
 

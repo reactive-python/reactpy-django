@@ -191,7 +191,7 @@ def django_js(static_path: str, key: Key | None = None):
 
     Args:
         static_path: The path to the static file. This path is identical to what you would \
-            use on a `static` template tag.
+            use on Django's `{% static %}` template tag.
         key: A key to uniquely identify this component which is unique amongst a component's \
             immediate siblings
     """
