@@ -19,8 +19,8 @@ def auth_required(
     This decorator can be used with or without parentheses.
 
     Args:
-        auth_attribute: The value to check within the user object.
-            This is checked in the form of `UserModel.<auth_attribute>`.
+        auth_attribute: The value to check within the user object. \
+            This is checked in the form of `UserModel.<auth_attribute>`. \
         fallback: The component or VDOM (`reactpy.html` snippet) to render if the user is not authenticated.
     """
 
