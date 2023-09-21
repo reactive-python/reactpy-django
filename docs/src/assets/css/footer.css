@@ -27,3 +27,7 @@
 .legal-footer-right {
 	float: right;
 }
+
+.md-copyright__highlight div {
+	display: inline;
+}

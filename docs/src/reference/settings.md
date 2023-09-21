@@ -34,7 +34,7 @@ The prefix used for all ReactPy WebSocket and HTTP URLs.
 
 **Example Value(s):** `#!python "example_project.postprocessor"`, `#!python None`
 
-Dotted path to the default `#!python reactpy_django.hooks.use_query` postprocessor function.
+Dotted path to the global default `#!python reactpy_django.hooks.use_query` postprocessor function.
 
 Postprocessor functions can be async or sync. Here is an example of a sync postprocessor function:
 

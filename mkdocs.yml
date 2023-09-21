@@ -12,12 +12,14 @@ nav:
           - Template Tag: reference/template-tag.md
           - Settings: reference/settings.md
     - About:
-          - Contribute:
+          - Changelog: about/changelog.md
+          - Contributor Guide:
                 - Code: about/code.md
                 - Docs: about/docs.md
-          - GitHub Discussions: https://github.com/reactive-python/reactpy-django/discussions
-          - Discord: https://discord.gg/uNb5P4hA9X
-          - Changelog: about/changelog.md
+          - Community:
+                - GitHub Discussions: https://github.com/reactive-python/reactpy-django/discussions
+                - Discord: https://discord.gg/uNb5P4hA9X
+          - License: about/license.md
 
 theme:
     name: material
@@ -90,6 +92,9 @@ extra:
     generator: false
     version:
         provider: mike
+    analytics:
+        provider: google
+        property: G-4KFQN2LWBG
 
 extra_javascript:
     - assets/js/main.js
@@ -98,6 +103,7 @@ extra_css:
     - assets/css/main.css
     - assets/css/button.css
     - assets/css/admonition.css
+    - assets/css/banner.css
     - assets/css/sidebar.css
     - assets/css/navbar.css
     - assets/css/table-of-contents.css
@@ -110,12 +116,19 @@ watch:
     - mkdocs.yml
     - README.md
     - CHANGELOG.md
+    - LICENSE.md
     - .mailmap
 
 site_name: ReactPy-Django
 site_author: Archmonger
 site_description: It's React, but in Python. Now with Django integration.
-copyright: Copyright &copy; 2023 Reactive Python.<div class="legal-footer-right">This project has no affiliation to ReactJS or Meta Platforms, Inc.</div>
+copyright: '&copy;
+<div id="year"></div>
+<script> document.getElementById("year").innerHTML = new Date().getFullYear(); </script>
+Reactive Python and affiliates.
+<div class="legal-footer-right">
+This project has no affiliation to ReactJS or Meta Platforms, Inc.
+</div>'
 repo_url: https://github.com/reactive-python/reactpy-django
 site_url: https://reactive-python.github.io/reactpy-django
 repo_name: reactive-python/reactpy-django
