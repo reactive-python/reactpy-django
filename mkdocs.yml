@@ -12,12 +12,14 @@ nav:
           - Template Tag: reference/template-tag.md
           - Settings: reference/settings.md
     - About:
-          - Contribute:
+          - Changelog: about/changelog.md
+          - Contributor Guide:
                 - Code: about/code.md
                 - Docs: about/docs.md
-          - GitHub Discussions: https://github.com/reactive-python/reactpy-django/discussions
-          - Discord: https://discord.gg/uNb5P4hA9X
-          - Changelog: about/changelog.md
+          - Community:
+                - GitHub Discussions: https://github.com/reactive-python/reactpy-django/discussions
+                - Discord: https://discord.gg/uNb5P4hA9X
+          - License: about/license.md
 
 theme:
     name: material
@@ -114,6 +116,7 @@ watch:
     - mkdocs.yml
     - README.md
     - CHANGELOG.md
+    - LICENSE.md
     - .mailmap
 
 site_name: ReactPy-Django
