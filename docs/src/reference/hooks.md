@@ -18,7 +18,7 @@ Prefabricated hooks can be used within your `components.py` to help simplify dev
 
 This hook is used to execute functions in the background and return the result, typically to [read](https://www.sumologic.com/glossary/crud/) data the Django ORM.
 
-The [default postprocessor](../reference/utils.md#django-query-postprocessor) expects your query function to return either a Django `#!python Model` or `#!python QuerySet`. The postprocessor needs to be changed to execute other types of queries. Query functions can be sync or async.
+The [default postprocessor](../reference/utils.md#django-query-postprocessor) expects your query function to `#!python return` a Django `#!python Model` or `#!python QuerySet`. The postprocessor needs to be changed to execute other types of queries. Query functions can be sync or async.
 
 === "components.py"
 
@@ -160,7 +160,7 @@ The [default postprocessor](../reference/utils.md#django-query-postprocessor) ex
 
 This hook is used to modify data in the background, typically to [create/update/delete](https://www.sumologic.com/glossary/crud/) data from the Django ORM.
 
-The mutation function you provide should have no return value. Mutation functions can be sync or async.
+Mutation functions can `#!python return False` to prevent executing your `#!python refetch` function. All other returns are ignored. Mutation functions can be sync or async.
 
 === "components.py"
 
@@ -285,7 +285,7 @@ This hook is used to fetch the active connection, which is either a Django [WebS
 
 ## Use Scope
 
-This is a shortcut that returns the HTTP or WebSocket [`#!python scope`](https://channels.readthedocs.io/en/stable/topics/consumers.html#scope).
+This is a shortcut that returns the WebSocket or HTTP [scope](https://channels.readthedocs.io/en/stable/topics/consumers.html#scope).
 
 === "components.py"
 
@@ -307,7 +307,7 @@ This is a shortcut that returns the HTTP or WebSocket [`#!python scope`](https:/
 
 ## Use Location
 
-This is a shortcut that returns the client's `#!python path`.
+This is a shortcut that returns the client's URL `#!python path`.
 
 You can expect this hook to provide strings such as `/reactpy/my_path`.
 
@@ -337,7 +337,7 @@ You can expect this hook to provide strings such as `/reactpy/my_path`.
 
 ## Use Origin
 
-This is a shortcut that returns the WebSocket's `#!python origin`.
+This is a shortcut that returns the client's `#!python origin`.
 
 You can expect this hook to provide strings such as `http://example.com`.
 
