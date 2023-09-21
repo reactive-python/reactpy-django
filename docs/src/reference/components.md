@@ -177,7 +177,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `#!python static_path` | `#!python str` | The path to the static file. This path is identical to what you would use on a `static` template tag. | N/A |
+    | `#!python static_path` | `#!python str` | The path to the static file. This path is identical to what you would use on Django's `#!jinja {% static %}` template tag. | N/A |
     | `#!python key` | `#!python Key | None` | A key to uniquely identify this component which is unique amongst a component's immediate siblings | `#!python None` |
 
     <font size="4">**Returns**</font>
@@ -185,10 +185,6 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
     | Type | Description |
     | --- | --- |
     | `#!python Component` | A ReactPy component. |
-
-??? question "Should I put `#!python django_css` at the top of my HTML?"
-
-    Yes, if the stylesheet contains styling for your component.
 
 ??? question "Can I load static CSS using `#!python html.link` instead?"
 
@@ -204,7 +200,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
     `#!python django_css` can only be used with local static files.
 
-    For external CSS, substitute `#!python django_css` with `#!python html.link`.
+    For external CSS, you should use `#!python html.link`.
 
     ```python
     {% include "../../python/django-css-external-link.py" %}
@@ -212,13 +208,17 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
 ??? question "Why not load my CSS in `#!html <head>`?"
 
-    Traditionally, stylesheets are loaded in your `#!html <head>` using the `#!jinja {% load static %}` template tag.
+    Traditionally, stylesheets are loaded in your `#!html <head>` using Django's `#!jinja {% static %}` template tag.
 
-    To help improve webpage load times, you can use the `#!python django_css` component to defer loading your stylesheet until it is needed.
+    However, to help improve webpage load times you can use this `#!python django_css` component to defer loading your stylesheet until it is needed.
 
 ## Django JS
 
 Allows you to defer loading JavaScript until a component begins rendering. This JavaScript must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).
+
+!!! warning "Pitfall"
+
+    Be mindful of load order! If your JavaScript relies on the component existing on the page, you must place `django_js` at the **bottom** of your component.
 
 === "components.py"
 
@@ -232,7 +232,7 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `#!python static_path` | `#!python str` | The path to the static file. This path is identical to what you would use on a `static` template tag. | N/A |
+    | `#!python static_path` | `#!python str` | The path to the static file. This path is identical to what you would use on Django's `#!jinja {% static %}` template tag. | N/A |
     | `#!python key` | `#!python Key | None` | A key to uniquely identify this component which is unique amongst a component's immediate siblings | `#!python None` |
 
     <font size="4">**Returns**</font>
@@ -240,10 +240,6 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
     | Type | Description |
     | --- | --- |
     | `#!python Component` | A ReactPy component. |
-
-??? question "Should I put `#!python django_js` at the bottom of my HTML?"
-
-    Yes, if your scripts are reliant on the contents of the component.
 
 ??? question "Can I load static JavaScript using `#!python html.script` instead?"
 
@@ -259,7 +255,7 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
 
     `#!python django_js` can only be used with local static files.
 
-    For external JavaScript, substitute `#!python django_js` with `#!python html.script`.
+    For external JavaScript, you should use `#!python html.script`.
 
     ```python
     {% include "../../python/django-js-remote-script.py" %}
@@ -267,6 +263,6 @@ Allows you to defer loading JavaScript until a component begins rendering. This 
 
 ??? question "Why not load my JS in `#!html <head>`?"
 
-    Traditionally, JavaScript is loaded in your `#!html <head>` using the `#!jinja {% load static %}` template tag.
+    Traditionally, JavaScript is loaded in your `#!html <head>` using Django's `#!jinja {% static %}` template tag.
 
-    To help improve webpage load times, you can use the `#!python django_js` component to defer loading your JavaScript until it is needed.
+    However, to help improve webpage load times you can use this `#!python django_js` component to defer loading your JavaScript until it is needed.

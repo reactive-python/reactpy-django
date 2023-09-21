@@ -124,16 +124,16 @@ def view_to_component(
 
     Keyword Args:
         view: The view function or class to convert.
-        compatibility: If True, the component will be rendered in an iframe.
-            When using compatibility mode `tranforms`, `strict_parsing`, `request`,
+        compatibility: If True, the component will be rendered in an iframe. \
+            When using compatibility mode `tranforms`, `strict_parsing`, `request`, \
             `args, and `kwargs` arguments will be ignored.
-        transforms: A list of functions that transforms the newly generated VDOM.
+        transforms: A list of functions that transforms the newly generated VDOM. \
             The functions will be called on each VDOM node.
-        strict_parsing: If True, an exception will be generated if the HTML does not
+        strict_parsing: If True, an exception will be generated if the HTML does not \
             perfectly adhere to HTML5.
 
     Returns:
-        A function that takes `request: HttpRequest | None, *args: Any, key: Key | None, **kwargs: Any`
+        A function that takes `request: HttpRequest | None, *args: Any, key: Key | None, **kwargs: Any` \
             and returns a ReactPy component.
     """
 
@@ -172,9 +172,9 @@ def django_css(static_path: str, key: Key | None = None):
     """Fetches a CSS static file for use within ReactPy. This allows for deferred CSS loading.
 
     Args:
-        static_path: The path to the static file. This path is identical to what you would
-            use on a `static` template tag.
-        key: A key to uniquely identify this component which is unique amongst a component's
+        static_path: The path to the static file. This path is identical to what you would \
+            use on Django's `{% static %}` template tag
+        key: A key to uniquely identify this component which is unique amongst a component's \
             immediate siblings
     """
 
@@ -190,9 +190,9 @@ def django_js(static_path: str, key: Key | None = None):
     """Fetches a JS static file for use within ReactPy. This allows for deferred JS loading.
 
     Args:
-        static_path: The path to the static file. This path is identical to what you would
-            use on a `static` template tag.
-        key: A key to uniquely identify this component which is unique amongst a component's
+        static_path: The path to the static file. This path is identical to what you would \
+            use on Django's `{% static %}` template tag.
+        key: A key to uniquely identify this component which is unique amongst a component's \
             immediate siblings
     """
 

@@ -3,8 +3,8 @@ from reactpy import component, html
 from reactpy_django.hooks import use_mutation
 
 
-def add_item(text: str):
-    TodoItem(text=text).save()
+async def add_item(text: str):
+    await TodoItem(text=text).asave()
 
 
 @component
