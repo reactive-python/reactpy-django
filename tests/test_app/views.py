@@ -124,6 +124,21 @@ class ViewToComponentTemplateViewClassCompatibility(TemplateView):
         return {"test_name": self.__class__.__name__}
 
 
+def view_to_iframe_args(request, arg1, arg2, kwarg1=None, kwarg2=None):
+    success = (
+        arg1 == "Arg1" and arg2 == "Arg2" and kwarg1 == "Kwarg1" and kwarg2 == "Kwarg2"
+    )
+
+    return render(
+        request,
+        "view_to_component.html",
+        {
+            "test_name": inspect.currentframe().f_code.co_name,  # type:ignore
+            "status": "Success" if success else "false",
+        },
+    )
+
+
 def view_to_component_script(request):
     return render(
         request,
@@ -149,7 +164,6 @@ def view_to_component_request(request):
         {
             "test_name": inspect.currentframe().f_code.co_name,  # type:ignore
             "status": "false",
-            "success": "false",
         },
     )
 

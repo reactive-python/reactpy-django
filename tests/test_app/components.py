@@ -7,7 +7,7 @@ from channels.db import database_sync_to_async
 from django.http import HttpRequest
 from django.shortcuts import render
 from reactpy import component, hooks, html, web
-from reactpy_django.components import view_to_component
+from reactpy_django.components import view_to_component, view_to_iframe
 from reactpy_django.types import QueryOptions
 
 from test_app.models import (
@@ -468,6 +468,7 @@ _view_to_component_async_class_compatibility = view_to_component(
 _view_to_component_template_view_class_compatibility = view_to_component(
     views.ViewToComponentTemplateViewClassCompatibility, compatibility=True
 )
+_view_to_iframe_args = view_to_iframe(views.view_to_iframe_args)
 view_to_component_script = view_to_component(views.view_to_component_script)
 _view_to_component_request = view_to_component(views.view_to_component_request)
 _view_to_component_args = view_to_component(views.view_to_component_args)
@@ -511,6 +512,14 @@ def view_to_component_template_view_class_compatibility():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},  # type: ignore
         _view_to_component_template_view_class_compatibility(),
+    )
+
+
+@component
+def view_to_iframe_args():
+    return html.div(
+        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
+        _view_to_iframe_args("Arg1", "Arg2", kwarg1="Kwarg1", kwarg2="Kwarg2"),
     )
 
 

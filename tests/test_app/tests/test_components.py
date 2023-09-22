@@ -264,6 +264,11 @@ class ComponentTests(ChannelsLiveServerTestCase):
             "#ViewToComponentTemplateViewClassCompatibility[data-success=true]"
         ).wait_for()
 
+    def test_view_to_iframe_args(self):
+        self.page.frame_locator("#view_to_iframe_args > iframe").locator(
+            "#view_to_iframe_args[data-success=Success]"
+        ).wait_for()
+
     def test_view_to_component_decorator(self):
         self.page.locator("#view_to_component_decorator[data-success=true]").wait_for()
 

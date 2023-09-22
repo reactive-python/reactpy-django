@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 from typing import Any, Callable, Sequence, Union, cast, overload
+from urllib.parse import urlencode
 from warnings import warn
 
 from django.contrib.staticfiles.finders import find
@@ -71,7 +72,7 @@ def _view_to_component(
             DeprecationWarning,
         )
 
-        return view_to_iframe(view)(_args, **_kwargs)
+        return view_to_iframe(view)(*_args, **_kwargs)
 
     # Return the view if it's been rendered via the `async_render` hook
     return converted_view
@@ -161,11 +162,19 @@ def view_to_iframe(view: Callable | View):
 
     @component
     def _view_to_iframe(*args: Any, **kwargs: Any):
+        query_string = ""
+        query = {}
+        if args:
+            query["_args"] = args
+        if kwargs:
+            query.update(kwargs)
+        if args or kwargs:
+            query_string = f"?{urlencode(query, doseq=True)}"
+
         return html.iframe(
             {
-                "src": reverse(
-                    "reactpy:view_to_iframe", args=[dotted_path, *args], kwargs=kwargs
-                ),
+                "src": reverse("reactpy:view_to_iframe", args=[dotted_path])
+                + query_string,
                 "loading": "lazy",
             }
         )

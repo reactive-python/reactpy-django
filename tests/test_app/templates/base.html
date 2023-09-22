@@ -81,6 +81,8 @@
   <hr>
   {% component "test_app.components.view_to_component_template_view_class_compatibility" %}
   <hr>
+  {% component "test_app.components.view_to_iframe_args" %}
+  <hr>
   {% component "test_app.components.view_to_component_decorator" %}
   <hr>
   {% component "test_app.components.view_to_component_decorator_args" %}
@@ -92,7 +94,8 @@
   <div id="invalid_host_error">{% component "test_app.components.hello_world" host="https://example.com/" %}</div>
   <hr>
   <div id="broken_postprocessor_query">
-    {% component "test_app.components.broken_postprocessor_query" %}</div>
+    {% component "test_app.components.broken_postprocessor_query" %}
+  </div>
   <hr>
 </body>
 

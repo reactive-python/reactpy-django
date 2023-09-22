@@ -77,6 +77,8 @@ class Mutation(Generic[_Params]):
 
 @dataclass
 class IframeComponent:
+    """Views registered by `view_to_iframe`."""
+
     view: View | Callable
 
 

@@ -1,4 +1,5 @@
 import os
+from urllib.parse import parse_qs
 
 from aiofile import async_open
 from django.core.cache import caches
@@ -39,9 +40,7 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
     return HttpResponse(file_contents, content_type="text/javascript")
 
 
-async def view_to_iframe(
-    request: HttpRequest, view_path: str, *args, **kwargs
-) -> HttpResponse:
+async def view_to_iframe(request: HttpRequest, view_path: str) -> HttpResponse:
     """Returns a view that was registered by reactpy_django.components.view_to_iframe."""
     from reactpy_django.config import REACTPY_REGISTERED_IFRAMES
 
@@ -49,6 +48,11 @@ async def view_to_iframe(
     iframe = REACTPY_REGISTERED_IFRAMES.get(view_path)
     if not iframe:
         return HttpResponseNotFound()
+
+    # Get args and kwargs from the request
+    query = request.META.get("QUERY_STRING", "")
+    kwargs = {k: v if len(v) > 1 else v[0] for k, v in parse_qs(query).items()}
+    args = kwargs.pop("_args", [])
 
     # Render the view
     response = await render_view(iframe.view, request, args, kwargs)
