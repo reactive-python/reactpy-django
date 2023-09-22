@@ -35,7 +35,7 @@ Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/top
 
     | Type | Description |
     | --- | --- |
-    | `#!python _ViewComponentConstructor` | A function that takes `#!python request, *args, key, **kwargs` and returns a ReactPy component. All parameters are directly provided to your view, besides `#!python key` which is used by ReactPy. |
+    | `#!python ViewToComponentConstructor` | A function that takes `#!python request, *args, key, **kwargs` and returns a ReactPy component. All parameters are directly provided to your view, besides `#!python key` which is used by ReactPy. |
 
 ??? info "Existing limitations"
 
@@ -152,7 +152,7 @@ Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/top
 
     | Type | Description |
     | --- | --- |
-    | `#!python _ViewComponentConstructor` | A function that takes `#!python request, *args, key, **kwargs` and returns a ReactPy component. All parameters are directly provided to your view, besides `#!python key` which is used by ReactPy. |
+    | `#!python ViewToComponentConstructor` | A function that takes `#!python request, *args, key, **kwargs` and returns a ReactPy component. All parameters are directly provided to your view, besides `#!python key` which is used by ReactPy. |
 
 ??? Warning "Potential information exposure when using this component"
 

@@ -17,7 +17,6 @@ from typing import (
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
 from django.http import HttpRequest
-from django.views.generic import View
 from reactpy.types import ComponentType
 from reactpy.types import Connection as _Connection
 from typing_extensions import ParamSpec
@@ -30,7 +29,6 @@ __all__ = [
     "Query",
     "Mutation",
     "Connection",
-    "IframeComponent",
     "AsyncPostprocessor",
     "SyncPostprocessor",
     "QueryOptions",
@@ -73,13 +71,6 @@ class Mutation(Generic[_Params]):
     loading: bool
     error: Exception | None
     reset: Callable[[], None]
-
-
-@dataclass
-class IframeComponent:
-    """Views registered by `view_to_iframe`."""
-
-    view: View | Callable
 
 
 class AsyncPostprocessor(Protocol):
@@ -137,8 +128,13 @@ class ComponentParams:
     kwargs: MutableMapping[str, Any]
 
 
-class ViewComponentConstructor(Protocol):
+class ViewToComponentConstructor(Protocol):
     def __call__(
         self, request: HttpRequest | None = None, *args: Any, **kwargs: Any
     ) -> ComponentType:
+        ...
+
+
+class ViewToIframeConstructor(Protocol):
+    def __call__(self, *args: Any, **kwargs: Any) -> ComponentType:
         ...

@@ -225,14 +225,19 @@ class RootComponentFinder:
 def generate_obj_name(object: Any) -> str:
     """Makes a best effort to create a name for an object.
     Useful for JSON serialization of Python objects."""
+
+    # Attempt to use dunder methods to create a name
     if hasattr(object, "__module__"):
         if hasattr(object, "__name__"):
             return f"{object.__module__}.{object.__name__}"
         if hasattr(object, "__class__"):
             return f"{object.__module__}.{object.__class__.__name__}"
 
+    # First fallback: String representation
     with contextlib.suppress(Exception):
         return str(object)
+
+    # Last fallback: Empty string
     return ""
 
 

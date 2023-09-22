@@ -14,7 +14,7 @@ from django.views import View
 from reactpy import component, hooks, html, utils
 from reactpy.types import Key, VdomDict
 
-from reactpy_django.types import IframeComponent, ViewComponentConstructor
+from reactpy_django.types import ViewToComponentConstructor, ViewToIframeConstructor
 from reactpy_django.utils import generate_obj_name, render_view
 
 
@@ -87,7 +87,7 @@ def view_to_component(
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-) -> ViewComponentConstructor:
+) -> ViewToComponentConstructor:
     ...
 
 
@@ -99,7 +99,7 @@ def view_to_component(
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-) -> Callable[[Callable], ViewComponentConstructor]:
+) -> Callable[[Callable], ViewToComponentConstructor]:
     ...
 
 
@@ -110,7 +110,7 @@ def view_to_component(
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-) -> ViewComponentConstructor | Callable[[Callable], ViewComponentConstructor]:
+) -> ViewToComponentConstructor | Callable[[Callable], ViewToComponentConstructor]:
     """Converts a Django view to a ReactPy component.
 
     Keyword Args:
@@ -154,11 +154,11 @@ def view_to_component(
     return decorator(view) if view else decorator
 
 
-def view_to_iframe(view: Callable | View):
+def view_to_iframe(view: Callable | View) -> ViewToIframeConstructor:
     from reactpy_django.config import REACTPY_REGISTERED_IFRAMES
 
-    dotted_path = f"{view.__module__}.{view.__name__}".replace("<", "").replace(">", "")  # type: ignore
-    REACTPY_REGISTERED_IFRAMES[dotted_path] = IframeComponent(view)
+    dotted_path = generate_obj_name(view).replace("<", "").replace(">", "")
+    REACTPY_REGISTERED_IFRAMES[dotted_path] = view
 
     @component
     def _view_to_iframe(*args: Any, **kwargs: Any):

@@ -55,7 +55,7 @@ async def view_to_iframe(request: HttpRequest, view_path: str) -> HttpResponse:
     args = kwargs.pop("_args", [])
 
     # Render the view
-    response = await render_view(iframe.view, request, args, kwargs)
+    response = await render_view(iframe, request, args, kwargs)
 
     # Ensure page can be rendered as an iframe
     response["X-Frame-Options"] = "SAMEORIGIN"
