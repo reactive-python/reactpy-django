@@ -35,7 +35,6 @@ Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/top
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
     | `#!python view` | `#!python Callable | View` | The view function or class to convert. | N/A |
-    | `#!python compatibility` | `#!python bool` | If `#!python True`, the component will be rendered in an `iframe`. When using compatibility mode `#!python tranforms`, `#!python strict_parsing`, `#!python request`, `#!python args`, and `#!python kwargs` arguments will be ignored. | `#!python False` |
     | `#!python transforms` | `#!python Sequence[Callable[[VdomDict], Any]]` | A list of functions that transforms the newly generated VDOM. The functions will be called on each VDOM node. | `#!python tuple` |
     | `#!python strict_parsing` | `#!python bool` | If `#!python True`, an exception will be generated if the HTML does not perfectly adhere to HTML5. | `#!python True` |
 
@@ -161,11 +160,17 @@ Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/top
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
+    | `#!python view` | `#!python Callable | View` | The view function or class to convert. | N/A |
+    | `#!python *args` | `#!python Sequence[Any]` | A list of arguments to provide to your view. | N/A |
+    | `#!python extra_props` | `#!python Mapping[str, Any] | None` | Additional properties to add to the `iframe` element. | `#!python None` |
+    | `#!python **kwargs` | `#!python dict[str, Any]` | A dictionary of keyword arguments to provide to your view. | N/A |
+
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
+    | `#!python ComponentType` | A ReactPy `iframe` component. |
 
 ??? info "Existing limitations"
 
