@@ -113,9 +113,7 @@ def view_to_component(
 
     Keyword Args:
         view: The view function or class to convert.
-        compatibility: If True, the component will be rendered in an iframe. \
-            When using compatibility mode `tranforms`, `strict_parsing`, `request`, \
-            `args, and `kwargs` arguments will be ignored.
+        compatibility: **DEPRECATED.** Use `view_to_iframe` instead.
         transforms: A list of functions that transforms the newly generated VDOM. \
             The functions will be called on each VDOM node.
         strict_parsing: If True, an exception will be generated if the HTML does not \
@@ -161,7 +159,7 @@ def view_to_component(
 
 @component
 def _view_to_iframe(
-    view: Callable | View, *args, extra_props: dict | None = None, **kwargs
+    view: Callable | View, *args, extra_props: dict[str, Any] | None = None, **kwargs
 ) -> VdomDict:
     from reactpy_django.config import REACTPY_REGISTERED_IFRAMES
 
@@ -179,7 +177,8 @@ def _view_to_iframe(
     return html.iframe(
         {
             "src": reverse("reactpy:view_to_iframe", args=[dotted_path]) + query_string,
-            "style": {"border": "none", "width": "100%", "height": "auto"},
+            "style": {"border": "none"},
+            "onload": 'javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));',
             "loading": "lazy",
         }
         | extra_props
@@ -187,10 +186,19 @@ def _view_to_iframe(
 
 
 def view_to_iframe(
-    view: Callable | View, *args, extra_props: dict | None = None, **kwargs
+    view: Callable | View, *args, extra_props: dict[str, Any] | None = None, **kwargs
 ) -> ComponentType:
     """
-    TODO: Fill this out
+    Args:
+        view: The view function or class to convert.
+        *args: The positional arguments to provide to the view.
+
+    Keyword Args:
+        extra_props: Additional properties to add to the `iframe` element.
+        **kwargs: The keyword arguments to provide to the view.
+
+    Returns:
+        A `Component` that renders the view within an `iframe`.
     """
     return _view_to_iframe(view, *args, extra_props=extra_props, **kwargs)
 
