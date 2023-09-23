@@ -12,9 +12,9 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.views import View
 from reactpy import component, hooks, html, utils
-from reactpy.types import Key, VdomDict
+from reactpy.types import ComponentType, Key, VdomDict
 
-from reactpy_django.types import ViewToComponentConstructor, ViewToIframeConstructor
+from reactpy_django.types import ViewToComponentConstructor
 from reactpy_django.utils import generate_obj_name, render_view
 
 
@@ -68,11 +68,11 @@ def _view_to_component(
         # Warn the user that compatibility mode is deprecated
         warn(
             "view_to_component(compatibility=True) is deprecated and will be removed in a future version. "
-            "Please use `view_to_iframe_component` instead.",
+            "Please use `view_to_iframe` instead.",
             DeprecationWarning,
         )
 
-        return view_to_iframe(view)(*_args, **_kwargs)
+        return view_to_iframe(view, *_args, **_kwargs)
 
     # Return the view if it's been rendered via the `async_render` hook
     return converted_view
@@ -103,8 +103,6 @@ def view_to_component(
     ...
 
 
-# TODO: Might want to intercept href clicks and form submit events.
-# Form events will probably be accomplished through the upcoming DjangoForm.
 def view_to_component(
     view: Callable | View | None = None,
     compatibility: bool = False,
@@ -151,35 +149,50 @@ def view_to_component(
 
         return wrapper
 
+    if not view:
+        warn(
+            "Using `view_to_component` as a decorator is deprecated. "
+            "This functionality will be removed in a future version.",
+            DeprecationWarning,
+        )
+
     return decorator(view) if view else decorator
 
 
-def view_to_iframe(view: Callable | View) -> ViewToIframeConstructor:
+@component
+def _view_to_iframe(
+    view: Callable | View, *args, extra_props: dict | None = None, **kwargs
+) -> VdomDict:
     from reactpy_django.config import REACTPY_REGISTERED_IFRAMES
 
     dotted_path = generate_obj_name(view).replace("<", "").replace(">", "")
     REACTPY_REGISTERED_IFRAMES[dotted_path] = view
+    extra_props = extra_props or {}
+    extra_props.pop("src", None)
 
-    @component
-    def _view_to_iframe(*args: Any, **kwargs: Any):
-        query_string = ""
-        query = {}
-        if args:
-            query["_args"] = args
-        if kwargs:
-            query.update(kwargs)
-        if args or kwargs:
-            query_string = f"?{urlencode(query, doseq=True)}"
+    query = kwargs.copy()
+    if args:
+        query["_args"] = args
 
-        return html.iframe(
-            {
-                "src": reverse("reactpy:view_to_iframe", args=[dotted_path])
-                + query_string,
-                "loading": "lazy",
-            }
-        )
+    query_string = f"?{urlencode(query, doseq=True)}" if args or kwargs else ""
 
-    return _view_to_iframe
+    return html.iframe(
+        {
+            "src": reverse("reactpy:view_to_iframe", args=[dotted_path]) + query_string,
+            "style": {"border": "none", "width": "100%", "height": "auto"},
+            "loading": "lazy",
+        }
+        | extra_props
+    )
+
+
+def view_to_iframe(
+    view: Callable | View, *args, extra_props: dict | None = None, **kwargs
+) -> ComponentType:
+    """
+    TODO: Fill this out
+    """
+    return _view_to_iframe(view, *args, extra_props=extra_props, **kwargs)
 
 
 @component

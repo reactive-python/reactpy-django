@@ -133,8 +133,3 @@ class ViewToComponentConstructor(Protocol):
         self, request: HttpRequest | None = None, *args: Any, **kwargs: Any
     ) -> ComponentType:
         ...
-
-
-class ViewToIframeConstructor(Protocol):
-    def __call__(self, *args: Any, **kwargs: Any) -> ComponentType:
-        ...
