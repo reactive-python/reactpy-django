@@ -39,6 +39,7 @@ Using the following categories, list your changes in this order:
 -   ReactPy components can now use SEO compatible rendering!
     -   `settings.py:REACTPY_PRERENDER` can be set to `True` to enable this behavior by default
     -   Or, you can enable it on individual components via the template tag: `{% component "..." prerender="True" %}`
+-   `reactpy_django.components.view_to_iframe` component has been added, which uses an `<iframe>` to render a Django view.
 
 ### Changed
 
@@ -46,7 +47,8 @@ Using the following categories, list your changes in this order:
 
 ### Deprecated
 
--   The `compatibility` argument on `reactpy_django.components.view_to_component` is deprecated. Use `view_to_iframe_component` instead.
+-   The `compatibility` argument on `reactpy_django.components.view_to_component` is deprecated. Use `reactpy_django.components.view_to_iframe` instead.
+-   Using `reactpy_django.components.view_to_component` as a `#!python @decorator` is deprecated. Check the docs on the new suggested usage.
 
 ## [3.5.1] - 2023-09-07
 
