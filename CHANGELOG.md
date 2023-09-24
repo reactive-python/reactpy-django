@@ -45,6 +45,8 @@ Using the following categories, list your changes in this order:
 ### Changed
 
 -   Renamed undocumented utility function `reactpy_django.utils.ComponentPreloader` to `reactpy_django.utils.RootComponentFinder`.
+-   It is now recommended to call `as_view()` when using `view_to_component` or `view_to_iframe` with Class Based Views.
+-   Thread sensitivity has been enabled in all locations where ORM queries are possible.
 
 ### Deprecated
 
