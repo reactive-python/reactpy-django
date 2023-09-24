@@ -3,9 +3,11 @@ from reactpy_django.components import view_to_iframe
 
 from . import views
 
+hello_world_iframe = view_to_iframe(views.HelloWorld)
+
 
 @component
 def my_component():
     return html.div(
-        view_to_iframe(views.HelloWorld),
+        hello_world_iframe(),
     )

@@ -34,7 +34,7 @@ Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/top
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `#!python view` | `#!python Callable | View` | The view function or class to convert. | N/A |
+    | `#!python view` | `#!python Callable | View | str` | The view to convert, or the view's dotted path as a string. | N/A |
     | `#!python transforms` | `#!python Sequence[Callable[[VdomDict], Any]]` | A list of functions that transforms the newly generated VDOM. The functions will be called on each VDOM node. | `#!python tuple` |
     | `#!python strict_parsing` | `#!python bool` | If `#!python True`, an exception will be generated if the HTML does not perfectly adhere to HTML5. | `#!python True` |
 
@@ -42,7 +42,7 @@ Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/top
 
     | Type | Description |
     | --- | --- |
-    | `#!python ViewToComponentConstructor` | A function that takes `#!python request, *args, key, **kwargs` and returns a ReactPy component. All parameters are directly provided to your view, besides `#!python key` which is used by ReactPy. |
+    | `#!python constructor` | A function that takes `#!python request, *args, key, **kwargs` and returns a ReactPy component. Note that `#!python *args` and `#!python **kwargs` are directly provided to your view. |
 
 ??? info "Existing limitations"
 
@@ -76,6 +76,12 @@ Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/top
 
         ```python
         {% include "../../python/vtc-args.py" %}
+        ```
+
+    === "views.py"
+
+        ```python
+        {% include "../../python/hello_world_args_kwargs.py" %}
         ```
 
 ??? question "How do I customize this component's behavior?"
@@ -154,23 +160,27 @@ Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/top
     {% include "../../python/hello_world_fbv.py" %}
     ```
 
+=== "apps.py"
+
+    ```python
+    {% include "../../python/hello_world_app_config_fbv.py" %}
+    ```
+
 ??? example "See Interface"
 
     <font size="4">**Parameters**</font>
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `#!python view` | `#!python Callable | View` | The view function or class to convert. | N/A |
-    | `#!python *args` | `#!python Sequence[Any]` | A list of arguments to provide to your view. | N/A |
+    | `#!python view` | `#!python Callable | View | str` | The view function or class to convert. | N/A |
     | `#!python extra_props` | `#!python Mapping[str, Any] | None` | Additional properties to add to the `iframe` element. | `#!python None` |
-    | `#!python **kwargs` | `#!python dict[str, Any]` | A dictionary of keyword arguments to provide to your view. | N/A |
 
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
-    | `#!python ComponentType` | A ReactPy `iframe` component. |
+    | `#!python constructor` | A function that takes `#!python *args, key, **kwargs` and returns a ReactPy component. Note that `#!python *args` and `#!python **kwargs` are directly provided to your view. |
 
 ??? info "Existing limitations"
 
@@ -197,6 +207,12 @@ Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/top
         {% include "../../python/hello_world_cbv.py" %}
         ```
 
+    === "apps.py"
+
+        ```python
+        {% include "../../python/hello_world_app_config_cbv.py" %}
+        ```
+
 ??? question "How do I provide `#!python args` and `#!python kwargs` to a converted view?"
 
     This component accepts `#!python *args` and `#!python **kwargs` arguments, which are sent to your provided view.
@@ -213,6 +229,12 @@ Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/top
 
         ```python
         {% include "../../python/hello_world_fbv.py" %}
+        ```
+
+    === "apps.py"
+
+        ```python
+        {% include "../../python/hello_world_app_config_fbv.py" %}
         ```
 
 ??? question "How do I customize this component's behavior?"
@@ -233,6 +255,18 @@ Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/top
 
         ```python
         {% include "../../python/vti-extra-props.py" %}
+        ```
+
+    === "views.py"
+
+        ```python
+        {% include "../../python/hello_world_fbv.py" %}
+        ```
+
+    === "apps.py"
+
+        ```python
+        {% include "../../python/hello_world_app_config_fbv.py" %}
         ```
 
 ## Django CSS

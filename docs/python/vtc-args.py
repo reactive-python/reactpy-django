@@ -17,7 +17,7 @@ def my_component():
             request,  # This request object is optional.
             "value_1",
             "value_2",
-            key1="abc",
-            key2="123",
+            kwarg1="abc",
+            kwarg2="123",
         ),
     )
