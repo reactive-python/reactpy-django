@@ -33,6 +33,7 @@ urlpatterns = [
         "roundrobin/<int:port1>/<int:port2>/<int:count>/",
         views.host_port_roundrobin_template,
     ),
+    path("errors/", views.errors_template),
     path("", include("test_app.prerender.urls")),
     path("", include("test_app.performance.urls")),
     path("reactpy/", include("reactpy_django.http.urls")),

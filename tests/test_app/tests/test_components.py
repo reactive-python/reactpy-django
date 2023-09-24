@@ -277,16 +277,6 @@ class ComponentTests(ChannelsLiveServerTestCase):
             "#view_to_component_decorator_args[data-success=true]"
         ).wait_for()
 
-    def test_component_does_not_exist_error(self):
-        broken_component = self.page.locator("#component_does_not_exist_error")
-        broken_component.wait_for()
-        self.assertIn("ComponentDoesNotExistError:", broken_component.text_content())
-
-    def test_component_param_error(self):
-        broken_component = self.page.locator("#component_param_error")
-        broken_component.wait_for()
-        self.assertIn("ComponentParamError:", broken_component.text_content())
-
     def test_component_session_exists(self):
         """Session should exist for components with args/kwargs."""
         component = self.page.locator("#parametrized-component")
@@ -314,8 +304,8 @@ class ComponentTests(ChannelsLiveServerTestCase):
     def test_custom_host(self):
         """Make sure that the component is rendered by a separate server."""
         new_page = self.browser.new_page()
+        new_page.goto(f"{self.live_server_url}/port/{self._port2}/")
         try:
-            new_page.goto(f"{self.live_server_url}/port/{self._port2}/")
             elem = new_page.locator(".custom_host-0")
             elem.wait_for()
             self.assertIn(
@@ -341,10 +331,8 @@ class ComponentTests(ChannelsLiveServerTestCase):
     def test_host_roundrobin(self):
         """Verify if round-robin host selection is working."""
         new_page = self.browser.new_page()
+        new_page.goto(f"{self.live_server_url}/roundrobin/{self._port}/{self._port2}/8")
         try:
-            new_page.goto(
-                f"{self.live_server_url}/roundrobin/{self._port}/{self._port2}/8"
-            )
             elem0 = new_page.locator(".custom_host-0")
             elem1 = new_page.locator(".custom_host-1")
             elem2 = new_page.locator(".custom_host-2")
@@ -372,21 +360,11 @@ class ComponentTests(ChannelsLiveServerTestCase):
         finally:
             new_page.close()
 
-    def test_invalid_host_error(self):
-        broken_component = self.page.locator("#invalid_host_error")
-        broken_component.wait_for()
-        self.assertIn("InvalidHostError:", broken_component.text_content())
-
-    def test_broken_postprocessor_query(self):
-        broken_component = self.page.locator("#broken_postprocessor_query pre")
-        broken_component.wait_for()
-        self.assertIn("SynchronousOnlyOperation:", broken_component.text_content())
-
     def test_prerender(self):
         """Verify if round-robin host selection is working."""
         new_page = self.browser.new_page()
+        new_page.goto(f"{self.live_server_url}/prerender/")
         try:
-            new_page.goto(f"{self.live_server_url}/prerender/")
             string = new_page.locator("#prerender_string")
             vdom = new_page.locator("#prerender_vdom")
             component = new_page.locator("#prerender_component")
@@ -412,5 +390,33 @@ class ComponentTests(ChannelsLiveServerTestCase):
             self.assertEqual(
                 component.all_inner_texts(), ["prerender_component: Fully Rendered"]
             )
+        finally:
+            new_page.close()
+
+    def test_component_errors(self):
+        new_page = self.browser.new_page()
+        new_page.goto(f"{self.live_server_url}/errors/")
+        try:
+            # ComponentDoesNotExistError
+            broken_component = new_page.locator("#component_does_not_exist_error")
+            broken_component.wait_for()
+            self.assertIn(
+                "ComponentDoesNotExistError:", broken_component.text_content()
+            )
+
+            # ComponentParamError
+            broken_component = new_page.locator("#component_param_error")
+            broken_component.wait_for()
+            self.assertIn("ComponentParamError:", broken_component.text_content())
+
+            # InvalidHostError
+            broken_component = new_page.locator("#invalid_host_error")
+            broken_component.wait_for()
+            self.assertIn("InvalidHostError:", broken_component.text_content())
+
+            # SynchronousOnlyOperation
+            broken_component = new_page.locator("#broken_postprocessor_query pre")
+            broken_component.wait_for()
+            self.assertIn("SynchronousOnlyOperation:", broken_component.text_content())
         finally:
             new_page.close()

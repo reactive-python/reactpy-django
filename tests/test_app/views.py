@@ -13,6 +13,10 @@ def base_template(request):
     return render(request, "base.html", {"my_object": TestObject(1)})
 
 
+def errors_template(request):
+    return render(request, "errors.html", {})
+
+
 def host_port_template(request: HttpRequest, port: int):
     host = request.get_host().replace(str(request.get_port()), str(port))
     return render(request, "host_port.html", {"new_host": host})
