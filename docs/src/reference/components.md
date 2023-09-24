@@ -54,7 +54,9 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
 
 ??? question "How do I use this for Class Based Views?"
 
-    Class Based Views are accepted by `#!python view_to_component` as an argument. For example...
+    Class Based Views are accepted by `#!python view_to_component` as an argument.
+
+    Calling `#!python as_view()` is optional, but recommended.
 
     === "components.py"
 
@@ -195,7 +197,9 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
 
 ??? question "How do I use this for Class Based Views?"
 
-    Class Based Views are accepted by `#!python view_to_iframe` as an argument. For example...
+    Class Based Views are accepted by `#!python view_to_iframe` as an argument.
+
+    Calling `#!python as_view()` is optional, but recommended.
 
     === "components.py"
 

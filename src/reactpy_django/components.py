@@ -220,6 +220,8 @@ def _view_to_iframe(
     """The actual component. Used to prevent pollution of acceptable kwargs keys."""
     from reactpy_django.config import REACTPY_REGISTERED_IFRAME_VIEWS
 
+    if hasattr(view, "view_class"):
+        view = view.view_class
     dotted_path = view if isinstance(view, str) else generate_obj_name(view)
     registered_view = REACTPY_REGISTERED_IFRAME_VIEWS.get(dotted_path)
 

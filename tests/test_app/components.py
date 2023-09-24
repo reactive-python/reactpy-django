@@ -448,10 +448,14 @@ def async_todo_list():
 
 view_to_component_sync_func = view_to_component(views.view_to_component_sync_func)
 view_to_component_async_func = view_to_component(views.view_to_component_async_func)
-view_to_component_sync_class = view_to_component(views.ViewToComponentSyncClass)
-view_to_component_async_class = view_to_component(views.ViewToComponentAsyncClass)
+view_to_component_sync_class = view_to_component(
+    views.ViewToComponentSyncClass.as_view()
+)
+view_to_component_async_class = view_to_component(
+    views.ViewToComponentAsyncClass.as_view()
+)
 view_to_component_template_view_class = view_to_component(
-    views.ViewToComponentTemplateViewClass
+    views.ViewToComponentTemplateViewClass.as_view()
 )
 _view_to_component_sync_func_compatibility = view_to_component(
     views.view_to_component_sync_func_compatibility, compatibility=True
@@ -460,13 +464,13 @@ _view_to_component_async_func_compatibility = view_to_component(
     views.view_to_component_async_func_compatibility, compatibility=True
 )
 _view_to_component_sync_class_compatibility = view_to_component(
-    views.ViewToComponentSyncClassCompatibility, compatibility=True
+    views.ViewToComponentSyncClassCompatibility.as_view(), compatibility=True
 )
 _view_to_component_async_class_compatibility = view_to_component(
-    views.ViewToComponentAsyncClassCompatibility, compatibility=True
+    views.ViewToComponentAsyncClassCompatibility.as_view(), compatibility=True
 )
 _view_to_component_template_view_class_compatibility = view_to_component(
-    views.ViewToComponentTemplateViewClassCompatibility, compatibility=True
+    views.ViewToComponentTemplateViewClassCompatibility.as_view(), compatibility=True
 )
 _view_to_iframe_args = view_to_iframe(views.view_to_iframe_args)
 _view_to_iframe_not_registered = view_to_iframe("view_does_not_exist")
