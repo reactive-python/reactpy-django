@@ -12,3 +12,7 @@ class InvalidHostError(ValueError):
 
 class ComponentCarrierError(ValueError):
     ...
+
+
+class ComponentNotRegisteredError(ComponentDoesNotExistError):
+    ...

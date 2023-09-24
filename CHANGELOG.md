@@ -40,6 +40,7 @@ Using the following categories, list your changes in this order:
     -   `settings.py:REACTPY_PRERENDER` can be set to `True` to enable this behavior by default
     -   Or, you can enable it on individual components via the template tag: `{% component "..." prerender="True" %}`
 -   `reactpy_django.components.view_to_iframe` component has been added, which uses an `<iframe>` to render a Django view.
+-   `reactpy_django.utils.register_iframe` function has been added, which is mandatory to use alongside `reactpy_django.components.view_to_iframe`.
 
 ### Changed
 

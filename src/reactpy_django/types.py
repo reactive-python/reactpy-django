@@ -17,7 +17,7 @@ from typing import (
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
 from django.http import HttpRequest
-from reactpy.types import ComponentType
+from reactpy.types import ComponentType, Key
 from reactpy.types import Connection as _Connection
 from typing_extensions import ParamSpec
 
@@ -130,6 +130,17 @@ class ComponentParams:
 
 class ViewToComponentConstructor(Protocol):
     def __call__(
-        self, request: HttpRequest | None = None, *args: Any, **kwargs: Any
+        self,
+        request: HttpRequest | None = None,
+        *args: Any,
+        key: Key | None = None,
+        **kwargs: Any,
+    ) -> ComponentType:
+        ...
+
+
+class ViewToIframeConstructor(Protocol):
+    def __call__(
+        self, *args: Any, key: Key | None = None, **kwargs: Any
     ) -> ComponentType:
         ...

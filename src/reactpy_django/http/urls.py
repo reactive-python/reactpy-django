@@ -11,7 +11,7 @@ urlpatterns = [
         name="web_modules",
     ),
     path(
-        "iframe/<str:view_path>",
+        "iframe/<str:dotted_path>",
         views.view_to_iframe,  # type: ignore[arg-type]
         name="view_to_iframe",
     ),

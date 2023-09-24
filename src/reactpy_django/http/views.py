@@ -40,13 +40,13 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
     return HttpResponse(file_contents, content_type="text/javascript")
 
 
-async def view_to_iframe(request: HttpRequest, view_path: str) -> HttpResponse:
+async def view_to_iframe(request: HttpRequest, dotted_path: str) -> HttpResponse:
     """Returns a view that was registered by reactpy_django.components.view_to_iframe."""
-    from reactpy_django.config import REACTPY_REGISTERED_IFRAMES
+    from reactpy_django.config import REACTPY_REGISTERED_IFRAME_VIEWS
 
-    # Get the view from REACTPY_REGISTERED_IFRAMES
-    iframe = REACTPY_REGISTERED_IFRAMES.get(view_path)
-    if not iframe:
+    # Get the view
+    registered_view = REACTPY_REGISTERED_IFRAME_VIEWS.get(dotted_path)
+    if not registered_view:
         return HttpResponseNotFound()
 
     # Get args and kwargs from the request
@@ -55,7 +55,7 @@ async def view_to_iframe(request: HttpRequest, view_path: str) -> HttpResponse:
     args = kwargs.pop("_args", [])
 
     # Render the view
-    response = await render_view(iframe, request, args, kwargs)
+    response = await render_view(registered_view, request, args, kwargs)
 
     # Ensure page can be rendered as an iframe
     response["X-Frame-Options"] = "SAMEORIGIN"

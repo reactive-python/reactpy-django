@@ -12,9 +12,10 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.views import View
 from reactpy import component, hooks, html, utils
-from reactpy.types import ComponentType, Key, VdomDict
+from reactpy.types import Key, VdomDict
 
-from reactpy_django.types import ViewToComponentConstructor
+from reactpy_django.exceptions import ComponentNotRegisteredError
+from reactpy_django.types import ViewToComponentConstructor, ViewToIframeConstructor
 from reactpy_django.utils import generate_obj_name, render_view
 
 
@@ -28,6 +29,7 @@ def _view_to_component(
     args: Sequence | None,
     kwargs: dict | None,
 ):
+    """The actual component. Used to prevent pollution of acceptable kwargs keys."""
     converted_view, set_converted_view = hooks.use_state(
         cast(Union[VdomDict, None], None)
     )
@@ -72,7 +74,7 @@ def _view_to_component(
             DeprecationWarning,
         )
 
-        return view_to_iframe(view, *_args, **_kwargs)
+        return view_to_iframe(view)(*_args, **_kwargs)
 
     # Return the view if it's been rendered via the `async_render` hook
     return converted_view
@@ -128,7 +130,7 @@ def view_to_component(
         if not view:
             raise ValueError("A view must be provided to `view_to_component`")
 
-        def wrapper(
+        def constructor(
             request: HttpRequest | None = None,
             *args: Any,
             key: Key | None = None,
@@ -145,7 +147,7 @@ def view_to_component(
                 key=key,
             )
 
-        return wrapper
+        return constructor
 
     if not view:
         warn(
@@ -159,20 +161,32 @@ def view_to_component(
 
 @component
 def _view_to_iframe(
-    view: Callable | View, *args, extra_props: dict[str, Any] | None = None, **kwargs
+    view: Callable | View | str,
+    extra_props: dict[str, Any] | None,
+    args: Sequence | None,
+    kwargs: dict | None,
 ) -> VdomDict:
-    from reactpy_django.config import REACTPY_REGISTERED_IFRAMES
+    """The actual component. Used to prevent pollution of acceptable kwargs keys."""
+    from reactpy_django.config import REACTPY_REGISTERED_IFRAME_VIEWS
 
-    dotted_path = generate_obj_name(view).replace("<", "").replace(">", "")
-    REACTPY_REGISTERED_IFRAMES[dotted_path] = view
-    extra_props = extra_props or {}
-    extra_props.pop("src", None)
+    if isinstance(view, str):
+        dotted_path = view
+    else:
+        dotted_path = generate_obj_name(view).replace("<", "").replace(">", "")
+    registered_view = REACTPY_REGISTERED_IFRAME_VIEWS.get(dotted_path)
+
+    if not registered_view:
+        raise ComponentNotRegisteredError(
+            f"'{dotted_path}' has not been registered as an iframe component! "
+            "Are you sure you called `register_iframe` within a Django `AppConfig.ready` method?"
+        )
 
     query = kwargs.copy()
     if args:
         query["_args"] = args
-
     query_string = f"?{urlencode(query, doseq=True)}" if args or kwargs else ""
+    extra_props = extra_props or {}
+    extra_props.pop("src", None)
 
     return html.iframe(
         {
@@ -186,21 +200,29 @@ def _view_to_iframe(
 
 
 def view_to_iframe(
-    view: Callable | View, *args, extra_props: dict[str, Any] | None = None, **kwargs
-) -> ComponentType:
+    view: Callable | View | str, extra_props: dict[str, Any] | None = None
+) -> ViewToIframeConstructor:
     """
     Args:
-        view: The view function or class to convert.
-        *args: The positional arguments to provide to the view.
+        view: The view function or class to convert, or the dotted path to the view.
 
     Keyword Args:
         extra_props: Additional properties to add to the `iframe` element.
-        **kwargs: The keyword arguments to provide to the view.
 
     Returns:
-        A `Component` that renders the view within an `iframe`.
+        A function that takes `*args: Any, key: Key | None, **kwargs: Any` and returns a ReactPy component.
     """
-    return _view_to_iframe(view, *args, extra_props=extra_props, **kwargs)
+
+    def constructor(
+        *args: Any,
+        key: Key | None = None,
+        **kwargs: Any,
+    ):
+        return _view_to_iframe(
+            view=view, extra_props=extra_props, args=args, kwargs=kwargs, key=key
+        )
+
+    return constructor
 
 
 @component

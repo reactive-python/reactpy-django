@@ -105,6 +105,21 @@ def register_component(dotted_path: str) -> ComponentConstructor:
     return REACTPY_REGISTERED_COMPONENTS[dotted_path]
 
 
+def register_iframe(view: Callable | View | str):
+    """Registers a view to be used as an iframe component."""
+    from reactpy_django.config import REACTPY_REGISTERED_IFRAME_VIEWS
+
+    resolved_view: Callable | View
+    if isinstance(view, str):
+        resolved_view = import_dotted_path(view)
+        dotted_path = view
+    else:
+        resolved_view = view
+        dotted_path = generate_obj_name(view).replace("<", "").replace(">", "")
+
+    REACTPY_REGISTERED_IFRAME_VIEWS[dotted_path] = resolved_view
+
+
 def import_dotted_path(dotted_path: str) -> Callable:
     """Imports a dotted path and returns the callable."""
     module_name, component_name = dotted_path.rsplit(".", 1)

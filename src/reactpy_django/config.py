@@ -20,7 +20,7 @@ from reactpy_django.utils import import_dotted_path
 REACTPY_DEBUG_MODE.set_current(getattr(settings, "DEBUG"))
 REACTPY_REGISTERED_COMPONENTS: dict[str, ComponentConstructor] = {}
 REACTPY_FAILED_COMPONENTS: set[str] = set()
-REACTPY_REGISTERED_IFRAMES: dict[str, Callable | View] = {}
+REACTPY_REGISTERED_IFRAME_VIEWS: dict[str, Callable | View] = {}
 
 
 # Remove in a future release
