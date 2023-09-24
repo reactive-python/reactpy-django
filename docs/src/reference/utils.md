@@ -8,6 +8,48 @@ Utility functions provide various miscellaneous functionality. These are typical
 
 ---
 
+## Register Iframe
+
+This function is used register a view as an `#!python iframe` with ReactPy.
+
+It is mandatory to use this function if you are using `#!python view_to_iframe` within your application.
+
+=== "apps.py"
+
+    ```python
+    {% include "../../python/hello_world_app_config_fbv.py" %}
+    ```
+
+??? warning "Only use this within `#!python MyAppConfig.ready()`"
+
+    You should always call `#!python register_iframe` within a Django [`MyAppConfig.ready()` method](https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.AppConfig.ready). This ensures you will retain multiprocessing compatibility, such as with ASGI web server workers.
+
+---
+
+## Register Component
+
+This function is used manually register a root component with ReactPy.
+
+=== "apps.py"
+
+    ```python
+    {% include "../../python/register-component.py" %}
+    ```
+
+??? warning "Only use this within `#!python MyAppConfig.ready()`"
+
+    You should always call `#!python register_component` within a Django [`MyAppConfig.ready()` method](https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.AppConfig.ready). This ensures you will retain multiprocessing compatibility, such as with ASGI web server workers.
+
+??? question "Do I need to use this?"
+
+    You typically will not need to use this function.
+
+    For security reasons, ReactPy requires all root components to be registered. However, all components contained within Django templates are automatically registered.
+
+    This function is needed when you have configured your [`host`](../reference/template-tag.md#component) to a dedicated Django rendering application that doesn't have templates.
+
+---
+
 ## Django Query Postprocessor
 
 This is the default postprocessor for the `#!python use_query` hook.
@@ -41,25 +83,3 @@ This postprocessor is designed to avoid Django's `#!python SynchronousOnlyExcept
     | Type | Description |
     | --- | --- |
     | `#!python QuerySet | Model` | The `#!python Model` or `#!python QuerySet` with all fields fetched. |
-
-## Register Component
-
-This function is used manually register a root component with ReactPy.
-
-=== "apps.py"
-
-    ```python
-    {% include "../../python/register-component.py" %}
-    ```
-
-??? warning "Only use this within `#!python MyAppConfig.ready()`"
-
-    You should always call `#!python register_component` within a Django [`#!python MyAppConfig.ready()` method](https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.AppConfig.ready). This ensures you will retain multiprocessing compatibility, such as with ASGI web server workers.
-
-??? question "Do I need to use this?"
-
-    You typically will not need to use this function.
-
-    For security reasons, ReactPy requires all root components to be registered. However, all components contained within Django templates are automatically registered.
-
-    This function is needed when you have configured your [`host`](../reference/template-tag.md#component) to a dedicated Django rendering application that doesn't have templates.
