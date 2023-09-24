@@ -418,5 +418,12 @@ class ComponentTests(ChannelsLiveServerTestCase):
             broken_component = new_page.locator("#broken_postprocessor_query pre")
             broken_component.wait_for()
             self.assertIn("SynchronousOnlyOperation:", broken_component.text_content())
+
+            # ComponentNotRegisteredError
+            broken_component = new_page.locator("#view_to_iframe_not_registered pre")
+            broken_component.wait_for()
+            self.assertIn(
+                "ComponentNotRegisteredError:", broken_component.text_content()
+            )
         finally:
             new_page.close()
