@@ -49,7 +49,7 @@ Using the following categories, list your changes in this order:
 ### Deprecated
 
 -   The `compatibility` argument on `reactpy_django.components.view_to_component` is deprecated. Use `reactpy_django.components.view_to_iframe` instead.
--   Using `reactpy_django.components.view_to_component` as a `#!python @decorator` is deprecated. Check the docs on the new suggested usage.
+-   Using `reactpy_django.components.view_to_component` as a decorator is deprecated. Check the docs on the new suggested usage.
 
 ## [3.5.1] - 2023-09-07
 

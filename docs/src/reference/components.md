@@ -12,9 +12,9 @@ We supply some pre-designed that components can be used to help simplify develop
 
 Automatically convert a Django view into a component.
 
-At this time, this component works best with static views that do not rely on HTTP methods other than `GET`.
+At this time, this works best with static views that do not rely on HTTP methods other than `GET`.
 
-Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/). These views can be sync or async.
+Compatible with sync or async [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/).
 
 === "components.py"
 
@@ -142,7 +142,7 @@ Automatically convert a Django view into an [`iframe` element](https://www.techt
 
 The contents of this `#!python iframe` is handled entirely by traditional Django view rendering. While this solution is compatible with more views than `#!python view_to_component`, it comes with different limitations.
 
-Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/). These views can be sync or async.
+Compatible with sync or async [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/).
 
 !!! Warning "Pitfall"
 
