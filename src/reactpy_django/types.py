@@ -17,7 +17,6 @@ from typing import (
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
 from django.http import HttpRequest
-from reactpy.types import ComponentType, Key
 from reactpy.types import Connection as _Connection
 from typing_extensions import ParamSpec
 
