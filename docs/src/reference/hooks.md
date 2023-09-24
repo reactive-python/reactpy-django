@@ -69,7 +69,7 @@ The [default postprocessor](../reference/utils.md#django-query-postprocessor) ex
 
     <font size="4">**`#!python thread_sensitive`**</font>
 
-    Whether to run your synchronous query function in thread-sensitive mode. Thread-sensitive mode is turned on by default due to Django ORM limitations. See Django's [`#!python sync_to_async` docs](https://docs.djangoproject.com/en/dev/topics/async/#sync-to-async) docs for more information.
+    Whether to run your synchronous query function in thread-sensitive mode. Thread-sensitive mode is turned on by default due to Django ORM limitations. See Django's [`sync_to_async` docs](https://docs.djangoproject.com/en/dev/topics/async/#sync-to-async) docs for more information.
 
     This setting only applies to sync query functions, and will be ignored for async functions.
 
@@ -211,7 +211,7 @@ Mutation functions can `#!python return False` to prevent executing your `#!pyth
 
     <font size="4">**`#!python thread_sensitive`**</font>
 
-    Whether to run your synchronous mutation function in thread-sensitive mode. Thread-sensitive mode is turned on by default due to Django ORM limitations. See Django's [`#!python sync_to_async` docs](https://docs.djangoproject.com/en/dev/topics/async/#sync-to-async) docs for more information.
+    Whether to run your synchronous mutation function in thread-sensitive mode. Thread-sensitive mode is turned on by default due to Django ORM limitations. See Django's [`sync_to_async` docs](https://docs.djangoproject.com/en/dev/topics/async/#sync-to-async) docs for more information.
 
     This setting only applies to sync query functions, and will be ignored for async functions.
 
