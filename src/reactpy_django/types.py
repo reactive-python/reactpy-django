@@ -126,21 +126,3 @@ class ComponentParams:
 
     args: Sequence
     kwargs: MutableMapping[str, Any]
-
-
-class ViewToComponentConstructor(Protocol):
-    def __call__(
-        self,
-        request: HttpRequest | None = None,
-        *args: Any,
-        key: Key | None = None,
-        **kwargs: Any,
-    ) -> ComponentType:
-        ...
-
-
-class ViewToIframeConstructor(Protocol):
-    def __call__(
-        self, *args: Any, key: Key | None = None, **kwargs: Any
-    ) -> ComponentType:
-        ...
