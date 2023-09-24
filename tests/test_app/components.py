@@ -469,7 +469,7 @@ _view_to_component_template_view_class_compatibility = view_to_component(
     views.ViewToComponentTemplateViewClassCompatibility, compatibility=True
 )
 _view_to_iframe_args = view_to_iframe(views.view_to_iframe_args)
-_view_to_iframe_not_registered = view_to_iframe(views.view_to_component_sync_func)
+_view_to_iframe_not_registered = view_to_iframe("view_does_not_exist")
 view_to_component_script = view_to_component(views.view_to_component_script)
 _view_to_component_request = view_to_component(views.view_to_component_request)
 _view_to_component_args = view_to_component(views.view_to_component_args)
