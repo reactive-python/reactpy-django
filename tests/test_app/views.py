@@ -73,7 +73,7 @@ class ViewToComponentSyncClass(View):
 
 class ViewToComponentAsyncClass(View):
     async def get(self, request, *args, **kwargs):
-        return await database_sync_to_async(render, thread_sensitive=False)(
+        return await database_sync_to_async(render)(
             request,
             "view_to_component.html",
             {"test_name": self.__class__.__name__},
@@ -96,7 +96,7 @@ def view_to_component_sync_func_compatibility(request):
 
 
 async def view_to_component_async_func_compatibility(request):
-    return await database_sync_to_async(render, thread_sensitive=False)(
+    return await database_sync_to_async(render)(
         request,
         "view_to_component.html",
         {"test_name": inspect.currentframe().f_code.co_name},  # type:ignore
@@ -114,7 +114,7 @@ class ViewToComponentSyncClassCompatibility(View):
 
 class ViewToComponentAsyncClassCompatibility(View):
     async def get(self, request, *args, **kwargs):
-        return await database_sync_to_async(render, thread_sensitive=False)(
+        return await database_sync_to_async(render)(
             request,
             "view_to_component.html",
             {"test_name": self.__class__.__name__},
