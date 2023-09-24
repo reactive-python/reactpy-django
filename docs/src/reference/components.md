@@ -134,6 +134,8 @@ Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/top
         {% include "../../python/hello_world_fbv_with_id.py" %}
         ```
 
+---
+
 ## View To Iframe
 
 Automatically convert a Django view into an [`iframe` element](https://www.techtarget.com/whatis/definition/IFrame-Inline-Frame).
@@ -269,6 +271,8 @@ Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/top
         {% include "../../python/hello_world_app_config_fbv.py" %}
         ```
 
+---
+
 ## Django CSS
 
 Allows you to defer loading a CSS stylesheet until a component begins rendering. This stylesheet must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).
@@ -319,6 +323,8 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
     Traditionally, stylesheets are loaded in your `#!html <head>` using Django's `#!jinja {% static %}` template tag.
 
     However, to help improve webpage load times you can use this `#!python django_css` component to defer loading your stylesheet until it is needed.
+
+---
 
 ## Django JS
 
