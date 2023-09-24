@@ -77,15 +77,15 @@ Register ReactPy's WebSocket using `#!python REACTPY_WEBSOCKET_ROUTE` in your [`
     {% include "../../python/configure-asgi.py" %}
     ```
 
-??? info "Add `#!python AuthMiddlewareStack` and `#!python SessionMiddlewareStack` (Optional)"
+??? info "Add `#!python AuthMiddlewareStack` (Optional)"
 
     There are many situations where you need to access the Django `#!python User` or `#!python Session` objects within ReactPy components. For example, if you want to:
 
     1. Access the `#!python User` that is currently logged in
-    2. Login or logout the current `#!python User`
     3. Access Django's `#!python Session` object
+    2. Login or logout the current `#!python User`
 
-    In these situations will need to ensure you are using `#!python AuthMiddlewareStack` and/or `#!python SessionMiddlewareStack`.
+    In these situations will need to ensure you are using `#!python AuthMiddlewareStack`.
 
     ```python linenums="0"
     {% include "../../python/configure-asgi-middleware.py" start="# start" %}

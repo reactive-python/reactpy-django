@@ -8,11 +8,10 @@ import logging
 from concurrent.futures import Future
 from datetime import timedelta
 from threading import Thread
-from typing import TYPE_CHECKING, Any, MutableMapping, Sequence
+from typing import Any, MutableMapping, Sequence
 
 import dill as pickle
 import orjson
-from channels.auth import login
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from django.utils import timezone
@@ -23,9 +22,6 @@ from reactpy.core.serve import serve_layout
 
 from reactpy_django.types import ComponentParams
 from reactpy_django.utils import delete_expired_sessions
-
-if TYPE_CHECKING:
-    from django.contrib.auth.models import AbstractUser
 
 _logger = logging.getLogger(__name__)
 backhaul_loop = asyncio.new_event_loop()
@@ -46,39 +42,22 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self) -> None:
         """The browser has connected."""
         from reactpy_django import models
-        from reactpy_django.config import REACTPY_AUTH_BACKEND, REACTPY_BACKHAUL_THREAD
+        from reactpy_django.config import REACTPY_BACKHAUL_THREAD
 
         await super().connect()
 
-        # Authenticate the user, if possible
-        user: AbstractUser | None = self.scope.get("user")
-        if user and getattr(user, "is_authenticated", False):
-            try:
-                await login(self.scope, user, backend=REACTPY_AUTH_BACKEND)
-            except Exception:
-                await asyncio.to_thread(
-                    _logger.exception, "ReactPy websocket authentication has failed!"
-                )
-        elif user is None:
+        # Warn for missing features
+        if self.scope.get("user") is None:
             await asyncio.to_thread(
                 _logger.debug,
-                "ReactPy websocket is missing AuthMiddlewareStack! "
-                "Users will not be accessible within `use_scope` or `use_websocket`!",
+                "ReactPy websocket is missing Auth Middleware! "
+                "User will not be accessible within hooks!",
             )
-
-        # Save the session, if possible
-        if self.scope.get("session"):
-            try:
-                await database_sync_to_async(self.scope["session"].save)()
-            except Exception:
-                await asyncio.to_thread(
-                    _logger.exception, "ReactPy has failed to save scope['session']!"
-                )
-        else:
+        if not self.scope.get("session"):
             await asyncio.to_thread(
                 _logger.debug,
-                "ReactPy websocket is missing SessionMiddlewareStack! "
-                "Sessions will not be accessible within `use_scope` or `use_websocket`!",
+                "ReactPy websocket is missing Session Middleware! "
+                "Sessions will not be accessible within hooks!",
             )
 
         # Start the component dispatcher
