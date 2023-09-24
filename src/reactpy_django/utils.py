@@ -24,7 +24,11 @@ from django.views import View
 from reactpy.core.layout import Layout
 from reactpy.types import ComponentConstructor
 
-from reactpy_django.exceptions import ComponentDoesNotExistError, ComponentParamError
+from reactpy_django.exceptions import (
+    ComponentDoesNotExistError,
+    ComponentParamError,
+    ViewDoesNotExistError,
+)
 
 _logger = logging.getLogger(__name__)
 _component_tag = r"(?P<tag>component)"
@@ -85,16 +89,21 @@ async def render_view(
     return response
 
 
-def register_component(dotted_path: str) -> ComponentConstructor:
-    """Adds a component to the list of known registered components."""
+def register_component(component: ComponentConstructor | str):
+    """Adds a component to the list of known registered components.
+
+    Args:
+        component: The component to register. Can be a component function or dotted path to a component.
+
+    """
     from reactpy_django.config import (
         REACTPY_FAILED_COMPONENTS,
         REACTPY_REGISTERED_COMPONENTS,
     )
 
-    if dotted_path in REACTPY_REGISTERED_COMPONENTS:
-        return REACTPY_REGISTERED_COMPONENTS[dotted_path]
-
+    dotted_path = (
+        component if isinstance(component, str) else generate_obj_name(component)
+    )
     try:
         REACTPY_REGISTERED_COMPONENTS[dotted_path] = import_dotted_path(dotted_path)
     except AttributeError as e:
@@ -102,22 +111,23 @@ def register_component(dotted_path: str) -> ComponentConstructor:
         raise ComponentDoesNotExistError(
             f"Error while fetching '{dotted_path}'. {(str(e).capitalize())}."
         ) from e
-    return REACTPY_REGISTERED_COMPONENTS[dotted_path]
 
 
 def register_iframe(view: Callable | View | str):
-    """Registers a view to be used as an iframe component."""
+    """Registers a view to be used as an iframe component.
+
+    Args:
+        view: The view to register. Can be a function or class based view, or a dotted path to a view.
+    """
     from reactpy_django.config import REACTPY_REGISTERED_IFRAME_VIEWS
 
-    resolved_view: Callable | View
-    if isinstance(view, str):
-        resolved_view = import_dotted_path(view)
-        dotted_path = view
-    else:
-        resolved_view = view
-        dotted_path = generate_obj_name(view).replace("<", "").replace(">", "")
-
-    REACTPY_REGISTERED_IFRAME_VIEWS[dotted_path] = resolved_view
+    dotted_path = view if isinstance(view, str) else generate_obj_name(view)
+    try:
+        REACTPY_REGISTERED_IFRAME_VIEWS[dotted_path] = import_dotted_path(dotted_path)
+    except AttributeError as e:
+        raise ViewDoesNotExistError(
+            f"Error while fetching '{dotted_path}'. {(str(e).capitalize())}."
+        ) from e
 
 
 def import_dotted_path(dotted_path: str) -> Callable:

@@ -14,7 +14,7 @@ from django.views import View
 from reactpy import component, hooks, html, utils
 from reactpy.types import Key, VdomDict
 
-from reactpy_django.exceptions import ComponentNotRegisteredError
+from reactpy_django.exceptions import ViewNotRegisteredError
 from reactpy_django.utils import generate_obj_name, import_module, render_view
 
 
@@ -220,15 +220,12 @@ def _view_to_iframe(
     """The actual component. Used to prevent pollution of acceptable kwargs keys."""
     from reactpy_django.config import REACTPY_REGISTERED_IFRAME_VIEWS
 
-    if isinstance(view, str):
-        dotted_path = view
-    else:
-        dotted_path = generate_obj_name(view).replace("<", "").replace(">", "")
+    dotted_path = view if isinstance(view, str) else generate_obj_name(view)
     registered_view = REACTPY_REGISTERED_IFRAME_VIEWS.get(dotted_path)
 
     if not registered_view:
-        raise ComponentNotRegisteredError(
-            f"'{dotted_path}' has not been registered as an iframe component! "
+        raise ViewNotRegisteredError(
+            f"'{dotted_path}' has not been registered as an iframe! "
             "Are you sure you called `register_iframe` within a Django `AppConfig.ready` method?"
         )
 

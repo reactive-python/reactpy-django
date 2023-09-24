@@ -14,5 +14,9 @@ class ComponentCarrierError(ValueError):
     ...
 
 
-class ComponentNotRegisteredError(ComponentDoesNotExistError):
+class ViewNotRegisteredError(AttributeError):
+    ...
+
+
+class ViewDoesNotExistError(AttributeError):
     ...
