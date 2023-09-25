@@ -15,7 +15,6 @@ from typing import (
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
 from django.http import HttpRequest
-from django.views.generic import View
 from reactpy.types import Connection as _Connection
 from typing_extensions import ParamSpec
 
@@ -28,7 +27,6 @@ __all__ = [
     "Query",
     "Mutation",
     "Connection",
-    "ViewComponentIframe",
     "AsyncPostprocessor",
     "SyncPostprocessor",
     "QueryOptions",
@@ -63,13 +61,6 @@ class Mutation(Generic[_Params]):
     loading: bool
     error: Exception | None
     reset: Callable[[], None]
-
-
-@dataclass
-class ViewComponentIframe:
-    view: View | Callable
-    args: Sequence
-    kwargs: dict
 
 
 class AsyncPostprocessor(Protocol):

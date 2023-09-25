@@ -39,7 +39,7 @@ def reactpy_warnings(app_configs, **kwargs):
     # ReactPy URLs exist
     try:
         reverse("reactpy:web_modules", kwargs={"file": "example"})
-        reverse("reactpy:view_to_component", kwargs={"view_path": "example"})
+        reverse("reactpy:view_to_iframe", kwargs={"dotted_path": "example"})
     except Exception:
         warnings.append(
             Warning(

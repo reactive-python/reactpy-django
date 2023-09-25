@@ -16,3 +16,11 @@ class ComponentCarrierError(Exception):
 
 class UserNotFoundError(Exception):
     ...
+
+
+class ViewNotRegisteredError(AttributeError):
+    ...
+
+
+class ViewDoesNotExistError(AttributeError):
+    ...

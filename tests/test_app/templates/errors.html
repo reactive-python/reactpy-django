@@ -1,0 +1,31 @@
+{% load static %} {% load reactpy %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
+    <title>ReactPy</title>
+</head>
+
+<body>
+    <h1>ReactPy Errors Test Page</h1>
+    <hr>
+    <div id="component_does_not_exist_error">{% component "test_app.components.does_not_exist" %}</div>
+    <hr>
+    <div id="component_param_error">{% component "test_app.components.hello_world" invalid_param="random_value" %}</div>
+    <hr>
+    <div id="invalid_host_error">{% component "test_app.components.hello_world" host="https://example.com/" %}</div>
+    <hr>
+    <div id="broken_postprocessor_query">
+        {% component "test_app.components.broken_postprocessor_query" %}
+    </div>
+    <hr>
+    <div id="view_to_iframe_not_registered">
+        {% component "test_app.components.view_to_iframe_not_registered" %}
+    </div>
+</body>
+
+</html>

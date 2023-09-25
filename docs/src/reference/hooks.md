@@ -69,7 +69,7 @@ The [default postprocessor](../reference/utils.md#django-query-postprocessor) ex
 
     <font size="4">**`#!python thread_sensitive`**</font>
 
-    Whether to run your synchronous query function in thread-sensitive mode. Thread-sensitive mode is turned on by default due to Django ORM limitations. See Django's [`#!python sync_to_async` docs](https://docs.djangoproject.com/en/dev/topics/async/#sync-to-async) docs for more information.
+    Whether to run your synchronous query function in thread-sensitive mode. Thread-sensitive mode is turned on by default due to Django ORM limitations. See Django's [`sync_to_async` docs](https://docs.djangoproject.com/en/dev/topics/async/#sync-to-async) docs for more information.
 
     This setting only applies to sync query functions, and will be ignored for async functions.
 
@@ -156,6 +156,8 @@ The [default postprocessor](../reference/utils.md#django-query-postprocessor) ex
 
     With the `#!python Model` or `#!python QuerySet` your function returns, this hook uses the [default postprocessor](../reference/utils.md#django-query-postprocessor) to ensure that all [deferred](https://docs.djangoproject.com/en/dev/ref/models/instances/#django.db.models.Model.get_deferred_fields) or [lazy](https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy) fields are executed.
 
+---
+
 ## Use Mutation
 
 This hook is used to modify data in the background, typically to [create/update/delete](https://www.sumologic.com/glossary/crud/) data from the Django ORM.
@@ -209,7 +211,7 @@ Mutation functions can `#!python return False` to prevent executing your `#!pyth
 
     <font size="4">**`#!python thread_sensitive`**</font>
 
-    Whether to run your synchronous mutation function in thread-sensitive mode. Thread-sensitive mode is turned on by default due to Django ORM limitations. See Django's [`#!python sync_to_async` docs](https://docs.djangoproject.com/en/dev/topics/async/#sync-to-async) docs for more information.
+    Whether to run your synchronous mutation function in thread-sensitive mode. Thread-sensitive mode is turned on by default due to Django ORM limitations. See Django's [`sync_to_async` docs](https://docs.djangoproject.com/en/dev/topics/async/#sync-to-async) docs for more information.
 
     This setting only applies to sync query functions, and will be ignored for async functions.
 
@@ -261,6 +263,8 @@ Mutation functions can `#!python return False` to prevent executing your `#!pyth
         {% include "../../python/example/models.py" %}
         ```
 
+---
+
 ## Use Connection
 
 This hook is used to fetch the active connection, which is either a Django [WebSocket](https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer) or a [HTTP Request](https://docs.djangoproject.com/en/4.2/ref/request-response/#django.http.HttpRequest).
@@ -283,6 +287,8 @@ This hook is used to fetch the active connection, which is either a Django [WebS
     | --- | --- |
     | `#!python Connection` | The component's `WebSocket` or `HttpRequest`. |
 
+---
+
 ## Use Scope
 
 This is a shortcut that returns the WebSocket or HTTP [scope](https://channels.readthedocs.io/en/stable/topics/consumers.html#scope).
@@ -304,6 +310,8 @@ This is a shortcut that returns the WebSocket or HTTP [scope](https://channels.r
     | Type | Description |
     | --- | --- |
     | `#!python MutableMapping[str, Any]` | The WebSocket's `#!python scope`. |
+
+---
 
 ## Use Location
 
@@ -334,6 +342,8 @@ You can expect this hook to provide strings such as `/reactpy/my_path`.
     This hook will be updated to return the browser's currently active HTTP path. This change will come in alongside ReactPy URL routing support.
 
     Check out [reactive-python/reactpy-django#147](https://github.com/reactive-python/reactpy-django/issues/147) for more information.
+
+---
 
 ## Use Origin
 

@@ -74,7 +74,6 @@ markdown_extensions:
 plugins:
     - search
     - include-markdown
-    - section-index
     - git-authors
     - minify:
           minify_html: true
@@ -87,6 +86,7 @@ plugins:
           known_words: dictionary.txt
           allow_unicode: no
           ignore_code: yes
+    # - section-index
 
 extra:
     generator: false
