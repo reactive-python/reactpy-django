@@ -48,14 +48,16 @@ def auth_required(
 
 def user_passes_test(
     test_func: Callable[[Any], bool],
-    fallback: ComponentType | Callable | VdomDict | None = None,
+    fallback: Any | None = None,
 ) -> Callable:
-    """Check the attribute on the current `UserModel`. If the attribute passes as a conditional,
+    """Imitation of Django's `user_passes_test` decorator that works with components.
+    This decorator runs your test function on the websocket connection's `user`. If the test passes,
     then decorated component will be rendered. Otherwise, the fallback component will be rendered.
 
     Args:
         test_func: The function that returns a boolean.
-        fallback: The component or VDOM (`reactpy.html` snippet) to render if the user is not authenticated.
+        fallback: The content to be rendered if the test fails. Typically is a ReactPy component or \
+            VDOM (`reactpy.html` snippet).
     """
 
     def decorator(component):
