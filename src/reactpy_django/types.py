@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Generic,
@@ -18,7 +19,8 @@ from django.http import HttpRequest
 from reactpy.types import Connection as _Connection
 from typing_extensions import ParamSpec
 
-from reactpy_django.websocket.consumer import ReactpyAsyncWebsocketConsumer
+if TYPE_CHECKING:
+    from reactpy_django.websocket.consumer import ReactpyAsyncWebsocketConsumer
 
 __all__ = [
     "_Result",
@@ -40,7 +42,7 @@ _Data = TypeVar("_Data")
 _Type = TypeVar("_Type")
 
 
-Connection = _Connection[Union[ReactpyAsyncWebsocketConsumer, HttpRequest]]
+Connection = _Connection[Union["ReactpyAsyncWebsocketConsumer", HttpRequest]]
 
 
 @dataclass
