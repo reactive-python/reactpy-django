@@ -52,9 +52,6 @@ Using the following categories, list your changes in this order:
 
 -   The `compatibility` argument on `reactpy_django.components.view_to_component` is deprecated. Use `reactpy_django.components.view_to_iframe` instead.
 -   Using `reactpy_django.components.view_to_component` as a decorator is deprecated. Check the docs on the new suggested usage.
-
-### Deprecated
-
 -   `reactpy_django.decorators.auth_required` is deprecated. An equivalent to this decorator's default is `@reactpy_django.decorators.user_passes_test(lambda user: user.is_active)`.
 
 ## [3.5.1] - 2023-09-07
