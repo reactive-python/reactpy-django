@@ -121,7 +121,8 @@ def use_query(
     *args: Any,
     **kwargs: Any,
 ) -> Query[_Result | None]:
-    """Hook to fetch a Django ORM query.
+    """This hook is used to execute functions in the background and return the result, \
+        typically to read data the Django ORM.
 
     Args:
         options: An optional `QueryOptions` object that can modify how the query is executed.
@@ -235,7 +236,11 @@ def use_mutation(
 
 
 def use_mutation(*args: Any, **kwargs: Any) -> Mutation[_Params]:
-    """Hook to create, update, or delete Django ORM objects.
+    """This hook is used to modify data in the background, typically to create/update/delete \
+    data from the Django ORM. \n
+        
+    Mutation functions can `return False` to prevent executing your `refetch` function. All \
+    other returns are ignored. Mutation functions can be sync or async.
 
     Args:
         mutation: A callable that performs Django ORM create, update, or delete \
