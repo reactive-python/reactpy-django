@@ -32,12 +32,13 @@ from reactpy_django.types import (
     UserData,
     _Params,
     _Result,
-    _Type,
+    _UserDataType,
 )
 from reactpy_django.utils import generate_obj_name
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import AbstractUser
+    from django.db.models import Model
 
 
 _logger = logging.getLogger(__name__)
@@ -355,7 +356,9 @@ def use_user() -> AbstractUser:
     return user
 
 
-async def get_user_data(user: AbstractUser | None, default: Any, user_data_model):
+async def _get_user_data(
+    user: AbstractUser | None, default: Any, user_data_model: Model
+):
     """Get the current user's `UserState` query."""
     from reactpy_django.models import UserDataModel
 
@@ -377,7 +380,7 @@ async def get_user_data(user: AbstractUser | None, default: Any, user_data_model
     return pickle.loads(model.data)
 
 
-def set_user_data(user: AbstractUser, user_data_model):
+def _set_user_data(user: AbstractUser, user_data_model: Model):
     from reactpy_django.models import UserDataModel
 
     user_data_model = user_data_model or UserDataModel
@@ -391,15 +394,18 @@ def set_user_data(user: AbstractUser, user_data_model):
     return mutation
 
 
-# TODO: Make user_data_model generic protocol
-
-
 def use_user_data(
-    default_data: _Type | Callable[[], _Type] | Callable[[], Awaitable[_Type]],
-    user_data_model,
-) -> UserData[_Type]:
+    default_data: _UserDataType
+    | Callable[[], _UserDataType]
+    | Callable[[], Awaitable[_UserDataType]],
+    user_data_model: Model,
+) -> UserData[_UserDataType]:
     user = use_user()
-    data = use_query(get_user_data, user, default_data, user_data_model)
-    set_data = use_mutation(set_user_data(user, user_data_model), refetch=get_user_data)
+    data = use_query(_get_user_data, user, default_data, user_data_model)
+    set_data = use_mutation(
+        _set_user_data(user, user_data_model), refetch=_get_user_data
+    )
 
-    return UserData(cast(Query[_Type | None], data), set_data)
+    return UserData(
+        cast(Query[_UserDataType | None], data), cast(Mutation[_UserDataType], set_data)
+    )

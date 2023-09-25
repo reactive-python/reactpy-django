@@ -39,7 +39,7 @@ __all__ = [
 _Result = TypeVar("_Result", bound=Union[Model, QuerySet[Any]])
 _Params = ParamSpec("_Params")
 _Data = TypeVar("_Data")
-_Type = TypeVar("_Type")
+_UserDataType = TypeVar("_UserDataType")
 
 
 Connection = _Connection[Union["ReactpyAsyncWebsocketConsumer", HttpRequest]]
@@ -121,6 +121,6 @@ class ComponentParams:
 
 
 @dataclass
-class UserData(Generic[_Type]):
-    data: Query[_Type | None]
-    set_data: Mutation[_Type]
+class UserData(Generic[_UserDataType]):
+    data: Query[_UserDataType | None]
+    set_data: Mutation[_UserDataType]
