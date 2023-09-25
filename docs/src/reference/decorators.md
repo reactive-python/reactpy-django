@@ -14,7 +14,7 @@ You can limit component access to users with a specific `#!python auth_attribute
 
 By default, this decorator checks if the user is logged in and not deactivated (`#!python is_active`).
 
-This decorator is commonly used to selectively render a component only if a user [`#!python is_staff`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_staff) or [`#!python is_superuser`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_superuser).
+This decorator is commonly used to selectively render a component only if a user [`is_staff`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_staff) or [`is_superuser`](https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.is_superuser).
 
 === "components.py"
 

@@ -88,9 +88,9 @@ DATABASE_ROUTERS = ["reactpy_django.database.Router", ...]
 
 **Example Value(s):** `#!python "my-reactpy-cache"`
 
-Cache used by ReactPy, typically for file operations.
+Cache used by ReactPy, typically for caching disk operations.
 
-We recommend configuring [`redis`](https://docs.djangoproject.com/en/dev/topics/cache/#redis), [`python-diskcache`](https://grantjenks.com/docs/diskcache/tutorial.html#djangocache), or [`LocMemCache`](https://docs.djangoproject.com/en/dev/topics/cache/#local-memory-caching).
+We recommend using [`redis`](https://docs.djangoproject.com/en/dev/topics/cache/#redis), [`python-diskcache`](https://grantjenks.com/docs/diskcache/tutorial.html#djangocache), or [`LocMemCache`](https://docs.djangoproject.com/en/dev/topics/cache/#local-memory-caching).
 
 ---
 
@@ -102,7 +102,9 @@ We recommend configuring [`redis`](https://docs.djangoproject.com/en/dev/topics/
 
 Configures whether ReactPy components are rendered in a dedicated thread.
 
-This setting allows the web server to process other traffic during ReactPy rendering. Vastly improves throughput with web servers such as [`hypercorn`](https://pgjones.gitlab.io/hypercorn/) and [`uvicorn`](https://www.uvicorn.org/).
+This allows the web server to process other traffic during ReactPy rendering. Vastly improves throughput with web servers such as [`hypercorn`](https://pgjones.gitlab.io/hypercorn/) and [`uvicorn`](https://www.uvicorn.org/).
+
+This setting is incompatible with [`daphne`](https://github.com/django/daphne).
 
 ---
 

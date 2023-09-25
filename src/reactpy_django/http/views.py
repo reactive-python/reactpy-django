@@ -1,4 +1,5 @@
 import os
+from urllib.parse import parse_qs
 
 from aiofile import async_open
 from django.core.cache import caches
@@ -39,20 +40,22 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
     return HttpResponse(file_contents, content_type="text/javascript")
 
 
-async def view_to_component_iframe(
-    request: HttpRequest, view_path: str
-) -> HttpResponse:
-    """Returns a view that was registered by view_to_component.
-    This view is intended to be used as iframe, for compatibility purposes."""
-    from reactpy_django.config import REACTPY_VIEW_COMPONENT_IFRAMES
+async def view_to_iframe(request: HttpRequest, dotted_path: str) -> HttpResponse:
+    """Returns a view that was registered by reactpy_django.components.view_to_iframe."""
+    from reactpy_django.config import REACTPY_REGISTERED_IFRAME_VIEWS
 
-    # Get the view from REACTPY_REGISTERED_IFRAMES
-    iframe = REACTPY_VIEW_COMPONENT_IFRAMES.get(view_path)
-    if not iframe:
+    # Get the view
+    registered_view = REACTPY_REGISTERED_IFRAME_VIEWS.get(dotted_path)
+    if not registered_view:
         return HttpResponseNotFound()
 
+    # Get args and kwargs from the request
+    query = request.META.get("QUERY_STRING", "")
+    kwargs = {k: v if len(v) > 1 else v[0] for k, v in parse_qs(query).items()}
+    args = kwargs.pop("_args", [])
+
     # Render the view
-    response = await render_view(iframe.view, request, iframe.args, iframe.kwargs)
+    response = await render_view(registered_view, request, args, kwargs)
 
     # Ensure page can be rendered as an iframe
     response["X-Frame-Options"] = "SAMEORIGIN"

@@ -101,9 +101,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         if self.component_session:
             # Clean up expired component sessions
             try:
-                await database_sync_to_async(
-                    delete_expired_sessions, thread_sensitive=False
-                )()
+                await database_sync_to_async(delete_expired_sessions)()
             except Exception:
                 await asyncio.to_thread(
                     _logger.exception,

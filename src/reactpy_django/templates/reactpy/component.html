@@ -1,7 +1,7 @@
 {% load static %}
 
 {% if reactpy_failure and reactpy_debug_mode %}
-<b>{% firstof reactpy_error "UnknownError" %}:</b> "{% firstof reactpy_dotted_path "UnknownPath" %}"
+<pre>{% firstof reactpy_error "UnknownError" %}: "{% firstof reactpy_dotted_path "UnknownPath" %}"</pre>
 {% endif %}
 
 {% if not reactpy_failure %}

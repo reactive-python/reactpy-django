@@ -3,7 +3,7 @@ from reactpy_django.hooks import use_mutation
 from reactpy_django.types import MutationOptions
 
 
-def execute_thread_safe_mutation():
+def execute_thread_safe_mutation(text):
     """This is an example mutation function that does some thread-safe operation."""
     pass
 

@@ -10,12 +10,22 @@ We supply some pre-designed that components can be used to help simplify develop
 
 ## View To Component
 
-Convert any Django view into a ReactPy component by using this decorator. Compatible with [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/). Views can be sync or async.
+Automatically convert a Django view into a component.
+
+At this time, this works best with static views that do not rely on HTTP methods other than `GET`.
+
+Compatible with sync or async [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/).
 
 === "components.py"
 
     ```python
     {% include "../../python/vtc.py" %}
+    ```
+
+=== "views.py"
+
+    ```python
+    {% include "../../python/hello_world_fbv.py" %}
     ```
 
 ??? example "See Interface"
@@ -24,8 +34,7 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `#!python view` | `#!python Callable | View` | The view function or class to convert. | N/A |
-    | `#!python compatibility` | `#!python bool` | If `#!python True`, the component will be rendered in an iframe. When using compatibility mode `#!python tranforms`, `#!python strict_parsing`, `#!python request`, `#!python args`, and `#!python kwargs` arguments will be ignored. | `#!python False` |
+    | `#!python view` | `#!python Callable | View | str` | The view to convert, or the view's dotted path as a string. | N/A |
     | `#!python transforms` | `#!python Sequence[Callable[[VdomDict], Any]]` | A list of functions that transforms the newly generated VDOM. The functions will be called on each VDOM node. | `#!python tuple` |
     | `#!python strict_parsing` | `#!python bool` | If `#!python True`, an exception will be generated if the HTML does not perfectly adhere to HTML5. | `#!python True` |
 
@@ -33,41 +42,21 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
 
     | Type | Description |
     | --- | --- |
-    | `#!python _ViewComponentConstructor` | A function that takes `#!python request, *args, key, **kwargs` and returns a ReactPy component. All parameters are directly provided to your view, besides `#!python key` which is used by ReactPy. |
-
-??? Warning "Potential information exposure when using `#!python compatibility = True`"
-
-    When using `#!python compatibility` mode, ReactPy automatically exposes a URL to your view.
-
-    It is your responsibility to ensure privileged information is not leaked via this method.
-
-    You must implement a method to ensure only authorized users can access your view. This can be done via directly writing conditionals into your view, or by adding decorators such as [`#!python user_passes_test`](https://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test) to your views. For example...
-
-    === "Function Based View"
-
-        ```python
-        {% include "../../python/vtc-fbv-compat.py" %}
-        ```
-
-    === "Class Based View"
-
-        ```python
-        {% include "../../python/vtc-cbv-compatibility.py" %}
-        ```
+    | `#!python constructor` | A function that takes `#!python request, *args, key, **kwargs` and returns a ReactPy component. Note that `#!python *args` and `#!python **kwargs` are directly provided to your view. |
 
 ??? info "Existing limitations"
 
     There are currently several limitations of using `#!python view_to_component` that may be resolved in a future version.
 
-    - Requires manual intervention to change request methods beyond `GET`.
+    - Requires manual intervention to change HTTP methods to anything other than `GET`.
     - ReactPy events cannot conveniently be attached to converted view HTML.
     - Has no option to automatically intercept local anchor link (such as `#!html <a href='example/'></a>`) click events.
 
-    _Please note these limitations do not exist when using `#!python compatibility` mode._
-
 ??? question "How do I use this for Class Based Views?"
 
-    You can simply pass your Class Based View directly into `#!python view_to_component`.
+    Class Based Views are accepted by `#!python view_to_component` as an argument.
+
+    Calling `#!python as_view()` is optional, but recommended.
 
     === "components.py"
 
@@ -75,41 +64,35 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
         {% include "../../python/vtc-cbv.py" %}
         ```
 
-??? question "How do I transform views from external libraries?"
+    === "views.py"
 
-    In order to convert external views, you can utilize `#!python view_to_component` as a function, rather than a decorator.
+        ```python
+        {% include "../../python/hello_world_cbv.py" %}
+        ```
+
+??? question "How do I provide `#!python request`, `#!python args`, and `#!python kwargs` to a converted view?"
+
+    This component accepts `#!python request`, `#!python *args`, and `#!python **kwargs` arguments, which are sent to your provided view.
 
     === "components.py"
 
         ```python
-        {% include "../../python/vtc-func.py" %}
+        {% include "../../python/vtc-args.py" %}
         ```
 
-??? question "How do I provide `#!python request`, `#!python args`, and `#!python kwargs` to a view?"
-
-    <font size="4">**`#!python Request`**</font>
-
-    You can use the `#!python request` parameter to provide the view a custom request object.
-
-    === "components.py"
+    === "views.py"
 
         ```python
-        {% include "../../python/vtc-request.py" %}
+        {% include "../../python/hello_world_args_kwargs.py" %}
         ```
+
+??? question "How do I customize this component's behavior?"
+
+    This component accepts arguments that can be used to customize its behavior.
+
+    Below are all the arguments that can be used.
 
     ---
-
-    <font size="4">**`#!python args` and `#!python kwargs`**</font>
-
-    You can use the `#!python args` and `#!python kwargs` parameters to provide positional and keyworded arguments to a view.
-
-    === "components.py"
-
-        ```python
-        {% include "../../python/vtc-args-kwargs.py" %}
-        ```
-
-??? question "How do I use `#!python strict_parsing`, `#!python compatibility`, and `#!python transforms`?"
 
     <font size="4">**`#!python strict_parsing`**</font>
 
@@ -117,7 +100,7 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
 
     However, there are some circumstances where you may not have control over the original HTML, so you may be unable to fix it. Or you may be relying on non-standard HTML tags such as `#!html <my-tag> Hello World </my-tag>`.
 
-    In these scenarios, you may want to rely on best-fit parsing by setting the `#!python strict_parsing` parameter to `#!python False`.
+    In these scenarios, you may want to rely on best-fit parsing by setting the `#!python strict_parsing` parameter to `#!python False`. This uses `libxml2` recovery algorithm, which is designed to be similar to how web browsers would attempt to parse non-standard or broken HTML.
 
     === "components.py"
 
@@ -125,25 +108,11 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
         {% include "../../python/vtc-strict-parsing.py" %}
         ```
 
-    _Note: Best-fit parsing is designed to be similar to how web browsers would handle non-standard or broken HTML._
-
-    ---
-
-    <font size="4">**`#!python compatibility`**</font>
-
-    For views that rely on HTTP responses other than `GET` (such as `PUT`, `POST`, `PATCH`, etc), you should consider using compatibility mode to render your view within an iframe.
-
-    Any view can be rendered within compatibility mode. However, the `#!python transforms`, `#!python strict_parsing`, `#!python request`, `#!python args`, and `#!python kwargs` arguments do not apply to compatibility mode.
-
-
-
-    === "components.py"
+    === "views.py"
 
         ```python
-        {% include "../../python/vtc-compatibility.py" %}
+        {% include "../../python/hello_world_fbv.py" %}
         ```
-
-    _Note: By default the `#!python compatibility` iframe is unstyled, and thus won't look pretty until you add some CSS._
 
     ---
 
@@ -160,6 +129,153 @@ Convert any Django view into a ReactPy component by using this decorator. Compat
         ```python
         {% include "../../python/vtc-transforms.py" %}
         ```
+
+    === "views.py"
+
+        ```python
+        {% include "../../python/hello_world_fbv_with_id.py" %}
+        ```
+
+---
+
+## View To Iframe
+
+Automatically convert a Django view into an [`iframe` element](https://www.techtarget.com/whatis/definition/IFrame-Inline-Frame).
+
+The contents of this `#!python iframe` is handled entirely by traditional Django view rendering. While this solution is compatible with more views than `#!python view_to_component`, it comes with different limitations.
+
+Compatible with sync or async [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/).
+
+!!! Warning "Pitfall"
+
+    When using this component, ReactPy automatically exposes a URL to your view. If your view contains sensitive information, you must ensure only authorized users can access this view.
+
+    This can be done via directly writing conditionals into your view, or by using [Django's `user_passes_test`](https://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test).
+
+=== "components.py"
+
+    ```python
+    {% include "../../python/vti.py" %}
+    ```
+
+=== "views.py"
+
+    ```python
+    {% include "../../python/hello_world_fbv.py" %}
+    ```
+
+=== "apps.py"
+
+    ```python
+    {% include "../../python/hello_world_app_config_fbv.py" %}
+    ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    | Name | Type | Description | Default |
+    | --- | --- | --- | --- |
+    | `#!python view` | `#!python Callable | View | str` | The view function or class to convert. | N/A |
+    | `#!python extra_props` | `#!python Mapping[str, Any] | None` | Additional properties to add to the `iframe` element. | `#!python None` |
+
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `#!python constructor` | A function that takes `#!python *args, key, **kwargs` and returns a ReactPy component. Note that `#!python *args` and `#!python **kwargs` are directly provided to your view. |
+
+??? info "Existing limitations"
+
+    There are currently several limitations of using `#!python view_to_iframe` that may be resolved in a future version.
+
+    - No built-in method of signalling events back to the parent component.
+    - All provided `#!python *args` and `#!python *kwargs` must be serializable values, since they are encoded into the URL.
+    - The `#!python iframe`'s contents will always load **after** the parent component.
+    - CSS styling for `#!python iframe` elements tends to be awkward/difficult.
+
+??? question "How do I use this for Class Based Views?"
+
+    Class Based Views are accepted by `#!python view_to_iframe` as an argument.
+
+    Calling `#!python as_view()` is optional, but recommended.
+
+    === "components.py"
+
+        ```python
+        {% include "../../python/vti-cbv.py" %}
+        ```
+
+    === "views.py"
+
+        ```python
+        {% include "../../python/hello_world_cbv.py" %}
+        ```
+
+    === "apps.py"
+
+        ```python
+        {% include "../../python/hello_world_app_config_cbv.py" %}
+        ```
+
+??? question "How do I provide `#!python args` and `#!python kwargs` to a converted view?"
+
+    This component accepts `#!python *args` and `#!python **kwargs` arguments, which are sent to your provided view.
+
+    All provided `#!python *args` and `#!python *kwargs` must be serializable values, since they are encoded into the URL.
+
+    === "components.py"
+
+        ```python
+        {% include "../../python/vti-args.py" %}
+        ```
+
+    === "views.py"
+
+        ```python
+        {% include "../../python/hello_world_fbv.py" %}
+        ```
+
+    === "apps.py"
+
+        ```python
+        {% include "../../python/hello_world_app_config_fbv.py" %}
+        ```
+
+??? question "How do I customize this component's behavior?"
+
+    This component accepts arguments that can be used to customize its behavior.
+
+    Below are all the arguments that can be used.
+
+    ---
+
+    <font size="4">**`#!python extra_props`**</font>
+
+    This component accepts a `#!python extra_props` parameter, which is a dictionary of additional properties to add to the `#!python iframe` element.
+
+    For example, if you want to add a `#!python title` attribute to the `#!python iframe` element, you can do so like such:
+
+    === "components.py"
+
+        ```python
+        {% include "../../python/vti-extra-props.py" %}
+        ```
+
+    === "views.py"
+
+        ```python
+        {% include "../../python/hello_world_fbv.py" %}
+        ```
+
+    === "apps.py"
+
+        ```python
+        {% include "../../python/hello_world_app_config_fbv.py" %}
+        ```
+
+---
 
 ## Django CSS
 
@@ -211,6 +327,8 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
     Traditionally, stylesheets are loaded in your `#!html <head>` using Django's `#!jinja {% static %}` template tag.
 
     However, to help improve webpage load times you can use this `#!python django_css` component to defer loading your stylesheet until it is needed.
+
+---
 
 ## Django JS
 

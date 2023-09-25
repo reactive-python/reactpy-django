@@ -71,6 +71,10 @@
   <hr>
   {% component "test_app.components.view_to_component_kwargs" %}
   <hr>
+  {% component "test_app.components.view_to_component_decorator" %}
+  <hr>
+  {% component "test_app.components.view_to_component_decorator_args" %}
+  <hr>
   {% component "test_app.components.view_to_component_sync_func_compatibility" %}
   <hr>
   {% component "test_app.components.view_to_component_async_func_compatibility" %}
@@ -81,18 +85,7 @@
   <hr>
   {% component "test_app.components.view_to_component_template_view_class_compatibility" %}
   <hr>
-  {% component "test_app.components.view_to_component_decorator" %}
-  <hr>
-  {% component "test_app.components.view_to_component_decorator_args" %}
-  <hr>
-  <div id="component_does_not_exist_error">{% component "test_app.components.does_not_exist" %}</div>
-  <hr>
-  <div id="component_param_error">{% component "test_app.components.hello_world" invalid_param="random_value" %}</div>
-  <hr>
-  <div id="invalid_host_error">{% component "test_app.components.hello_world" host="https://example.com/" %}</div>
-  <hr>
-  <div id="broken_postprocessor_query">
-    {% component "test_app.components.broken_postprocessor_query" %}</div>
+  {% component "test_app.components.view_to_iframe_args" %}
   <hr>
 </body>
 
