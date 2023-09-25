@@ -362,7 +362,7 @@ def use_user() -> AbstractUser:
 
 
 async def _get_user_data(
-    user: AbstractUser | None, default: Any, user_data_model: Model
+    user: AbstractUser | None, default: Any, user_data_model: Any | None
 ):
     """Get the current user's `UserState` query."""
     from reactpy_django.models import UserDataModel
@@ -385,7 +385,7 @@ async def _get_user_data(
     return pickle.loads(model.data)
 
 
-def _set_user_data(user: AbstractUser, user_data_model: Model):
+def _set_user_data(user: AbstractUser, user_data_model: Any | None):
     from reactpy_django.models import UserDataModel
 
     user_data_model = user_data_model or UserDataModel
@@ -403,7 +403,7 @@ def use_user_data(
     default_data: _UserDataType
     | Callable[[], _UserDataType]
     | Callable[[], Awaitable[_UserDataType]],
-    user_data_model: Model,
+    user_data_model: Any | None,
 ) -> UserData[_UserDataType]:
     user = use_user()
     data = use_query(_get_user_data, user, default_data, user_data_model)
