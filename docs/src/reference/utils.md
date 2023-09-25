@@ -2,9 +2,13 @@
 
 <p class="intro" markdown>
 
-Utility functions provide various miscellaneous functionality. These are typically not used, but are available for advanced use cases.
+Utility functions provide various miscellaneous functionality for advanced use cases.
 
 </p>
+
+!!! warning "Pitfall"
+
+    Any utility functions not documented here are not considered part of the public API and may change without notice.
 
 ---
 
