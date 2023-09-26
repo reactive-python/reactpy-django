@@ -151,6 +151,24 @@ class ComponentTests(ChannelsLiveServerTestCase):
         )
         self.page.wait_for_selector("#authorized-user")
 
+    def test_unauthorized_user_test(self):
+        self.assertRaises(
+            TimeoutError,
+            self.page.wait_for_selector,
+            "#unauthorized-user-test",
+            timeout=1,
+        )
+        self.page.wait_for_selector("#unauthorized-user-test-fallback")
+
+    def test_authorized_user_test(self):
+        self.assertRaises(
+            TimeoutError,
+            self.page.wait_for_selector,
+            "#authorized-user-test-fallback",
+            timeout=1,
+        )
+        self.page.wait_for_selector("#authorized-user-test")
+
     def test_relational_query(self):
         self.page.locator("#relational-query[data-success=true]").wait_for()
 

@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from functools import wraps
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
 from warnings import warn
 
 from reactpy.core.types import ComponentType, VdomDict
 
 from reactpy_django.hooks import use_scope, use_user
+
+if TYPE_CHECKING:
+    from django.contrib.auth.models import AbstractUser
 
 
 def auth_required(
@@ -47,7 +50,7 @@ def auth_required(
 
 
 def user_passes_test(
-    test_func: Callable[[Any], bool],
+    test_func: Callable[[AbstractUser], bool],
     fallback: Any | None = None,
 ) -> Callable:
     """Imitation of Django's `user_passes_test` decorator that works with components.
