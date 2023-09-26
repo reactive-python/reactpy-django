@@ -24,21 +24,19 @@ from reactpy.backend.types import Location
 
 from reactpy_django.exceptions import UserNotFoundError
 from reactpy_django.types import (
-    Connection,
+    ConnectionType,
+    FuncParams,
+    Inferred,
     Mutation,
     MutationOptions,
     Query,
     QueryOptions,
     UserData,
-    _Params,
-    _Result,
-    _UserDataType,
 )
 from reactpy_django.utils import generate_obj_name
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import AbstractUser
-    from django.db.models import Model
 
 
 _logger = logging.getLogger(__name__)
@@ -90,7 +88,7 @@ def use_scope() -> dict[str, Any]:
     raise TypeError(f"Expected scope to be a dict, got {type(scope)}")
 
 
-def use_connection() -> Connection:
+def use_connection() -> ConnectionType:
     """Get the current `Connection` object"""
     return _use_connection()
 
@@ -99,28 +97,23 @@ def use_connection() -> Connection:
 def use_query(
     options: QueryOptions,
     /,
-    query: Callable[_Params, _Result | None]
-    | Callable[_Params, Awaitable[_Result | None]],
-    *args: _Params.args,
-    **kwargs: _Params.kwargs,
-) -> Query[_Result | None]:
+    query: Callable[FuncParams, Awaitable[Inferred]] | Callable[FuncParams, Inferred],
+    *args: FuncParams.args,
+    **kwargs: FuncParams.kwargs,
+) -> Query[Inferred]:
     ...
 
 
 @overload
 def use_query(
-    query: Callable[_Params, _Result | None]
-    | Callable[_Params, Awaitable[_Result | None]],
-    *args: _Params.args,
-    **kwargs: _Params.kwargs,
-) -> Query[_Result | None]:
+    query: Callable[FuncParams, Awaitable[Inferred]] | Callable[FuncParams, Inferred],
+    *args: FuncParams.args,
+    **kwargs: FuncParams.kwargs,
+) -> Query[Inferred]:
     ...
 
 
-def use_query(
-    *args: Any,
-    **kwargs: Any,
-) -> Query[_Result | None]:
+def use_query(*args, **kwargs) -> Query[Inferred]:
     """This hook is used to execute functions in the background and return the result, \
         typically to read data the Django ORM.
 
@@ -133,7 +126,7 @@ def use_query(
         **kwargs: Keyword arguments to pass into `query`."""
 
     should_execute, set_should_execute = use_state(True)
-    data, set_data = use_state(cast(Union[_Result, None], None))
+    data, set_data = use_state(cast(Inferred, None))
     loading, set_loading = use_state(True)
     error, set_error = use_state(cast(Union[Exception, None], None))
     if isinstance(args[0], QueryOptions):
@@ -174,7 +167,7 @@ def use_query(
 
         # Log any errors and set the error state
         except Exception as e:
-            set_data(None)
+            set_data(cast(Inferred, None))
             set_loading(False)
             set_error(e)
             _logger.exception(f"Failed to execute query: {generate_obj_name(query)}")
@@ -219,23 +212,23 @@ def use_query(
 @overload
 def use_mutation(
     options: MutationOptions,
-    mutation: Callable[_Params, bool | None]
-    | Callable[_Params, Awaitable[bool | None]],
+    mutation: Callable[FuncParams, bool | None]
+    | Callable[FuncParams, Awaitable[bool | None]],
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
-) -> Mutation[_Params]:
+) -> Mutation[FuncParams]:
     ...
 
 
 @overload
 def use_mutation(
-    mutation: Callable[_Params, bool | None]
-    | Callable[_Params, Awaitable[bool | None]],
+    mutation: Callable[FuncParams, bool | None]
+    | Callable[FuncParams, Awaitable[bool | None]],
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
-) -> Mutation[_Params]:
+) -> Mutation[FuncParams]:
     ...
 
 
-def use_mutation(*args: Any, **kwargs: Any) -> Mutation[_Params]:
+def use_mutation(*args: Any, **kwargs: Any) -> Mutation[FuncParams]:
     """This hook is used to modify data in the background, typically to create/update/delete \
     data from the Django ORM. \n
         
@@ -293,7 +286,7 @@ def use_mutation(*args: Any, **kwargs: Any) -> Mutation[_Params]:
     # Schedule the mutation to be run when needed
     @use_callback
     def schedule_mutation(
-        *exec_args: _Params.args, **exec_kwargs: _Params.kwargs
+        *exec_args: FuncParams.args, **exec_kwargs: FuncParams.kwargs
     ) -> None:
         # Set the loading state.
         # It's okay to re-execute the mutation if we're told to. The user
@@ -315,43 +308,6 @@ def use_mutation(*args: Any, **kwargs: Any) -> Mutation[_Params]:
     return Mutation(schedule_mutation, loading, error, reset)
 
 
-def _use_query_args_1(
-    options: QueryOptions,
-    /,
-    query: Callable[_Params, _Result | None]
-    | Callable[_Params, Awaitable[_Result | None]],
-    *args: _Params.args,
-    **kwargs: _Params.kwargs,
-):
-    return options, query, args, kwargs
-
-
-def _use_query_args_2(
-    query: Callable[_Params, _Result | None]
-    | Callable[_Params, Awaitable[_Result | None]],
-    *args: _Params.args,
-    **kwargs: _Params.kwargs,
-):
-    return QueryOptions(), query, args, kwargs
-
-
-def _use_mutation_args_1(
-    options: MutationOptions,
-    mutation: Callable[_Params, bool | None]
-    | Callable[_Params, Awaitable[bool | None]],
-    refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
-):
-    return options, mutation, refetch
-
-
-def _use_mutation_args_2(
-    mutation: Callable[_Params, bool | None]
-    | Callable[_Params, Awaitable[bool | None]],
-    refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
-):
-    return MutationOptions(), mutation, refetch
-
-
 def use_user() -> AbstractUser:
     """Get the current `User` object from either the WebSocket or HTTP request."""
     connection = use_connection()
@@ -361,56 +317,77 @@ def use_user() -> AbstractUser:
     return user
 
 
-async def _get_user_data(
-    user: AbstractUser | None, default: Any, user_data_model: Any | None
-):
-    """Get the current user's `UserState` query."""
+def use_user_data(
+    default_data: None
+    | dict[str, Callable[[], Any] | Callable[[], Awaitable[Any]] | Any] = None,
+) -> UserData[dict]:
+    from reactpy_django.models import UserDataModel
+
+    user = use_user()
+
+    async def _set_user_data(data):
+        if not isinstance(data, dict):
+            raise TypeError(f"Expected dict while setting user data, got {type(data)}")
+
+        model, _ = await UserDataModel.objects.aget_or_create(user=user)
+        model.data = pickle.dumps(data)
+        model.save()
+
+    data: Query[dict] = use_query(
+        QueryOptions(postprocessor=None),
+        _get_user_data,
+        user=user,
+        defaults=default_data,
+    )
+    set_data = use_mutation(_set_user_data, refetch=_get_user_data)
+
+    return UserData(data, set_data)
+
+
+def _use_query_args_1(options: QueryOptions, /, query: Query, *args, **kwargs):
+    return options, query, args, kwargs
+
+
+def _use_query_args_2(query: Query, *args, **kwargs):
+    return QueryOptions(), query, args, kwargs
+
+
+def _use_mutation_args_1(options: MutationOptions, mutation: Mutation, refetch=None):
+    return options, mutation, refetch
+
+
+def _use_mutation_args_2(mutation, refetch=None):
+    return MutationOptions(), mutation, refetch
+
+
+async def _get_user_data(user: AbstractUser, defaults: None | dict) -> dict:
     from reactpy_django.models import UserDataModel
 
     if user is None:
         raise ValueError("No user is available.")
 
-    user_data_model = user_data_model or UserDataModel
-
-    model, _ = await user_data_model.objects.aget_or_create(user=user)
-
-    if not model.data:
-        if asyncio.iscoroutinefunction(default):
-            default = await default()
-        elif callable(default):
-            default = default()
-        model.data = pickle.dumps(default)
-        model.save()
-
-    return pickle.loads(model.data)
-
-
-def _set_user_data(user: AbstractUser, user_data_model: Any | None):
-    from reactpy_django.models import UserDataModel
-
-    user_data_model = user_data_model or UserDataModel
-
-    async def mutation(data: Any):
-        """Set the current user's `UserState` query."""
-        model, _ = await user_data_model.objects.aget_or_create(user=user)
-        model.data = pickle.dumps(data)
-        model.save()
-
-    return mutation
-
-
-def use_user_data(
-    default_data: _UserDataType
-    | Callable[[], _UserDataType]
-    | Callable[[], Awaitable[_UserDataType]],
-    user_data_model: Any | None,
-) -> UserData[_UserDataType]:
-    user = use_user()
-    data = use_query(_get_user_data, user, default_data, user_data_model)
-    set_data = use_mutation(
-        _set_user_data(user, user_data_model), refetch=_get_user_data
+    model, _ = await UserDataModel.objects.aget_or_create(
+        user=user, data=pickle.dumps({})
     )
+    data = pickle.loads(model.data)
 
-    return UserData(
-        cast(Query[_UserDataType | None], data), cast(Mutation[_UserDataType], set_data)
-    )
+    if not isinstance(data, dict):
+        raise TypeError(f"Expected dict while loading user data, got {type(data)}")
+
+    # Set default values, if needed
+    if defaults:
+        changed = False
+        for key, value in defaults.items():
+            if key not in data:
+                new_value: Any = value
+                if asyncio.iscoroutinefunction(value):
+                    new_value = await value()
+                elif callable(value):
+                    new_value = value()
+                data[key] = new_value
+                changed = True
+        if changed:
+            model.data = pickle.dumps(data)
+            model.save()
+
+    return data

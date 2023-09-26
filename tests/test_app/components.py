@@ -207,7 +207,7 @@ def relational_query():
             "id": "relational-query",
             "data-success": bool(mtm) and bool(oto) and bool(mto) and bool(fk),
         },
-        html.p(inspect.currentframe().f_code.co_name),
+        html.p(inspect.currentframe().f_code.co_name),  # type: ignore
         html.div(f"Relational Parent Many To Many: {mtm}"),
         html.div(f"Relational Parent One To One: {oto}"),
         html.div(f"Relational Parent Many to One: {mto}"),
@@ -268,7 +268,7 @@ def async_relational_query():
             "id": "async-relational-query",
             "data-success": bool(mtm) and bool(oto) and bool(mto) and bool(fk),
         },
-        html.p(inspect.currentframe().f_code.co_name),
+        html.p(inspect.currentframe().f_code.co_name),  # type: ignore
         html.div(f"Relational Parent Many To Many: {mtm}"),
         html.div(f"Relational Parent One To One: {oto}"),
         html.div(f"Relational Parent Many to One: {mto}"),
