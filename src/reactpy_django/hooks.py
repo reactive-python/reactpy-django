@@ -328,10 +328,12 @@ def use_user_data(
     async def _set_user_data(data):
         if not isinstance(data, dict):
             raise TypeError(f"Expected dict while setting user data, got {type(data)}")
+        if user.is_anonymous:
+            raise ValueError("AnonymousUser cannot have user data.")
 
         model, _ = await UserDataModel.objects.aget_or_create(user=user)
         model.data = pickle.dumps(data)
-        model.save()
+        await model.asave()
 
     data: Query[dict] = use_query(
         QueryOptions(postprocessor=None),
@@ -363,13 +365,11 @@ def _use_mutation_args_2(mutation, refetch=None):
 async def _get_user_data(user: AbstractUser, defaults: None | dict) -> dict:
     from reactpy_django.models import UserDataModel
 
-    if user is None:
-        raise ValueError("No user is available.")
+    if not user or user.is_anonymous:
+        raise UserNotFoundError("No user is available, cannot fetch user data.")
 
-    model, _ = await UserDataModel.objects.aget_or_create(
-        user=user, data=pickle.dumps({})
-    )
-    data = pickle.loads(model.data)
+    model, _ = await UserDataModel.objects.aget_or_create(user=user)
+    data = pickle.loads(model.data) if model.data else {}
 
     if not isinstance(data, dict):
         raise TypeError(f"Expected dict while loading user data, got {type(data)}")

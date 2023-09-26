@@ -31,5 +31,5 @@ class Config(models.Model):
 class UserDataModel(models.Model):
     """A model for storing `user_state` data."""
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # type: ignore
-    data = models.BinaryField(blank=True)  # type: ignore
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # type: ignore
+    data = models.BinaryField(null=True, blank=True)  # type: ignore

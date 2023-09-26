@@ -7,6 +7,7 @@ from typing import (
     Callable,
     Generic,
     MutableMapping,
+    NamedTuple,
     Protocol,
     Sequence,
     TypeVar,
@@ -101,7 +102,6 @@ class ComponentParams:
     kwargs: MutableMapping[str, Any]
 
 
-@dataclass
-class UserData(Generic[Inferred]):
-    data: Query[Inferred]
-    set_data: Mutation[Inferred]
+class UserData(NamedTuple):
+    data: Query[dict]
+    set_data: Mutation[dict]
