@@ -320,7 +320,7 @@ def use_user() -> AbstractUser:
 def use_user_data(
     default_data: None
     | dict[str, Callable[[], Any] | Callable[[], Awaitable[Any]] | Any] = None,
-) -> UserData[dict]:
+) -> UserData:
     from reactpy_django.models import UserDataModel
 
     user = use_user()
