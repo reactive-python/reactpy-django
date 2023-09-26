@@ -368,10 +368,13 @@ class ComponentTests(ChannelsLiveServerTestCase):
             string = new_page.locator("#prerender_string")
             vdom = new_page.locator("#prerender_vdom")
             component = new_page.locator("#prerender_component")
+            use_user_http = new_page.locator("#use-user-http[data-success=True]")
+            use_user_ws = new_page.locator("#use-user-ws[data-success=true]")
 
             string.wait_for()
             vdom.wait_for()
             component.wait_for()
+            use_user_http.wait_for()
 
             # Check if the prerender occurred
             self.assertEqual(
@@ -390,6 +393,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
             self.assertEqual(
                 component.all_inner_texts(), ["prerender_component: Fully Rendered"]
             )
+            use_user_ws.wait_for()
         finally:
             new_page.close()
 
