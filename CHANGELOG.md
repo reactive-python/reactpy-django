@@ -39,20 +39,29 @@ Using the following categories, list your changes in this order:
 -   ReactPy components can now use SEO compatible rendering!
     -   `settings.py:REACTPY_PRERENDER` can be set to `True` to enable this behavior by default
     -   Or, you can enable it on individual components via the template tag: `{% component "..." prerender="True" %}`
--   `reactpy_django.components.view_to_iframe` component has been added, which uses an `<iframe>` to render a Django view.
--   `reactpy_django.utils.register_iframe` function has been added, which is mandatory to use alongside `reactpy_django.components.view_to_iframe`.
+-   New components!
+    -   `reactpy_django.components.view_to_iframe` uses an `<iframe>` to render a Django view.
+-   New utilies!
+    -   `reactpy_django.utils.register_iframe` notifies ReactPy which views are allowed to be used with `view_to_iframe`.
+-   New decorators!
+    -   `reactpy_django.decorators.user_passes_test` is a similar equivalent to Django's `user_passes_test` decorator, but ours works with ReactPy components.
+-   New hooks!
+    -   `reactpy_django.hooks.use_user` can be used to access the current user.
+    -   `reactpy_django.hooks.use_user_data` provides a simplified interface for storing user key-value data.
+-   New settings!
+    -   `REACTPY_AUTO_LOGIN` automatically logs in **pre-authenticated** users that during the initial component WebSocket connection. This is useful to continuously update `last_login` timestamps.
 
 ### Changed
 
--   Renamed undocumented utility function `reactpy_django.utils.ComponentPreloader` to `reactpy_django.utils.RootComponentFinder`.
+-   Renamed undocumented utility function `ComponentPreloader` to `RootComponentFinder`.
 -   It is now recommended to call `as_view()` when using `view_to_component` or `view_to_iframe` with Class Based Views.
 -   Thread sensitivity has been enabled in all locations where ORM queries are possible.
 
 ### Deprecated
 
--   The `compatibility` argument on `reactpy_django.components.view_to_component` is deprecated. Use `reactpy_django.components.view_to_iframe` instead.
+-   The `compatibility` argument on `reactpy_django.components.view_to_component` is deprecated. Use `view_to_iframe` instead.
 -   Using `reactpy_django.components.view_to_component` as a decorator is deprecated. Check the docs on the new suggested usage.
--   `reactpy_django.decorators.auth_required` is deprecated. An equivalent to this decorator's default is `@reactpy_django.decorators.user_passes_test(lambda user: user.is_active)`.
+-   `reactpy_django.decorators.auth_required` is deprecated. An equivalent to this decorator's default is `@user_passes_test(lambda user: user.is_active)`.
 
 ## [3.5.1] - 2023-09-07
 
