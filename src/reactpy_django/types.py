@@ -103,5 +103,5 @@ class ComponentParams:
 
 
 class UserData(NamedTuple):
-    data: Query[dict]
+    data: Query[dict | None]
     set_data: Mutation[dict]

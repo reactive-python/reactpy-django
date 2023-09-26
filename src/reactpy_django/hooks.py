@@ -335,7 +335,7 @@ def use_user_data(
         model.data = pickle.dumps(data)
         await model.asave()
 
-    data: Query[dict] = use_query(
+    data: Query[dict | None] = use_query(
         QueryOptions(postprocessor=None),
         _get_user_data,
         user=user,
