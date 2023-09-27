@@ -14,7 +14,7 @@ from typing import (
     overload,
 )
 
-import dill as pickle
+import orjson as pickle
 from channels.db import database_sync_to_async
 from reactpy import use_callback, use_effect, use_ref, use_state
 from reactpy import use_connection as _use_connection
