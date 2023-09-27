@@ -68,7 +68,7 @@ Dotted path to the Django authentication backend to use for ReactPy components. 
 
 **Example Value(s):** `#!python True`
 
-Enabling this will cause component WebSocket connections to automatically perform a [re-login](https://channels.readthedocs.io/en/latest/topics/authentication.html#how-to-log-a-user-in-out) on users that are already authenticated.
+Enabling this will cause component WebSocket connections to automatically [re-login](https://channels.readthedocs.io/en/latest/topics/authentication.html#how-to-log-a-user-in-out) users that are already authenticated.
 
 This is useful to continuously update `#!python last_login` timestamps and refresh the [Django login session](https://docs.djangoproject.com/en/dev/topics/http/sessions/).
 

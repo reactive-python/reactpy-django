@@ -46,7 +46,7 @@ Using the following categories, list your changes in this order:
     -   `reactpy_django.hooks.use_user` can be used to access the current user.
     -   `reactpy_django.hooks.use_user_data` provides a simplified interface for storing user key-value data.
     -   `reactpy_django.decorators.user_passes_test` is inspired by Django's [`user_passes_test`](http://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test) decorator, but works with ReactPy components.
-    -   `settings.py:REACTPY_AUTO_RELOGIN` will cause component WebSocket connections to automatically perform a re-login on authenticated users. This is useful to continuously update `last_login` timestamps and refresh the [Django login session](https://docs.djangoproject.com/en/dev/topics/http/sessions/).
+    -   `settings.py:REACTPY_AUTO_RELOGIN` will cause component WebSocket connections to automatically [re-login](https://channels.readthedocs.io/en/latest/topics/authentication.html#how-to-log-a-user-in-out) users that are already authenticated. This is useful to continuously update `last_login` timestamps and refresh the [Django login session](https://docs.djangoproject.com/en/dev/topics/http/sessions/).
 
 ### Changed
 
