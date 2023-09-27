@@ -48,14 +48,15 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         from reactpy_django import models
         from reactpy_django.config import (
             REACTPY_AUTH_BACKEND,
-            REACTPY_AUTO_LOGIN,
+            REACTPY_AUTO_RELOGIN,
             REACTPY_BACKHAUL_THREAD,
         )
 
         await super().connect()
 
-        user: AbstractUser = self.scope.get("user")
-        if REACTPY_AUTO_LOGIN and user and user.is_authenticated:
+        # Automatically re-login the user, if needed
+        user: AbstractUser | None = self.scope.get("user")
+        if REACTPY_AUTO_RELOGIN and user and user.is_authenticated and user.is_active:
             try:
                 await login(self.scope, user, backend=REACTPY_AUTH_BACKEND)
             except Exception:

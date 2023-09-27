@@ -36,20 +36,17 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
--   ReactPy components can now use SEO compatible rendering!
-    -   `settings.py:REACTPY_PRERENDER` can be set to `True` to enable this behavior by default
-    -   Or, you can enable it on individual components via the template tag: `{% component "..." prerender="True" %}`
--   New components!
+-   SEO compatible rendering!
+    -   `settings.py:REACTPY_PRERENDER` can be set to `True` to enable this behavior by default.
+    -   Or, you can enable it on individual components via the template tag: `{% component "..." prerender="True" %}`.
+-   New `view_to_iframe` feature!
     -   `reactpy_django.components.view_to_iframe` uses an `<iframe>` to render a Django view.
--   New utilies!
     -   `reactpy_django.utils.register_iframe` notifies ReactPy which views are allowed to be used with `view_to_iframe`.
--   New decorators!
-    -   `reactpy_django.decorators.user_passes_test` is a similar equivalent to Django's `user_passes_test` decorator, but ours works with ReactPy components.
--   New hooks!
+-   New Django `User` related features!
     -   `reactpy_django.hooks.use_user` can be used to access the current user.
     -   `reactpy_django.hooks.use_user_data` provides a simplified interface for storing user key-value data.
--   New settings!
-    -   `REACTPY_AUTO_LOGIN` automatically logs in **pre-authenticated** users that during the initial component WebSocket connection. This is useful to continuously update `last_login` timestamps.
+    -   `reactpy_django.decorators.user_passes_test` is inspired by Django's [`user_passes_test`](http://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test) decorator, but works with ReactPy components.
+    -   `settings.py:REACTPY_AUTO_RELOGIN` will cause component WebSocket connections to automatically perform a re-login on authenticated users. This is useful to continuously update `last_login` timestamps and refresh the [Django login session](https://docs.djangoproject.com/en/dev/topics/http/sessions/).
 
 ### Changed
 

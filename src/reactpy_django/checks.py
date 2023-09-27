@@ -482,4 +482,13 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    if not isinstance(config.REACTPY_AUTO_RELOGIN, bool):
+        errors.append(
+            Error(
+                "Invalid type for REACTPY_AUTO_RELOGIN.",
+                hint="REACTPY_AUTO_RELOGIN should be a boolean.",
+                id="reactpy_django.E022",
+            )
+        )
+
     return errors

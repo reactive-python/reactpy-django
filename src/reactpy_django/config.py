@@ -113,8 +113,8 @@ REACTPY_PRERENDER: bool = getattr(
     "REACTPY_PRERENDER",
     False,
 )
-REACTPY_AUTO_LOGIN: bool = getattr(
+REACTPY_AUTO_RELOGIN: bool = getattr(
     settings,
-    "REACTPY_AUTO_LOGIN",
-    True,
+    "REACTPY_AUTO_RELOGIN",
+    False,
 )

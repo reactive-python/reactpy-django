@@ -62,6 +62,18 @@ Dotted path to the Django authentication backend to use for ReactPy components. 
 
 ---
 
+### `#!python REACTPY_AUTO_RELOGIN`
+
+**Default:** `#!python False`
+
+**Example Value(s):** `#!python True`
+
+Enabling this will cause component WebSocket connections to automatically perform a [re-login](https://channels.readthedocs.io/en/latest/topics/authentication.html#how-to-log-a-user-in-out) on users that are already authenticated.
+
+This is useful to continuously update `#!python last_login` timestamps and refresh the [Django login session](https://docs.djangoproject.com/en/dev/topics/http/sessions/).
+
+---
+
 ## Performance Settings
 
 ---
@@ -128,7 +140,7 @@ You can use the `#!python host` argument in your [template tag](../reference/tem
 
 **Example Value(s):** `#!python True`
 
-Configures whether to pre-render your components, which enables SEO compatibility and reduces perceived latency.
+Configures whether to HTTP pre-render your components, which enables SEO compatibility and reduces perceived latency.
 
 During pre-rendering, there are some key differences in behavior:
 
