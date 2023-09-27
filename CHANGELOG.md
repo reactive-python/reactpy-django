@@ -37,7 +37,7 @@ Using the following categories, list your changes in this order:
 ### Added
 
 -   SEO compatible rendering!
-    -   `settings.py:REACTPY_PRERENDER` can be set to `True` to enable this behavior by default.
+    -   `settings.py:REACTPY_PRERENDER` can be set to `True` to make components pre-render by default.
     -   Or, you can enable it on individual components via the template tag: `{% component "..." prerender="True" %}`.
 -   New `view_to_iframe` feature!
     -   `reactpy_django.components.view_to_iframe` uses an `<iframe>` to render a Django view.
@@ -52,7 +52,7 @@ Using the following categories, list your changes in this order:
 
 -   Renamed undocumented utility function `ComponentPreloader` to `RootComponentFinder`.
 -   It is now recommended to call `as_view()` when using `view_to_component` or `view_to_iframe` with Class Based Views.
--   Thread sensitivity has been enabled in all locations where ORM queries are possible.
+-   For thread safety, `thread_sensitive=True` has been enabled in all `sync_to_async` functions where ORM queries are possible.
 
 ### Deprecated
 
