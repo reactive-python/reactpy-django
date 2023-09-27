@@ -17,9 +17,9 @@ from typing import (
 import dill as pickle
 from channels.db import database_sync_to_async
 from reactpy import use_callback, use_effect, use_ref, use_state
-from reactpy.backend.hooks import use_connection as _use_connection
-from reactpy.backend.hooks import use_location as _use_location
-from reactpy.backend.hooks import use_scope as _use_scope
+from reactpy import use_connection as _use_connection
+from reactpy import use_location as _use_location
+from reactpy import use_scope as _use_scope
 from reactpy.backend.types import Location
 
 from reactpy_django.exceptions import UserNotFoundError
@@ -339,7 +339,7 @@ def use_user_data(
         QueryOptions(postprocessor=None),
         _get_user_data,
         user=user,
-        defaults=default_data,
+        default_data=default_data,
     )
     set_data = use_mutation(_set_user_data, refetch=_get_user_data)
 
@@ -362,11 +362,11 @@ def _use_mutation_args_2(mutation, refetch=None):
     return MutationOptions(), mutation, refetch
 
 
-async def _get_user_data(user: AbstractUser, defaults: None | dict) -> dict:
+async def _get_user_data(user: AbstractUser, default_data: None | dict) -> dict | None:
     from reactpy_django.models import UserDataModel
 
     if not user or user.is_anonymous:
-        raise UserNotFoundError("No user is available, cannot fetch user data.")
+        return None
 
     model, _ = await UserDataModel.objects.aget_or_create(user=user)
     data = pickle.loads(model.data) if model.data else {}
@@ -375,9 +375,9 @@ async def _get_user_data(user: AbstractUser, defaults: None | dict) -> dict:
         raise TypeError(f"Expected dict while loading user data, got {type(data)}")
 
     # Set default values, if needed
-    if defaults:
+    if default_data:
         changed = False
-        for key, value in defaults.items():
+        for key, value in default_data.items():
             if key not in data:
                 new_value: Any = value
                 if asyncio.iscoroutinefunction(value):
