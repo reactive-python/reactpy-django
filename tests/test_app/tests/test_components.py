@@ -21,6 +21,7 @@ CLICK_DELAY = 250 if strtobool(GITHUB_ACTIONS) else 25  # Delay in miliseconds.
 
 
 class ComponentTests(ChannelsLiveServerTestCase):
+    from django.db import DEFAULT_DB_ALIAS
     from reactpy_django import config
 
     databases = {"default"}
@@ -454,7 +455,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
             new_page.close()
 
     @skipIf(
-        config.REACTPY_DATABASE != "default",
+        config.REACTPY_DATABASE != DEFAULT_DB_ALIAS,
         "`use_user_data` does not work with database routing.",
     )
     def test_use_user_data(self):
@@ -466,27 +467,27 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
         # Test AnonymousUser data
         user_data_div = self.page.wait_for_selector(
-            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-username=AnonymousUser]"
+            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=AnonymousUser]"
         )
         self.assertIn("Data: None", user_data_div.text_content())
 
         # Test first user's data
         login_1.click()
         user_data_div = self.page.wait_for_selector(
-            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-username=user_1]"
+            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_1]"
         )
         self.assertIn(r"Data: {}", user_data_div.text_content())
         input.type("test", delay=CLICK_DELAY)
         input.press("Enter", delay=CLICK_DELAY)
         user_data_div = self.page.wait_for_selector(
-            "#use-user-data[data-success=true][data-fetch-error=false][data-mutation-error=false][data-username=user_1]"
+            "#use-user-data[data-success=true][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_1]"
         )
         self.assertIn("Data: {'test': 'test'}", user_data_div.text_content())
 
         # Test second user's data
         login_2.click()
         user_data_div = self.page.wait_for_selector(
-            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-username=user_2]"
+            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_2]"
         )
         self.assertIn(r"Data: {}", user_data_div.text_content())
         input.press("Control+A", delay=CLICK_DELAY)
@@ -494,20 +495,20 @@ class ComponentTests(ChannelsLiveServerTestCase):
         input.type("test 2", delay=CLICK_DELAY)
         input.press("Enter", delay=CLICK_DELAY)
         user_data_div = self.page.wait_for_selector(
-            "#use-user-data[data-success=true][data-fetch-error=false][data-mutation-error=false][data-username=user_2]"
+            "#use-user-data[data-success=true][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_2]"
         )
         self.assertIn("Data: {'test 2': 'test 2'}", user_data_div.text_content())
 
         # Attempt to clear data
         clear.click()
         user_data_div = self.page.wait_for_selector(
-            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-username=user_2]"
+            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_2]"
         )
         self.assertIn(r"Data: {}", user_data_div.text_content())
 
         # Attempt to logout
         logout.click()
         user_data_div = self.page.wait_for_selector(
-            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-username=AnonymousUser]"
+            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=AnonymousUser]"
         )
         self.assertIn(r"Data: None", user_data_div.text_content())

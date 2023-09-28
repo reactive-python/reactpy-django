@@ -714,6 +714,7 @@ def use_user_data():
             "data-success": bool(user_data.data),
             "data-fetch-error": bool(user_data.error),
             "data-mutation-error": bool(set_user_data.error),
+            "data-loading": user_data.loading or set_user_data.loading,
             "data-username": "AnonymousUser"
             if current_user.is_anonymous
             else current_user.username,
