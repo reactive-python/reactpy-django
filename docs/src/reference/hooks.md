@@ -18,7 +18,9 @@ Prefabricated hooks can be used within your `components.py` to help simplify dev
 
 This hook is used to execute functions in the background and return the result, typically to [read](https://www.sumologic.com/glossary/crud/) data the Django ORM.
 
-The [default postprocessor](../reference/utils.md#django-query-postprocessor) expects your query function to `#!python return` a Django `#!python Model` or `#!python QuerySet`. The postprocessor needs to be changed to execute other types of queries. Query functions can be sync or async.
+The [default postprocessor](../reference/utils.md#django-query-postprocessor) expects your query function to `#!python return` a Django `#!python Model` or `#!python QuerySet`. The postprocessor needs to be changed to execute other types of queries.
+
+Query functions can be sync or async.
 
 === "components.py"
 
@@ -162,7 +164,9 @@ The [default postprocessor](../reference/utils.md#django-query-postprocessor) ex
 
 This hook is used to modify data in the background, typically to [create/update/delete](https://www.sumologic.com/glossary/crud/) data from the Django ORM.
 
-Mutation functions can `#!python return False` to prevent executing your `#!python refetch` function. All other returns are ignored. Mutation functions can be sync or async.
+Mutation functions can `#!python return False` to manually prevent your `#!python refetch=...` function from executing. All other returns are ignored.
+
+Mutation functions can be sync or async.
 
 === "components.py"
 

@@ -3,7 +3,9 @@ import inspect
 from pathlib import Path
 
 import reactpy_django
+from channels.auth import login, logout
 from channels.db import database_sync_to_async
+from django.contrib.auth import get_user_model
 from django.http import HttpRequest
 from django.shortcuts import render
 from reactpy import component, hooks, html, web
@@ -661,3 +663,74 @@ def broken_postprocessor_query():
     mtm = relational_parent.data.many_to_many.all()
 
     return html.div(f"This should have failed! Something went wrong: {mtm}")
+
+
+def get_or_create_user1():
+    return get_user_model().objects.get_or_create(username="user_1")[0]
+
+
+def get_or_create_user2():
+    return get_user_model().objects.get_or_create(username="user_2")[0]
+
+
+@component
+def use_user_data():
+    user_data, set_user_data = reactpy_django.hooks.use_user_data()
+    user1 = reactpy_django.hooks.use_query(get_or_create_user1)
+    user2 = reactpy_django.hooks.use_query(get_or_create_user2)
+    current_user = reactpy_django.hooks.use_user()
+    scope = reactpy_django.hooks.use_scope()
+
+    async def login_user1(event):
+        await login(scope, user1.data)
+        user_data.refetch()
+        set_user_data.reset()
+
+    async def login_user2(event):
+        await login(scope, user2.data)
+        user_data.refetch()
+        set_user_data.reset()
+
+    async def logout_user(event):
+        await logout(scope)
+        user_data.refetch()
+        set_user_data.reset()
+
+    async def clear_data(event):
+        set_user_data.execute({})
+        user_data.refetch()
+        set_user_data.reset()
+
+    async def on_submit(event):
+        if event["key"] == "Enter":
+            set_user_data.execute(
+                (user_data.data or {})
+                | {event["target"]["value"]: event["target"]["value"]}
+            )
+
+    return html.div(
+        {
+            "id": "use-user-data",
+            "data-success": bool(user_data.data),
+            "data-fetch-error": bool(user_data.error),
+            "data-mutation-error": bool(set_user_data.error),
+            "data-username": "AnonymousUser"
+            if current_user.is_anonymous
+            else current_user.username,
+        },
+        html.button({"id": "login-1", "on_click": login_user1}, "Login 1"),
+        html.button({"id": "login-2", "on_click": login_user2}, "Login 2"),
+        html.button({"id": "logout", "on_click": logout_user}, "Logout"),
+        html.button({"id": "clear", "on_click": clear_data}, "Clear Data"),
+        html.div(f"User: {current_user}"),
+        html.div(f"Data: {user_data.data}"),
+        html.div(f"Data State: (loading={user_data.loading}, error={user_data.error})"),
+        html.div(
+            f"Mutation State: (loading={set_user_data.loading}, error={set_user_data.error})"
+        ),
+        html.div(
+            html.input(
+                {"on_key_press": on_submit, "placeholder": "Type here to add data"}
+            )
+        ),
+    )
