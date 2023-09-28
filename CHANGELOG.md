@@ -56,9 +56,16 @@ Using the following categories, list your changes in this order:
 
 ### Deprecated
 
--   The `compatibility` argument on `reactpy_django.components.view_to_component` is deprecated. Use `view_to_iframe` instead.
--   Using `reactpy_django.components.view_to_component` as a decorator is deprecated. Check the docs on the new suggested usage.
--   `reactpy_django.decorators.auth_required` is deprecated. An equivalent to this decorator's default is `@user_passes_test(lambda user: user.is_active)`.
+-   The `compatibility` argument on `reactpy_django.components.view_to_component` is deprecated.
+    -   Use `view_to_iframe` as a replacement.
+-   `reactpy_django.components.view_to_component` **usage as a decorator** is deprecated.
+    -   Check the docs on how to use `view_to_component` as a function instead.
+-   `reactpy_django.decorators.auth_required` is deprecated.
+    -   An equivalent to this decorator's default is `@user_passes_test(lambda user: user.is_active)`.
+
+### Fixed
+
+-   Fixed a bug where exception stacks would not print on failed component renders.
 
 ## [3.5.1] - 2023-09-07
 

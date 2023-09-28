@@ -4,9 +4,11 @@ from functools import wraps
 from typing import TYPE_CHECKING, Any, Callable
 from warnings import warn
 
-from reactpy.core.types import ComponentType, VdomDict
+from reactpy import component
+from reactpy.core.types import ComponentConstructor, ComponentType, VdomDict
 
 from reactpy_django.hooks import use_scope, use_user
+from reactpy_django.utils import generate_obj_name
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import AbstractUser
@@ -51,8 +53,9 @@ def auth_required(
 
 def user_passes_test(
     test_func: Callable[[AbstractUser], bool],
+    /,
     fallback: Any | None = None,
-) -> Callable:
+) -> ComponentConstructor:
     """Imitation of Django's `user_passes_test` decorator that works with components.
     This decorator runs your test function on the websocket connection's `user`. If the test passes,
     then decorated component will be rendered. Otherwise, the fallback component will be rendered.
@@ -63,18 +66,35 @@ def user_passes_test(
             VDOM (`reactpy.html` snippet).
     """
 
-    def decorator(component):
-        @wraps(component)
+    def decorator(user_component):
+        @wraps(user_component)
         def _wrapper(*args, **kwargs):
-            user = use_user()
-
-            # Run the test and render the component if it passes.
-            if test_func(user):
-                return component(*args, **kwargs)
-
-            # Render the fallback component.
-            return fallback(*args, **kwargs) if callable(fallback) else fallback
+            return _user_passes_test(
+                user_component, fallback, test_func, *args, **kwargs
+            )
 
         return _wrapper
 
     return decorator
+
+
+@component
+def _user_passes_test(component_constructor, fallback, test_func, *args, **kwargs):
+    """Dedicated component for `user_passes_test` to allow us to always have access to hooks."""
+    user = use_user()
+
+    if test_func(user):
+        # Ensure that the component is a ReactPy component.
+        user_component = component_constructor(*args, **kwargs)
+        if not getattr(user_component, "render", None):
+            raise TypeError(
+                f"user_passes_test got {type(component_constructor)} for "
+                f"'{generate_obj_name(component_constructor)}', expected <class 'Component'>. "
+                "Did you forget @user_passes_test must be ABOVE the @component decorator?"
+            )
+
+        # Render the component.
+        return user_component
+
+    # Render the fallback component.
+    return fallback(*args, **kwargs) if callable(fallback) else fallback
