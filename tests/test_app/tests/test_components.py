@@ -452,3 +452,62 @@ class ComponentTests(ChannelsLiveServerTestCase):
             self.assertIn("ViewNotRegisteredError:", broken_component.text_content())
         finally:
             new_page.close()
+
+    @skipIf(
+        config.REACTPY_DATABASE != "default",
+        "`use_user_data` does not work with database routing.",
+    )
+    def test_use_user_data(self):
+        input = self.page.wait_for_selector("#use-user-data input")
+        login_1 = self.page.wait_for_selector("#login-1")
+        login_2 = self.page.wait_for_selector("#login-2")
+        logout = self.page.wait_for_selector("#logout")
+        clear = self.page.wait_for_selector("#clear")
+
+        # Test AnonymousUser data
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-username=AnonymousUser]"
+        )
+        self.assertIn("Data: None", user_data_div.text_content())
+
+        # Test first user's data
+        login_1.click()
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-username=user_1]"
+        )
+        self.assertIn(r"Data: {}", user_data_div.text_content())
+        input.type("test", delay=CLICK_DELAY)
+        input.press("Enter", delay=CLICK_DELAY)
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data[data-success=true][data-fetch-error=false][data-mutation-error=false][data-username=user_1]"
+        )
+        self.assertIn("Data: {'test': 'test'}", user_data_div.text_content())
+
+        # Test second user's data
+        login_2.click()
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-username=user_2]"
+        )
+        self.assertIn(r"Data: {}", user_data_div.text_content())
+        input.press("Control+A", delay=CLICK_DELAY)
+        input.press("Backspace", delay=CLICK_DELAY)
+        input.type("test 2", delay=CLICK_DELAY)
+        input.press("Enter", delay=CLICK_DELAY)
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data[data-success=true][data-fetch-error=false][data-mutation-error=false][data-username=user_2]"
+        )
+        self.assertIn("Data: {'test 2': 'test 2'}", user_data_div.text_content())
+
+        # Attempt to clear data
+        clear.click()
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-username=user_2]"
+        )
+        self.assertIn(r"Data: {}", user_data_div.text_content())
+
+        # Attempt to logout
+        logout.click()
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-username=AnonymousUser]"
+        )
+        self.assertIn(r"Data: None", user_data_div.text_content())
