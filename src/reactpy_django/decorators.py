@@ -56,12 +56,12 @@ def user_passes_test(
     /,
     fallback: Any | None = None,
 ) -> ComponentConstructor:
-    """Imitation of Django's `user_passes_test` decorator that works with components.
-    This decorator runs your test function on the websocket connection's `user`. If the test passes,
-    then decorated component will be rendered. Otherwise, the fallback component will be rendered.
+    """You can limit component access to users that pass a test function by using this decorator.
+
+    This decorator is inspired by Django's `user_passes_test` decorator, but works with ReactPy components.
 
     Args:
-        test_func: The function that returns a boolean.
+        test_func: A function that accepts a `User` returns a boolean.
         fallback: The content to be rendered if the test fails. Typically is a ReactPy component or \
             VDOM (`reactpy.html` snippet).
     """
@@ -97,4 +97,5 @@ def _user_passes_test(component_constructor, fallback, test_func, *args, **kwarg
         return user_component
 
     # Render the fallback component.
-    return fallback(*args, **kwargs) if callable(fallback) else fallback
+    # Returns an empty string if fallback is None, since ReactPy currently renders None as a string.
+    return fallback(*args, **kwargs) if callable(fallback) else (fallback or "")
