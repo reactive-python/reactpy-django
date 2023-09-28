@@ -5,6 +5,7 @@ import sys
 from distutils.util import strtobool
 from functools import partial
 from time import sleep
+from unittest import skipIf
 
 from channels.testing import ChannelsLiveServerTestCase
 from channels.testing.live import make_application
@@ -20,6 +21,8 @@ CLICK_DELAY = 250 if strtobool(GITHUB_ACTIONS) else 25  # Delay in miliseconds.
 
 
 class ComponentTests(ChannelsLiveServerTestCase):
+    from reactpy_django import config
+
     databases = {"default"}
 
     @classmethod
@@ -59,6 +62,8 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
+        from reactpy_django import config
+
         # Close the Playwright browser
         cls.playwright.stop()
 
@@ -70,7 +75,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
         cls._server_process.terminate()
         cls._server_process.join()
         cls._live_server_modified_settings.disable()
-        for db_name in {"default", "reactpy"}:
+        for db_name in {"default", config.REACTPY_DATABASE}:
             call_command(
                 "flush",
                 verbosity=0,

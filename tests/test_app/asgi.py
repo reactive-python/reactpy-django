@@ -8,7 +8,8 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
+# The default settings file, which can be overridden by `--settings <module_path>`
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings_single_db")
 
 # Fetch ASGI application before importing dependencies that require ORM models.
 http_asgi_app = get_asgi_application()
