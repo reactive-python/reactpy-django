@@ -451,6 +451,11 @@ class ComponentTests(ChannelsLiveServerTestCase):
             broken_component = new_page.locator("#view_to_iframe_not_registered pre")
             broken_component.wait_for()
             self.assertIn("ViewNotRegisteredError:", broken_component.text_content())
+
+            # DecoratorParamError
+            broken_component = new_page.locator("#incorrect_user_passes_test_decorator")
+            broken_component.wait_for()
+            self.assertIn("DecoratorParamError:", broken_component.text_content())
         finally:
             new_page.close()
 

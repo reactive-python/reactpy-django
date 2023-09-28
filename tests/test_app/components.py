@@ -188,6 +188,11 @@ def unauthorized_user_test():
     return html.div({"id": "unauthorized-user-test"}, "unauthorized_user_test: Fail")
 
 
+@reactpy_django.decorators.user_passes_test(lambda user: True)
+def incorrect_user_passes_test_decorator():
+    return html.div("incorrect_decorator_test: Fail")
+
+
 def create_relational_parent() -> RelationalParent:
     child_1 = RelationalChild.objects.create(text="ManyToMany Child 1")
     child_2 = RelationalChild.objects.create(text="ManyToMany Child 2")

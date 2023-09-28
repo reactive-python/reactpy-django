@@ -7,8 +7,8 @@ from warnings import warn
 from reactpy import component
 from reactpy.core.types import ComponentConstructor, ComponentType, VdomDict
 
+from reactpy_django.exceptions import DecoratorParamError
 from reactpy_django.hooks import use_scope, use_user
-from reactpy_django.utils import generate_obj_name
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import AbstractUser
@@ -87,10 +87,9 @@ def _user_passes_test(component_constructor, fallback, test_func, *args, **kwarg
         # Ensure that the component is a ReactPy component.
         user_component = component_constructor(*args, **kwargs)
         if not getattr(user_component, "render", None):
-            raise TypeError(
-                f"user_passes_test got {type(component_constructor)} for "
-                f"'{generate_obj_name(component_constructor)}', expected <class 'Component'>. "
-                "Did you forget @user_passes_test must be ABOVE the @component decorator?"
+            raise DecoratorParamError(
+                "`user_passes_test` is not decorating a ReactPy component. "
+                "Did you forget `@user_passes_test` must be ABOVE the `@component` decorator?"
             )
 
         # Render the component.

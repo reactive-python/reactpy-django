@@ -24,3 +24,7 @@ class ViewNotRegisteredError(AttributeError):
 
 class ViewDoesNotExistError(AttributeError):
     ...
+
+
+class DecoratorParamError(TypeError):
+    ...
