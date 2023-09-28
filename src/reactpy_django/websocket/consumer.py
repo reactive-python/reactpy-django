@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import logging
+import traceback
 from concurrent.futures import Future
 from datetime import timedelta
 from threading import Thread
@@ -61,13 +62,17 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 await login(self.scope, user, backend=REACTPY_AUTH_BACKEND)
             except Exception:
                 await asyncio.to_thread(
-                    _logger.exception, "ReactPy websocket authentication has failed!"
+                    _logger.error,
+                    "ReactPy websocket authentication has failed!\n"
+                    f"{traceback.format_exc()}",
                 )
             try:
                 await database_sync_to_async(self.scope["session"].save)()
             except Exception:
                 await asyncio.to_thread(
-                    _logger.exception, "ReactPy has failed to save scope['session']!"
+                    _logger.error,
+                    "ReactPy has failed to save scope['session']!\n"
+                    f"{traceback.format_exc()}",
                 )
 
         # Start the component dispatcher
@@ -96,8 +101,9 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 await database_sync_to_async(delete_expired_sessions)()
             except Exception:
                 await asyncio.to_thread(
-                    _logger.exception,
-                    "ReactPy has failed to delete expired component sessions!",
+                    _logger.error,
+                    "ReactPy has failed to delete expired component sessions!\n"
+                    f"{traceback.format_exc()}",
                 )
 
             # Update the last_accessed timestamp
@@ -105,8 +111,9 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 await self.component_session.asave()
             except Exception:
                 await asyncio.to_thread(
-                    _logger.exception,
-                    "ReactPy has failed to save component session!",
+                    _logger.error,
+                    "ReactPy has failed to save component session!\n"
+                    f"{traceback.format_exc()}",
                 )
 
         await super().disconnect(code)
@@ -190,9 +197,10 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             return
         except Exception:
             await asyncio.to_thread(
-                _logger.exception,
+                _logger.error,
                 f"Failed to construct component {component_constructor} "
-                f"with args='{component_session_args}' kwargs='{component_session_kwargs}'!",
+                f"with args='{component_session_args}' kwargs='{component_session_kwargs}'!\n"
+                f"{traceback.format_exc()}",
             )
             return
 
