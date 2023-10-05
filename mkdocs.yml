@@ -19,6 +19,7 @@ nav:
           - Community:
                 - GitHub Discussions: https://github.com/reactive-python/reactpy-django/discussions
                 - Discord: https://discord.gg/uNb5P4hA9X
+                - Reddit: https://www.reddit.com/r/ReactPy/
           - License: about/license.md
 
 theme:
