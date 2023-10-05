@@ -320,7 +320,9 @@ def use_user() -> AbstractUser:
 def use_user_data(
     default_data: None
     | dict[str, Callable[[], Any] | Callable[[], Awaitable[Any]] | Any] = None,
+    auto_save_defaults: bool = False,
 ) -> UserData:
+    """..."""
     from reactpy_django.models import UserDataModel
 
     user = use_user()
@@ -340,6 +342,7 @@ def use_user_data(
         _get_user_data,
         user=user,
         default_data=default_data,
+        auto_save_defaults=auto_save_defaults,
     )
     set_data = use_mutation(_set_user_data, refetch=_get_user_data)
 
@@ -362,7 +365,9 @@ def _use_mutation_args_2(mutation, refetch=None):
     return MutationOptions(), mutation, refetch
 
 
-async def _get_user_data(user: AbstractUser, default_data: None | dict) -> dict | None:
+async def _get_user_data(
+    user: AbstractUser, default_data: None | dict, auto_save_defaults: bool
+) -> dict | None:
     from reactpy_django.models import UserDataModel
 
     if not user or user.is_anonymous:
@@ -388,6 +393,7 @@ async def _get_user_data(user: AbstractUser, default_data: None | dict) -> dict 
                 changed = True
         if changed:
             model.data = pickle.dumps(data)
-            model.save()
+            if auto_save_defaults:
+                await model.asave()
 
     return data
