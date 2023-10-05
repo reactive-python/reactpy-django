@@ -464,11 +464,11 @@ class ComponentTests(ChannelsLiveServerTestCase):
         "`use_user_data` does not work with database routing.",
     )
     def test_use_user_data(self):
-        input = self.page.wait_for_selector("#use-user-data input")
-        login_1 = self.page.wait_for_selector("#login-1")
-        login_2 = self.page.wait_for_selector("#login-2")
-        logout = self.page.wait_for_selector("#logout")
-        clear = self.page.wait_for_selector("#clear")
+        text_input = self.page.wait_for_selector("#use-user-data input")
+        login_1 = self.page.wait_for_selector("#use-user-data .login-1")
+        login_2 = self.page.wait_for_selector("#use-user-data .login-2")
+        logout = self.page.wait_for_selector("#use-user-data .logout")
+        clear = self.page.wait_for_selector("#use-user-data .clear")
 
         # Test AnonymousUser data
         user_data_div = self.page.wait_for_selector(
@@ -482,8 +482,8 @@ class ComponentTests(ChannelsLiveServerTestCase):
             "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_1]"
         )
         self.assertIn(r"Data: {}", user_data_div.text_content())
-        input.type("test", delay=CLICK_DELAY)
-        input.press("Enter", delay=CLICK_DELAY)
+        text_input.type("test", delay=CLICK_DELAY)
+        text_input.press("Enter", delay=CLICK_DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=true][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_1]"
         )
@@ -495,10 +495,10 @@ class ComponentTests(ChannelsLiveServerTestCase):
             "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_2]"
         )
         self.assertIn(r"Data: {}", user_data_div.text_content())
-        input.press("Control+A", delay=CLICK_DELAY)
-        input.press("Backspace", delay=CLICK_DELAY)
-        input.type("test 2", delay=CLICK_DELAY)
-        input.press("Enter", delay=CLICK_DELAY)
+        text_input.press("Control+A", delay=CLICK_DELAY)
+        text_input.press("Backspace", delay=CLICK_DELAY)
+        text_input.type("test 2", delay=CLICK_DELAY)
+        text_input.press("Enter", delay=CLICK_DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=true][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_2]"
         )
