@@ -1,4 +1,5 @@
 import contextlib
+import sys
 
 from django.apps import AppConfig
 from reactpy_django.utils import register_iframe
@@ -18,6 +19,9 @@ class TestAppConfig(AppConfig):
         register_iframe(views.ViewToComponentAsyncClassCompatibility)
         register_iframe(views.ViewToComponentTemplateViewClassCompatibility)
         register_iframe(views.view_to_iframe_args)
+
+        if "test" in sys.argv:
+            return
 
         with contextlib.suppress(Exception):
             user = User.objects.create_superuser(

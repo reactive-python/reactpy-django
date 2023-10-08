@@ -512,3 +512,43 @@ class ComponentTests(ChannelsLiveServerTestCase):
             "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=AnonymousUser]"
         )
         self.assertIn(r"Data: None", user_data_div.text_content())
+
+    def test_use_user_data_with_default(self):
+        text_input = self.page.wait_for_selector("#use-user-data-with-default input")
+        login_3 = self.page.wait_for_selector("#use-user-data-with-default .login-3")
+        clear = self.page.wait_for_selector("#use-user-data-with-default .clear")
+
+        # Test AnonymousUser data
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=AnonymousUser]"
+        )
+        self.assertIn("Data: None", user_data_div.text_content())
+
+        # Test first user's data
+        login_3.click()
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_3]"
+        )
+        self.assertIn(
+            "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3'}",
+            user_data_div.text_content(),
+        )
+        text_input.type("test", delay=CLICK_DELAY)
+        text_input.press("Enter", delay=CLICK_DELAY)
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_3]"
+        )
+        self.assertIn(
+            "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3', 'test': 'test'}",
+            user_data_div.text_content(),
+        )
+
+        # Attempt to clear data
+        clear.click()
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_3]"
+        )
+        self.assertIn(
+            "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3'}",
+            user_data_div.text_content(),
+        )

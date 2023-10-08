@@ -741,3 +741,67 @@ def use_user_data():
             )
         ),
     )
+
+
+def get_or_create_user3():
+    return get_user_model().objects.get_or_create(username="user_3")[0]
+
+
+@component
+def use_user_data_with_default():
+    async def value3():
+        return "value3"
+
+    def value2():
+        return "value2"
+
+    user_data, set_user_data = reactpy_django.hooks.use_user_data(
+        {"default1": "value", "default2": value2, "default3": value3},
+        auto_save_defaults=True,
+    )
+    user3 = reactpy_django.hooks.use_query(get_or_create_user3)
+    current_user = reactpy_django.hooks.use_user()
+    scope = reactpy_django.hooks.use_scope()
+
+    async def login_user3(event):
+        await login(scope, user3.data)
+        user_data.refetch()
+        set_user_data.reset()
+
+    async def clear_data(event):
+        set_user_data.execute({})
+        user_data.refetch()
+        set_user_data.reset()
+
+    async def on_submit(event):
+        if event["key"] == "Enter":
+            set_user_data.execute(
+                (user_data.data or {})
+                | {event["target"]["value"]: event["target"]["value"]}
+            )
+
+    return html.div(
+        {
+            "id": "use-user-data-with-default",
+            "data-fetch-error": bool(user_data.error),
+            "data-mutation-error": bool(set_user_data.error),
+            "data-loading": user_data.loading or set_user_data.loading,
+            "data-username": "AnonymousUser"
+            if current_user.is_anonymous
+            else current_user.username,
+        },
+        html.div("use_user_data_with_default"),
+        html.button({"class": "login-3", "on_click": login_user3}, "Login 3"),
+        html.button({"class": "clear", "on_click": clear_data}, "Clear Data"),
+        html.div(f"User: {current_user}"),
+        html.div(f"Data: {user_data.data}"),
+        html.div(f"Data State: (loading={user_data.loading}, error={user_data.error})"),
+        html.div(
+            f"Mutation State: (loading={set_user_data.loading}, error={set_user_data.error})"
+        ),
+        html.div(
+            html.input(
+                {"on_key_press": on_submit, "placeholder": "Type here to add data"}
+            )
+        ),
+    )
