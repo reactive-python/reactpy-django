@@ -5,7 +5,6 @@ import sys
 from distutils.util import strtobool
 from functools import partial
 from time import sleep
-from unittest import skipIf
 
 from channels.testing import ChannelsLiveServerTestCase
 from channels.testing.live import make_application
@@ -459,10 +458,6 @@ class ComponentTests(ChannelsLiveServerTestCase):
         finally:
             new_page.close()
 
-    @skipIf(
-        config.REACTPY_DATABASE != DEFAULT_DB_ALIAS,
-        "`use_user_data` does not work with database routing.",
-    )
     def test_use_user_data(self):
         text_input = self.page.wait_for_selector("#use-user-data input")
         login_1 = self.page.wait_for_selector("#use-user-data .login-1")

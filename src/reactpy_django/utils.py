@@ -11,8 +11,10 @@ from fnmatch import fnmatch
 from importlib import import_module
 from typing import Any, Callable, Sequence
 
+import orjson as pickle
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
+from django.contrib.auth import get_user_model
 from django.db.models import ManyToManyField, ManyToOneRel, prefetch_related_objects
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
@@ -317,7 +319,7 @@ def django_query_postprocessor(
 
 def validate_component_args(func, *args, **kwargs):
     """
-    Validate whether a set of args/kwargs would work on the given function.
+    Validate whether a set of args/kwargs would work on the given component.
 
     Raises `ComponentParamError` if the args/kwargs are invalid.
     """
@@ -386,3 +388,9 @@ class SyncLayout(Layout):
 
     def render(self):
         return async_to_sync(super().render)()
+
+
+def get_user_pk(user, serialize=False):
+    """Returns the primary key value for a user model instance."""
+    pk = getattr(user, user._meta.pk.name)
+    return pickle.dumps(pk) if serialize else pk
