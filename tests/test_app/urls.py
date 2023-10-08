@@ -19,13 +19,6 @@ from django.urls import include, path
 
 from . import views
 
-
-class AccessUser:
-    has_module_perms = has_perm = __getattr__ = lambda s, *a, **kw: True
-
-
-admin.site.has_permission = lambda r: setattr(r, "user", AccessUser()) or True  # type: ignore
-
 urlpatterns = [
     path("", views.base_template),
     path("port/<int:port>/", views.host_port_template),
