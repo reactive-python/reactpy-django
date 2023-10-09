@@ -32,6 +32,8 @@ from reactpy_django.types import (
     Query,
     QueryOptions,
     UserData,
+    UserDataMutation,
+    UserDataQuery,
 )
 from reactpy_django.utils import generate_obj_name, get_user_pk
 
@@ -338,16 +340,29 @@ def use_user_data(
         model.data = pickle.dumps(data)
         await model.asave()
 
-    data: Query[dict | None] = use_query(
+    query: Query[dict | None] = use_query(
         QueryOptions(postprocessor=None),
         _get_user_data,
         user=user,
         default_data=default_data,
         auto_save_defaults=auto_save_defaults,
     )
-    set_data = use_mutation(_set_user_data, refetch=_get_user_data)
+    mutation = use_mutation(_set_user_data, refetch=_get_user_data)
 
-    return UserData(data, set_data)
+    return UserData(
+        UserDataQuery(
+            current=query.data,
+            loading=query.loading,
+            error=query.error,
+            refetch=query.refetch,
+        ),
+        UserDataMutation(
+            _execute=mutation.execute,
+            loading=mutation.loading,
+            error=mutation.error,
+            reset=mutation.reset,
+        ),
+    )
 
 
 def _use_query_args_1(options: QueryOptions, /, query: Query, *args, **kwargs):

@@ -702,21 +702,21 @@ def use_user_data():
         set_user_data.reset()
 
     async def clear_data(event):
-        set_user_data.execute({})
+        set_user_data({})
         user_data.refetch()
         set_user_data.reset()
 
     async def on_submit(event):
         if event["key"] == "Enter":
-            set_user_data.execute(
-                (user_data.data or {})
+            set_user_data(
+                (user_data.current or {})
                 | {event["target"]["value"]: event["target"]["value"]}
             )
 
     return html.div(
         {
             "id": "use-user-data",
-            "data-success": bool(user_data.data),
+            "data-success": bool(user_data.current),
             "data-fetch-error": bool(user_data.error),
             "data-mutation-error": bool(set_user_data.error),
             "data-loading": user_data.loading or set_user_data.loading,
@@ -730,7 +730,7 @@ def use_user_data():
         html.button({"class": "logout", "on_click": logout_user}, "Logout"),
         html.button({"class": "clear", "on_click": clear_data}, "Clear Data"),
         html.div(f"User: {current_user}"),
-        html.div(f"Data: {user_data.data}"),
+        html.div(f"Data: {user_data.current}"),
         html.div(f"Data State: (loading={user_data.loading}, error={user_data.error})"),
         html.div(
             f"Mutation State: (loading={set_user_data.loading}, error={set_user_data.error})"
@@ -769,14 +769,14 @@ def use_user_data_with_default():
         set_user_data.reset()
 
     async def clear_data(event):
-        set_user_data.execute({})
+        set_user_data({})
         user_data.refetch()
         set_user_data.reset()
 
     async def on_submit(event):
         if event["key"] == "Enter":
-            set_user_data.execute(
-                (user_data.data or {})
+            set_user_data(
+                (user_data.current or {})
                 | {event["target"]["value"]: event["target"]["value"]}
             )
 
@@ -794,7 +794,7 @@ def use_user_data_with_default():
         html.button({"class": "login-3", "on_click": login_user3}, "Login 3"),
         html.button({"class": "clear", "on_click": clear_data}, "Clear Data"),
         html.div(f"User: {current_user}"),
-        html.div(f"Data: {user_data.data}"),
+        html.div(f"Data: {user_data.current}"),
         html.div(f"Data State: (loading={user_data.loading}, error={user_data.error})"),
         html.div(
             f"Mutation State: (loading={set_user_data.loading}, error={set_user_data.error})"
