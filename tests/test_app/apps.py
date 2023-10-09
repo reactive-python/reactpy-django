@@ -24,7 +24,6 @@ class TestAppConfig(AppConfig):
             return
 
         with contextlib.suppress(Exception):
-            user = User.objects.create_superuser(
+            User.objects.create_superuser(
                 username="admin", email="admin@example.com", password="password"
             )
-            user.save()

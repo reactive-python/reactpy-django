@@ -333,9 +333,8 @@ def use_user_data(
         if user.is_anonymous:
             raise ValueError("AnonymousUser cannot have user data.")
 
-        model, _ = await UserDataModel.objects.aget_or_create(
-            user_pk=get_user_pk(user, True)
-        )
+        pk = get_user_pk(user)
+        model, _ = await UserDataModel.objects.aget_or_create(user_pk=pk)
         model.data = pickle.dumps(data)
         await model.asave()
 
@@ -375,9 +374,8 @@ async def _get_user_data(
     if not user or user.is_anonymous:
         return None
 
-    model, _ = await UserDataModel.objects.aget_or_create(
-        user_pk=get_user_pk(user, True)
-    )
+    pk = get_user_pk(user)
+    model, _ = await UserDataModel.objects.aget_or_create(user_pk=pk)
     data = pickle.loads(model.data) if model.data else {}
 
     if not isinstance(data, dict):

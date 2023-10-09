@@ -1,6 +1,5 @@
 import contextlib
 
-import orjson as pickle
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.signals import pre_delete
@@ -36,26 +35,17 @@ class Config(models.Model):
 class UserDataModel(models.Model):
     """A model for storing `user_state` data."""
 
-    # Can't store user model as a ForeignKey/OneToOneField because it may not be in the same database
-    # and Django does not allow cross-database relations. Also, the PK is not guaranteed to be an integer,
-    # so we can't use a PositiveIntegerField.
-    user_pk = models.BinaryField(unique=True)  # type: ignore
+    # We can't store User as a ForeignKey/OneToOneField because it may not be in the same database
+    # and Django does not allow cross-database relations. Also, we can't know the type of the UserModel PK,
+    # so we store it as a string.
+    user_pk = models.CharField(max_length=255, unique=True)  # type: ignore
     data = models.BinaryField(null=True, blank=True)  # type: ignore
 
 
 @receiver(pre_delete, sender=get_user_model(), dispatch_uid="reactpy_delete_user_data")
 def delete_user_data(sender, instance, **kwargs):
     """Delete `UserDataModel` when the `User` is deleted."""
-    pk_field_name = instance._meta.pk.name
-    pickled_pk = pickle.dumps(getattr(instance, pk_field_name))
+    pk = getattr(instance, instance._meta.pk.name)
 
     with contextlib.suppress(Exception):
-        UserDataModel.objects.get(user_pk=pickled_pk).delete()
-
-    # Make a list of all user PKs in the database
-    all_users = sender.objects.all()
-    all_user_pks = [pickle.dumps(getattr(user, pk_field_name)) for user in all_users]
-
-    # Delete any `UserDataModel` objects that are no longer associated with a `User`
-    UserDataModel.objects.exclude(user_pk__in=all_user_pks).delete()
-
+        UserDataModel.objects.get(user_pk=pk).delete()
