@@ -14,7 +14,6 @@ from typing import Any, Callable, Sequence
 import orjson as pickle
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
-from django.contrib.auth import get_user_model
 from django.db.models import ManyToManyField, ManyToOneRel, prefetch_related_objects
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
@@ -289,7 +288,7 @@ def django_query_postprocessor(
             # Force the query to execute
             getattr(data, field.name, None)
 
-            if many_to_one and type(field) == ManyToOneRel:  # noqa: #E721
+            if many_to_one and type(field) == ManyToOneRel:  # noqa: E721
                 prefetch_fields.append(field.related_name or f"{field.name}_set")
 
             elif many_to_many and isinstance(field, ManyToManyField):
