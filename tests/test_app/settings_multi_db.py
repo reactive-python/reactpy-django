@@ -151,6 +151,7 @@ LOGGING = {
     "loggers": {
         "reactpy_django": {"handlers": ["console"], "level": LOG_LEVEL},
         "reactpy": {"handlers": ["console"], "level": LOG_LEVEL},
+        "django.request": {"handlers": ["console"], "level": LOG_LEVEL},
     },
 }
 
