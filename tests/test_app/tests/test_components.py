@@ -544,7 +544,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
         )
 
         # Attempt to clear data
-        clear.click()
+        clear.click(delay=CLICK_DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_3]"
         )
