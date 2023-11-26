@@ -9,6 +9,11 @@ from jinja2.runtime import Context
 from reactpy_django import config
 from reactpy_django.templatetags.reactpy import component
 
+#
+# Point to our non-Django analogue.
+#
+DJT_TEMPLATE = "reactpy/component.html"
+
 
 class ReactPyExtension(Extension):
     """
@@ -17,7 +22,7 @@ class ReactPyExtension(Extension):
 
         {{ component(*args, **kwargs) }}
     """
-    DJT_TEMPLATE = 'reactpy/component.html'
+
     #
     # Therefore, there is no new tag to parse().
     #
@@ -31,7 +36,9 @@ class ReactPyExtension(Extension):
         environment.globals["component"] = self.template_tag
 
     @pass_context
-    def template_tag(self, jinja_context: Context, dotted_path: str, *args, **kwargs) -> str:
+    def template_tag(
+        self, jinja_context: Context, dotted_path: str, *args, **kwargs
+    ) -> str:
         """
         This method is used to embed an existing ReactPy component into your
         Jinja2 template.
@@ -46,9 +53,14 @@ class ReactPyExtension(Extension):
         Returns:
             Whatever the components returns.
         """
-        django_context = RequestContext(jinja_context.parent['request'], autoescape=jinja_context.eval_ctx.autoescape)
+        django_context = RequestContext(
+            jinja_context.parent["request"],
+            autoescape=jinja_context.eval_ctx.autoescape,
+        )
         template_context = component(django_context, dotted_path, *args, **kwargs)
         #
         # TODO: can this be usefully cached?
         #
-        return loader.render_to_string(self.DJT_TEMPLATE, template_context, jinja_context.parent['request'])
+        return loader.render_to_string(
+            DJT_TEMPLATE, template_context, jinja_context.parent["request"]
+        )
