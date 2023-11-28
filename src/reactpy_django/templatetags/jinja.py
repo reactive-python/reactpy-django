@@ -1,4 +1,3 @@
-# Copyright © 2023 Innovatie Ltd. All rights reserved.
 """
 Jinja support.
 """
@@ -6,13 +5,7 @@ from django.template import RequestContext, loader
 from jinja2 import pass_context
 from jinja2.ext import Extension
 from jinja2.runtime import Context
-from reactpy_django import config
-from reactpy_django.templatetags.reactpy import component
-
-#
-# Point to our non-Django analogue.
-#
-DJT_TEMPLATE = "reactpy/component.html"
+from reactpy_django.templatetags.reactpy import COMPONENT_TEMPLATE, component
 
 
 class ReactPyExtension(Extension):
@@ -62,5 +55,5 @@ class ReactPyExtension(Extension):
         # TODO: can this be usefully cached?
         #
         return loader.render_to_string(
-            DJT_TEMPLATE, template_context, jinja_context.parent["request"]
+            COMPONENT_TEMPLATE, template_context, jinja_context.parent["request"]
         )

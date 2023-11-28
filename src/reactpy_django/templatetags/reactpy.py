@@ -27,11 +27,12 @@ try:
     RESOLVED_WEB_MODULES_PATH = reverse("reactpy:web_modules", args=["/"]).strip("/")
 except NoReverseMatch:
     RESOLVED_WEB_MODULES_PATH = ""
+COMPONENT_TEMPLATE = "reactpy/component.html"
 register = template.Library()
 _logger = getLogger(__name__)
 
 
-@register.inclusion_tag("reactpy/component.html", takes_context=True)
+@register.inclusion_tag(COMPONENT_TEMPLATE, takes_context=True)
 def component(
     context: template.RequestContext,
     dotted_path: str,
