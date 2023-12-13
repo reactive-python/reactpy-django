@@ -7,12 +7,10 @@ def my_component():
     user_data, set_user_data = use_user_data()
 
     async def on_submit(event):
-        if user_data.current is None:
-            raise ValueError("User data not loaded or user is anonymous.")
-
         if event["key"] == "Enter":
-            num = len(user_data.current)
-            set_user_data(user_data.current | {f"#{num}": event["target"]["value"]})
+            key = str(len(user_data.current))
+            merged_data = user_data.current | {key: event["target"]["value"]}
+            set_user_data(merged_data)
 
     return html.div(
         html.div(f"Data: {user_data.current}"),

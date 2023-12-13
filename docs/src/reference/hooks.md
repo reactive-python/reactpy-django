@@ -14,11 +14,15 @@ Prefabricated hooks can be used within your `components.py` to help simplify dev
 
 ---
 
-## Use Query
+## Database Hooks
 
-This hook is used to execute functions in the background and return the result, typically to [read](https://www.sumologic.com/glossary/crud/) data the Django ORM.
+---
 
-The [default postprocessor](../reference/utils.md#django-query-postprocessor) expects your query function to `#!python return` a Django `#!python Model` or `#!python QuerySet`. The postprocessor needs to be changed to execute other types of queries.
+### Use Query
+
+Execute functions in the background and return the result, typically to [read](https://www.sumologic.com/glossary/crud/) data from the Django ORM.
+
+The [default postprocessor](../reference/utils.md#django-query-postprocessor) expects your query function to `#!python return` a Django `#!python Model` or `#!python QuerySet`. This needs to be changed or disabled to execute other types of queries.
 
 Query functions can be sync or async.
 
@@ -160,9 +164,9 @@ Query functions can be sync or async.
 
 ---
 
-## Use Mutation
+### Use Mutation
 
-This hook is used to modify data in the background, typically to [create/update/delete](https://www.sumologic.com/glossary/crud/) data from the Django ORM.
+Modify data in the background, typically to [create/update/delete](https://www.sumologic.com/glossary/crud/) data from the Django ORM.
 
 Mutation functions can `#!python return False` to manually prevent your `#!python refetch=...` function from executing. All other returns are ignored.
 
@@ -269,9 +273,25 @@ Mutation functions can be sync or async.
 
 ---
 
-## Use Connection
+### Use User Data
 
-This hook is used to fetch the active connection, which is either a Django [WebSocket](https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer) or a [HTTP Request](https://docs.djangoproject.com/en/4.2/ref/request-response/#django.http.HttpRequest).
+Store or retrieve data specific to the connection's `#!python User`.
+
+=== "components.py"
+
+    ```python
+    {% include "../../python/use-user-data.py" %}
+    ```
+
+---
+
+## Connection Hooks
+
+---
+
+### Use Connection
+
+Returns the active connection, which is either a Django [WebSocket](https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer) or a [HTTP Request](https://docs.djangoproject.com/en/4.2/ref/request-response/#django.http.HttpRequest).
 
 === "components.py"
 
@@ -289,13 +309,13 @@ This hook is used to fetch the active connection, which is either a Django [WebS
 
     | Type | Description |
     | --- | --- |
-    | `#!python Connection` | The component's `WebSocket` or `HttpRequest`. |
+    | `#!python Connection` | An object that contains a `carrier` (`WebSocket` or `HttpRequest`), `scope`, and `location`. |
 
 ---
 
-## Use Scope
+### Use Scope
 
-This is a shortcut that returns the WebSocket or HTTP [scope](https://channels.readthedocs.io/en/stable/topics/consumers.html#scope).
+Shortcut that returns the WebSocket or HTTP connection's [scope](https://channels.readthedocs.io/en/stable/topics/consumers.html#scope).
 
 === "components.py"
 
@@ -313,13 +333,13 @@ This is a shortcut that returns the WebSocket or HTTP [scope](https://channels.r
 
     | Type | Description |
     | --- | --- |
-    | `#!python MutableMapping[str, Any]` | The WebSocket's `#!python scope`. |
+    | `#!python MutableMapping[str, Any]` | The connection's `#!python scope`. |
 
 ---
 
-## Use Location
+### Use Location
 
-This is a shortcut that returns the client's URL `#!python path`.
+Shortcut that returns the WebSocket or HTTP connection's URL `#!python path`.
 
 You can expect this hook to provide strings such as `/reactpy/my_path`.
 
@@ -349,9 +369,9 @@ You can expect this hook to provide strings such as `/reactpy/my_path`.
 
 ---
 
-## Use Origin
+### Use Origin
 
-This is a shortcut that returns the client's `#!python origin`.
+Shortcut that returns the WebSocket or HTTP connection's `#!python origin`.
 
 You can expect this hook to provide strings such as `http://example.com`.
 
@@ -372,3 +392,15 @@ You can expect this hook to provide strings such as `http://example.com`.
     | Type | Description |
     | --- | --- |
     | `#!python str | None` | A string containing the browser's current origin, obtained from WebSocket or HTTP headers (if available). |
+
+---
+
+### Use User
+
+Shortcut that returns the WebSocket or HTTP connection's `#!python User`.
+
+=== "components.py"
+
+    ```python
+    {% include "../../python/use-user.py" %}
+    ```
