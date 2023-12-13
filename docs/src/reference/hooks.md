@@ -18,7 +18,7 @@ Prefabricated hooks can be used within your `components.py` to help simplify dev
 
 ---
 
-### Use Query
+### `#!python use_query(query, *args, **kwargs)`
 
 Execute functions in the background and return the result, typically to [read](https://www.sumologic.com/glossary/crud/) data from the Django ORM.
 
@@ -164,7 +164,7 @@ Query functions can be sync or async.
 
 ---
 
-### Use Mutation
+### `#!python use_mutation(mutation, refetch=None)`
 
 Modify data in the background, typically to [create/update/delete](https://www.sumologic.com/glossary/crud/) data from the Django ORM.
 
@@ -190,7 +190,7 @@ Mutation functions can be sync or async.
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `#!python mutate` | `#!python Callable[_Params, bool | None]` | A callable that performs Django ORM create, update, or delete functionality. If this function returns `#!python False`, then your `#!python refetch` function will not be used. | N/A |
+    | `#!python mutation` | `#!python Callable[_Params, bool | None]` | A callable that performs Django ORM create, update, or delete functionality. If this function returns `#!python False`, then your `#!python refetch` function will not be used. | N/A |
     | `#!python refetch` | `#!python Callable[..., Any] | Sequence[Callable[..., Any]] | None` | A query function (the function you provide to your `#!python use_query` hook) or a sequence of query functions that need a `refetch` if the mutation succeeds. This is useful for refreshing data after a mutation has been performed. | `#!python None` |
 
     <font size="4">**Returns**</font>
@@ -273,9 +273,9 @@ Mutation functions can be sync or async.
 
 ---
 
-### Use User Data
+### `#!python use_user_data(initial_data=None, auto_save_initial=False)`
 
-Store or retrieve data specific to the connection's `#!python User`.
+Store or retrieve data specific to the connection's `#!python User`. This data is stored in the database.
 
 === "components.py"
 
@@ -289,7 +289,7 @@ Store or retrieve data specific to the connection's `#!python User`.
 
 ---
 
-### Use Connection
+### `#!python use_connection()`
 
 Returns the active connection, which is either a Django [WebSocket](https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer) or a [HTTP Request](https://docs.djangoproject.com/en/4.2/ref/request-response/#django.http.HttpRequest).
 
@@ -313,7 +313,7 @@ Returns the active connection, which is either a Django [WebSocket](https://chan
 
 ---
 
-### Use Scope
+### `#!python use_scope()`
 
 Shortcut that returns the WebSocket or HTTP connection's [scope](https://channels.readthedocs.io/en/stable/topics/consumers.html#scope).
 
@@ -337,7 +337,7 @@ Shortcut that returns the WebSocket or HTTP connection's [scope](https://channel
 
 ---
 
-### Use Location
+### `#!python use_location()`
 
 Shortcut that returns the WebSocket or HTTP connection's URL `#!python path`.
 
@@ -369,7 +369,7 @@ You can expect this hook to provide strings such as `/reactpy/my_path`.
 
 ---
 
-### Use Origin
+### `#!python use_origin()`
 
 Shortcut that returns the WebSocket or HTTP connection's `#!python origin`.
 
@@ -395,7 +395,7 @@ You can expect this hook to provide strings such as `http://example.com`.
 
 ---
 
-### Use User
+### `#!python use_user()`
 
 Shortcut that returns the WebSocket or HTTP connection's `#!python User`.
 
