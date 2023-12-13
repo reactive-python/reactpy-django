@@ -24,6 +24,6 @@ def todo_list():
 
     return html.div(
         html.label("Add an item:"),
-        html.input({"type": "text", "onKeyDown": submit_event}),
+        html.input({"type": "text", "on_key_down": submit_event}),
         mutation_status,
     )
