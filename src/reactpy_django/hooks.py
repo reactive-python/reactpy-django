@@ -322,7 +322,7 @@ def use_user() -> AbstractUser:
 def use_user_data(
     initial_data: None
     | dict[str, Callable[[], Any] | Callable[[], Awaitable[Any]] | Any] = None,
-    auto_save_defaults: bool = False,
+    auto_save_initial: bool = False,
 ) -> UserData:
     """Get or set user data stored within the REACTPY_DATABASE."""
     from reactpy_django.models import UserDataModel
@@ -345,7 +345,7 @@ def use_user_data(
         _get_user_data,
         user=user,
         initial_data=initial_data,
-        auto_save_defaults=auto_save_defaults,
+        auto_save_initial=auto_save_initial,
     )
     mutation = use_mutation(_set_user_data, refetch=_get_user_data)
 

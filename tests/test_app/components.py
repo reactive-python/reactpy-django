@@ -757,7 +757,7 @@ def use_user_data_with_default():
 
     user_data, set_user_data = reactpy_django.hooks.use_user_data(
         {"default1": "value", "default2": value2, "default3": value3},
-        auto_save_defaults=True,
+        auto_save_initial=True,
     )
     user3 = reactpy_django.hooks.use_query(get_or_create_user3)
     current_user = reactpy_django.hooks.use_user()
