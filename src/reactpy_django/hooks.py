@@ -143,8 +143,8 @@ def use_query(*args, **kwargs) -> Query[Inferred]:
     if query_ref.current is not query:
         raise ValueError(f"Query function changed from {query_ref.current} to {query}.")
 
-    # The main "running" function for `use_query`
     async def execute_query() -> None:
+        """The main running function for `use_query`"""
         try:
             # Run the query
             if asyncio.iscoroutinefunction(query):
@@ -181,9 +181,9 @@ def use_query(*args, **kwargs) -> Query[Inferred]:
             set_loading(False)
             set_error(None)
 
-    # Schedule the query to be run when needed
     @use_effect(dependencies=None)
     def schedule_query() -> None:
+        """Schedule the query to be run when needed"""
         # Make sure we don't re-execute the query unless we're told to
         if not should_execute:
             return
@@ -192,16 +192,16 @@ def use_query(*args, **kwargs) -> Query[Inferred]:
         # Execute the query in the background
         asyncio.create_task(execute_query())
 
-    # Used when the user has told us to refetch this query
     @use_callback
     def refetch() -> None:
+        """Callable provided to the user, used to re-execute the query"""
         set_should_execute(True)
         set_loading(True)
         set_error(None)
 
-    # Track the refetch callback so we can re-execute the query
     @use_effect(dependencies=[])
-    def add_refetch_callback() -> Callable[[], None]:
+    def register_refetch_callback() -> Callable[[], None]:
+        """Track the refetch callback so we can re-execute the query"""
         # By tracking callbacks globally, any usage of the query function will be re-run
         # if the user has told a mutation to refetch it.
         _REFETCH_CALLBACKS[query].add(refetch)
@@ -324,7 +324,7 @@ def use_user_data(
     | dict[str, Callable[[], Any] | Callable[[], Awaitable[Any]] | Any] = None,
     auto_save_defaults: bool = False,
 ) -> UserData:
-    """..."""
+    """Get or set user data stored within the REACTPY_DATABASE."""
     from reactpy_django.models import UserDataModel
 
     user = use_user()
@@ -384,6 +384,7 @@ def _use_mutation_args_2(mutation, refetch=None):
 async def _get_user_data(
     user: AbstractUser, default_data: None | dict, auto_save_defaults: bool
 ) -> dict | None:
+    """The mutation function for `use_user_data`"""
     from reactpy_django.models import UserDataModel
 
     if not user or user.is_anonymous:
