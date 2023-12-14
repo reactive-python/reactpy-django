@@ -41,11 +41,11 @@ Using the following categories, list your changes in this order:
     -   Or, you can enable it on individual components via the template tag: `{% component "..." prerender="True" %}`.
 -   New `view_to_iframe` feature!
     -   `reactpy_django.components.view_to_iframe` uses an `<iframe>` to render a Django view.
-    -   `reactpy_django.utils.register_iframe` notifies ReactPy which views are allowed to be used with `view_to_iframe`.
+    -   `reactpy_django.utils.register_iframe` tells ReactPy which views `view_to_iframe` can use.
 -   New Django `User` related features!
     -   `reactpy_django.hooks.use_user` can be used to access the current user.
     -   `reactpy_django.hooks.use_user_data` provides a simplified interface for storing user key-value data.
-    -   `reactpy_django.decorators.user_passes_test` is inspired by Django's [`user_passes_test`](http://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test) decorator, but works with ReactPy components.
+    -   `reactpy_django.decorators.user_passes_test` is inspired by the [equivalent Django decorator](http://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test), but ours works with ReactPy components.
     -   `settings.py:REACTPY_AUTO_RELOGIN` will cause component WebSocket connections to automatically [re-login](https://channels.readthedocs.io/en/latest/topics/authentication.html#how-to-log-a-user-in-out) users that are already authenticated. This is useful to continuously update `last_login` timestamps and refresh the [Django login session](https://docs.djangoproject.com/en/dev/topics/http/sessions/).
 
 ### Changed
@@ -61,7 +61,8 @@ Using the following categories, list your changes in this order:
 -   `reactpy_django.components.view_to_component` **usage as a decorator** is deprecated.
     -   Check the docs on how to use `view_to_component` as a function instead.
 -   `reactpy_django.decorators.auth_required` is deprecated.
-    -   An equivalent to this decorator's default is `@user_passes_test(lambda user: user.is_active)`.
+    -   Use `reactpy_django.decorators.user_passes_test` instead.
+    -   An equivalent to `auth_required`'s default is `@user_passes_test(lambda user: user.is_active)`.
 
 ### Fixed
 

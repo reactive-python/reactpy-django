@@ -34,7 +34,7 @@ The prefix used for all ReactPy WebSocket and HTTP URLs.
 
 **Example Value(s):** `#!python "example_project.postprocessor"`, `#!python None`
 
-Dotted path to the global default `#!python reactpy_django.hooks.use_query` postprocessor function.
+Dotted path to the default `#!python reactpy_django.hooks.use_query` postprocessor function.
 
 Postprocessor functions can be async or sync. Here is an example of a sync postprocessor function:
 
@@ -140,14 +140,16 @@ You can use the `#!python host` argument in your [template tag](../reference/tem
 
 **Example Value(s):** `#!python True`
 
-Configures whether to HTTP pre-render your components, which enables SEO compatibility and reduces perceived latency.
+Configures whether to pre-render your components via HTTP, which enables SEO compatibility and reduces perceived latency.
 
 During pre-rendering, there are some key differences in behavior:
 
 1. Only the component's first render is pre-rendered.
 2. All `#!python connection` related hooks use HTTP.
-3. `#!python html.script` elements are executed twice (pre-render and post-render).
-4. The component will be non-interactive until a WebSocket connection is formed.
+3. The component will be non-interactive until a WebSocket connection is formed.
+
+<!-- TODO: This comment below will become true when ReactPy no longer strips scripts from the DOM -->
+<!-- 4. `#!python html.script` elements are executed twice (pre-render and post-render). -->
 
 You can use the `#!python prerender` argument in your [template tag](../reference/template-tag.md#component) to manually override this default.
 

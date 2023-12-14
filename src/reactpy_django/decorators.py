@@ -97,4 +97,5 @@ def _user_passes_test(component_constructor, fallback, test_func, *args, **kwarg
 
     # Render the fallback component.
     # Returns an empty string if fallback is None, since ReactPy currently renders None as a string.
+    # TODO: Remove this fallback when ReactPy can render None properly.
     return fallback(*args, **kwargs) if callable(fallback) else (fallback or "")
