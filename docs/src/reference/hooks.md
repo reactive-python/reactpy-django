@@ -283,6 +283,8 @@ Store or retrieve data specific to the connection's `#!python User`. This data i
     {% include "../../python/use-user-data.py" %}
     ```
 
+TODO: Need some questions here and interface docs
+
 ---
 
 ## Connection Hooks
@@ -404,3 +406,5 @@ Shortcut that returns the WebSocket or HTTP connection's `#!python User`.
     ```python
     {% include "../../python/use-user.py" %}
     ```
+
+TODO: Needs interface docs
