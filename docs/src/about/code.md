@@ -92,3 +92,12 @@ If you want to manually run the Django test application, you can use the followi
 cd tests
 python manage.py runserver
 ```
+
+## Rebuilding JavaScript
+
+If you want to rebuild this repository's JavaScript, you can use the following command:
+
+```bash linenums="0"
+cd src/js
+npm run build
+```
