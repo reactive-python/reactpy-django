@@ -1,5 +1,5 @@
 export function createReconnectingWebSocket(props: {
-	url: string;
+	url: URL;
 	readyPromise: Promise<void>;
 	onOpen?: () => void;
 	onMessage: (message: MessageEvent<any>) => void;

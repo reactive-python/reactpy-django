@@ -9,6 +9,7 @@ from concurrent.futures import Future
 from datetime import timedelta
 from threading import Thread
 from typing import Any, MutableMapping, Sequence
+from urllib.parse import parse_qs
 
 import dill as pickle
 import orjson
@@ -151,14 +152,13 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         scope = self.scope
         dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
         uuid = scope["url_route"]["kwargs"].get("uuid")
-        search = scope["query_string"].decode()
+        query_string = parse_qs(scope["query_string"].decode(), strict_parsing=True)
+        http_pathname = query_string.get("http_pathname", [""])[0]
+        http_search = query_string.get("http_search", [""])[0]
         self.recv_queue: asyncio.Queue = asyncio.Queue()
         connection = Connection(  # For `use_connection`
             scope=scope,
-            location=Location(
-                pathname=scope["path"],
-                search=f"?{search}" if (search and (search != "undefined")) else "",
-            ),
+            location=Location(pathname=http_pathname, search=http_search),
             carrier=ComponentWebsocket(self.close, self.disconnect, dotted_path),
         )
         now = timezone.now()

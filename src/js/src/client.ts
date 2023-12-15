@@ -1,4 +1,8 @@
-import {  BaseReactPyClient, ReactPyClient, ReactPyModule } from "@reactpy/client";
+import {
+	BaseReactPyClient,
+	ReactPyClient,
+	ReactPyModule,
+} from "@reactpy/client";
 import { createReconnectingWebSocket } from "./utils";
 import { ReactPyDjangoClientProps, ReactPyUrls } from "./types";
 
