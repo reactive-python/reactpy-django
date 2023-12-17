@@ -10,7 +10,7 @@ from reactpy_django.router.converters import CONVERTERS
 PARAM_PATTERN = re.compile(r"<(?P<name>\w+)(?P<type>:\w+)?>")
 
 
-# TODO: Make reactpy_router's SimpleRouter generic enough to where we don't have to define our own
+# TODO: Make reactpy_router's SimpleResolver generic enough to where we don't have to define our own
 class DjangoResolver:
     """A simple route resolver that uses regex to match paths"""
 
