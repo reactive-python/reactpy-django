@@ -1,13 +1,15 @@
+from __future__ import annotations
+
 import re
 from typing import Any
 
 from reactpy_router.core import create_router
-from reactpy_router.simple import STAR_PATTERN, ConverterMapping
+from reactpy_router.simple import ConverterMapping
 from reactpy_router.types import Route
 
 from reactpy_django.router.converters import CONVERTERS
 
-PARAM_PATTERN = re.compile(r"<(?P<name>\w+)(?P<type>:\w+)?>")
+PARAM_PATTERN = re.compile(r"<(?P<type>:\w+)?(?P<name>\w+)>")
 
 
 # TODO: Make reactpy_router's SimpleResolver generic enough to where we don't have to define our own
@@ -31,9 +33,6 @@ class DjangoResolver:
 
 # TODO: Make reactpy_router's parse_path generic enough to where we don't have to define our own
 def parse_path(path: str) -> tuple[re.Pattern[str], ConverterMapping]:
-    if path == "*":
-        return STAR_PATTERN, {}
-
     pattern = "^"
     last_match_end = 0
     converters: ConverterMapping = {}
