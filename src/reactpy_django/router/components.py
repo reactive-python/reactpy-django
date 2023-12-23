@@ -9,7 +9,7 @@ from reactpy_router.types import Route
 
 from reactpy_django.router.converters import CONVERTERS
 
-PARAM_PATTERN = re.compile(r"<(?P<type>:\w+)?(?P<name>\w+)>")
+PARAM_PATTERN = re.compile(r"<(?P<type>\w+:)?(?P<name>\w+)>")
 
 
 # TODO: Make reactpy_router's SimpleResolver generic enough to where we don't have to define our own
@@ -38,7 +38,7 @@ def parse_path(path: str) -> tuple[re.Pattern[str], ConverterMapping]:
     converters: ConverterMapping = {}
     for match in PARAM_PATTERN.finditer(path):
         param_name = match.group("name")
-        param_type = (match.group("type") or "str").lstrip(":")
+        param_type = (match.group("type") or "str").strip(":")
         try:
             param_conv = CONVERTERS[param_type]
         except KeyError as e:
