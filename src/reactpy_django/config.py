@@ -1,17 +1,18 @@
 from __future__ import annotations
 
 from itertools import cycle
+from typing import Callable
 
 from django.conf import settings
 from django.core.cache import DEFAULT_CACHE_ALIAS
 from django.db import DEFAULT_DB_ALIAS
+from django.views import View
 from reactpy.config import REACTPY_DEBUG_MODE
 from reactpy.core.types import ComponentConstructor
 
 from reactpy_django.types import (
     AsyncPostprocessor,
     SyncPostprocessor,
-    ViewComponentIframe,
 )
 from reactpy_django.utils import import_dotted_path
 
@@ -19,7 +20,7 @@ from reactpy_django.utils import import_dotted_path
 REACTPY_DEBUG_MODE.set_current(getattr(settings, "DEBUG"))
 REACTPY_REGISTERED_COMPONENTS: dict[str, ComponentConstructor] = {}
 REACTPY_FAILED_COMPONENTS: set[str] = set()
-REACTPY_VIEW_COMPONENT_IFRAMES: dict[str, ViewComponentIframe] = {}
+REACTPY_REGISTERED_IFRAME_VIEWS: dict[str, Callable | View] = {}
 
 
 # Remove in a future release

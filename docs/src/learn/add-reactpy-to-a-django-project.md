@@ -6,7 +6,7 @@ If you want to add some interactivity to your existing **Django project**, you d
 
 </p>
 
-!!! note
+!!! abstract "Note"
 
     These docs assumes you have already created [a **Django project**](https://docs.djangoproject.com/en/dev/intro/tutorial01/), which involves creating and installing at least one **Django app**.
 
@@ -51,11 +51,11 @@ Add `#!python "reactpy_django"` to [`INSTALLED_APPS`](https://docs.djangoproject
         {% include "../../python/configure-channels-asgi-app.py" %}
         ```
 
-??? note "Configure ReactPy settings (Optional)"
+??? info "Configure ReactPy settings (Optional)"
 
-    {% include "../reference/settings.md" start="<!--intro-start-->" end="<!--intro-end-->"  %}
+    ReactPy's has additional configuration available to fit a variety of use cases.
 
-    {% include "../reference/settings.md" start="<!--config-table-start-->" end="<!--config-table-end-->"  %}
+    See the [ReactPy settings](../reference/settings.md) documentation to learn more.
 
 ## Step 3: Configure `urls.py`
 
@@ -77,7 +77,7 @@ Register ReactPy's WebSocket using `#!python REACTPY_WEBSOCKET_ROUTE` in your [`
     {% include "../../python/configure-asgi.py" %}
     ```
 
-??? note "Add `#!python AuthMiddlewareStack` and `#!python SessionMiddlewareStack` (Optional)"
+??? info "Add `#!python AuthMiddlewareStack` and `#!python SessionMiddlewareStack` (Optional)"
 
     There are many situations where you need to access the Django `#!python User` or `#!python Session` objects within ReactPy components. For example, if you want to:
 

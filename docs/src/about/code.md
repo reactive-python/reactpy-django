@@ -6,7 +6,7 @@
 
 </p>
 
-!!! note
+!!! abstract "Note"
 
     Looking to contribute features that are not Django specific?
 
@@ -59,7 +59,7 @@ Navigate to [`http://127.0.0.1:8000`](http://127.0.0.1:8000) to see if the tests
 
 ## Running the full test suite
 
-!!! note
+!!! abstract "Note"
 
     This repository uses [Nox](https://nox.thea.codes/en/stable/) to run tests. For a full test of available scripts run `nox -l`.
 

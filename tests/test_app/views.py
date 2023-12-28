@@ -13,6 +13,10 @@ def base_template(request):
     return render(request, "base.html", {"my_object": TestObject(1)})
 
 
+def errors_template(request):
+    return render(request, "errors.html", {})
+
+
 def host_port_template(request: HttpRequest, port: int):
     host = request.get_host().replace(str(request.get_port()), str(port))
     return render(request, "host_port.html", {"new_host": host})
@@ -69,7 +73,7 @@ class ViewToComponentSyncClass(View):
 
 class ViewToComponentAsyncClass(View):
     async def get(self, request, *args, **kwargs):
-        return await database_sync_to_async(render, thread_sensitive=False)(
+        return await database_sync_to_async(render)(
             request,
             "view_to_component.html",
             {"test_name": self.__class__.__name__},
@@ -92,7 +96,7 @@ def view_to_component_sync_func_compatibility(request):
 
 
 async def view_to_component_async_func_compatibility(request):
-    return await database_sync_to_async(render, thread_sensitive=False)(
+    return await database_sync_to_async(render)(
         request,
         "view_to_component.html",
         {"test_name": inspect.currentframe().f_code.co_name},  # type:ignore
@@ -110,7 +114,7 @@ class ViewToComponentSyncClassCompatibility(View):
 
 class ViewToComponentAsyncClassCompatibility(View):
     async def get(self, request, *args, **kwargs):
-        return await database_sync_to_async(render, thread_sensitive=False)(
+        return await database_sync_to_async(render)(
             request,
             "view_to_component.html",
             {"test_name": self.__class__.__name__},
@@ -122,6 +126,21 @@ class ViewToComponentTemplateViewClassCompatibility(TemplateView):
 
     def get_context_data(self, **kwargs):
         return {"test_name": self.__class__.__name__}
+
+
+def view_to_iframe_args(request, arg1, arg2, kwarg1=None, kwarg2=None):
+    success = (
+        arg1 == "Arg1" and arg2 == "Arg2" and kwarg1 == "Kwarg1" and kwarg2 == "Kwarg2"
+    )
+
+    return render(
+        request,
+        "view_to_component.html",
+        {
+            "test_name": inspect.currentframe().f_code.co_name,  # type:ignore
+            "status": "Success" if success else "false",
+        },
+    )
 
 
 def view_to_component_script(request):
@@ -149,7 +168,6 @@ def view_to_component_request(request):
         {
             "test_name": inspect.currentframe().f_code.co_name,  # type:ignore
             "status": "false",
-            "success": "false",
         },
     )
 

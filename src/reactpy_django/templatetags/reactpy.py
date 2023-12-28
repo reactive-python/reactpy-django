@@ -54,7 +54,7 @@ def component(
             the host will be automatically configured. \
             Example values include: `localhost:8000`, `example.com`, `example.com/subdir`
         prerender: Configures whether to pre-render this component, which \
-            enables SEO compatibility and increases perceived responsiveness.
+            enables SEO compatibility and reduces perceived latency.
         **kwargs: The keyword arguments to provide to the component.
 
     Example ::

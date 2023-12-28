@@ -68,31 +68,25 @@ React Name: "You will learn"
 }
 
 /* 
-Admonition: "note" 
+Admonition: "abstract" 
 React Name: "Note"
 */
-.md-typeset .admonition.note {
+.md-typeset .admonition.abstract {
 	background: var(--note-bg-color);
 	padding: 0.8rem 1.4rem;
 	border-radius: 0.8rem;
 }
 
-.md-typeset .note .admonition-title {
+.md-typeset .abstract .admonition-title {
 	font-size: 1rem;
 	background: transparent;
 	padding-bottom: 0;
 	color: rgb(68, 172, 153);
 }
 
-.md-typeset .note .admonition-title:before {
+.md-typeset .abstract .admonition-title:before {
 	font-size: 1.1rem;
 	background: rgb(68, 172, 153);
-}
-
-.md-typeset .note > .admonition-title:before,
-.md-typeset .note > summary:before {
-	-webkit-mask-image: var(--md-admonition-icon--abstract);
-	mask-image: var(--md-admonition-icon--abstract);
 }
 
 /* 

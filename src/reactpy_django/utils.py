@@ -5,10 +5,10 @@ import inspect
 import logging
 import os
 import re
+from asyncio import iscoroutinefunction
 from datetime import timedelta
 from fnmatch import fnmatch
 from importlib import import_module
-from inspect import iscoroutinefunction
 from typing import Any, Callable, Sequence
 
 from asgiref.sync import async_to_sync
@@ -24,7 +24,11 @@ from django.views import View
 from reactpy.core.layout import Layout
 from reactpy.types import ComponentConstructor
 
-from reactpy_django.exceptions import ComponentDoesNotExistError, ComponentParamError
+from reactpy_django.exceptions import (
+    ComponentDoesNotExistError,
+    ComponentParamError,
+    ViewDoesNotExistError,
+)
 
 _logger = logging.getLogger(__name__)
 _component_tag = r"(?P<tag>component)"
@@ -50,51 +54,40 @@ async def render_view(
     kwargs: dict,
 ) -> HttpResponse:
     """Ingests a Django view (class or function) and returns an HTTP response object."""
-    # Render Check 1: Async function view
-    if iscoroutinefunction(view) and callable(view):
+    # Convert class-based view to function-based view
+    if getattr(view, "as_view", None):
+        view = view.as_view()  # type: ignore[union-attr]
+
+    # Async function view
+    if iscoroutinefunction(view):
         response = await view(request, *args, **kwargs)
 
-    # Render Check 2: Async class view
-    elif getattr(view, "view_is_async", False):
-        # django-stubs does not support async views yet, so we have to ignore types here
-        view_or_template_view = await view.as_view()(request, *args, **kwargs)  # type: ignore
-        if getattr(view_or_template_view, "render", None):  # TemplateView
-            response = await view_or_template_view.render()
-        else:  # View
-            response = view_or_template_view
-
-    # Render Check 3: Sync class view
-    elif getattr(view, "as_view", None):
-        # MyPy does not know how to properly interpret this as a `View` type
-        # And `isinstance(view, View)` does not work due to some weird Django internal shenanigans
-        async_cbv = database_sync_to_async(view.as_view(), thread_sensitive=False)  # type: ignore
-        view_or_template_view = await async_cbv(request, *args, **kwargs)
-        if getattr(view_or_template_view, "render", None):  # TemplateView
-            response = await database_sync_to_async(
-                view_or_template_view.render, thread_sensitive=False
-            )()
-        else:  # View
-            response = view_or_template_view
-
-    # Render Check 4: Sync function view
+    # Sync function view
     else:
-        response = await database_sync_to_async(view, thread_sensitive=False)(
-            request, *args, **kwargs
-        )
+        response = await database_sync_to_async(view)(request, *args, **kwargs)
+
+    # TemplateView
+    if getattr(response, "render", None):
+        response = await database_sync_to_async(response.render)()
 
     return response
 
 
-def register_component(dotted_path: str) -> ComponentConstructor:
-    """Adds a component to the list of known registered components."""
+def register_component(component: ComponentConstructor | str):
+    """Adds a component to the list of known registered components.
+
+    Args:
+        component: The component to register. Can be a component function or dotted path to a component.
+
+    """
     from reactpy_django.config import (
         REACTPY_FAILED_COMPONENTS,
         REACTPY_REGISTERED_COMPONENTS,
     )
 
-    if dotted_path in REACTPY_REGISTERED_COMPONENTS:
-        return REACTPY_REGISTERED_COMPONENTS[dotted_path]
-
+    dotted_path = (
+        component if isinstance(component, str) else generate_obj_name(component)
+    )
     try:
         REACTPY_REGISTERED_COMPONENTS[dotted_path] = import_dotted_path(dotted_path)
     except AttributeError as e:
@@ -102,7 +95,25 @@ def register_component(dotted_path: str) -> ComponentConstructor:
         raise ComponentDoesNotExistError(
             f"Error while fetching '{dotted_path}'. {(str(e).capitalize())}."
         ) from e
-    return REACTPY_REGISTERED_COMPONENTS[dotted_path]
+
+
+def register_iframe(view: Callable | View | str):
+    """Registers a view to be used as an iframe component.
+
+    Args:
+        view: The view to register. Can be a function or class based view, or a dotted path to a view.
+    """
+    from reactpy_django.config import REACTPY_REGISTERED_IFRAME_VIEWS
+
+    if hasattr(view, "view_class"):
+        view = view.view_class
+    dotted_path = view if isinstance(view, str) else generate_obj_name(view)
+    try:
+        REACTPY_REGISTERED_IFRAME_VIEWS[dotted_path] = import_dotted_path(dotted_path)
+    except AttributeError as e:
+        raise ViewDoesNotExistError(
+            f"Error while fetching '{dotted_path}'. {(str(e).capitalize())}."
+        ) from e
 
 
 def import_dotted_path(dotted_path: str) -> Callable:
@@ -222,17 +233,22 @@ class RootComponentFinder:
                 )
 
 
-def generate_obj_name(object: Any) -> str:
+def generate_obj_name(obj: Any) -> str:
     """Makes a best effort to create a name for an object.
     Useful for JSON serialization of Python objects."""
-    if hasattr(object, "__module__"):
-        if hasattr(object, "__name__"):
-            return f"{object.__module__}.{object.__name__}"
-        if hasattr(object, "__class__"):
-            return f"{object.__module__}.{object.__class__.__name__}"
 
+    # First attempt: Dunder methods
+    if hasattr(obj, "__module__"):
+        if hasattr(obj, "__name__"):
+            return f"{obj.__module__}.{obj.__name__}"
+        if hasattr(obj, "__class__") and hasattr(obj.__class__, "__name__"):
+            return f"{obj.__module__}.{obj.__class__.__name__}"
+
+    # Second attempt: String representation
     with contextlib.suppress(Exception):
-        return str(object)
+        return str(obj)
+
+    # Fallback: Empty string
     return ""
 
 

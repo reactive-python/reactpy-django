@@ -12,3 +12,11 @@ class InvalidHostError(ValueError):
 
 class ComponentCarrierError(ValueError):
     ...
+
+
+class ViewNotRegisteredError(AttributeError):
+    ...
+
+
+class ViewDoesNotExistError(AttributeError):
+    ...
