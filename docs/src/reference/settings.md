@@ -148,7 +148,7 @@ During pre-rendering, there are some key differences in behavior:
 2. All `#!python connection` related hooks use HTTP.
 3. The component will be non-interactive until a WebSocket connection is formed.
 
-<!-- TODO: This comment below will become true when ReactPy no longer strips scripts from the DOM -->
+<!-- TODO: The comment below will become true when ReactPy no longer strips scripts from the DOM -->
 <!-- 4. `#!python html.script` elements are executed twice (pre-render and post-render). -->
 
 You can use the `#!python prerender` argument in your [template tag](../reference/template-tag.md#component) to manually override this default.

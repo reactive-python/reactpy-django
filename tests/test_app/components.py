@@ -680,7 +680,7 @@ def get_or_create_user2():
 
 @component
 def use_user_data():
-    user_data, set_user_data = reactpy_django.hooks.use_user_data()
+    user_data_query, user_data_mutation = reactpy_django.hooks.use_user_data()
     user1 = reactpy_django.hooks.use_query(get_or_create_user1)
     user2 = reactpy_django.hooks.use_query(get_or_create_user2)
     current_user = reactpy_django.hooks.use_user()
@@ -688,38 +688,38 @@ def use_user_data():
 
     async def login_user1(event):
         await login(scope, user1.data)
-        user_data.refetch()
-        set_user_data.reset()
+        user_data_query.refetch()
+        user_data_mutation.reset()
 
     async def login_user2(event):
         await login(scope, user2.data)
-        user_data.refetch()
-        set_user_data.reset()
+        user_data_query.refetch()
+        user_data_mutation.reset()
 
     async def logout_user(event):
         await logout(scope)
-        user_data.refetch()
-        set_user_data.reset()
+        user_data_query.refetch()
+        user_data_mutation.reset()
 
     async def clear_data(event):
-        set_user_data({})
-        user_data.refetch()
-        set_user_data.reset()
+        user_data_mutation({})
+        user_data_query.refetch()
+        user_data_mutation.reset()
 
     async def on_submit(event):
         if event["key"] == "Enter":
-            set_user_data(
-                (user_data.current or {})
+            user_data_mutation(
+                (user_data_query.data or {})
                 | {event["target"]["value"]: event["target"]["value"]}
             )
 
     return html.div(
         {
             "id": "use-user-data",
-            "data-success": bool(user_data.current),
-            "data-fetch-error": bool(user_data.error),
-            "data-mutation-error": bool(set_user_data.error),
-            "data-loading": user_data.loading or set_user_data.loading,
+            "data-success": bool(user_data_query.data),
+            "data-fetch-error": bool(user_data_query.error),
+            "data-mutation-error": bool(user_data_mutation.error),
+            "data-loading": user_data_query.loading or user_data_mutation.loading,
             "data-username": "AnonymousUser"
             if current_user.is_anonymous
             else current_user.username,
@@ -730,10 +730,12 @@ def use_user_data():
         html.button({"class": "logout", "on_click": logout_user}, "Logout"),
         html.button({"class": "clear", "on_click": clear_data}, "Clear Data"),
         html.div(f"User: {current_user}"),
-        html.div(f"Data: {user_data.current}"),
-        html.div(f"Data State: (loading={user_data.loading}, error={user_data.error})"),
+        html.div(f"Data: {user_data_query.data}"),
         html.div(
-            f"Mutation State: (loading={set_user_data.loading}, error={set_user_data.error})"
+            f"Data State: (loading={user_data_query.loading}, error={user_data_query.error})"
+        ),
+        html.div(
+            f"Mutation State: (loading={user_data_mutation.loading}, error={user_data_mutation.error})"
         ),
         html.div(
             html.input(
@@ -755,7 +757,7 @@ def use_user_data_with_default():
     def value2():
         return "value2"
 
-    user_data, set_user_data = reactpy_django.hooks.use_user_data(
+    user_data_query, user_data_mutation = reactpy_django.hooks.use_user_data(
         {"default1": "value", "default2": value2, "default3": value3},
         auto_save_initial=True,
     )
@@ -765,27 +767,27 @@ def use_user_data_with_default():
 
     async def login_user3(event):
         await login(scope, user3.data)
-        user_data.refetch()
-        set_user_data.reset()
+        user_data_query.refetch()
+        user_data_mutation.reset()
 
     async def clear_data(event):
-        set_user_data({})
-        user_data.refetch()
-        set_user_data.reset()
+        user_data_mutation({})
+        user_data_query.refetch()
+        user_data_mutation.reset()
 
     async def on_submit(event):
         if event["key"] == "Enter":
-            set_user_data(
-                (user_data.current or {})
+            user_data_mutation(
+                (user_data_query.data or {})
                 | {event["target"]["value"]: event["target"]["value"]}
             )
 
     return html.div(
         {
             "id": "use-user-data-with-default",
-            "data-fetch-error": bool(user_data.error),
-            "data-mutation-error": bool(set_user_data.error),
-            "data-loading": user_data.loading or set_user_data.loading,
+            "data-fetch-error": bool(user_data_query.error),
+            "data-mutation-error": bool(user_data_mutation.error),
+            "data-loading": user_data_query.loading or user_data_mutation.loading,
             "data-username": "AnonymousUser"
             if current_user.is_anonymous
             else current_user.username,
@@ -794,10 +796,12 @@ def use_user_data_with_default():
         html.button({"class": "login-3", "on_click": login_user3}, "Login 3"),
         html.button({"class": "clear", "on_click": clear_data}, "Clear Data"),
         html.div(f"User: {current_user}"),
-        html.div(f"Data: {user_data.current}"),
-        html.div(f"Data State: (loading={user_data.loading}, error={user_data.error})"),
+        html.div(f"Data: {user_data_query.data}"),
         html.div(
-            f"Mutation State: (loading={set_user_data.loading}, error={set_user_data.error})"
+            f"Data State: (loading={user_data_query.loading}, error={user_data_query.error})"
+        ),
+        html.div(
+            f"Mutation State: (loading={user_data_mutation.loading}, error={user_data_mutation.error})"
         ),
         html.div(
             html.input(

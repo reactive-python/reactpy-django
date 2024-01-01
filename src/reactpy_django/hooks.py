@@ -32,8 +32,6 @@ from reactpy_django.types import (
     Query,
     QueryOptions,
     UserData,
-    UserDataMutation,
-    UserDataQuery,
 )
 from reactpy_django.utils import generate_obj_name, get_user_pk
 
@@ -329,7 +327,7 @@ def use_user_data(
 
     user = use_user()
 
-    async def _set_user_data(data):
+    async def _set_user_data(data: dict):
         if not isinstance(data, dict):
             raise TypeError(f"Expected dict while setting user data, got {type(data)}")
         if user.is_anonymous:
@@ -349,20 +347,7 @@ def use_user_data(
     )
     mutation = use_mutation(_set_user_data, refetch=_get_user_data)
 
-    return UserData(
-        UserDataQuery(
-            current=query.data,
-            loading=query.loading,
-            error=query.error,
-            refetch=query.refetch,
-        ),
-        UserDataMutation(
-            _execute=mutation.execute,
-            loading=mutation.loading,
-            error=mutation.error,
-            reset=mutation.reset,
-        ),
-    )
+    return UserData(query, mutation)
 
 
 def _use_query_args_1(options: QueryOptions, /, query: Query, *args, **kwargs):
