@@ -35,4 +35,8 @@ def main():
         route("/router/string/<str:value>/", display_params("Path 6", route_info)),
         route("/router/uuid/<uuid:value>/", display_params("Path 7", route_info)),
         route("/router/", None, route("abc/", display_params("Path 8", route_info))),
+        route(
+            "/router/two/<int:value>/<str:value2>/",
+            display_params("Path 9", route_info),
+        ),
     )
