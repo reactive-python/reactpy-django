@@ -18,7 +18,7 @@ def todo_list():
 
     def submit_event(event):
         if event["key"] == "Enter":
-            item_mutation.execute(text=event["target"]["value"])
+            item_mutation(text=event["target"]["value"])
 
     # Handle all possible query states
     if item_query.loading:

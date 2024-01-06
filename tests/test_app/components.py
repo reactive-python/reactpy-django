@@ -337,7 +337,7 @@ def _render_todo_items(items, toggle_item):
                         "id": f"todo-item-{item.text}-checkbox",
                         "type": "checkbox",
                         "checked": item.done,
-                        "on_change": lambda event, i=item: toggle_item.execute(i),
+                        "on_change": lambda event, i=item: toggle_item(i),
                     }
                 ),
             )
@@ -357,7 +357,7 @@ def todo_list():
 
     def on_submit(event):
         if event["key"] == "Enter":
-            add_item.execute(text=event["target"]["value"])
+            add_item(text=event["target"]["value"])
             set_input_value("")
 
     def on_change(event):
@@ -432,7 +432,7 @@ def async_todo_list():
 
     async def on_submit(event):
         if event["key"] == "Enter":
-            add_item.execute(text=event["target"]["value"])
+            add_item(text=event["target"]["value"])
             set_input_value("")
 
     async def on_change(event):

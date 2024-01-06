@@ -53,6 +53,7 @@ Using the following categories, list your changes in this order:
 -   Renamed undocumented utility function `ComponentPreloader` to `RootComponentFinder`.
 -   It is now recommended to call `as_view()` when using `view_to_component` or `view_to_iframe` with Class Based Views.
 -   For thread safety, `thread_sensitive=True` has been enabled in all `sync_to_async` functions where ORM queries are possible.
+-   `reactpy_django.hooks.use_mutation` now has a `__call__` method. So rather than writing `my_mutation.execute(...)`, you can now write `my_mutation(...)`.
 
 ### Deprecated
 
