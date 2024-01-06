@@ -201,7 +201,7 @@ Mutation functions can be sync or async.
 
 ??? question "How can I provide arguments to my mutation function?"
 
-    `#!python *args` and `#!python **kwargs` can be provided to your mutation function via #!python mutation.execute` parameters.
+    `#!python *args` and `#!python **kwargs` can be provided to your mutation function via #!python mutation(...)` parameters.
 
     === "components.py"
 
@@ -273,9 +273,9 @@ Mutation functions can be sync or async.
 
 ---
 
-### `#!python use_user_data(initial_data=None, auto_save_initial=False)`
+### `#!python use_user_data(default_data=None, save_default_data=False)`
 
-Store or retrieve data specific to the connection's `#!python User`. This data is stored in the database.
+Store or retrieve data (`#!python dict`) specific to the connection's `#!python User`. This data is stored in the `#!python REACTPY_DATABASE`.
 
 === "components.py"
 
@@ -283,7 +283,20 @@ Store or retrieve data specific to the connection's `#!python User`. This data i
     {% include "../../python/use-user-data.py" %}
     ```
 
-TODO: Need some questions here and interface docs
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    | Name | Type | Description | Default |
+    | --- | --- | --- | --- |
+    | `#!python default_data` | `#!python None | dict[str, Callable[[], Any] | Callable[[], Awaitable[Any]] | Any]` | A dictionary containing `#!python {key: default_value}` pairs. For computationally intensive defaults, your `#!python default_value` can be sync or async functions that return the value to set. | `#!python None` |
+    | `#!python save_default_data` | `#!python bool` | If `#!python True`, `#!python default_data` values will automatically be stored within the database if they do not exist. | `#!python False` |
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `#!python UserData` | A `#!python NamedTuple` containing a `#!python Query` and `#!python Mutation` objects used to access/modify user data. Read the `#!python use_query` and `#!python use_mutation` docs for more details. |
 
 ---
 

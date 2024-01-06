@@ -318,11 +318,19 @@ def use_user() -> AbstractUser:
 
 
 def use_user_data(
-    initial_data: None
+    default_data: None
     | dict[str, Callable[[], Any] | Callable[[], Awaitable[Any]] | Any] = None,
-    auto_save_initial: bool = False,
+    save_default_data: bool = False,
 ) -> UserData:
-    """Get or set user data stored within the REACTPY_DATABASE."""
+    """Get or set user data stored within the REACTPY_DATABASE.
+    
+    Kwargs:
+        default_data: A dictionary containing `{key: default_value}` pairs. \
+            For computationally intensive defaults, your `default_value` \
+            can be sync or async functions that return the value to set.
+        save_default_data: If True, `default_data` values will automatically be stored \
+            within the database if they do not exist.
+    """
     from reactpy_django.models import UserDataModel
 
     user = use_user()
@@ -342,8 +350,8 @@ def use_user_data(
         QueryOptions(postprocessor=None),
         _get_user_data,
         user=user,
-        initial_data=initial_data,
-        auto_save_initial=auto_save_initial,
+        default_data=default_data,
+        save_default_data=save_default_data,
     )
     mutation = use_mutation(_set_user_data, refetch=_get_user_data)
 
@@ -367,7 +375,7 @@ def _use_mutation_args_2(mutation, refetch=None):
 
 
 async def _get_user_data(
-    user: AbstractUser, initial_data: None | dict, auto_save_initial: bool
+    user: AbstractUser, default_data: None | dict, save_default_data: bool
 ) -> dict | None:
     """The mutation function for `use_user_data`"""
     from reactpy_django.models import UserDataModel
@@ -383,9 +391,9 @@ async def _get_user_data(
         raise TypeError(f"Expected dict while loading user data, got {type(data)}")
 
     # Set default values, if needed
-    if initial_data:
+    if default_data:
         changed = False
-        for key, value in initial_data.items():
+        for key, value in default_data.items():
             if key not in data:
                 new_value: Any = value
                 if asyncio.iscoroutinefunction(value):
@@ -396,7 +404,7 @@ async def _get_user_data(
                 changed = True
         if changed:
             model.data = pickle.dumps(data)
-            if auto_save_initial:
+            if save_default_data:
                 await model.asave()
 
     return data

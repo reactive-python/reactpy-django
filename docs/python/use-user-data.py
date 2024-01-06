@@ -6,11 +6,10 @@ from reactpy_django.hooks import use_user_data
 def my_component():
     query, mutation = use_user_data()
 
-    async def on_submit(event):
+    def on_submit(event):
         if event["key"] == "Enter" and query.data:
-            key = str(len(query.data))
-            merged_data = query.data | {key: event["target"]["value"]}
-            mutation(merged_data)
+            new_key = str(len(query.data))
+            mutation({**query.data, new_key: event["target"]["value"]})
 
     return html.div(
         html.div(f"Data: {query.data}"),

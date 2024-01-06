@@ -48,7 +48,7 @@ class Mutation(Generic[FuncParams]):
     reset: Callable[[], None]
 
     def __call__(self, *args: FuncParams.args, **kwargs: FuncParams.kwargs) -> None:
-        """Alternative syntax for `execute`."""
+        """Execute the mutation."""
         self.execute(*args, **kwargs)
 
 
@@ -109,4 +109,4 @@ class ComponentParams:
 
 class UserData(NamedTuple):
     query: Query[dict | None]
-    mutation: Mutation
+    mutation: Mutation[dict]
