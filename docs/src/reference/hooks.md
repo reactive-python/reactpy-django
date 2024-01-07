@@ -432,4 +432,14 @@ Shortcut that returns the WebSocket or HTTP connection's `#!python User`.
     {% include "../../python/use-user.py" %}
     ```
 
-TODO: Needs interface docs
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    `#!python None`
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `#!python AbstractUser` | A Django `#!python User`, which can also be an `#!python AnonymousUser`. |
