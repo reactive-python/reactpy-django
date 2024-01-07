@@ -298,6 +298,18 @@ Store or retrieve data (`#!python dict`) specific to the connection's `#!python 
     | --- | --- |
     | `#!python UserData` | A `#!python NamedTuple` containing a `#!python Query` and `#!python Mutation` objects used to access/modify user data. Read the `#!python use_query` and `#!python use_mutation` docs for more details. |
 
+??? question "How do I set default values?"
+
+    You can configure default user data via the `#!python default_data` parameter.
+
+    This parameter accepts a dictionary containing a `#!python {key: default_value}` pairs. For computationally intensive defaults, your `#!python default_value` can be sync or async functions that return the value to set.
+
+    === "components.py"
+
+        ```python
+        {% include "../../python/use-user-data-defaults.py" %}
+        ```
+
 ---
 
 ## Connection Hooks
