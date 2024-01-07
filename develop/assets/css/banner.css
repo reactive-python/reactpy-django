@@ -1,5 +1,5 @@
 body[data-md-color-scheme="slate"] {
-	--md-banner-bg-color: #4d4121;
+	--md-banner-bg-color: rgb(55, 81, 78);
 	--md-banner-font-color: #fff;
 }
 
