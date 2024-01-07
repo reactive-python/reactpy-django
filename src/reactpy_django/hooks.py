@@ -45,7 +45,7 @@ _REFETCH_CALLBACKS: DefaultDict[
 ] = DefaultDict(set)
 
 
-# TODO: Remove this in the next version
+# TODO: Deprecate this once the equivalent hook gets moved to reactpy.hooks.*
 def use_location() -> Location:
     """Get the current route as a `Location` object"""
     return _use_location()
@@ -79,7 +79,7 @@ def use_origin() -> str | None:
     return None
 
 
-# TODO: Remove this in the next version
+# TODO: Deprecate this once the equivalent hook gets moved to reactpy.hooks.*
 def use_scope() -> dict[str, Any]:
     """Get the current ASGI scope dictionary"""
     scope = _use_scope()
@@ -90,7 +90,7 @@ def use_scope() -> dict[str, Any]:
     raise TypeError(f"Expected scope to be a dict, got {type(scope)}")
 
 
-# TODO: Remove this in the next version
+# TODO: Deprecate this once the equivalent hook gets moved to reactpy.hooks.*
 def use_connection() -> ConnectionType:
     """Get the current `Connection` object"""
     return _use_connection()
