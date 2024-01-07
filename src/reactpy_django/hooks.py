@@ -230,7 +230,7 @@ def use_mutation(
 
 def use_mutation(*args: Any, **kwargs: Any) -> Mutation[FuncParams]:
     """This hook is used to modify data in the background, typically to create/update/delete \
-    data from the Django ORM. \n
+    data from the Django ORM.
         
     Mutation functions can `return False` to prevent executing your `refetch` function. All \
     other returns are ignored. Mutation functions can be sync or async.

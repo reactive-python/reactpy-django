@@ -201,7 +201,7 @@ Mutation functions can be sync or async.
 
 ??? question "How can I provide arguments to my mutation function?"
 
-    `#!python *args` and `#!python **kwargs` can be provided to your mutation function via #!python mutation(...)` parameters.
+    `#!python *args` and `#!python **kwargs` can be provided to your mutation function via `#!python mutation(...)` parameters.
 
     === "components.py"
 
