@@ -1,6 +1,6 @@
 mkdocs
 mkdocs-git-revision-date-localized-plugin
-mkdocs-material
+mkdocs-material==9.4.0
 mkdocs-include-markdown-plugin
 linkcheckmd
 mkdocs-spellcheck[all]

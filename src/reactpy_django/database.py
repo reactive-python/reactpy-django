@@ -20,7 +20,9 @@ class Router:
             return REACTPY_DATABASE
 
     def allow_relation(self, obj1, obj2, **hints):
-        """Only relations within the same database are allowed (default behavior)."""
+        """Returning `None` only allow relations within the same database.
+        https://docs.djangoproject.com/en/dev/topics/db/multi-db/#limitations-of-multiple-databases
+        """
         return None
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):

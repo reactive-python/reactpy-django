@@ -16,17 +16,17 @@ def todo_list():
 
     def submit_event(event):
         if event["key"] == "Enter":
-            item_mutation.execute(text=event["target"]["value"])
+            item_mutation(text=event["target"]["value"])
 
     if item_mutation.loading:
         mutation_status = html.h2("Adding...")
     elif item_mutation.error:
-        mutation_status = html.button({"onClick": reset_event}, "Error: Try again!")
+        mutation_status = html.button({"on_click": reset_event}, "Error: Try again!")
     else:
         mutation_status = html.h2("Mutation done.")
 
     return html.div(
         html.label("Add an item:"),
-        html.input({"type": "text", "onKeyDown": submit_event}),
+        html.input({"type": "text", "on_key_down": submit_event}),
         mutation_status,
     )

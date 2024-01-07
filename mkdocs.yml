@@ -19,6 +19,7 @@ nav:
           - Community:
                 - GitHub Discussions: https://github.com/reactive-python/reactpy-django/discussions
                 - Discord: https://discord.gg/uNb5P4hA9X
+                - Reddit: https://www.reddit.com/r/ReactPy/
           - License: about/license.md
 
 theme:
@@ -57,8 +58,8 @@ markdown_extensions:
     - toc:
           permalink: true
     - pymdownx.emoji:
-          emoji_index: !!python/name:materialx.emoji.twemoji
-          emoji_generator: !!python/name:materialx.emoji.to_svg
+          emoji_index: !!python/name:material.extensions.emoji.twemoji
+          emoji_generator: !!python/name:material.extensions.emoji.to_svg
     - pymdownx.tabbed:
           alternate_style: true
     - pymdownx.highlight:

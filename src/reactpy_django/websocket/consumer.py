@@ -5,10 +5,11 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import logging
+import traceback
 from concurrent.futures import Future
 from datetime import timedelta
 from threading import Thread
-from typing import Any, MutableMapping, Sequence
+from typing import TYPE_CHECKING, Any, MutableMapping, Sequence
 
 import dill as pickle
 import orjson
@@ -21,8 +22,11 @@ from reactpy.backend.types import Connection, Location
 from reactpy.core.layout import Layout
 from reactpy.core.serve import serve_layout
 
-from reactpy_django.types import ComponentParams, ComponentWebsocket
+from reactpy_django.types import ComponentParams
 from reactpy_django.utils import delete_expired_sessions
+
+if TYPE_CHECKING:
+    from django.contrib.auth.models import AbstractUser
 
 _logger = logging.getLogger(__name__)
 backhaul_loop = asyncio.new_event_loop()
@@ -43,40 +47,33 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self) -> None:
         """The browser has connected."""
         from reactpy_django import models
-        from reactpy_django.config import REACTPY_AUTH_BACKEND, REACTPY_BACKHAUL_THREAD
+        from reactpy_django.config import (
+            REACTPY_AUTH_BACKEND,
+            REACTPY_AUTO_RELOGIN,
+            REACTPY_BACKHAUL_THREAD,
+        )
 
         await super().connect()
 
-        # Authenticate the user, if possible
-        user = self.scope.get("user")
-        if user and user.is_authenticated:
+        # Automatically re-login the user, if needed
+        user: AbstractUser | None = self.scope.get("user")
+        if REACTPY_AUTO_RELOGIN and user and user.is_authenticated and user.is_active:
             try:
                 await login(self.scope, user, backend=REACTPY_AUTH_BACKEND)
             except Exception:
                 await asyncio.to_thread(
-                    _logger.exception, "ReactPy websocket authentication has failed!"
+                    _logger.error,
+                    "ReactPy websocket authentication has failed!\n"
+                    f"{traceback.format_exc()}",
                 )
-        elif user is None:
-            await asyncio.to_thread(
-                _logger.debug,
-                "ReactPy websocket is missing AuthMiddlewareStack! "
-                "Users will not be accessible within `use_scope` or `use_websocket`!",
-            )
-
-        # Save the session, if possible
-        if self.scope.get("session"):
             try:
                 await database_sync_to_async(self.scope["session"].save)()
             except Exception:
                 await asyncio.to_thread(
-                    _logger.exception, "ReactPy has failed to save scope['session']!"
+                    _logger.error,
+                    "ReactPy has failed to save scope['session']!\n"
+                    f"{traceback.format_exc()}",
                 )
-        else:
-            await asyncio.to_thread(
-                _logger.debug,
-                "ReactPy websocket is missing SessionMiddlewareStack! "
-                "Sessions will not be accessible within `use_scope` or `use_websocket`!",
-            )
 
         # Start the component dispatcher
         self.dispatcher: Future | asyncio.Task
@@ -104,8 +101,9 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 await database_sync_to_async(delete_expired_sessions)()
             except Exception:
                 await asyncio.to_thread(
-                    _logger.exception,
-                    "ReactPy has failed to delete expired component sessions!",
+                    _logger.error,
+                    "ReactPy has failed to delete expired component sessions!\n"
+                    f"{traceback.format_exc()}",
                 )
 
             # Update the last_accessed timestamp
@@ -113,8 +111,9 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 await self.component_session.asave()
             except Exception:
                 await asyncio.to_thread(
-                    _logger.exception,
-                    "ReactPy has failed to save component session!",
+                    _logger.error,
+                    "ReactPy has failed to save component session!\n"
+                    f"{traceback.format_exc()}",
                 )
 
         await super().disconnect(code)
@@ -145,7 +144,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         )
 
         scope = self.scope
-        dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
+        self.dotted_path = dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
         uuid = scope["url_route"]["kwargs"].get("uuid")
         search = scope["query_string"].decode()
         self.recv_queue: asyncio.Queue = asyncio.Queue()
@@ -155,7 +154,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 pathname=scope["path"],
                 search=f"?{search}" if (search and (search != "undefined")) else "",
             ),
-            carrier=ComponentWebsocket(self.close, self.disconnect, dotted_path),
+            carrier=self,
         )
         now = timezone.now()
         component_session_args: Sequence[Any] = ()
@@ -198,9 +197,10 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             return
         except Exception:
             await asyncio.to_thread(
-                _logger.exception,
+                _logger.error,
                 f"Failed to construct component {component_constructor} "
-                f"with args='{component_session_args}' kwargs='{component_session_kwargs}'!",
+                f"with args='{component_session_args}' kwargs='{component_session_kwargs}'!\n"
+                f"{traceback.format_exc()}",
             )
             return
 

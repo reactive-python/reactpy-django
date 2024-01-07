@@ -36,22 +36,38 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
--   ReactPy components can now use SEO compatible rendering!
-    -   `settings.py:REACTPY_PRERENDER` can be set to `True` to enable this behavior by default
-    -   Or, you can enable it on individual components via the template tag: `{% component "..." prerender="True" %}`
--   `reactpy_django.components.view_to_iframe` component has been added, which uses an `<iframe>` to render a Django view.
--   `reactpy_django.utils.register_iframe` function has been added, which is mandatory to use alongside `reactpy_django.components.view_to_iframe`.
+-   SEO compatible rendering!
+    -   `settings.py:REACTPY_PRERENDER` can be set to `True` to make components pre-render by default.
+    -   Or, you can enable it on individual components via the template tag: `{% component "..." prerender="True" %}`.
+-   New `view_to_iframe` feature!
+    -   `reactpy_django.components.view_to_iframe` uses an `<iframe>` to render a Django view.
+    -   `reactpy_django.utils.register_iframe` tells ReactPy which views `view_to_iframe` can use.
+-   New Django `User` related features!
+    -   `reactpy_django.hooks.use_user` can be used to access the current user.
+    -   `reactpy_django.hooks.use_user_data` provides a simplified interface for storing user key-value data.
+    -   `reactpy_django.decorators.user_passes_test` is inspired by the [equivalent Django decorator](http://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test), but ours works with ReactPy components.
+    -   `settings.py:REACTPY_AUTO_RELOGIN` will cause component WebSocket connections to automatically [re-login](https://channels.readthedocs.io/en/latest/topics/authentication.html#how-to-log-a-user-in-out) users that are already authenticated. This is useful to continuously update `last_login` timestamps and refresh the [Django login session](https://docs.djangoproject.com/en/dev/topics/http/sessions/).
 
 ### Changed
 
--   Renamed undocumented utility function `reactpy_django.utils.ComponentPreloader` to `reactpy_django.utils.RootComponentFinder`.
+-   Renamed undocumented utility function `ComponentPreloader` to `RootComponentFinder`.
 -   It is now recommended to call `as_view()` when using `view_to_component` or `view_to_iframe` with Class Based Views.
--   Thread sensitivity has been enabled in all locations where ORM queries are possible.
+-   For thread safety, `thread_sensitive=True` has been enabled in all `sync_to_async` functions where ORM queries are possible.
+-   `reactpy_django.hooks.use_mutation` now has a `__call__` method. So rather than writing `my_mutation.execute(...)`, you can now write `my_mutation(...)`.
 
 ### Deprecated
 
--   The `compatibility` argument on `reactpy_django.components.view_to_component` is deprecated. Use `reactpy_django.components.view_to_iframe` instead.
--   Using `reactpy_django.components.view_to_component` as a decorator is deprecated. Check the docs on the new suggested usage.
+-   The `compatibility` argument on `reactpy_django.components.view_to_component` is deprecated.
+    -   Use `view_to_iframe` as a replacement.
+-   `reactpy_django.components.view_to_component` **usage as a decorator** is deprecated.
+    -   Check the docs on how to use `view_to_component` as a function instead.
+-   `reactpy_django.decorators.auth_required` is deprecated.
+    -   Use `reactpy_django.decorators.user_passes_test` instead.
+    -   An equivalent to `auth_required`'s default is `@user_passes_test(lambda user: user.is_active)`.
+
+### Fixed
+
+-   Fixed a bug where exception stacks would not print on failed component renders.
 
 ## [3.5.1] - 2023-09-07
 

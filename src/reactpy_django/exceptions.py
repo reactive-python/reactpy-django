@@ -10,7 +10,11 @@ class InvalidHostError(ValueError):
     ...
 
 
-class ComponentCarrierError(ValueError):
+class ComponentCarrierError(Exception):
+    ...
+
+
+class UserNotFoundError(Exception):
     ...
 
 
@@ -19,4 +23,8 @@ class ViewNotRegisteredError(AttributeError):
 
 
 class ViewDoesNotExistError(AttributeError):
+    ...
+
+
+class DecoratorParamError(TypeError):
     ...

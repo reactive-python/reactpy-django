@@ -14,11 +14,17 @@ Prefabricated hooks can be used within your `components.py` to help simplify dev
 
 ---
 
-## Use Query
+## Database Hooks
 
-This hook is used to execute functions in the background and return the result, typically to [read](https://www.sumologic.com/glossary/crud/) data the Django ORM.
+---
 
-The [default postprocessor](../reference/utils.md#django-query-postprocessor) expects your query function to `#!python return` a Django `#!python Model` or `#!python QuerySet`. The postprocessor needs to be changed to execute other types of queries. Query functions can be sync or async.
+### `#!python use_query(query, *args, **kwargs)`
+
+Execute functions in the background and return the result, typically to [read](https://www.sumologic.com/glossary/crud/) data from the Django ORM.
+
+The [default postprocessor](../reference/utils.md#django-query-postprocessor) expects your query function to `#!python return` a Django `#!python Model` or `#!python QuerySet`. This needs to be changed or disabled to execute other types of queries.
+
+Query functions can be sync or async.
 
 === "components.py"
 
@@ -158,11 +164,13 @@ The [default postprocessor](../reference/utils.md#django-query-postprocessor) ex
 
 ---
 
-## Use Mutation
+### `#!python use_mutation(mutation, refetch=None)`
 
-This hook is used to modify data in the background, typically to [create/update/delete](https://www.sumologic.com/glossary/crud/) data from the Django ORM.
+Modify data in the background, typically to [create/update/delete](https://www.sumologic.com/glossary/crud/) data from the Django ORM.
 
-Mutation functions can `#!python return False` to prevent executing your `#!python refetch` function. All other returns are ignored. Mutation functions can be sync or async.
+Mutation functions can `#!python return False` to manually prevent your `#!python refetch=...` function from executing. All other returns are ignored.
+
+Mutation functions can be sync or async.
 
 === "components.py"
 
@@ -182,7 +190,7 @@ Mutation functions can `#!python return False` to prevent executing your `#!pyth
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `#!python mutate` | `#!python Callable[_Params, bool | None]` | A callable that performs Django ORM create, update, or delete functionality. If this function returns `#!python False`, then your `#!python refetch` function will not be used. | N/A |
+    | `#!python mutation` | `#!python Callable[_Params, bool | None]` | A callable that performs Django ORM create, update, or delete functionality. If this function returns `#!python False`, then your `#!python refetch` function will not be used. | N/A |
     | `#!python refetch` | `#!python Callable[..., Any] | Sequence[Callable[..., Any]] | None` | A query function (the function you provide to your `#!python use_query` hook) or a sequence of query functions that need a `refetch` if the mutation succeeds. This is useful for refreshing data after a mutation has been performed. | `#!python None` |
 
     <font size="4">**Returns**</font>
@@ -193,7 +201,7 @@ Mutation functions can `#!python return False` to prevent executing your `#!pyth
 
 ??? question "How can I provide arguments to my mutation function?"
 
-    `#!python *args` and `#!python **kwargs` can be provided to your mutation function via #!python mutation.execute` parameters.
+    `#!python *args` and `#!python **kwargs` can be provided to your mutation function via `#!python mutation(...)` parameters.
 
     === "components.py"
 
@@ -265,9 +273,52 @@ Mutation functions can `#!python return False` to prevent executing your `#!pyth
 
 ---
 
-## Use Connection
+### `#!python use_user_data(default_data=None, save_default_data=False)`
 
-This hook is used to fetch the active connection, which is either a Django [WebSocket](https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer) or a [HTTP Request](https://docs.djangoproject.com/en/4.2/ref/request-response/#django.http.HttpRequest).
+Store or retrieve data (`#!python dict`) specific to the connection's `#!python User`. This data is stored in the `#!python REACTPY_DATABASE`.
+
+=== "components.py"
+
+    ```python
+    {% include "../../python/use-user-data.py" %}
+    ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    | Name | Type | Description | Default |
+    | --- | --- | --- | --- |
+    | `#!python default_data` | `#!python None | dict[str, Callable[[], Any] | Callable[[], Awaitable[Any]] | Any]` | A dictionary containing `#!python {key: default_value}` pairs. For computationally intensive defaults, your `#!python default_value` can be sync or async functions that return the value to set. | `#!python None` |
+    | `#!python save_default_data` | `#!python bool` | If `#!python True`, `#!python default_data` values will automatically be stored within the database if they do not exist. | `#!python False` |
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `#!python UserData` | A `#!python NamedTuple` containing a `#!python Query` and `#!python Mutation` objects used to access/modify user data. Read the `#!python use_query` and `#!python use_mutation` docs for more details. |
+
+??? question "How do I set default values?"
+
+    You can configure default user data via the `#!python default_data` parameter.
+
+    This parameter accepts a dictionary containing a `#!python {key: default_value}` pairs. For computationally intensive defaults, your `#!python default_value` can be sync or async functions that return the value to set.
+
+    === "components.py"
+
+        ```python
+        {% include "../../python/use-user-data-defaults.py" %}
+        ```
+
+---
+
+## Connection Hooks
+
+---
+
+### `#!python use_connection()`
+
+Returns the active connection, which is either a Django [WebSocket](https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer) or a [HTTP Request](https://docs.djangoproject.com/en/4.2/ref/request-response/#django.http.HttpRequest).
 
 === "components.py"
 
@@ -285,13 +336,13 @@ This hook is used to fetch the active connection, which is either a Django [WebS
 
     | Type | Description |
     | --- | --- |
-    | `#!python Connection` | The component's `WebSocket` or `HttpRequest`. |
+    | `#!python Connection` | An object that contains a `carrier` (`WebSocket` or `HttpRequest`), `scope`, and `location`. |
 
 ---
 
-## Use Scope
+### `#!python use_scope()`
 
-This is a shortcut that returns the WebSocket or HTTP [scope](https://channels.readthedocs.io/en/stable/topics/consumers.html#scope).
+Shortcut that returns the WebSocket or HTTP connection's [scope](https://channels.readthedocs.io/en/stable/topics/consumers.html#scope).
 
 === "components.py"
 
@@ -309,13 +360,13 @@ This is a shortcut that returns the WebSocket or HTTP [scope](https://channels.r
 
     | Type | Description |
     | --- | --- |
-    | `#!python MutableMapping[str, Any]` | The WebSocket's `#!python scope`. |
+    | `#!python MutableMapping[str, Any]` | The connection's `#!python scope`. |
 
 ---
 
-## Use Location
+### `#!python use_location()`
 
-This is a shortcut that returns the client's URL `#!python path`.
+Shortcut that returns the WebSocket or HTTP connection's URL `#!python path`.
 
 You can expect this hook to provide strings such as `/reactpy/my_path`.
 
@@ -345,9 +396,9 @@ You can expect this hook to provide strings such as `/reactpy/my_path`.
 
 ---
 
-## Use Origin
+### `#!python use_origin()`
 
-This is a shortcut that returns the client's `#!python origin`.
+Shortcut that returns the WebSocket or HTTP connection's `#!python origin`.
 
 You can expect this hook to provide strings such as `http://example.com`.
 
@@ -368,3 +419,27 @@ You can expect this hook to provide strings such as `http://example.com`.
     | Type | Description |
     | --- | --- |
     | `#!python str | None` | A string containing the browser's current origin, obtained from WebSocket or HTTP headers (if available). |
+
+---
+
+### `#!python use_user()`
+
+Shortcut that returns the WebSocket or HTTP connection's `#!python User`.
+
+=== "components.py"
+
+    ```python
+    {% include "../../python/use-user.py" %}
+    ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    `#!python None`
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `#!python AbstractUser` | A Django `#!python User`, which can also be an `#!python AnonymousUser`. |

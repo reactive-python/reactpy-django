@@ -13,8 +13,8 @@ SECRET_KEY = "django-insecure-n!bd1#+7ufw5#9ipayu9k(lyu@za$c2ajbro7es(v8_7w1$=&c
 
 # Run in production mode when using a real web server
 DEBUG = all(
-    not sys.argv[0].endswith(substring)
-    for substring in {"hypercorn", "uvicorn", "daphne"}
+    not sys.argv[0].endswith(webserver_name)
+    for webserver_name in {"hypercorn", "uvicorn", "daphne"}
 )
 ALLOWED_HOSTS = ["*"]
 
@@ -62,15 +62,17 @@ sys.path.append(str(SRC_DIR))
 # Database
 # WARNING: There are overrides in `test_components.py` that require no in-memory
 # databases are used for testing. Make sure all SQLite databases are on disk.
+DB_NAME = "multi_db"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         # Changing NAME is needed due to a bug related to `manage.py test`
         "NAME": os.path.join(
-            BASE_DIR, "test_db.sqlite3" if "test" in sys.argv else "db.sqlite3"
+            BASE_DIR,
+            f"test_{DB_NAME}.sqlite3" if "test" in sys.argv else f"{DB_NAME}.sqlite3",
         ),
         "TEST": {
-            "NAME": os.path.join(BASE_DIR, "test_db.sqlite3"),
+            "NAME": os.path.join(BASE_DIR, f"test_{DB_NAME}.sqlite3"),
             "OPTIONS": {"timeout": 20},
             "DEPENDENCIES": [],
         },
@@ -82,10 +84,13 @@ if "test" in sys.argv:
         "ENGINE": "django.db.backends.sqlite3",
         # Changing NAME is needed due to a bug related to `manage.py test`
         "NAME": os.path.join(
-            BASE_DIR, "test_db_2.sqlite3" if "test" in sys.argv else "db_2.sqlite3"
+            BASE_DIR,
+            f"test_{DB_NAME}_2.sqlite3"
+            if "test" in sys.argv
+            else f"{DB_NAME}_2.sqlite3",
         ),
         "TEST": {
-            "NAME": os.path.join(BASE_DIR, "test_db_2.sqlite3"),
+            "NAME": os.path.join(BASE_DIR, f"test_{DB_NAME}_2.sqlite3"),
             "OPTIONS": {"timeout": 20},
             "DEPENDENCIES": [],
         },
@@ -93,7 +98,6 @@ if "test" in sys.argv:
     }
     REACTPY_DATABASE = "reactpy"
 DATABASE_ROUTERS = ["reactpy_django.database.Router"]
-
 
 # Cache
 CACHES = {
@@ -108,15 +112,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
 # Internationalization
@@ -125,7 +123,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -141,33 +138,22 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
-
 # Logging
 LOG_LEVEL = "WARNING"
 if DEBUG and ("test" not in sys.argv):
     LOG_LEVEL = "DEBUG"
-
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-        },
+        "console": {"class": "logging.StreamHandler"},
     },
     "loggers": {
-        "reactpy_django": {
-            "handlers": ["console"],
-            "level": LOG_LEVEL,
-        },
-        "reactpy": {
-            "handlers": ["console"],
-            "level": LOG_LEVEL,
-        },
+        "reactpy_django": {"handlers": ["console"], "level": LOG_LEVEL},
+        "reactpy": {"handlers": ["console"], "level": LOG_LEVEL},
+        "django.request": {"handlers": ["console"], "level": LOG_LEVEL},
     },
 }
 
-
 # ReactPy Django Settings
-REACTPY_AUTH_BACKEND = "django.contrib.auth.backends.ModelBackend"
 REACTPY_BACKHAUL_THREAD = "test" not in sys.argv and "runserver" not in sys.argv

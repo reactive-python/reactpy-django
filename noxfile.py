@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from glob import glob
 from pathlib import Path
 
 import nox
@@ -34,7 +35,6 @@ def test_suite(session: Session) -> None:
     """Run the Python-based test suite"""
     install_requirements_file(session, "test-env")
     session.install(".[all]")
-
     session.chdir(HERE / "tests")
     session.env["REACTPY_DEBUG_MODE"] = "1"
 
@@ -47,7 +47,25 @@ def test_suite(session: Session) -> None:
         posargs.append("--debug-mode")
 
     session.run("playwright", "install", "chromium")
-    session.run("python", "manage.py", "test", *posargs, "-v 2")
+
+    # Run tests for each settings file (tests/test_app/settings_*.py)
+    settings_glob = "test_app/settings_*.py"
+    settings_files = glob(settings_glob)
+    assert settings_files, f"No Django settings files found at '{settings_glob}'!"
+    for settings_file in settings_files:
+        settings_module = (
+            settings_file.strip(".py").replace("/", ".").replace("\\", ".")
+        )
+        session.run(
+            "python",
+            "manage.py",
+            "test",
+            *posargs,
+            "-v",
+            "2",
+            "--settings",
+            settings_module,
+        )
 
 
 @nox.session

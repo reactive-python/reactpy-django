@@ -10,7 +10,9 @@ from reactpy_django.types import ComponentParams
 
 
 class RoutedDatabaseTests(TransactionTestCase):
-    databases = {"reactpy"}
+    from reactpy_django import config
+
+    databases = {config.REACTPY_DATABASE}
 
     @classmethod
     def setUpClass(cls):

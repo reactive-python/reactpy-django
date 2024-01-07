@@ -34,7 +34,7 @@ The prefix used for all ReactPy WebSocket and HTTP URLs.
 
 **Example Value(s):** `#!python "example_project.postprocessor"`, `#!python None`
 
-Dotted path to the global default `#!python reactpy_django.hooks.use_query` postprocessor function.
+Dotted path to the default `#!python reactpy_django.hooks.use_query` postprocessor function.
 
 Postprocessor functions can be async or sync. Here is an example of a sync postprocessor function:
 
@@ -59,6 +59,18 @@ Dotted path to the Django authentication backend to use for ReactPy components. 
 1. You are using `#!python AuthMiddlewareStack` and...
 2. You are using Django's `#!python AUTHENTICATION_BACKENDS` setting and...
 3. Your Django user model does not define a `#!python backend` attribute.
+
+---
+
+### `#!python REACTPY_AUTO_RELOGIN`
+
+**Default:** `#!python False`
+
+**Example Value(s):** `#!python True`
+
+Enabling this will cause component WebSocket connections to automatically [re-login](https://channels.readthedocs.io/en/latest/topics/authentication.html#how-to-log-a-user-in-out) users that are already authenticated.
+
+This is useful to continuously update `#!python last_login` timestamps and refresh the [Django login session](https://docs.djangoproject.com/en/dev/topics/http/sessions/).
 
 ---
 
@@ -128,14 +140,16 @@ You can use the `#!python host` argument in your [template tag](../reference/tem
 
 **Example Value(s):** `#!python True`
 
-Configures whether to pre-render your components, which enables SEO compatibility and reduces perceived latency.
+Configures whether to pre-render your components via HTTP, which enables SEO compatibility and reduces perceived latency.
 
 During pre-rendering, there are some key differences in behavior:
 
 1. Only the component's first render is pre-rendered.
 2. All `#!python connection` related hooks use HTTP.
-3. `#!python html.script` elements are executed twice (pre-render and post-render).
-4. The component will be non-interactive until a WebSocket connection is formed.
+3. The component will be non-interactive until a WebSocket connection is formed.
+
+<!-- TODO: The comment below will become true when ReactPy no longer strips scripts from the DOM -->
+<!-- 4. `#!python html.script` elements are executed twice (pre-render and post-render). -->
 
 You can use the `#!python prerender` argument in your [template tag](../reference/template-tag.md#component) to manually override this default.
 
