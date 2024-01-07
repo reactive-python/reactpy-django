@@ -366,7 +366,7 @@ Shortcut that returns the WebSocket or HTTP connection's [scope](https://channel
 
 ### `#!python use_location()`
 
-This is a shortcut that returns the browser's current `#!python path` as a `Location` object.
+Shortcut that returns the browser's current `#!python Location`.
 
 === "components.py"
 
