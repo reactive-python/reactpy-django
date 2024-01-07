@@ -3,7 +3,9 @@ import inspect
 from pathlib import Path
 
 import reactpy_django
+from channels.auth import login, logout
 from channels.db import database_sync_to_async
+from django.contrib.auth import get_user_model
 from django.http import HttpRequest
 from django.shortcuts import render
 from reactpy import component, hooks, html, web
@@ -164,6 +166,33 @@ def authorized_user():
     return html.div({"id": "authorized-user"}, "authorized_user: Success")
 
 
+@reactpy_django.decorators.user_passes_test(
+    lambda user: user.is_anonymous,
+    fallback=html.div(
+        {"id": "authorized-user-test-fallback"}, "authorized_user_test: Fail"
+    ),
+)
+@component
+def authorized_user_test():
+    return html.div({"id": "authorized-user-test"}, "authorized_user_test: Success")
+
+
+@reactpy_django.decorators.user_passes_test(
+    lambda user: user.is_active,
+    fallback=html.div(
+        {"id": "unauthorized-user-test-fallback"}, "unauthorized_user_test: Success"
+    ),
+)
+@component
+def unauthorized_user_test():
+    return html.div({"id": "unauthorized-user-test"}, "unauthorized_user_test: Fail")
+
+
+@reactpy_django.decorators.user_passes_test(lambda user: True)
+def incorrect_user_passes_test_decorator():
+    return html.div("incorrect_decorator_test: Fail")
+
+
 def create_relational_parent() -> RelationalParent:
     child_1 = RelationalChild.objects.create(text="ManyToMany Child 1")
     child_2 = RelationalChild.objects.create(text="ManyToMany Child 2")
@@ -207,7 +236,7 @@ def relational_query():
             "id": "relational-query",
             "data-success": bool(mtm) and bool(oto) and bool(mto) and bool(fk),
         },
-        html.p(inspect.currentframe().f_code.co_name),
+        html.p(inspect.currentframe().f_code.co_name),  # type: ignore
         html.div(f"Relational Parent Many To Many: {mtm}"),
         html.div(f"Relational Parent One To One: {oto}"),
         html.div(f"Relational Parent Many to One: {mto}"),
@@ -268,7 +297,7 @@ def async_relational_query():
             "id": "async-relational-query",
             "data-success": bool(mtm) and bool(oto) and bool(mto) and bool(fk),
         },
-        html.p(inspect.currentframe().f_code.co_name),
+        html.p(inspect.currentframe().f_code.co_name),  # type: ignore
         html.div(f"Relational Parent Many To Many: {mtm}"),
         html.div(f"Relational Parent One To One: {oto}"),
         html.div(f"Relational Parent Many to One: {mto}"),
@@ -308,7 +337,7 @@ def _render_todo_items(items, toggle_item):
                         "id": f"todo-item-{item.text}-checkbox",
                         "type": "checkbox",
                         "checked": item.done,
-                        "on_change": lambda event, i=item: toggle_item.execute(i),
+                        "on_change": lambda event, i=item: toggle_item(i),
                     }
                 ),
             )
@@ -328,7 +357,7 @@ def todo_list():
 
     def on_submit(event):
         if event["key"] == "Enter":
-            add_item.execute(text=event["target"]["value"])
+            add_item(text=event["target"]["value"])
             set_input_value("")
 
     def on_change(event):
@@ -403,7 +432,7 @@ def async_todo_list():
 
     async def on_submit(event):
         if event["key"] == "Enter":
-            add_item.execute(text=event["target"]["value"])
+            add_item(text=event["target"]["value"])
             set_input_value("")
 
     async def on_change(event):
@@ -639,3 +668,144 @@ def broken_postprocessor_query():
     mtm = relational_parent.data.many_to_many.all()
 
     return html.div(f"This should have failed! Something went wrong: {mtm}")
+
+
+def get_or_create_user1():
+    return get_user_model().objects.get_or_create(username="user_1")[0]
+
+
+def get_or_create_user2():
+    return get_user_model().objects.get_or_create(username="user_2")[0]
+
+
+@component
+def use_user_data():
+    user_data_query, user_data_mutation = reactpy_django.hooks.use_user_data()
+    user1 = reactpy_django.hooks.use_query(get_or_create_user1)
+    user2 = reactpy_django.hooks.use_query(get_or_create_user2)
+    current_user = reactpy_django.hooks.use_user()
+    scope = reactpy_django.hooks.use_scope()
+
+    async def login_user1(event):
+        await login(scope, user1.data)
+        user_data_query.refetch()
+        user_data_mutation.reset()
+
+    async def login_user2(event):
+        await login(scope, user2.data)
+        user_data_query.refetch()
+        user_data_mutation.reset()
+
+    async def logout_user(event):
+        await logout(scope)
+        user_data_query.refetch()
+        user_data_mutation.reset()
+
+    async def clear_data(event):
+        user_data_mutation({})
+        user_data_query.refetch()
+        user_data_mutation.reset()
+
+    async def on_submit(event):
+        if event["key"] == "Enter":
+            user_data_mutation(
+                (user_data_query.data or {})
+                | {event["target"]["value"]: event["target"]["value"]}
+            )
+
+    return html.div(
+        {
+            "id": "use-user-data",
+            "data-success": bool(user_data_query.data),
+            "data-fetch-error": bool(user_data_query.error),
+            "data-mutation-error": bool(user_data_mutation.error),
+            "data-loading": user_data_query.loading or user_data_mutation.loading,
+            "data-username": "AnonymousUser"
+            if current_user.is_anonymous
+            else current_user.username,
+        },
+        html.div("use_user_data"),
+        html.button({"class": "login-1", "on_click": login_user1}, "Login 1"),
+        html.button({"class": "login-2", "on_click": login_user2}, "Login 2"),
+        html.button({"class": "logout", "on_click": logout_user}, "Logout"),
+        html.button({"class": "clear", "on_click": clear_data}, "Clear Data"),
+        html.div(f"User: {current_user}"),
+        html.div(f"Data: {user_data_query.data}"),
+        html.div(
+            f"Data State: (loading={user_data_query.loading}, error={user_data_query.error})"
+        ),
+        html.div(
+            f"Mutation State: (loading={user_data_mutation.loading}, error={user_data_mutation.error})"
+        ),
+        html.div(
+            html.input(
+                {"on_key_press": on_submit, "placeholder": "Type here to add data"}
+            )
+        ),
+    )
+
+
+def get_or_create_user3():
+    return get_user_model().objects.get_or_create(username="user_3")[0]
+
+
+@component
+def use_user_data_with_default():
+    async def value3():
+        return "value3"
+
+    def value2():
+        return "value2"
+
+    user_data_query, user_data_mutation = reactpy_django.hooks.use_user_data(
+        {"default1": "value", "default2": value2, "default3": value3},
+        save_default_data=True,
+    )
+    user3 = reactpy_django.hooks.use_query(get_or_create_user3)
+    current_user = reactpy_django.hooks.use_user()
+    scope = reactpy_django.hooks.use_scope()
+
+    async def login_user3(event):
+        await login(scope, user3.data)
+        user_data_query.refetch()
+        user_data_mutation.reset()
+
+    async def clear_data(event):
+        user_data_mutation({})
+        user_data_query.refetch()
+        user_data_mutation.reset()
+
+    async def on_submit(event):
+        if event["key"] == "Enter":
+            user_data_mutation(
+                (user_data_query.data or {})
+                | {event["target"]["value"]: event["target"]["value"]}
+            )
+
+    return html.div(
+        {
+            "id": "use-user-data-with-default",
+            "data-fetch-error": bool(user_data_query.error),
+            "data-mutation-error": bool(user_data_mutation.error),
+            "data-loading": user_data_query.loading or user_data_mutation.loading,
+            "data-username": "AnonymousUser"
+            if current_user.is_anonymous
+            else current_user.username,
+        },
+        html.div("use_user_data_with_default"),
+        html.button({"class": "login-3", "on_click": login_user3}, "Login 3"),
+        html.button({"class": "clear", "on_click": clear_data}, "Clear Data"),
+        html.div(f"User: {current_user}"),
+        html.div(f"Data: {user_data_query.data}"),
+        html.div(
+            f"Data State: (loading={user_data_query.loading}, error={user_data_query.error})"
+        ),
+        html.div(
+            f"Mutation State: (loading={user_data_mutation.loading}, error={user_data_mutation.error})"
+        ),
+        html.div(
+            html.input(
+                {"on_key_press": on_submit, "placeholder": "Type here to add data"}
+            )
+        ),
+    )

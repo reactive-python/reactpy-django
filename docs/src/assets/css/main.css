@@ -17,6 +17,7 @@
 	--md-default-bg-color--lighter: hsla(var(--md-hue), 15%, 16%, 0.26);
 	--md-default-bg-color--lightest: hsla(var(--md-hue), 15%, 16%, 0.07);
 	--md-primary-fg-color: var(--md-default-bg-color);
+	--md-default-fg-color: hsla(var(--md-hue), 75%, 95%, 1);
 	--md-default-fg-color--light: #fff;
 	--md-typeset-a-color: var(--reactpy-color);
 	--md-accent-fg-color: var(--reactpy-color-dark);
@@ -38,7 +39,7 @@
 }
 
 .md-typeset h1 {
-	font-weight: 500;
+	font-weight: 600;
 	margin: 0;
 	font-size: 2.5em;
 }
@@ -48,7 +49,7 @@
 }
 
 .md-typeset h3 {
-	font-weight: 600;
+	font-weight: 400;
 }
 
 /* Intro section styling */

@@ -146,12 +146,6 @@ The contents of this `#!python iframe` is handled entirely by traditional Django
 
 Compatible with sync or async [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/).
 
-!!! Warning "Pitfall"
-
-    When using this component, ReactPy automatically exposes a URL to your view. If your view contains sensitive information, you must ensure only authorized users can access this view.
-
-    This can be done via directly writing conditionals into your view, or by using [Django's `user_passes_test`](https://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test).
-
 === "components.py"
 
     ```python
@@ -334,9 +328,14 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
 Allows you to defer loading JavaScript until a component begins rendering. This JavaScript must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).
 
+<!--
+TODO: This is no longer true since we don't insert elements on the page via JSON Patch anymore.
+However, we may go back to diffing at some point in the future.
+
 !!! warning "Pitfall"
 
-    Be mindful of load order! If your JavaScript relies on the component existing on the page, you must place `django_js` at the **bottom** of your component.
+Be mindful of load order! If your JavaScript relies on the component existing on the page, you must place `django_js` at the **bottom** of your component.
+ -->
 
 === "components.py"
 

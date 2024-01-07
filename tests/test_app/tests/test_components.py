@@ -20,6 +20,9 @@ CLICK_DELAY = 250 if strtobool(GITHUB_ACTIONS) else 25  # Delay in miliseconds.
 
 
 class ComponentTests(ChannelsLiveServerTestCase):
+    from django.db import DEFAULT_DB_ALIAS
+    from reactpy_django import config
+
     databases = {"default"}
 
     @classmethod
@@ -59,6 +62,8 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
+        from reactpy_django import config
+
         # Close the Playwright browser
         cls.playwright.stop()
 
@@ -70,7 +75,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
         cls._server_process.terminate()
         cls._server_process.join()
         cls._live_server_modified_settings.disable()
-        for db_name in {"default", "reactpy"}:
+        for db_name in {"default", config.REACTPY_DATABASE}:
             call_command(
                 "flush",
                 verbosity=0,
@@ -150,6 +155,24 @@ class ComponentTests(ChannelsLiveServerTestCase):
             timeout=1,
         )
         self.page.wait_for_selector("#authorized-user")
+
+    def test_unauthorized_user_test(self):
+        self.assertRaises(
+            TimeoutError,
+            self.page.wait_for_selector,
+            "#unauthorized-user-test",
+            timeout=1,
+        )
+        self.page.wait_for_selector("#unauthorized-user-test-fallback")
+
+    def test_authorized_user_test(self):
+        self.assertRaises(
+            TimeoutError,
+            self.page.wait_for_selector,
+            "#authorized-user-test-fallback",
+            timeout=1,
+        )
+        self.page.wait_for_selector("#authorized-user-test")
 
     def test_relational_query(self):
         self.page.locator("#relational-query[data-success=true]").wait_for()
@@ -368,10 +391,13 @@ class ComponentTests(ChannelsLiveServerTestCase):
             string = new_page.locator("#prerender_string")
             vdom = new_page.locator("#prerender_vdom")
             component = new_page.locator("#prerender_component")
+            use_user_http = new_page.locator("#use-user-http[data-success=True]")
+            use_user_ws = new_page.locator("#use-user-ws[data-success=true]")
 
             string.wait_for()
             vdom.wait_for()
             component.wait_for()
+            use_user_http.wait_for()
 
             # Check if the prerender occurred
             self.assertEqual(
@@ -390,6 +416,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
             self.assertEqual(
                 component.all_inner_texts(), ["prerender_component: Fully Rendered"]
             )
+            use_user_ws.wait_for()
         finally:
             new_page.close()
 
@@ -423,5 +450,106 @@ class ComponentTests(ChannelsLiveServerTestCase):
             broken_component = new_page.locator("#view_to_iframe_not_registered pre")
             broken_component.wait_for()
             self.assertIn("ViewNotRegisteredError:", broken_component.text_content())
+
+            # DecoratorParamError
+            broken_component = new_page.locator("#incorrect_user_passes_test_decorator")
+            broken_component.wait_for()
+            self.assertIn("DecoratorParamError:", broken_component.text_content())
         finally:
             new_page.close()
+
+    def test_use_user_data(self):
+        text_input = self.page.wait_for_selector("#use-user-data input")
+        login_1 = self.page.wait_for_selector("#use-user-data .login-1")
+        login_2 = self.page.wait_for_selector("#use-user-data .login-2")
+        logout = self.page.wait_for_selector("#use-user-data .logout")
+        clear = self.page.wait_for_selector("#use-user-data .clear")
+
+        # Test AnonymousUser data
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=AnonymousUser]"
+        )
+        self.assertIn("Data: None", user_data_div.text_content())
+
+        # Test first user's data
+        login_1.click()
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_1]"
+        )
+        self.assertIn(r"Data: {}", user_data_div.text_content())
+        text_input.type("test", delay=CLICK_DELAY)
+        text_input.press("Enter", delay=CLICK_DELAY)
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data[data-success=true][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_1]"
+        )
+        self.assertIn("Data: {'test': 'test'}", user_data_div.text_content())
+
+        # Test second user's data
+        login_2.click()
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_2]"
+        )
+        self.assertIn(r"Data: {}", user_data_div.text_content())
+        text_input.press("Control+A", delay=CLICK_DELAY)
+        text_input.press("Backspace", delay=CLICK_DELAY)
+        text_input.type("test 2", delay=CLICK_DELAY)
+        text_input.press("Enter", delay=CLICK_DELAY)
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data[data-success=true][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_2]"
+        )
+        self.assertIn("Data: {'test 2': 'test 2'}", user_data_div.text_content())
+
+        # Attempt to clear data
+        clear.click()
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_2]"
+        )
+        self.assertIn(r"Data: {}", user_data_div.text_content())
+
+        # Attempt to logout
+        logout.click()
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=AnonymousUser]"
+        )
+        self.assertIn(r"Data: None", user_data_div.text_content())
+
+    def test_use_user_data_with_default(self):
+        text_input = self.page.wait_for_selector("#use-user-data-with-default input")
+        login_3 = self.page.wait_for_selector("#use-user-data-with-default .login-3")
+        clear = self.page.wait_for_selector("#use-user-data-with-default .clear")
+
+        # Test AnonymousUser data
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=AnonymousUser]"
+        )
+        self.assertIn("Data: None", user_data_div.text_content())
+
+        # Test first user's data
+        login_3.click()
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_3]"
+        )
+        self.assertIn(
+            "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3'}",
+            user_data_div.text_content(),
+        )
+        text_input.type("test", delay=CLICK_DELAY)
+        text_input.press("Enter", delay=CLICK_DELAY)
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_3]"
+        )
+        self.assertIn(
+            "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3', 'test': 'test'}",
+            user_data_div.text_content(),
+        )
+
+        # Attempt to clear data
+        clear.click()
+        sleep(0.25)
+        user_data_div = self.page.wait_for_selector(
+            "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_3]"
+        )
+        self.assertIn(
+            "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3'}",
+            user_data_div.text_content(),
+        )

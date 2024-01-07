@@ -38,3 +38,19 @@ def prerender_component():
         return inner("prerender_component: Prerendered")
 
     return inner("prerender_component: Fully Rendered")
+
+
+@component
+def use_user():
+    user = reactpy_django.hooks.use_user()
+    scope = reactpy_django.hooks.use_scope()
+    success = bool(user)
+
+    if scope.get("type") == "http":
+        return html.div(
+            {"id": "use-user-http", "data-success": success}, f"use_user: {user} (HTTP)"
+        )
+
+    return html.div(
+        {"id": "use-user-ws", "data-success": success}, f"use_user: {user} (WebSocket)"
+    )

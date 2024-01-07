@@ -18,7 +18,7 @@ def todo_list():
 
     def submit_event(event):
         if event["key"] == "Enter":
-            item_mutation.execute(text=event["target"]["value"])
+            item_mutation(text=event["target"]["value"])
 
     # Handle all possible query states
     if item_query.loading:
@@ -38,7 +38,7 @@ def todo_list():
 
     return html.div(
         html.label("Add an item:"),
-        html.input({"type": "text", "onKeyDown": submit_event}),
+        html.input({"type": "text", "on_key_down": submit_event}),
         mutation_status,
         rendered_items,
     )

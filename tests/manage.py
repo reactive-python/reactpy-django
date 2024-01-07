@@ -6,7 +6,8 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
+    # The default settings file, which can be overridden by `--settings <module_path>`
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings_single_db")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

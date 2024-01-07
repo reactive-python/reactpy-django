@@ -2,9 +2,13 @@
 
 <p class="intro" markdown>
 
-Utility functions provide various miscellaneous functionality. These are typically not used, but are available for advanced use cases.
+Utility functions provide various miscellaneous functionality for advanced use cases.
 
 </p>
+
+!!! warning "Pitfall"
+
+    Any utility functions not documented here are not considered part of the public API and may change without notice.
 
 ---
 
@@ -40,7 +44,9 @@ It is mandatory to use this function alongside [`view_to_iframe`](../reference/c
 
 ## Register Component
 
-This function is used manually register a root component with ReactPy.
+This function is used register a root component with ReactPy.
+
+Typically, this function is automatically called on all components contained within Django templates.
 
 === "apps.py"
 
