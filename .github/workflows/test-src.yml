@@ -18,9 +18,6 @@ jobs:
                 python-version: ["3.9", "3.10", "3.11"]
         steps:
             - uses: actions/checkout@v3
-            - uses: actions/setup-node@v3
-              with:
-                  node-version: "20.x"
             - name: Use Python ${{ matrix.python-version }}
               uses: actions/setup-python@v4
               with:
@@ -29,6 +26,4 @@ jobs:
               run: pip install -r requirements/test-run.txt
             - name: Run Tests
               run: |
-                  npm install -g npm@latest
-                  npm --version
                   nox -s test
