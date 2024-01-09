@@ -20,7 +20,6 @@ If you plan to make code changes to this repository, you will need to install th
 
 -   [Python 3.9+](https://www.python.org/downloads/)
 -   [Git](https://git-scm.com/downloads)
--   [NPM](https://docs.npmjs.com/try-the-latest-stable-version-of-npm) for installing and managing Javascript
 
 Once done, you should clone this repository:
 
