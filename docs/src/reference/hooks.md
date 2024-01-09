@@ -386,7 +386,7 @@ Shortcut that returns the browser's current `#!python Location`.
     | --- | --- |
     | `#!python Location` | An object containing the current URL's `#!python pathname` and `#!python search` query. |
 
-## Use Origin
+### `#!python use_origin()`
 
 Shortcut that returns the WebSocket or HTTP connection's `#!python origin`.
 
