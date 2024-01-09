@@ -1,39 +1,19 @@
-from __future__ import print_function
+from __future__ import annotations, print_function
 
-import pipes
-import shutil
-import subprocess
 import sys
 import traceback
 from distutils import log
-from logging import StreamHandler, getLogger
 from pathlib import Path
 
+from nodejs import npm
 from setuptools import find_namespace_packages, setup
 from setuptools.command.develop import develop
 from setuptools.command.sdist import sdist
 
-if sys.platform == "win32":
-    from subprocess import list2cmdline
-else:
-
-    def list2cmdline(cmd_list):
-        return " ".join(map(pipes.quote, cmd_list))
-
-
-log = getLogger()  # noqa: F811
-log.addHandler(StreamHandler(sys.stdout))
-
-
 # -----------------------------------------------------------------------------
 # Basic Constants
 # -----------------------------------------------------------------------------
-
-
-# the name of the project
 name = "reactpy_django"
-
-# basic paths used to gather files
 root_dir = Path(__file__).parent
 src_dir = root_dir / "src"
 package_dir = src_dir / name
@@ -42,8 +22,6 @@ package_dir = src_dir / name
 # -----------------------------------------------------------------------------
 # Package Definition
 # -----------------------------------------------------------------------------
-
-
 package = {
     "name": name,
     "python_requires": ">=3.9",
@@ -84,8 +62,6 @@ package = {
 # -----------------------------------------------------------------------------
 # Library Version
 # -----------------------------------------------------------------------------
-
-
 for line in (package_dir / "__init__.py").read_text().split("\n"):
     if line.startswith("__version__ = "):
         package["version"] = eval(line.split("=", 1)[1])
@@ -98,9 +74,7 @@ else:
 # -----------------------------------------------------------------------------
 # Requirements
 # -----------------------------------------------------------------------------
-
-
-requirements = []
+requirements: list[str] = []
 with (root_dir / "requirements" / "pkg-deps.txt").open() as f:
     requirements.extend(line for line in map(str.strip, f) if not line.startswith("#"))
 package["install_requires"] = requirements
@@ -109,8 +83,6 @@ package["install_requires"] = requirements
 # -----------------------------------------------------------------------------
 # Library Description
 # -----------------------------------------------------------------------------
-
-
 with (root_dir / "README.md").open() as f:
     long_description = f.read()
 
@@ -121,44 +93,24 @@ package["long_description_content_type"] = "text/markdown"
 # ----------------------------------------------------------------------------
 # Build Javascript
 # ----------------------------------------------------------------------------
-
-
-def build_javascript_first(cls):
-    class Command(cls):
+def build_javascript_first(build_cls: type):
+    class Command(build_cls):
         def run(self):
             js_dir = str(src_dir / "js")
-            npm = shutil.which("npm")  # this is required on windows
-            if npm is None:
-                raise RuntimeError("NPM is not installed.")
-
-            log.info("Updating NPM...")
-            try:
-                args_list = [npm, "install", "-g", "npm@latest"]
-                log.info(f"> {list2cmdline(args_list)}")
-                subprocess.run(args_list, cwd=js_dir, check=True)
-            except Exception:
-                log.error(traceback.format_exc())
-                log.error("Failed to update NPM, continuing anyway...")
 
             log.info("Installing Javascript...")
-            try:
-                args_list = [npm, "install"]
-                log.info(f"> {list2cmdline(args_list)}")
-                subprocess.run(args_list, cwd=js_dir, check=True)
-            except Exception:
+            result = npm.call(["install"], cwd=js_dir)
+            if result != 0:
                 log.error(traceback.format_exc())
                 log.error("Failed to install Javascript")
-                raise
+                raise RuntimeError("Failed to install Javascript")
 
             log.info("Building Javascript...")
-            try:
-                args_list = [npm, "run", "build"]
-                log.info(f"> {list2cmdline(args_list)}")
-                subprocess.run(args_list, cwd=js_dir, check=True)
-            except Exception:
+            result = npm.call(["run", "build"], cwd=js_dir)
+            if result != 0:
                 log.error(traceback.format_exc())
                 log.error("Failed to build Javascript")
-                raise
+                raise RuntimeError("Failed to build Javascript")
 
             log.info("Successfully built Javascript")
             super().run()
@@ -182,9 +134,7 @@ else:
 
 
 # -----------------------------------------------------------------------------
-# Install It
+# Installation
 # -----------------------------------------------------------------------------
-
-
 if __name__ == "__main__":
     setup(**package)
