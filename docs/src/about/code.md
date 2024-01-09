@@ -20,7 +20,6 @@ If you plan to make code changes to this repository, you will need to install th
 
 -   [Python 3.9+](https://www.python.org/downloads/)
 -   [Git](https://git-scm.com/downloads)
--   [NPM](https://docs.npmjs.com/try-the-latest-stable-version-of-npm) for installing and managing Javascript
 
 Once done, you should clone this repository:
 
@@ -29,33 +28,20 @@ git clone https://github.com/reactive-python/reactpy-django.git
 cd reactpy-django
 ```
 
-Then, by running the command below you can:
-
--   Install an editable version of the Python code
--   Download, build, and install Javascript dependencies
+Then, by running the command below you can install the dependencies needed to run the ReactPy Django development environment.
 
 ```bash linenums="0"
-pip install -e . -r requirements.txt --verbose --upgrade
+pip install -r requirements.txt --upgrade --verbose
 ```
 
 !!! warning "Pitfall"
 
-    Some of our development dependencies require a C++ compiler, which is not installed by default on Windows.
+    Some of our development dependencies require a C++ compiler, which is not installed by default on Windows. If you receive errors related to this during installation, follow the instructions in your console errors.
 
-    If you receive errors related to this during installation, follow the instructions in your console errors.
+    Additionally, be aware that ReactPy Django's JavaScript bundle is built within the following scenarios:
 
-Finally, to verify that everything is working properly, you can manually run the test web server.
-
-```bash linenums="0"
-cd tests
-python manage.py runserver
-```
-
-Navigate to [`http://127.0.0.1:8000`](http://127.0.0.1:8000) to see if the tests are rendering correctly.
-
-## Creating a pull request
-
-{% include-markdown "../../includes/pr.md" %}
+    1. When `pip install` is run on the `reactpy-django` package.
+    2. Every time `python manage.py ...` or `nox ...` is run
 
 ## Running the full test suite
 
@@ -92,3 +78,7 @@ If you want to manually run the Django test application, you can use the followi
 cd tests
 python manage.py runserver
 ```
+
+## Creating a pull request
+
+{% include-markdown "../../includes/pr.md" %}
