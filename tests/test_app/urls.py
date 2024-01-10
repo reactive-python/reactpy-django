@@ -29,6 +29,7 @@ urlpatterns = [
     path("errors/", views.errors_template),
     path("", include("test_app.prerender.urls")),
     path("", include("test_app.performance.urls")),
+    path("", include("test_app.router.urls")),
     path("reactpy/", include("reactpy_django.http.urls")),
     path("admin/", admin.site.urls),
 ]

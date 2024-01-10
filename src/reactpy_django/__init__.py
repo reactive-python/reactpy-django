@@ -2,7 +2,7 @@ import contextlib
 
 import nest_asyncio
 
-from reactpy_django import checks, components, decorators, hooks, types, utils
+from reactpy_django import checks, components, decorators, hooks, router, types, utils
 from reactpy_django.websocket.paths import (
     REACTPY_WEBSOCKET_PATH,
     REACTPY_WEBSOCKET_ROUTE,
@@ -18,6 +18,7 @@ __all__ = [
     "types",
     "utils",
     "checks",
+    "router",
 ]
 
 # Fixes bugs with REACTPY_BACKHAUL_THREAD + built-in asyncio event loops.

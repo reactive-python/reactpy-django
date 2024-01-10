@@ -39,10 +39,17 @@ export function mountComponent(
 		}
 	}
 
+	// Embed the initial HTTP path into the WebSocket URL
+	let componentUrl = new URL(`${wsOrigin}/${urlPrefix}/${componentPath}`);
+	componentUrl.searchParams.append("http_pathname", window.location.pathname);
+	if (window.location.search) {
+		componentUrl.searchParams.append("http_search", window.location.search);
+	}
+
 	// Configure a new ReactPy client
 	const client = new ReactPyDjangoClient({
 		urls: {
-			componentUrl: `${wsOrigin}/${urlPrefix}/${componentPath}`,
+			componentUrl: componentUrl,
 			query: document.location.search,
 			jsModules: `${httpOrigin}/${jsModulesPath}`,
 		},

@@ -366,9 +366,7 @@ Shortcut that returns the WebSocket or HTTP connection's [scope](https://channel
 
 ### `#!python use_location()`
 
-Shortcut that returns the WebSocket or HTTP connection's URL `#!python path`.
-
-You can expect this hook to provide strings such as `/reactpy/my_path`.
+Shortcut that returns the browser's current `#!python Location`.
 
 === "components.py"
 
@@ -387,14 +385,6 @@ You can expect this hook to provide strings such as `/reactpy/my_path`.
     | Type | Description |
     | --- | --- |
     | `#!python Location` | An object containing the current URL's `#!python pathname` and `#!python search` query. |
-
-??? info "This hook's behavior will be changed in a future update"
-
-    This hook will be updated to return the browser's currently active HTTP path. This change will come in alongside ReactPy URL routing support.
-
-    Check out [reactive-python/reactpy-django#147](https://github.com/reactive-python/reactpy-django/issues/147) for more information.
-
----
 
 ### `#!python use_origin()`
 

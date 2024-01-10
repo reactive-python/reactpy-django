@@ -553,3 +553,50 @@ class ComponentTests(ChannelsLiveServerTestCase):
             "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3'}",
             user_data_div.text_content(),
         )
+
+    def test_url_router(self):
+        new_page = self.browser.new_page()
+        try:
+            new_page.goto(f"{self.live_server_url}/router/")
+            path = new_page.wait_for_selector("#router-path")
+            self.assertIn("/router/", path.get_attribute("data-path"))
+
+            new_page.goto(f"{self.live_server_url}/router/any/123/")
+            path = new_page.wait_for_selector("#router-path")
+            self.assertIn("/router/any/123/", path.get_attribute("data-path"))
+
+            new_page.goto(f"{self.live_server_url}/router/integer/123/")
+            path = new_page.wait_for_selector("#router-path")
+            self.assertIn("/router/integer/123/", path.get_attribute("data-path"))
+
+            new_page.goto(f"{self.live_server_url}/router/path/abc/123/")
+            path = new_page.wait_for_selector("#router-path")
+            self.assertIn("/router/path/abc/123/", path.get_attribute("data-path"))
+
+            new_page.goto(f"{self.live_server_url}/router/slug/abc-123/")
+            path = new_page.wait_for_selector("#router-path")
+            self.assertIn("/router/slug/abc-123/", path.get_attribute("data-path"))
+
+            new_page.goto(f"{self.live_server_url}/router/string/abc/")
+            path = new_page.wait_for_selector("#router-path")
+            self.assertIn("/router/string/abc/", path.get_attribute("data-path"))
+
+            new_page.goto(
+                f"{self.live_server_url}/router/uuid/123e4567-e89b-12d3-a456-426614174000/"
+            )
+            path = new_page.wait_for_selector("#router-path")
+            self.assertIn(
+                "/router/uuid/123e4567-e89b-12d3-a456-426614174000/",
+                path.get_attribute("data-path"),
+            )
+
+            new_page.goto(f"{self.live_server_url}/router/abc/")
+            path = new_page.wait_for_selector("#router-path")
+            self.assertIn("/router/abc/", path.get_attribute("data-path"))
+
+            new_page.goto(f"{self.live_server_url}/router/two/123/abc/")
+            path = new_page.wait_for_selector("#router-path")
+            self.assertIn("/router/two/123/abc/", path.get_attribute("data-path"))
+
+        finally:
+            new_page.close()
