@@ -1,5 +1,5 @@
 from reactpy import component, html, use_location
-from reactpy_django.router.components import django_router
+from reactpy_django.router import django_router
 from reactpy_router import route, use_params, use_query
 
 
@@ -19,7 +19,7 @@ def main():
 
     route_info = html._(
         html.div(
-            {"class_name": "router-path", "data-path": location.pathname},
+            {"id": "router-path", "data-path": location.pathname},
             f"Path Name: {location.pathname}",
         ),
         html.div(f"Query String: {location.search}"),
