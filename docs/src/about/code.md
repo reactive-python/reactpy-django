@@ -28,7 +28,7 @@ git clone https://github.com/reactive-python/reactpy-django.git
 cd reactpy-django
 ```
 
-Then, by running the command below you can install the dependencies needed to run the ReactPy Django development environment.
+Then, by running the command below you can install the dependencies needed to run the ReactPy-Django development environment.
 
 ```bash linenums="0"
 pip install -r requirements.txt --upgrade --verbose
@@ -38,7 +38,7 @@ pip install -r requirements.txt --upgrade --verbose
 
     Some of our development dependencies require a C++ compiler, which is not installed by default on Windows. If you receive errors related to this during installation, follow the instructions in your console errors.
 
-    Additionally, be aware that ReactPy Django's JavaScript bundle is built within the following scenarios:
+    Additionally, be aware that ReactPy-Django's JavaScript bundle is built within the following scenarios:
 
     1. When `pip install` is run on the `reactpy-django` package.
     2. Every time `python manage.py ...` or `nox ...` is run

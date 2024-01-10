@@ -217,7 +217,7 @@ Using the following categories, list your changes in this order:
 
 ### Changed
 
--   `django-reactpy` database entries are no longer cleaned during Django application startup. Instead, it will occur on webpage loads if `REACTPY_RECONNECT_MAX` seconds has elapsed since the last cleaning.
+-   `reactpy-django` database entries are no longer cleaned during Django application startup. Instead, it will occur on webpage loads if `REACTPY_RECONNECT_MAX` seconds has elapsed since the last cleaning.
 
 ## [3.0.0-reactpy] - 2023-03-30
 
