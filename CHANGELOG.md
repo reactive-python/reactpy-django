@@ -36,6 +36,8 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
+-   Built-in Single Page Application (SPA) support!
+    -   `reactpy_django.router.django_router` can be used to render your Django application as a SPA.
 -   SEO compatible rendering!
     -   `settings.py:REACTPY_PRERENDER` can be set to `True` to make components pre-render by default.
     -   Or, you can enable it on individual components via the template tag: `{% component "..." prerender="True" %}`.
