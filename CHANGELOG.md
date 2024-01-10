@@ -34,6 +34,10 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+-   Nothing (yet)!
+
+## [3.6.0] - 2024-01-10
+
 ### Added
 
 -   Built-in Single Page Application (SPA) support!
@@ -213,7 +217,7 @@ Using the following categories, list your changes in this order:
 
 ### Changed
 
--   `django-reactpy` database entries are no longer cleaned during Django application startup. Instead, it will occur on webpage loads if `REACTPY_RECONNECT_MAX` seconds has elapsed since the last cleaning.
+-   `reactpy-django` database entries are no longer cleaned during Django application startup. Instead, it will occur on webpage loads if `REACTPY_RECONNECT_MAX` seconds has elapsed since the last cleaning.
 
 ## [3.0.0-reactpy] - 2023-03-30
 
@@ -433,7 +437,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.5.1...HEAD
+[unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.6.0...HEAD
+[3.6.0]: https://github.com/reactive-python/reactpy-django/compare/3.5.1...3.6.0
 [3.5.1]: https://github.com/reactive-python/reactpy-django/compare/3.5.0...3.5.1
 [3.5.0]: https://github.com/reactive-python/reactpy-django/compare/3.4.0...3.5.0
 [3.4.0]: https://github.com/reactive-python/reactpy-django/compare/3.3.2...3.4.0
