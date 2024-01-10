@@ -14,7 +14,9 @@ A variant of [`reactpy-router`](https://github.com/reactive-python/reactpy-route
 
 ---
 
-## `#!python django_router(*routes)`
+## Django Router
+
+URL router that enables the ability to conditionally render other components based on the client's current URL `#!python path`.
 
 === "components.py"
 

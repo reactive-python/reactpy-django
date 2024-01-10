@@ -18,7 +18,7 @@ Prefabricated hooks can be used within your `components.py` to help simplify dev
 
 ---
 
-### `#!python use_query(query, *args, **kwargs)`
+### Use Query
 
 Execute functions in the background and return the result, typically to [read](https://www.sumologic.com/glossary/crud/) data from the Django ORM.
 
@@ -164,7 +164,7 @@ Query functions can be sync or async.
 
 ---
 
-### `#!python use_mutation(mutation, refetch=None)`
+### Use Mutation
 
 Modify data in the background, typically to [create/update/delete](https://www.sumologic.com/glossary/crud/) data from the Django ORM.
 
@@ -273,7 +273,7 @@ Mutation functions can be sync or async.
 
 ---
 
-### `#!python use_user_data(default_data=None, save_default_data=False)`
+### Use User Data
 
 Store or retrieve data (`#!python dict`) specific to the connection's `#!python User`. This data is stored in the `#!python REACTPY_DATABASE`.
 
@@ -316,7 +316,7 @@ Store or retrieve data (`#!python dict`) specific to the connection's `#!python 
 
 ---
 
-### `#!python use_connection()`
+### Use Connection
 
 Returns the active connection, which is either a Django [WebSocket](https://channels.readthedocs.io/en/stable/topics/consumers.html#asyncjsonwebsocketconsumer) or a [HTTP Request](https://docs.djangoproject.com/en/4.2/ref/request-response/#django.http.HttpRequest).
 
@@ -340,7 +340,7 @@ Returns the active connection, which is either a Django [WebSocket](https://chan
 
 ---
 
-### `#!python use_scope()`
+### Use Scope
 
 Shortcut that returns the WebSocket or HTTP connection's [scope](https://channels.readthedocs.io/en/stable/topics/consumers.html#scope).
 
@@ -364,7 +364,7 @@ Shortcut that returns the WebSocket or HTTP connection's [scope](https://channel
 
 ---
 
-### `#!python use_location()`
+### Use Location
 
 Shortcut that returns the browser's current `#!python Location`.
 
@@ -386,7 +386,7 @@ Shortcut that returns the browser's current `#!python Location`.
     | --- | --- |
     | `#!python Location` | An object containing the current URL's `#!python pathname` and `#!python search` query. |
 
-### `#!python use_origin()`
+### Use Origin
 
 Shortcut that returns the WebSocket or HTTP connection's `#!python origin`.
 
@@ -412,7 +412,7 @@ You can expect this hook to provide strings such as `http://example.com`.
 
 ---
 
-### `#!python use_user()`
+### Use User
 
 Shortcut that returns the WebSocket or HTTP connection's `#!python User`.
 
