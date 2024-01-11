@@ -8,14 +8,21 @@ from warnings import warn
 
 from django.contrib.staticfiles.finders import find
 from django.core.cache import caches
+from django.forms import Form
 from django.http import HttpRequest
 from django.urls import reverse
 from django.views import View
-from reactpy import component, hooks, html, utils
+from reactpy import component, event, hooks, html
 from reactpy.types import Key, VdomDict
+from reactpy.utils import del_html_head_body_transform, html_to_vdom
 
 from reactpy_django.exceptions import ViewNotRegisteredError
-from reactpy_django.utils import generate_obj_name, import_module, render_view
+from reactpy_django.utils import (
+    generate_obj_name,
+    import_module,
+    render_form,
+    render_view,
+)
 
 
 # Type hints for:
@@ -187,9 +194,9 @@ def _view_to_component(
         # Render the view
         response = await render_view(resolved_view, _request, _args, _kwargs)
         set_converted_view(
-            utils.html_to_vdom(
+            html_to_vdom(
                 response.content.decode("utf-8").strip(),
-                utils.del_html_head_body_transform,
+                del_html_head_body_transform,
                 *transforms,
                 strict=strict_parsing,
             )
@@ -246,6 +253,61 @@ def _view_to_iframe(
             "loading": "lazy",
         }
         | extra_props
+    )
+
+
+@component
+def django_form(
+    form: Form,
+    /,
+    top_children: Sequence | None = None,
+    bottom_children: Sequence | None = None,
+    template_name: str | None = None,
+    context: dict | None = None,
+):
+    rendered_form, set_rendered_form = hooks.use_state("")
+    render_needed, set_render_needed = hooks.use_state(True)
+    request, set_request = hooks.use_state(HttpRequest())
+
+    @hooks.use_effect
+    async def async_render():
+        """Render the form in an async hook to avoid blocking the main thread."""
+        if render_needed:
+            if not request.method:
+                request.method = "GET"
+
+            set_rendered_form(
+                await render_form(
+                    form,
+                    template_name=template_name,
+                    context=context,
+                    request=request,
+                )
+            )
+            set_render_needed(False)
+
+    @event(prevent_default=True)
+    async def on_submit(event):
+        """Event handler attached to the rendered form to intercept submission."""
+        # Create a synthetic request object.
+        request_obj = HttpRequest()
+        request_obj.method = "POST"
+        # FIXME: Need to figure out how to get the form data from the event.
+        setattr(request_obj, "_body", event["target"])
+        set_request(request_obj)
+
+        # Queue a re-render of the form
+        set_render_needed(True)
+
+    return (
+        html.form(
+            {"on_submit": on_submit},
+            *top_children or "",
+            html_to_vdom(rendered_form),
+            *bottom_children or "",
+        )
+        if rendered_form
+        else None
     )
 
 
