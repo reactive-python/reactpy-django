@@ -80,7 +80,7 @@ async def render_form(
     template_name: str | None,
     context: dict | None,
     request: HttpRequest | None = None,
-):
+) -> str:
     """Renders a Django form asynchronously."""
     return await database_sync_to_async(form.renderer.render)(
         template_name=template_name, context=context or {}, request=request

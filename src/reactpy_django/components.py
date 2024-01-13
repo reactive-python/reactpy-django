@@ -13,8 +13,8 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.views import View
 from reactpy import component, event, hooks, html
-from reactpy.types import Key, VdomDict
-from reactpy.utils import del_html_head_body_transform, html_to_vdom
+from reactpy.types import ComponentType, Key, VdomDict
+from reactpy.utils import _ModelTransform, del_html_head_body_transform, html_to_vdom
 
 from reactpy_django.exceptions import ViewNotRegisteredError
 from reactpy_django.utils import (
@@ -55,6 +55,7 @@ def view_to_component(
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
+    loading_placeholder: ComponentType | VdomDict | str | None = None,
 ) -> Any | Callable[[Callable], Any]:
     """Converts a Django view to a ReactPy component.
 
@@ -89,6 +90,7 @@ def view_to_component(
                 args=args,
                 kwargs=kwargs,
                 key=key,
+                loading_placeholder=loading_placeholder,
             )
 
         return constructor
@@ -129,6 +131,12 @@ def view_to_iframe(
     return constructor
 
 
+@component
+def django_form():
+    """TODO: Write this definition."""
+    ...
+
+
 def django_css(static_path: str, key: Key | None = None):
     """Fetches a CSS static file for use within ReactPy. This allows for deferred CSS loading.
 
@@ -159,11 +167,12 @@ def django_js(static_path: str, key: Key | None = None):
 def _view_to_component(
     view: Callable | View | str,
     compatibility: bool,
-    transforms: Sequence[Callable[[VdomDict], Any]],
+    transforms: Sequence[_ModelTransform],
     strict_parsing: bool,
     request: HttpRequest | None,
     args: Sequence | None,
     kwargs: dict | None,
+    loading_placeholder: ComponentType | VdomDict | str | None = None,
 ):
     """The actual component. Used to prevent pollution of acceptable kwargs keys."""
     converted_view, set_converted_view = hooks.use_state(
@@ -214,7 +223,7 @@ def _view_to_component(
         return view_to_iframe(resolved_view)(*_args, **_kwargs)
 
     # Return the view if it's been rendered via the `async_render` hook
-    return converted_view
+    return converted_view or loading_placeholder
 
 
 @component
@@ -257,15 +266,20 @@ def _view_to_iframe(
 
 
 @component
-def django_form(
+def _django_form(
     form: Form,
     /,
-    top_children: Sequence | None = None,
-    bottom_children: Sequence | None = None,
+    top_children: Sequence = (),
+    bottom_children: Sequence = (),
     template_name: str | None = None,
     context: dict | None = None,
+    transforms: Sequence[_ModelTransform] = (),
+    strict_parsing: bool = True,
+    loading_placeholder: ComponentType | VdomDict | str | None = None,
 ):
-    rendered_form, set_rendered_form = hooks.use_state("")
+    convertered_form, set_converted_form = hooks.use_state(
+        cast(Union[VdomDict, None], None)
+    )
     render_needed, set_render_needed = hooks.use_state(True)
     request, set_request = hooks.use_state(HttpRequest())
 
@@ -275,13 +289,19 @@ def django_form(
         if render_needed:
             if not request.method:
                 request.method = "GET"
-
-            set_rendered_form(
-                await render_form(
-                    form,
-                    template_name=template_name,
-                    context=context,
-                    request=request,
+            # TODO: Maybe I need to use FormView here instead? At that point may as well also use view_to_component.
+            form_html = await render_form(
+                form,
+                template_name=template_name,
+                context=context,
+                request=request,
+            )
+            set_converted_form(
+                html.form(
+                    {"on_submit": on_submit},
+                    *top_children or "",
+                    html_to_vdom(form_html, *transforms, strict=strict_parsing),
+                    *bottom_children or "",
                 )
             )
             set_render_needed(False)
@@ -299,16 +319,7 @@ def django_form(
         # Queue a re-render of the form
         set_render_needed(True)
 
-    return (
-        html.form(
-            {"on_submit": on_submit},
-            *top_children or "",
-            html_to_vdom(rendered_form),
-            *bottom_children or "",
-        )
-        if rendered_form
-        else None
-    )
+    return convertered_form or loading_placeholder
 
 
 @component
