@@ -304,6 +304,8 @@ def _django_form(
                     *bottom_children or "",
                 )
             )
+            # TODO: When ReactPy starts serializing the `name` field of input elements,
+            # we will need to make sure all inputs have a name attribute here
             set_render_needed(False)
 
     @event(prevent_default=True)

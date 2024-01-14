@@ -24,7 +24,7 @@ from django.utils import timezone
 from django.utils.encoding import smart_str
 from django.views import View
 from reactpy.core.layout import Layout
-from reactpy.types import ComponentConstructor
+from reactpy.types import ComponentConstructor, VdomDict
 
 from reactpy_django.exceptions import (
     ComponentDoesNotExistError,
@@ -406,3 +406,32 @@ def get_user_pk(user, serialize=False):
     """Returns the primary key value for a user model instance."""
     pk = getattr(user, user._meta.pk.name)
     return pickle.dumps(pk) if serialize else pk
+
+
+def combine_event_and_form(target_elements: list[dict], form: Form) -> dict[str, str]:
+    """
+    Serialized DOM elements currently do not send over their `name` attribute. They only contain
+    `tagName` and `value` attributes.
+
+    However, since DOM elements are rendered in order, so we can reconstruct the form data by
+    generating a list of `name` attribute from the form and matching them with the `value` attributes
+    from the serialized DOM elements.
+
+    FIXME: https://github.com/reactive-python/reactpy/issues/1186
+    FIXME: https://github.com/reactive-python/reactpy/issues/1188
+    """
+    # TODO: FieldSet breaks this logic, will need to find a workaround
+    # Generate a list of names from the form
+    input_field_names = [field.name for field in form]
+
+    # Generate a list of values from the serialized DOM
+    input_field_values = [element["value"] for element in target_elements]
+
+    # Verify if something went wrong
+    if len(input_field_names) != len(input_field_values):
+        raise ValueError(
+            "The number of input fields in the form does not match the number of values in the serialized DOM elements."
+        )
+
+    # Combine the two lists into a dictionary
+    return dict(zip(input_field_names, input_field_values))

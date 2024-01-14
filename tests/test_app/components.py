@@ -8,7 +8,7 @@ from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from django.http import HttpRequest
 from django.shortcuts import render
-from reactpy import component, hooks, html, web
+from reactpy import component, event, hooks, html, web
 from reactpy_django.components import view_to_component, view_to_iframe
 from reactpy_django.types import QueryOptions
 
@@ -808,4 +808,31 @@ def use_user_data_with_default():
                 {"on_key_press": on_submit, "placeholder": "Type here to add data"}
             )
         ),
+    )
+
+
+@component
+def example():
+    @event(prevent_default=True)
+    def on_submit(event):
+        ...
+
+    return html.form(
+        {"on_submit": on_submit},
+        html.input({"type": "text"}),
+        html.div(
+            html.input({"type": "text"}),
+        ),
+        html.input({"type": "text", "disabled": True}),
+        html.textarea("Hello World"),
+        html.select(
+            html.option("Hello"),
+            html.option("World"),
+        ),
+        html.input({"type": "checkbox"}),
+        html.fieldset(
+            html.input({"type": "radio", "name": "radio"}),
+            html.input({"type": "radio", "name": "radio"}),
+        ),
+        html.button({"type": "submit"}, "Submit"),
     )
