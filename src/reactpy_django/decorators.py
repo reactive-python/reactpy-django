@@ -32,7 +32,7 @@ def auth_required(
 
     warn(
         "auth_required is deprecated and will be removed in the next major version. "
-        "An equivalent to this decorator's default is @user_passes_test('is_active').",
+        "An equivalent to this decorator's default is @user_passes_test(lambda user: user.is_active).",
         DeprecationWarning,
     )
 
