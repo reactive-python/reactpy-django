@@ -24,7 +24,7 @@ from django.utils import timezone
 from django.utils.encoding import smart_str
 from django.views import View
 from reactpy.core.layout import Layout
-from reactpy.types import ComponentConstructor, VdomDict
+from reactpy.types import ComponentConstructor
 
 from reactpy_django.exceptions import (
     ComponentDoesNotExistError,
