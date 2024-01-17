@@ -1,5 +1,6 @@
-from django.test import TestCase
+import re
 
+from django.test import TestCase
 from reactpy_django.utils import COMMENT_REGEX, COMPONENT_REGEX
 
 
@@ -52,7 +53,7 @@ class RegexTests(TestCase):
         double_component_match = COMPONENT_REGEX.search(
             r'{% component "my.component" %} {% component "my.component" %}'
         )
-        self.assertTrue(double_component_match[0] == r'{% component "my.component" %}')  # type: ignore
+        self.assertTrue(double_component_match[0] == r'{% component "my.component" %}')
 
     def test_comment_regex(self):
         # Real comment matches
@@ -134,3 +135,16 @@ class RegexTests(TestCase):
             ),
             "",
         )
+
+    def test_offline_component_regex(self):
+        regex = re.compile(COMPONENT_REGEX)
+        # Check if "offline_path" group is present and equals to "my_offline_path"
+        search = regex.search(
+            r'{% component "my.component" offline="my_offline_path" %}'
+        )
+        self.assertTrue(search["offline_path"] == '"my_offline_path"')  # type: ignore
+
+        search = regex.search(
+            r'{% component "my.component" arg_1="1" offline="my_offline_path" arg_2="2" %}'
+        )
+        self.assertTrue(search["offline_path"] == '"my_offline_path"')  # type: ignore
