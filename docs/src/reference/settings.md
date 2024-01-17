@@ -88,9 +88,11 @@ Multiprocessing-safe database used by ReactPy, typically for session data.
 
 If configuring this value, it is mandatory to enable our database router like such:
 
-```python linenums="0"
-DATABASE_ROUTERS = ["reactpy_django.database.Router", ...]
-```
+=== "settings.py"
+
+    ```python linenums="0"
+    DATABASE_ROUTERS = ["reactpy_django.database.Router", ...]
+    ```
 
 ---
 
@@ -145,7 +147,7 @@ Configures whether to pre-render your components via HTTP, which enables SEO com
 During pre-rendering, there are some key differences in behavior:
 
 1. Only the component's first render is pre-rendered.
-2. All `#!python connection` related hooks use HTTP.
+2. All [`connection` hooks](https://reactive-python.github.io/reactpy-django/latest/reference/hooks/#connection-hooks) will provide HTTP variants.
 3. The component will be non-interactive until a WebSocket connection is formed.
 
 <!-- TODO: The comment below will become true when ReactPy no longer strips scripts from the DOM -->
