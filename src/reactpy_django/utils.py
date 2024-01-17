@@ -35,7 +35,7 @@ _logger = logging.getLogger(__name__)
 _component_tag = r"(?P<tag>component)"
 _component_path = r"""(?P<path>"[^"'\s]+"|'[^"'\s]+')"""
 _component_offline_kwarg = (
-    r"(\s*offline\s*=\s*" + _component_path.replace(r"<path>", r"<offline_path>") + r")"
+    rf"""(\s*offline\s*=\s*{_component_path.replace(r"<path>", r"<offline_path>")})"""
 )
 _component_generic_kwarg = r"""(\s*.*?)"""
 COMMENT_REGEX = re.compile(r"<!--[\s\S]*?-->")
