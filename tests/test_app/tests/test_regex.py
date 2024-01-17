@@ -29,6 +29,7 @@ class RegexTests(TestCase):
         %}""",  # noqa: W291
             COMPONENT_REGEX,
         )
+        self.assertRegex(r'{% component "my.component" my_object %}', COMPONENT_REGEX)
 
         # Fake component matches
         self.assertNotRegex(r'{% not_a_real_thing "my.component" %}', COMPONENT_REGEX)
@@ -146,5 +147,15 @@ class RegexTests(TestCase):
 
         search = regex.search(
             r'{% component "my.component" arg_1="1" offline="my_offline_path" arg_2="2" %}'
+        )
+        self.assertTrue(search["offline_path"] == '"my_offline_path"')  # type: ignore
+
+        search = regex.search(
+            r'{% component "my.component" offline="my_offline_path" arg_2="2" %}'
+        )
+
+        self.assertTrue(search["offline_path"] == '"my_offline_path"')  # type: ignore
+        search = regex.search(
+            r'{% component "my.component" arg_1="1" offline="my_offline_path" %}'
         )
         self.assertTrue(search["offline_path"] == '"my_offline_path"')  # type: ignore
