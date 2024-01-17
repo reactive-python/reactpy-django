@@ -28,7 +28,8 @@ export class ReactPyDjangoClient
 			onClose: () => {
 				// If offlineElement exists, show it and hide the mountElement/prerenderElement
 				if (this.prerenderElement) {
-					this.prerenderElement.hidden = true;
+					this.prerenderElement.remove();
+					this.prerenderElement = null;
 				}
 				if (this.offlineElement) {
 					this.mountElement.hidden = true;
