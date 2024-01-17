@@ -25,6 +25,23 @@ export class ReactPyDjangoClient
 			onMessage: async ({ data }) =>
 				this.handleIncoming(JSON.parse(data)),
 			...props.reconnectOptions,
+			onClose: () => {
+				// If offlineElement exists, show it and hide the mountElement/prerenderElement
+				if (this.prerenderElement) {
+					this.prerenderElement.hidden = true;
+				}
+				if (this.offlineElement) {
+					this.mountElement.hidden = true;
+					this.offlineElement.hidden = false;
+				}
+			},
+			onOpen: () => {
+				// If offlineElement exists, hide it and show the mountElement
+				if (this.offlineElement) {
+					this.offlineElement.hidden = true;
+					this.mountElement.hidden = false;
+				}
+			},
 		});
 		this.mountElement = props.mountElement;
 		this.prerenderElement = props.prerenderElement;
