@@ -30,6 +30,10 @@ class RegexTests(TestCase):
             COMPONENT_REGEX,
         )
         self.assertRegex(r'{% component "my.component" my_object %}', COMPONENT_REGEX)
+        self.assertRegex(
+            r'{% component "my.component" class="example-cls" x=123 y=456 %}',
+            COMPONENT_REGEX,
+        )
 
         # Fake component matches
         self.assertNotRegex(r'{% not_a_real_thing "my.component" %}', COMPONENT_REGEX)
