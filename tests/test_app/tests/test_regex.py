@@ -34,6 +34,10 @@ class RegexTests(TestCase):
             r'{% component "my.component" class="example-cls" x=123 y=456 %}',
             COMPONENT_REGEX,
         )
+        self.assertRegex(
+            r'{% component "my.component" class = "example-cls" %}',
+            COMPONENT_REGEX,
+        )
 
         # Fake component matches
         self.assertNotRegex(r'{% not_a_real_thing "my.component" %}', COMPONENT_REGEX)
@@ -58,7 +62,7 @@ class RegexTests(TestCase):
         double_component_match = COMPONENT_REGEX.search(
             r'{% component "my.component" %} {% component "my.component" %}'
         )
-        self.assertTrue(double_component_match[0] == r'{% component "my.component" %}')
+        self.assertTrue(double_component_match[0] == r'{% component "my.component" %}')  # type: ignore
 
     def test_comment_regex(self):
         # Real comment matches
