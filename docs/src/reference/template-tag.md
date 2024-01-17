@@ -62,11 +62,13 @@ This template tag can be used to insert any number of ReactPy components onto yo
         {% include "../../python/template-tag-bad-view.py" %}
         ```
 
+    _Note: If you decide to not follow this warning, you will need to use the [`register_component`](../reference/utils.md#register-component) function to manually register your components._
+
 <!--context-end-->
 
 ??? question "Can I render components on a different server (distributed computing)?"
 
-    Yes! By using the `#!python host` keyword argument, you can render components from a completely separate ASGI server.
+    Yes! This is most commonly done through [`settings.py:REACTPY_HOSTS`](../reference/settings.md#reactpy_default_hosts). However, you can use the `#!python host` keyword to render components on a specific ASGI server.
 
     === "my-template.html"
 
