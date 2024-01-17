@@ -12,6 +12,9 @@ export class ReactPyDjangoClient
 {
 	urls: ReactPyUrls;
 	socket: { current?: WebSocket };
+	mountElement: HTMLElement | null = null;
+	prerenderElement: HTMLElement | null = null;
+	offlineElement: HTMLElement | null = null;
 
 	constructor(props: ReactPyDjangoClientProps) {
 		super();
@@ -23,6 +26,9 @@ export class ReactPyDjangoClient
 				this.handleIncoming(JSON.parse(data)),
 			...props.reconnectOptions,
 		});
+		this.mountElement = props.mountElement;
+		this.prerenderElement = props.prerenderElement;
+		this.offlineElement = props.offlineElement;
 	}
 
 	sendMessage(message: any): void {

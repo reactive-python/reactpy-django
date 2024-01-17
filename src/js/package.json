@@ -1,10 +1,7 @@
 {
-	"description": "reactpy-django client",
-	"main": "src/index.ts",
+	"description": "ReactPy-Django Client",
+	"main": "src/index.tsx",
 	"type": "module",
-	"files": [
-		"src/**/*.js"
-	],
 	"scripts": {
 		"build": "rollup --config",
 		"format": "prettier --ignore-path .gitignore --write ."

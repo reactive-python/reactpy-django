@@ -32,14 +32,14 @@ export function createReconnectingWebSocket(props: {
 		};
 		socket.current.onmessage = props.onMessage;
 		socket.current.onclose = () => {
+			if (props.onClose) {
+				props.onClose();
+			}
 			if (!everConnected) {
 				console.info("ReactPy failed to connect!");
 				return;
 			}
 			console.info("ReactPy disconnected!");
-			if (props.onClose) {
-				props.onClose();
-			}
 			if (retries >= maxRetries) {
 				console.info("ReactPy connection max retries exhausted!");
 				return;
