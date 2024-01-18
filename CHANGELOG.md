@@ -34,7 +34,9 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Added
+
+-   An "offline component" can now be displayed when the client disconnects from the server.
 
 ## [3.6.0] - 2024-01-10
 
