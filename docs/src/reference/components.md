@@ -19,13 +19,13 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
 === "components.py"
 
     ```python
-    {% include "../../python/vtc.py" %}
+    {% include "../../examples/python/vtc.py" %}
     ```
 
 === "views.py"
 
     ```python
-    {% include "../../python/hello_world_fbv.py" %}
+    {% include "../../examples/python/hello_world_fbv.py" %}
     ```
 
 ??? example "See Interface"
@@ -61,13 +61,13 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
     === "components.py"
 
         ```python
-        {% include "../../python/vtc-cbv.py" %}
+        {% include "../../examples/python/vtc-cbv.py" %}
         ```
 
     === "views.py"
 
         ```python
-        {% include "../../python/hello_world_cbv.py" %}
+        {% include "../../examples/python/hello_world_cbv.py" %}
         ```
 
 ??? question "How do I provide `#!python request`, `#!python args`, and `#!python kwargs` to a converted view?"
@@ -77,13 +77,13 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
     === "components.py"
 
         ```python
-        {% include "../../python/vtc-args.py" %}
+        {% include "../../examples/python/vtc-args.py" %}
         ```
 
     === "views.py"
 
         ```python
-        {% include "../../python/hello_world_args_kwargs.py" %}
+        {% include "../../examples/python/hello_world_args_kwargs.py" %}
         ```
 
 ??? question "How do I customize this component's behavior?"
@@ -105,13 +105,13 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
     === "components.py"
 
         ```python
-        {% include "../../python/vtc-strict-parsing.py" %}
+        {% include "../../examples/python/vtc-strict-parsing.py" %}
         ```
 
     === "views.py"
 
         ```python
-        {% include "../../python/hello_world_fbv.py" %}
+        {% include "../../examples/python/hello_world_fbv.py" %}
         ```
 
     ---
@@ -127,13 +127,13 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
     === "components.py"
 
         ```python
-        {% include "../../python/vtc-transforms.py" %}
+        {% include "../../examples/python/vtc-transforms.py" %}
         ```
 
     === "views.py"
 
         ```python
-        {% include "../../python/hello_world_fbv_with_id.py" %}
+        {% include "../../examples/python/hello_world_fbv_with_id.py" %}
         ```
 
 ---
@@ -149,19 +149,19 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
 === "components.py"
 
     ```python
-    {% include "../../python/vti.py" %}
+    {% include "../../examples/python/vti.py" %}
     ```
 
 === "views.py"
 
     ```python
-    {% include "../../python/hello_world_fbv.py" %}
+    {% include "../../examples/python/hello_world_fbv.py" %}
     ```
 
 === "apps.py"
 
     ```python
-    {% include "../../python/hello_world_app_config_fbv.py" %}
+    {% include "../../examples/python/hello_world_app_config_fbv.py" %}
     ```
 
 ??? example "See Interface"
@@ -198,19 +198,19 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
     === "components.py"
 
         ```python
-        {% include "../../python/vti-cbv.py" %}
+        {% include "../../examples/python/vti-cbv.py" %}
         ```
 
     === "views.py"
 
         ```python
-        {% include "../../python/hello_world_cbv.py" %}
+        {% include "../../examples/python/hello_world_cbv.py" %}
         ```
 
     === "apps.py"
 
         ```python
-        {% include "../../python/hello_world_app_config_cbv.py" %}
+        {% include "../../examples/python/hello_world_app_config_cbv.py" %}
         ```
 
 ??? question "How do I provide `#!python args` and `#!python kwargs` to a converted view?"
@@ -222,19 +222,19 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
     === "components.py"
 
         ```python
-        {% include "../../python/vti-args.py" %}
+        {% include "../../examples/python/vti-args.py" %}
         ```
 
     === "views.py"
 
         ```python
-        {% include "../../python/hello_world_fbv.py" %}
+        {% include "../../examples/python/hello_world_fbv.py" %}
         ```
 
     === "apps.py"
 
         ```python
-        {% include "../../python/hello_world_app_config_fbv.py" %}
+        {% include "../../examples/python/hello_world_app_config_fbv.py" %}
         ```
 
 ??? question "How do I customize this component's behavior?"
@@ -254,19 +254,19 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
     === "components.py"
 
         ```python
-        {% include "../../python/vti-extra-props.py" %}
+        {% include "../../examples/python/vti-extra-props.py" %}
         ```
 
     === "views.py"
 
         ```python
-        {% include "../../python/hello_world_fbv.py" %}
+        {% include "../../examples/python/hello_world_fbv.py" %}
         ```
 
     === "apps.py"
 
         ```python
-        {% include "../../python/hello_world_app_config_fbv.py" %}
+        {% include "../../examples/python/hello_world_app_config_fbv.py" %}
         ```
 
 ---
@@ -278,7 +278,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 === "components.py"
 
     ```python
-    {% include "../../python/django-css.py" %}
+    {% include "../../examples/python/django-css.py" %}
     ```
 
 ??? example "See Interface"
@@ -303,7 +303,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
     Here's an example on what you should avoid doing for Django static files:
 
     ```python
-    {% include "../../python/django-css-local-link.py" %}
+    {% include "../../examples/python/django-css-local-link.py" %}
     ```
 
 ??? question "How do I load external CSS?"
@@ -313,7 +313,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
     For external CSS, you should use `#!python html.link`.
 
     ```python
-    {% include "../../python/django-css-external-link.py" %}
+    {% include "../../examples/python/django-css-external-link.py" %}
     ```
 
 ??? question "Why not load my CSS in `#!html <head>`?"
@@ -340,7 +340,7 @@ Be mindful of load order! If your JavaScript relies on the component existing on
 === "components.py"
 
     ```python
-    {% include "../../python/django-js.py" %}
+    {% include "../../examples/python/django-js.py" %}
     ```
 
 ??? example "See Interface"
@@ -365,7 +365,7 @@ Be mindful of load order! If your JavaScript relies on the component existing on
     Here's an example on what you should avoid doing for Django static files:
 
     ```python
-    {% include "../../python/django-js-local-script.py" %}
+    {% include "../../examples/python/django-js-local-script.py" %}
     ```
 
 ??? question "How do I load external JS?"
@@ -375,7 +375,7 @@ Be mindful of load order! If your JavaScript relies on the component existing on
     For external JavaScript, you should use `#!python html.script`.
 
     ```python
-    {% include "../../python/django-js-remote-script.py" %}
+    {% include "../../examples/python/django-js-remote-script.py" %}
     ```
 
 ??? question "Why not load my JS in `#!html <head>`?"

@@ -21,7 +21,7 @@ It is mandatory to use this function alongside [`view_to_iframe`](../reference/c
 === "apps.py"
 
     ```python
-    {% include "../../python/hello_world_app_config_fbv.py" %}
+    {% include "../../examples/python/hello_world_app_config_fbv.py" %}
     ```
 
 ??? example "See Interface"
@@ -51,7 +51,7 @@ Typically, this function is automatically called on all components contained wit
 === "apps.py"
 
     ```python
-    {% include "../../python/register-component.py" %}
+    {% include "../../examples/python/register-component.py" %}
     ```
 
 ??? example "See Interface"
@@ -89,13 +89,13 @@ This postprocessor is designed to avoid Django's `#!python SynchronousOnlyExcept
 === "components.py"
 
     ```python
-    {% include "../../python/django-query-postprocessor.py" %}
+    {% include "../../examples/python/django-query-postprocessor.py" %}
     ```
 
 === "models.py"
 
     ```python
-    {% include "../../python/example/models.py" %}
+    {% include "../../examples/python/example/models.py" %}
     ```
 
 ??? example "See Interface"

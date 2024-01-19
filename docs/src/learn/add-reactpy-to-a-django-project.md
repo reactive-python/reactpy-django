@@ -29,7 +29,7 @@ Add `#!python "reactpy_django"` to [`INSTALLED_APPS`](https://docs.djangoproject
 === "settings.py"
 
     ```python
-    {% include "../../python/configure-installed-apps.py" %}
+    {% include "../../examples/python/configure-installed-apps.py" %}
     ```
 
 ??? warning "Enable ASGI and Django Channels (Required)"
@@ -42,13 +42,13 @@ Add `#!python "reactpy_django"` to [`INSTALLED_APPS`](https://docs.djangoproject
     2. Add `#!python "daphne"` to `#!python INSTALLED_APPS`.
 
         ```python linenums="0"
-        {% include "../../python/configure-channels-installed-app.py" %}
+        {% include "../../examples/python/configure-channels-installed-app.py" %}
         ```
 
     3. Set your `#!python ASGI_APPLICATION` variable.
 
         ```python linenums="0"
-        {% include "../../python/configure-channels-asgi-app.py" %}
+        {% include "../../examples/python/configure-channels-asgi-app.py" %}
         ```
 
 ??? info "Configure ReactPy settings (Optional)"
@@ -64,7 +64,7 @@ Add ReactPy HTTP paths to your `#!python urlpatterns` in your [`urls.py`](https:
 === "urls.py"
 
     ```python
-    {% include "../../python/configure-urls.py" %}
+    {% include "../../examples/python/configure-urls.py" %}
     ```
 
 ## Step 4: Configure `asgi.py`
@@ -74,7 +74,7 @@ Register ReactPy's WebSocket using `#!python REACTPY_WEBSOCKET_ROUTE` in your [`
 === "asgi.py"
 
     ```python
-    {% include "../../python/configure-asgi.py" %}
+    {% include "../../examples/python/configure-asgi.py" %}
     ```
 
 ??? info "Add `#!python AuthMiddlewareStack` (Optional)"
@@ -88,7 +88,7 @@ Register ReactPy's WebSocket using `#!python REACTPY_WEBSOCKET_ROUTE` in your [`
     In these situations will need to ensure you are using `#!python AuthMiddlewareStack`.
 
     ```python linenums="0"
-    {% include "../../python/configure-asgi-middleware.py" start="# start" %}
+    {% include "../../examples/python/configure-asgi-middleware.py" start="# start" %}
     ```
 
 ??? question "Where is my `asgi.py`?"
