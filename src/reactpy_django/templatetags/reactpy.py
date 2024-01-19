@@ -19,7 +19,7 @@ from reactpy_django.exceptions import (
     ComponentDoesNotExistError,
     ComponentParamError,
     InvalidHostError,
-    OfflineComponentMissingError,
+    OfflineComponentMissing,
 )
 from reactpy_django.types import ComponentParams
 from reactpy_django.utils import SyncLayout, validate_component_args
@@ -143,7 +143,7 @@ def component(
         if not offline_component:
             msg = f"Cannot render offline component '{offline}'. It is not registered as a component."
             _logger.error(msg)
-            return failure_context(dotted_path, OfflineComponentMissingError(msg))
+            return failure_context(dotted_path, OfflineComponentMissing(msg))
         if not request:
             msg = (
                 "Cannot render an offline component without a HTTP request. Are you missing the "

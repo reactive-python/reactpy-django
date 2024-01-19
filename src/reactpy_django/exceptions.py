@@ -6,7 +6,7 @@ class ComponentDoesNotExistError(AttributeError):
     ...
 
 
-class OfflineComponentMissingError(ComponentDoesNotExistError):
+class OfflineComponentMissing(ComponentDoesNotExistError):
     ...
 
 
