@@ -29,13 +29,13 @@ Query functions can be sync or async.
 === "components.py"
 
     ```python
-    {% include "../../python/use-query.py" %}
+    {% include "../../examples/python/use-query.py" %}
     ```
 
 === "models.py"
 
     ```python
-    {% include "../../python/example/models.py" %}
+    {% include "../../examples/python/example/models.py" %}
     ```
 
 ??? example "See Interface"
@@ -62,7 +62,7 @@ Query functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../python/use-query-args.py" %}
+        {% include "../../examples/python/use-query-args.py" %}
         ```
 
 ??? question "How can I customize this hook's behavior?"
@@ -82,7 +82,7 @@ Query functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../python/use-query-thread-sensitive.py" %}
+        {% include "../../examples/python/use-query-thread-sensitive.py" %}
         ```
 
     ---
@@ -101,7 +101,7 @@ Query functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../python/use-query-postprocessor-disable.py" %}
+        {% include "../../examples/python/use-query-postprocessor-disable.py" %}
         ```
 
     If you wish to create a custom `#!python postprocessor`, you will need to create a callable.
@@ -113,7 +113,7 @@ Query functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../python/use-query-postprocessor-change.py" %}
+        {% include "../../examples/python/use-query-postprocessor-change.py" %}
         ```
 
     ---
@@ -129,7 +129,7 @@ Query functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../python/use-query-postprocessor-kwargs.py" %}
+        {% include "../../examples/python/use-query-postprocessor-kwargs.py" %}
         ```
 
     _Note: In Django's ORM design, the field name to access foreign keys is [postfixed with `_set`](https://docs.djangoproject.com/en/dev/topics/db/examples/many_to_one/) by default._
@@ -147,13 +147,13 @@ Query functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../python/use-mutation-reset.py" %}
+        {% include "../../examples/python/use-mutation-reset.py" %}
         ```
 
     === "models.py"
 
         ```python
-        {% include "../../python/example/models.py" %}
+        {% include "../../examples/python/example/models.py" %}
         ```
 
 ??? question "Why does the example query function return `#!python TodoItem.objects.all()`?"
@@ -175,13 +175,13 @@ Mutation functions can be sync or async.
 === "components.py"
 
     ```python
-    {% include "../../python/use-mutation.py" %}
+    {% include "../../examples/python/use-mutation.py" %}
     ```
 
 === "models.py"
 
     ```python
-    {% include "../../python/example/models.py" %}
+    {% include "../../examples/python/example/models.py" %}
     ```
 
 ??? example "See Interface"
@@ -206,7 +206,7 @@ Mutation functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../python/use-mutation-args-kwargs.py" %}
+        {% include "../../examples/python/use-mutation-args-kwargs.py" %}
         ```
 
 ??? question "How can I customize this hook's behavior?"
@@ -226,7 +226,7 @@ Mutation functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../python/use-mutation-thread-sensitive.py" %}
+        {% include "../../examples/python/use-mutation-thread-sensitive.py" %}
         ```
 
 ??? question "Can I make ORM calls without hooks?"
@@ -242,13 +242,13 @@ Mutation functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../python/use-mutation-reset.py" %}
+        {% include "../../examples/python/use-mutation-reset.py" %}
         ```
 
     === "models.py"
 
         ```python
-        {% include "../../python/example/models.py" %}
+        {% include "../../examples/python/example/models.py" %}
         ```
 
 ??? question "Can `#!python use_mutation` trigger a refetch of `#!python use_query`?"
@@ -262,13 +262,13 @@ Mutation functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../python/use-mutation-query-refetch.py" %}
+        {% include "../../examples/python/use-mutation-query-refetch.py" %}
         ```
 
     === "models.py"
 
         ```python
-        {% include "../../python/example/models.py" %}
+        {% include "../../examples/python/example/models.py" %}
         ```
 
 ---
@@ -280,7 +280,7 @@ Store or retrieve data (`#!python dict`) specific to the connection's `#!python 
 === "components.py"
 
     ```python
-    {% include "../../python/use-user-data.py" %}
+    {% include "../../examples/python/use-user-data.py" %}
     ```
 
 ??? example "See Interface"
@@ -307,7 +307,7 @@ Store or retrieve data (`#!python dict`) specific to the connection's `#!python 
     === "components.py"
 
         ```python
-        {% include "../../python/use-user-data-defaults.py" %}
+        {% include "../../examples/python/use-user-data-defaults.py" %}
         ```
 
 ---
@@ -323,7 +323,7 @@ Returns the active connection, which is either a Django [WebSocket](https://chan
 === "components.py"
 
     ```python
-    {% include "../../python/use-connection.py" %}
+    {% include "../../examples/python/use-connection.py" %}
     ```
 
 ??? example "See Interface"
@@ -347,7 +347,7 @@ Shortcut that returns the WebSocket or HTTP connection's [scope](https://channel
 === "components.py"
 
     ```python
-    {% include "../../python/use-scope.py" %}
+    {% include "../../examples/python/use-scope.py" %}
     ```
 
 ??? example "See Interface"
@@ -371,7 +371,7 @@ Shortcut that returns the browser's current `#!python Location`.
 === "components.py"
 
     ```python
-    {% include "../../python/use-location.py" %}
+    {% include "../../examples/python/use-location.py" %}
     ```
 
 ??? example "See Interface"
@@ -395,7 +395,7 @@ You can expect this hook to provide strings such as `http://example.com`.
 === "components.py"
 
     ```python
-    {% include "../../python/use-origin.py" %}
+    {% include "../../examples/python/use-origin.py" %}
     ```
 
 ??? example "See Interface"
@@ -419,7 +419,7 @@ Shortcut that returns the WebSocket or HTTP connection's `#!python User`.
 === "components.py"
 
     ```python
-    {% include "../../python/use-user.py" %}
+    {% include "../../examples/python/use-user.py" %}
     ```
 
 ??? example "See Interface"
