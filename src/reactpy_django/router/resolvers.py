@@ -3,7 +3,6 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from reactpy_router.core import create_router
 from reactpy_router.simple import ConverterMapping
 from reactpy_router.types import Route
 
@@ -51,6 +50,3 @@ def parse_path(path: str) -> tuple[re.Pattern[str], ConverterMapping]:
         last_match_end = match.end()
     pattern += f"{re.escape(path[last_match_end:])}$"
     return re.compile(pattern), converters
-
-
-django_router = create_router(DjangoResolver)
