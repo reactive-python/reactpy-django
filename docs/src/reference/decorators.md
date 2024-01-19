@@ -17,7 +17,7 @@ This decorator is inspired by Django's [`user_passes_test`](http://docs.djangopr
 === "components.py"
 
     ```python
-    {% include "../../python/user-passes-test.py" %}
+    {% include "../../examples/python/user-passes-test.py" %}
     ```
 
 ??? example "See Interface"
@@ -42,7 +42,7 @@ This decorator is inspired by Django's [`user_passes_test`](http://docs.djangopr
     === "components.py"
 
         ```python
-        {% include "../../python/user-passes-test-component-fallback.py" %}
+        {% include "../../examples/python/user-passes-test-component-fallback.py" %}
         ```
 
 ??? question "How do I render a simple `#!python reactpy.html` snippet if the test fails?"
@@ -52,5 +52,5 @@ This decorator is inspired by Django's [`user_passes_test`](http://docs.djangopr
     === "components.py"
 
         ```python
-        {% include "../../python/user-passes-test-vdom-fallback.py" %}
+        {% include "../../examples/python/user-passes-test-vdom-fallback.py" %}
         ```

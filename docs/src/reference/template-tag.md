@@ -60,7 +60,7 @@ This template tag can be used to insert any number of ReactPy components onto yo
     === "views.py"
 
         ```python
-        {% include "../../python/template-tag-bad-view.py" %}
+        {% include "../../examples/python/template-tag-bad-view.py" %}
         ```
 
     _Note: If you decide to not follow this warning, you will need to use the [`register_component`](../reference/utils.md#register-component) function to manually register your components._
@@ -106,7 +106,7 @@ This template tag can be used to insert any number of ReactPy components onto yo
     === "components.py"
 
         ```python
-        {% include "../../python/template-tag-args-kwargs.py" %}
+        {% include "../../examples/python/template-tag-args-kwargs.py" %}
         ```
 
 ??? question "Can I render components on a different server (distributed computing)?"

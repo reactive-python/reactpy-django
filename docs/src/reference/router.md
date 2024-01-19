@@ -21,7 +21,7 @@ URL router that enables the ability to conditionally render other components bas
 === "components.py"
 
     ```python
-    {% include "../../python/django-router.py" %}
+    {% include "../../examples/python/django-router.py" %}
     ```
 
 ??? example "See Interface"
