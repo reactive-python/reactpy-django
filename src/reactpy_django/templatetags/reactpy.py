@@ -57,6 +57,7 @@ def component(
             Example values include: `localhost:8000`, `example.com`, `example.com/subdir`
         prerender: Configures whether to pre-render this component, which \
             enables SEO compatibility and reduces perceived latency.
+        offline: The dotted path to the component to render when the client is offline.
         **kwargs: The keyword arguments to provide to the component.
 
     Example ::
