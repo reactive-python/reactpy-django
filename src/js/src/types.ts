@@ -14,4 +14,7 @@ export type ReactPyUrls = {
 export type ReactPyDjangoClientProps = {
 	urls: ReactPyUrls;
 	reconnectOptions: ReconnectOptions;
+	mountElement: HTMLElement | null;
+	prerenderElement: HTMLElement | null;
+	offlineElement: HTMLElement | null;
 };

@@ -33,16 +33,18 @@ from reactpy_django.exceptions import (
 
 _logger = logging.getLogger(__name__)
 _component_tag = r"(?P<tag>component)"
-_component_path = r"(?P<path>\"[^\"'\s]+\"|'[^\"'\s]+')"
-_component_kwargs = r"(?P<kwargs>[\s\S]*?)"
+_component_path = r"""(?P<path>"[^"'\s]+"|'[^"'\s]+')"""
+_component_offline_kwarg = (
+    rf"""(\s*offline\s*=\s*{_component_path.replace(r"<path>", r"<offline_path>")})"""
+)
+_component_generic_kwarg = r"""(\s*.*?)"""
 COMMENT_REGEX = re.compile(r"<!--[\s\S]*?-->")
 COMPONENT_REGEX = re.compile(
     r"{%\s*"
     + _component_tag
     + r"\s*"
     + _component_path
-    + r"\s*"
-    + _component_kwargs
+    + rf"({_component_offline_kwarg}|{_component_generic_kwarg})*?"
     + r"\s*%}"
 )
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -198,11 +200,17 @@ class RootComponentFinder:
                 with open(template, "r", encoding="utf-8") as template_file:
                     clean_template = COMMENT_REGEX.sub("", template_file.read())
                     regex_iterable = COMPONENT_REGEX.finditer(clean_template)
-                    component_paths = [
-                        match.group("path").replace('"', "").replace("'", "")
-                        for match in regex_iterable
-                    ]
-                    components.update(component_paths)
+                    new_components: list[str] = []
+                    for match in regex_iterable:
+                        new_components.append(
+                            match.group("path").replace('"', "").replace("'", "")
+                        )
+                        offline_path = match.group("offline_path")
+                        if offline_path:
+                            new_components.append(
+                                offline_path.replace('"', "").replace("'", "")
+                            )
+                    components.update(new_components)
         if not components:
             _logger.warning(
                 "\033[93m"

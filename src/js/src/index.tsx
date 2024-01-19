@@ -1,5 +1,8 @@
-import { mount } from "./mount";
+
 import { ReactPyDjangoClient } from "./client";
+import React from "react";
+import { render } from "react-dom";
+import { Layout } from "@reactpy/client/src/components";
 
 export function mountComponent(
 	mountElement: HTMLElement,
@@ -59,8 +62,24 @@ export function mountComponent(
 			backoffMultiplier: reconnectBackoffMultiplier,
 			maxRetries: reconnectMaxRetries,
 		},
+		mountElement: mountElement,
+		prerenderElement: document.getElementById(
+			mountElement.id + "-prerender"
+		),
+		offlineElement: document.getElementById(mountElement.id + "-offline"),
 	});
 
+
+	// Replace the prerender element with the real element on the first layout update
+	if (client.prerenderElement) {
+		client.onMessage("layout-update", ({ path, model }) => {
+			if (client.prerenderElement) {
+				client.prerenderElement.replaceWith(client.mountElement);
+				client.prerenderElement = null;
+			}
+		});
+	}
+
 	// Start rendering the component
-	mount(mountElement, client);
+	render(<Layout client={client} />, client.mountElement);
 }

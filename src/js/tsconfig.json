@@ -1,9 +1,10 @@
 {
     "compilerOptions": {
-        "target": "ES2017",
+        "target": "ES2022",
         "module": "esnext",
         "moduleResolution": "node",
         "jsx": "react",
+        "allowSyntheticDefaultImports": true
     },
     "paths": {
         "react": [

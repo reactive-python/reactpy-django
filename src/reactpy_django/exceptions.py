@@ -6,6 +6,10 @@ class ComponentDoesNotExistError(AttributeError):
     ...
 
 
+class OfflineComponentMissing(ComponentDoesNotExistError):
+    ...
+
+
 class InvalidHostError(ValueError):
     ...
 

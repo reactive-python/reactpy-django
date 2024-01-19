@@ -19,6 +19,7 @@ from reactpy_django.exceptions import (
     ComponentDoesNotExistError,
     ComponentParamError,
     InvalidHostError,
+    OfflineComponentMissing,
 )
 from reactpy_django.types import ComponentParams
 from reactpy_django.utils import SyncLayout, validate_component_args
@@ -38,6 +39,7 @@ def component(
     *args,
     host: str | None = None,
     prerender: str = str(config.REACTPY_PRERENDER),
+    offline: str = "",
     **kwargs,
 ):
     """This tag is used to embed an existing ReactPy component into your HTML template.
@@ -55,6 +57,7 @@ def component(
             Example values include: `localhost:8000`, `example.com`, `example.com/subdir`
         prerender: Configures whether to pre-render this component, which \
             enables SEO compatibility and reduces perceived latency.
+        offline: The dotted path to the component to render when the client is offline.
         **kwargs: The keyword arguments to provide to the component.
 
     Example ::
@@ -79,6 +82,7 @@ def component(
     component_has_args = args or kwargs
     user_component: ComponentConstructor | None = None
     _prerender_html = ""
+    _offline_html = ""
 
     # Validate the host
     if host and config.REACTPY_DEBUG_MODE:
@@ -133,6 +137,22 @@ def component(
             return failure_context(dotted_path, ComponentCarrierError(msg))
         _prerender_html = prerender_component(user_component, args, kwargs, request)
 
+    # Fetch the offline component's HTML, if requested
+    if offline:
+        offline_component = config.REACTPY_REGISTERED_COMPONENTS.get(offline)
+        if not offline_component:
+            msg = f"Cannot render offline component '{offline}'. It is not registered as a component."
+            _logger.error(msg)
+            return failure_context(dotted_path, OfflineComponentMissing(msg))
+        if not request:
+            msg = (
+                "Cannot render an offline component without a HTTP request. Are you missing the "
+                "request context processor in settings.py:TEMPLATES['OPTIONS']['context_processors']?"
+            )
+            _logger.error(msg)
+            return failure_context(dotted_path, ComponentCarrierError(msg))
+        _offline_html = prerender_component(offline_component, [], {}, request)
+
     # Return the template rendering context
     return {
         "reactpy_class": class_,
@@ -148,6 +168,7 @@ def component(
         "reactpy_reconnect_backoff_multiplier": config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER,
         "reactpy_reconnect_max_retries": config.REACTPY_RECONNECT_MAX_RETRIES,
         "reactpy_prerender_html": _prerender_html,
+        "reactpy_offline_html": _offline_html,
     }
 
 

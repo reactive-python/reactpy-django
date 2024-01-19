@@ -46,11 +46,17 @@ class ComponentTests(ChannelsLiveServerTestCase):
         cls._server_process.ready.wait()
         cls._port = cls._server_process.port.value
 
-        # Open the second server process
+        # Open the second server process, used for testing custom hosts
         cls._server_process2 = cls.ProtocolServerProcess(cls.host, get_application)
         cls._server_process2.start()
         cls._server_process2.ready.wait()
         cls._port2 = cls._server_process2.port.value
+
+        # Open the third server process, used for testing offline fallback
+        cls._server_process3 = cls.ProtocolServerProcess(cls.host, get_application)
+        cls._server_process3.start()
+        cls._server_process3.ready.wait()
+        cls._port3 = cls._server_process3.port.value
 
         # Open a Playwright browser window
         if sys.platform == "win32":
@@ -67,9 +73,11 @@ class ComponentTests(ChannelsLiveServerTestCase):
         # Close the Playwright browser
         cls.playwright.stop()
 
-        # Close the second server process
+        # Close the other server processes
         cls._server_process2.terminate()
         cls._server_process2.join()
+        cls._server_process3.terminate()
+        cls._server_process3.join()
 
         # Repurposed from ChannelsLiveServerTestCase._post_teardown
         cls._server_process.terminate()
@@ -597,6 +605,23 @@ class ComponentTests(ChannelsLiveServerTestCase):
             new_page.goto(f"{self.live_server_url}/router/two/123/abc/")
             path = new_page.wait_for_selector("#router-path")
             self.assertIn("/router/two/123/abc/", path.get_attribute("data-path"))
+
+        finally:
+            new_page.close()
+
+    def test_offline_components(self):
+        new_page = self.browser.new_page()
+        try:
+            server3_url = self.live_server_url.replace(
+                str(self._port), str(self._port3)
+            )
+            new_page.goto(f"{server3_url}/offline/")
+            new_page.wait_for_selector("div:not([hidden]) > #online")
+            self.assertIsNotNone(new_page.query_selector("div[hidden] > #offline"))
+            self._server_process3.terminate()
+            self._server_process3.join()
+            new_page.wait_for_selector("div:not([hidden]) > #offline")
+            self.assertIsNotNone(new_page.query_selector("div[hidden] > #online"))
 
         finally:
             new_page.close()

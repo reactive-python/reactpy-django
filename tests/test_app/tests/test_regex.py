@@ -1,5 +1,6 @@
-from django.test import TestCase
+import re
 
+from django.test import TestCase
 from reactpy_django.utils import COMMENT_REGEX, COMPONENT_REGEX
 
 
@@ -26,6 +27,15 @@ class RegexTests(TestCase):
             attr="attribute"  
 
         %}""",  # noqa: W291
+            COMPONENT_REGEX,
+        )
+        self.assertRegex(r'{% component "my.component" my_object %}', COMPONENT_REGEX)
+        self.assertRegex(
+            r'{% component "my.component" class="example-cls" x=123 y=456 %}',
+            COMPONENT_REGEX,
+        )
+        self.assertRegex(
+            r'{% component "my.component" class = "example-cls" %}',
             COMPONENT_REGEX,
         )
 
@@ -134,3 +144,26 @@ class RegexTests(TestCase):
             ),
             "",
         )
+
+    def test_offline_component_regex(self):
+        regex = re.compile(COMPONENT_REGEX)
+        # Check if "offline_path" group is present and equals to "my_offline_path"
+        search = regex.search(
+            r'{% component "my.component" offline="my_offline_path" %}'
+        )
+        self.assertTrue(search["offline_path"] == '"my_offline_path"')  # type: ignore
+
+        search = regex.search(
+            r'{% component "my.component" arg_1="1" offline="my_offline_path" arg_2="2" %}'
+        )
+        self.assertTrue(search["offline_path"] == '"my_offline_path"')  # type: ignore
+
+        search = regex.search(
+            r'{% component "my.component" offline="my_offline_path" arg_2="2" %}'
+        )
+
+        self.assertTrue(search["offline_path"] == '"my_offline_path"')  # type: ignore
+        search = regex.search(
+            r'{% component "my.component" arg_1="1" offline="my_offline_path" %}'
+        )
+        self.assertTrue(search["offline_path"] == '"my_offline_path"')  # type: ignore

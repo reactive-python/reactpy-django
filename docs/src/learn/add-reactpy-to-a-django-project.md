@@ -117,7 +117,7 @@ The [next step](./your-first-component.md) will show you how to create your firs
 
 Prefer a quick summary? Read the **At a Glance** section below.
 
-!!! info "At a Glance: Your First Component"
+!!! info "At a Glance"
 
     <font size="5">**`my_app/components.py`**</font>
 

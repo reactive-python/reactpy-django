@@ -12,6 +12,9 @@ export class ReactPyDjangoClient
 {
 	urls: ReactPyUrls;
 	socket: { current?: WebSocket };
+	mountElement: HTMLElement | null = null;
+	prerenderElement: HTMLElement | null = null;
+	offlineElement: HTMLElement | null = null;
 
 	constructor(props: ReactPyDjangoClientProps) {
 		super();
@@ -22,7 +25,28 @@ export class ReactPyDjangoClient
 			onMessage: async ({ data }) =>
 				this.handleIncoming(JSON.parse(data)),
 			...props.reconnectOptions,
+			onClose: () => {
+				// If offlineElement exists, show it and hide the mountElement/prerenderElement
+				if (this.prerenderElement) {
+					this.prerenderElement.remove();
+					this.prerenderElement = null;
+				}
+				if (this.offlineElement) {
+					this.mountElement.hidden = true;
+					this.offlineElement.hidden = false;
+				}
+			},
+			onOpen: () => {
+				// If offlineElement exists, hide it and show the mountElement
+				if (this.offlineElement) {
+					this.offlineElement.hidden = true;
+					this.mountElement.hidden = false;
+				}
+			},
 		});
+		this.mountElement = props.mountElement;
+		this.prerenderElement = props.prerenderElement;
+		this.offlineElement = props.offlineElement;
 	}
 
 	sendMessage(message: any): void {

@@ -27,7 +27,8 @@ This template tag can be used to insert any number of ReactPy components onto yo
     | `#!python class` | `#!python str | None` | The HTML class to apply to the top-level component div. | `#!python None` |
     | `#!python key` | `#!python Any` | Force the component's root node to use a [specific key value](https://reactpy.dev/docs/guides/creating-interfaces/rendering-data/index.html#organizing-items-with-keys). Using `#!python key` within a template tag is effectively useless. | `#!python None` |
     | `#!python host` | `#!python str | None` | The host to use for the ReactPy connections. If unset, the host will be automatically configured.<br/>Example values include: `localhost:8000`, `example.com`, `example.com/subdir` | `#!python None` |
-    | `#!python prerender` | `#!python str` | If `#!python "True"`, the component will pre-rendered, which enables SEO compatibility and reduces perceived latency. | `#!python "False"` |
+    | `#!python prerender` | `#!python str` | If `#!python "true"`, the component will pre-rendered, which enables SEO compatibility and reduces perceived latency. | `#!python "false"` |
+    | `#!python offline` | `#!python str` | The dotted path to a component that will be displayed if your root component loses connection to the server. Keep in mind, this `offline` component will be non-interactive (hooks won't operate). | `#!python ""` |
     | `#!python **kwargs` | `#!python Any` | The keyword arguments to provide to the component. | N/A |
 
     <font size="4">**Returns**</font>
@@ -62,27 +63,9 @@ This template tag can be used to insert any number of ReactPy components onto yo
         {% include "../../python/template-tag-bad-view.py" %}
         ```
 
+    _Note: If you decide to not follow this warning, you will need to use the [`register_component`](../reference/utils.md#register-component) function to manually register your components._
+
 <!--context-end-->
-
-??? question "Can I render components on a different server (distributed computing)?"
-
-    Yes! By using the `#!python host` keyword argument, you can render components from a completely separate ASGI server.
-
-    === "my-template.html"
-
-        ```jinja
-        ...
-        {% component "example_project.my_app.components.do_something" host="127.0.0.1:8001" %}
-        ...
-        ```
-
-    This configuration most commonly involves you deploying multiple instances of your project. But, you can also create dedicated Django project(s) that only render specific ReactPy components if you wish.
-
-    Here's a couple of things to keep in mind:
-
-    1. If your host address are completely separate ( `origin1.com != origin2.com` ) you will need to [configure CORS headers](https://pypi.org/project/django-cors-headers/) on your main application during deployment.
-    2. You will not need to register ReactPy WebSocket or HTTP paths on any applications that do not perform any component rendering.
-    3. Your component will only be able to access your template tag's `#!python *args`/`#!python **kwargs` if your applications share a common database.
 
 <!--multiple-components-start-->
 
@@ -109,7 +92,6 @@ This template tag can be used to insert any number of ReactPy components onto yo
     Additionally, in scenarios where you are trying to create a Single Page Application (SPA) within Django, you will only have one component within your `#!html <body>` tag.
 
 <!--multiple-components-end-->
-<!--args-kwargs-start-->
 
 ??? question "Can I use positional arguments instead of keyword arguments?"
 
@@ -127,4 +109,48 @@ This template tag can be used to insert any number of ReactPy components onto yo
         {% include "../../python/template-tag-args-kwargs.py" %}
         ```
 
-<!--args-kwargs-end-->
+??? question "Can I render components on a different server (distributed computing)?"
+
+    Yes! This is most commonly done through [`settings.py:REACTPY_HOSTS`](../reference/settings.md#reactpy_default_hosts). However, you can use the `#!python host` keyword to render components on a specific ASGI server.
+
+    === "my-template.html"
+
+        ```jinja
+        ...
+        {% component "example_project.my_app.components.do_something" host="127.0.0.1:8001" %}
+        ...
+        ```
+
+    This configuration most commonly involves you deploying multiple instances of your project. But, you can also create dedicated Django project(s) that only render specific ReactPy components if you wish.
+
+    Here's a couple of things to keep in mind:
+
+    1. If your host address are completely separate ( `origin1.com != origin2.com` ) you will need to [configure CORS headers](https://pypi.org/project/django-cors-headers/) on your main application during deployment.
+    2. You will not need to register ReactPy WebSocket or HTTP paths on any applications that do not perform any component rendering.
+    3. Your component will only be able to access your template tag's `#!python *args`/`#!python **kwargs` if your applications share a common database.
+
+??? question "How do I pre-render components for SEO compatibility?"
+
+    This is most commonly done through [`settings.py:REACTPY_PRERENDER`](../reference/settings.md#reactpy_prerender). However, you can use the `#!python prerender` keyword to pre-render a specific component.
+
+    === "my-template.html"
+
+        ```jinja
+        ...
+        {% component "example_project.my_app.components.do_something" prerender="true" %}
+        ...
+        ```
+
+??? question "How do I show something when the client disconnects?"
+
+    You can use the `#!python offline` keyword to display a specific component when the client disconnects from the server.
+
+    === "my-template.html"
+
+        ```jinja
+        ...
+        {% component "example_project.my_app.components.do_something" offline="example_project.my_app.components.offline" %}
+        ...
+        ```
+
+    _Note: The `#!python offline` component will be non-interactive (hooks won't operate)._

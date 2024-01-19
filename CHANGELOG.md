@@ -34,7 +34,9 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Added
+
+-   An "offline component" can now be displayed when the client disconnects from the server.
 
 ## [3.6.0] - 2024-01-10
 
@@ -103,9 +105,14 @@ Using the following categories, list your changes in this order:
 -   Prettier WebSocket URLs for components that do not have sessions.
 -   Template tag will now only validate `args`/`kwargs` if `settings.py:DEBUG` is enabled.
 -   Bumped the minimum `@reactpy/client` version to `0.3.1`
--   Bumped the minimum Django version to `4.2`.
 -   Use TypeScript instead of JavaScript for this repository.
-    -   Note: ReactPy-Django will continue bumping minimum Django requirements to versions that increase async support. This "latest-only" trend will continue until Django has all async features that ReactPy benefits from. After this point, ReactPy-Django will begin supporting all maintained Django versions.
+-   Bumped the minimum Django version to `4.2`.
+
+???+ note "Django 4.2+ is required"
+
+    ReactPy-Django will continue bumping minimum Django requirements to versions that increase async support.
+
+    This "latest-only" trend will continue until Django has all async features that ReactPy benefits from. After this point, ReactPy-Django will begin supporting all maintained Django versions.
 
 ### Removed
 
