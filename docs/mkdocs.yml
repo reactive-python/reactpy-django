@@ -25,7 +25,7 @@ nav:
 
 theme:
     name: material
-    custom_dir: docs/overrides
+    custom_dir: overrides
     palette:
         - media: "(prefers-color-scheme: dark)"
           scheme: slate
@@ -114,12 +114,11 @@ extra_css:
     - assets/css/home.css
 
 watch:
-    - docs
-    - mkdocs.yml
-    - README.md
-    - CHANGELOG.md
-    - LICENSE.md
-    - .mailmap
+    - ../docs
+    - ../README.md
+    - ../CHANGELOG.md
+    - ../LICENSE.md
+    - ../.mailmap
 
 site_name: ReactPy-Django
 site_author: Archmonger
@@ -133,6 +132,6 @@ This project has no affiliation to ReactJS or Meta Platforms, Inc.
 </div>'
 repo_url: https://github.com/reactive-python/reactpy-django
 site_url: https://reactive-python.github.io/reactpy-django
-repo_name: reactive-python/reactpy-django
+repo_name: ReactPy Django (GitHub)
 edit_uri: edit/main/docs/src
-docs_dir: docs/src
+docs_dir: src

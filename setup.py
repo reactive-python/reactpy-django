@@ -25,7 +25,7 @@ package_dir = src_dir / name
 package = {
     "name": name,
     "python_requires": ">=3.9",
-    "packages": find_namespace_packages(str(src_dir)),
+    "packages": find_namespace_packages(src_dir),
     "package_dir": {"": "src"},
     "description": "It's React, but in Python. Now with Django integration.",
     "author": "Mark Bakhit",

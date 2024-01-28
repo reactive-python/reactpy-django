@@ -7,7 +7,7 @@
     <a href="https://pypi.python.org/pypi/reactpy-django">
         <img src="https://img.shields.io/pypi/v/reactpy-django.svg?label=PyPI">
     </a>
-    <a href="https://github.com/reactive-python/reactpy/blob/main/LICENSE">
+    <a href="https://github.com/reactive-python/reactpy-django/blob/main/LICENSE.md">
         <img src="https://img.shields.io/badge/License-MIT-purple.svg">
     </a>
     <a href="https://reactive-python.github.io/reactpy-django/">
