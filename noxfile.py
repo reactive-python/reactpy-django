@@ -60,12 +60,14 @@ def test_style(session: Session) -> None:
 
 @session(tags=["test"])
 def test_javascript(session: Session) -> None:
+    install_requirements_file(session, "test-env")
     session.chdir(ROOT_DIR / "src" / "js")
     session.run("python", "-m", "nodejs.npm", "install", external=True)
     session.run("python", "-m", "nodejs.npm", "run", "check")
 
 
 def install_requirements_file(session: Session, name: str) -> None:
+    session.install("--upgrade", "pip", "setuptools", "wheel")
     file_path = ROOT_DIR / "requirements" / f"{name}.txt"
     assert file_path.exists(), f"requirements file {file_path} does not exist"
     session.install("-r", str(file_path))
