@@ -10,7 +10,11 @@ from .types import TestObject
 
 
 def base_template(request):
-    return render(request, "base.html", {"my_object": TestObject(1)})
+    return render(
+        request,
+        "base.html",
+        {"my_object": TestObject(1), "my_html_object": "<div> Hello World </div>"},
+    )
 
 
 def errors_template(request):

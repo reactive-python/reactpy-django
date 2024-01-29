@@ -71,6 +71,20 @@ def object_in_templatetag(my_object: TestObject):
     )
 
 
+@component
+def html_in_templatetag(my_html_object: str, my_string: str):
+    success = (
+        my_html_object == "<div> Hello World </div>"
+        and my_string == "<div> Hello World </div>"
+    )
+    co_name = inspect.currentframe().f_code.co_name  # type: ignore
+    return html._(
+        html.div(
+            {"id": co_name, "data-success": success}, f"{co_name}: ", my_html_object
+        )
+    )
+
+
 SimpleButtonModule = web.module_from_file(
     "SimpleButton",
     Path(__file__).parent / "tests" / "js" / "simple-button.js",
