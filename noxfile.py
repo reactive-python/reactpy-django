@@ -31,9 +31,7 @@ def test_python(session: Session) -> None:
     settings_files = glob(settings_glob)
     assert settings_files, f"No Django settings files found at '{settings_glob}'!"
     for settings_file in settings_files:
-        settings_module = (
-            settings_file.strip(".py").replace("/", ".").replace("\\", ".")
-        )
+        settings_module = settings_file.strip(".py").replace("/", ".").replace("\\", ".")
         session.run(
             "python",
             "manage.py",
@@ -57,13 +55,6 @@ def test_types(session: Session) -> None:
 def test_style(session: Session) -> None:
     """Check that style guidelines are being followed"""
     install_requirements_file(session, "check-style")
-    session.run(
-        "black",
-        ".",
-        "--check",
-        "--extend-exclude",
-        "/migrations/",
-    )
     session.run("ruff", "check", ".")
 
 

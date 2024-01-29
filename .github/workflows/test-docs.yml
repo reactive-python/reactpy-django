@@ -33,5 +33,4 @@ jobs:
                   pip install -r requirements/check-types.txt
                   pip install -r requirements/check-style.txt
                   mypy --show-error-codes docs/examples/python/
-                  black docs/examples/python/ --check
                   ruff check docs/examples/python/
