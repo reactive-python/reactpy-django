@@ -1,24 +1,27 @@
 {
-	"description": "ReactPy-Django Client",
-	"main": "src/index.tsx",
-	"type": "module",
-	"scripts": {
-		"build": "rollup --config",
-		"format": "prettier --ignore-path .gitignore --write ."
-	},
-	"devDependencies": {
-		"@rollup/plugin-commonjs": "^25.0.7",
-		"@rollup/plugin-node-resolve": "^15.2.3",
-		"@rollup/plugin-replace": "^5.0.5",
-		"@types/react": "^18.2.48",
-		"@types/react-dom": "^18.2.18",
-		"prettier": "^3.2.3",
-		"rollup": "^4.9.5",
-		"typescript": "^5.3.3"
-	},
-	"dependencies": {
-		"@reactpy/client": "^0.3.1",
-		"@rollup/plugin-typescript": "^11.1.6",
-		"tslib": "^2.6.2"
-	}
+  "description": "ReactPy-Django Client",
+  "main": "src/index.tsx",
+  "type": "module",
+  "scripts": {
+    "build": "rollup --config",
+    "format": "prettier --write . && eslint --fix",
+    "check": "prettier --check . && eslint"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.5",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "prettier": "^3.2.3",
+    "eslint": "^8.38.0",
+    "eslint-plugin-react": "^7.32.2",
+    "rollup": "^4.9.5",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@reactpy/client": "^0.3.1",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "tslib": "^2.6.2"
+  }
 }

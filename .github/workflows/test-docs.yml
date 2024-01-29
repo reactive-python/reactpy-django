@@ -26,11 +26,11 @@ jobs:
                   linkcheckMarkdown docs/ -v -r
                   linkcheckMarkdown README.md -v -r
                   linkcheckMarkdown CHANGELOG.md -v -r
+                  cd docs
                   mkdocs build --strict
             - name: Check docs examples
               run: |
                   pip install -r requirements/check-types.txt
                   pip install -r requirements/check-style.txt
                   mypy --show-error-codes docs/examples/python/
-                  black docs/examples/python/ --check
                   ruff check docs/examples/python/

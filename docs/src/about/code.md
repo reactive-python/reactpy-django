@@ -52,13 +52,13 @@ pip install -r requirements.txt --upgrade --verbose
 By running the command below you can run the full test suite:
 
 ```bash linenums="0"
-nox -s test
+nox -t test
 ```
 
 Or, if you want to run the tests in the background:
 
 ```bash linenums="0"
-nox -s test -- --headless
+nox -t test -- --headless
 ```
 
 ## Running Django tests

@@ -18,5 +18,6 @@ jobs:
             - name: Publish ${{ github.event.release.name }} Docs
               run: |
                   git config user.name github-actions
-                  git config user.email github-actions@github.com 
+                  git config user.email github-actions@github.com
+                  cd docs
                   mike deploy --push --update-aliases ${{ github.event.release.name }} latest

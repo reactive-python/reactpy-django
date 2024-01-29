@@ -1,4 +1,5 @@
 name: Publish Develop Docs
+
 on:
     push:
         branches:
@@ -17,5 +18,6 @@ jobs:
             - name: Publish Develop Docs
               run: |
                   git config user.name github-actions
-                  git config user.email github-actions@github.com 
+                  git config user.email github-actions@github.com
+                  cd docs
                   mike deploy --push develop
