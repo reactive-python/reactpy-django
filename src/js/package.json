@@ -4,10 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "rollup --config",
-    "format": "npm run run:format",
-    "run:format": "prettier --write . && eslint --fix",
-    "check": "npm run check:format",
-    "check:format": "prettier --check . && eslint"
+    "format": "prettier --write . && eslint --fix",
+    "check": "prettier --check . && eslint"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
