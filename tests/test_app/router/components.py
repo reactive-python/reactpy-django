@@ -39,4 +39,17 @@ def main():
             "/router/two/<int:value>/<str:value2>/",
             display_params("Path 9", route_info),
         ),
+        route(
+            "/router/multi-tier-route/",
+            display_params("Path 10", route_info),
+            route("one/", display_params("Path 11", route_info)),
+            route("two/", display_params("Path 12", route_info)),
+            route("*", display_params("Path 13", route_info)),
+        ),
+        route(
+            "/router/star-in-middle/*/",
+            display_params("Path 14", route_info),
+            route("one/", display_params("Path 15", route_info)),
+            route("two/", display_params("Path 16", route_info)),
+        ),
     )
