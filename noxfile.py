@@ -1,41 +1,19 @@
 from __future__ import annotations
 
-import re
 from glob import glob
 from pathlib import Path
 
-import nox
-from nox.sessions import Session
+from nox import Session, session
 
-HERE = Path(__file__).parent
-POSARGS_PATTERN = re.compile(r"^(\w+)\[(.+)\]$")
+ROOT_DIR = Path(__file__).parent
 
 
-@nox.session(reuse_venv=True)
-def manage(session: Session) -> None:
-    """Run a manage.py command for tests/test_app"""
-    session.install("-r", "requirements/test-env.txt")
-    session.install("reactpy[stable]")
-    session.install("-e", ".")
-    session.chdir("tests")
-    session.run("python", "manage.py", *session.posargs)
-
-
-@nox.session
-def test(session: Session) -> None:
-    """Run the complete test suite"""
-    session.install("--upgrade", "pip", "setuptools", "wheel")
-    session.notify("test_suite", posargs=session.posargs)
-    session.notify("test_types")
-    session.notify("test_style")
-
-
-@nox.session
-def test_suite(session: Session) -> None:
+@session(tags=["test"])
+def test_python(session: Session) -> None:
     """Run the Python-based test suite"""
     install_requirements_file(session, "test-env")
     session.install(".[all]")
-    session.chdir(HERE / "tests")
+    session.chdir(ROOT_DIR / "tests")
     session.env["REACTPY_DEBUG_MODE"] = "1"
 
     posargs = session.posargs[:]
@@ -53,9 +31,7 @@ def test_suite(session: Session) -> None:
     settings_files = glob(settings_glob)
     assert settings_files, f"No Django settings files found at '{settings_glob}'!"
     for settings_file in settings_files:
-        settings_module = (
-            settings_file.strip(".py").replace("/", ".").replace("\\", ".")
-        )
+        settings_module = settings_file.strip(".py").replace("/", ".").replace("\\", ".")
         session.run(
             "python",
             "manage.py",
@@ -68,28 +44,30 @@ def test_suite(session: Session) -> None:
         )
 
 
-@nox.session
+@session(tags=["test"])
 def test_types(session: Session) -> None:
     install_requirements_file(session, "check-types")
     install_requirements_file(session, "pkg-deps")
     session.run("mypy", "--show-error-codes", "src/reactpy_django", "tests/test_app")
 
 
-@nox.session
+@session(tags=["test"])
 def test_style(session: Session) -> None:
     """Check that style guidelines are being followed"""
     install_requirements_file(session, "check-style")
-    session.run(
-        "black",
-        ".",
-        "--check",
-        "--extend-exclude",
-        "/migrations/",
-    )
     session.run("ruff", "check", ".")
 
 
+@session(tags=["test"])
+def test_javascript(session: Session) -> None:
+    install_requirements_file(session, "test-env")
+    session.chdir(ROOT_DIR / "src" / "js")
+    session.run("python", "-m", "nodejs.npm", "install", external=True)
+    session.run("python", "-m", "nodejs.npm", "run", "check")
+
+
 def install_requirements_file(session: Session, name: str) -> None:
-    file_path = HERE / "requirements" / f"{name}.txt"
+    session.install("--upgrade", "pip", "setuptools", "wheel")
+    file_path = ROOT_DIR / "requirements" / f"{name}.txt"
     assert file_path.exists(), f"requirements file {file_path} does not exist"
     session.install("-r", str(file_path))

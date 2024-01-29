@@ -1,17 +1,13 @@
 {
-    "compilerOptions": {
-        "target": "ES2022",
-        "module": "esnext",
-        "moduleResolution": "node",
-        "jsx": "react",
-        "allowSyntheticDefaultImports": true
-    },
-    "paths": {
-        "react": [
-            "./node_modules/preact/compat/"
-        ],
-        "react-dom": [
-            "./node_modules/preact/compat/"
-        ]
-    }
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true,
+  },
+  "paths": {
+    "react": ["./node_modules/preact/compat/"],
+    "react-dom": ["./node_modules/preact/compat/"],
+  },
 }

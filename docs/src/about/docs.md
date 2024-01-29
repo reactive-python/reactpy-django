@@ -34,6 +34,7 @@ pip install -r requirements.txt --upgrade
 Finally, to verify that everything is working properly, you can manually run the docs preview web server.
 
 ```bash linenums="0"
+cd docs
 mkdocs serve
 ```
 
