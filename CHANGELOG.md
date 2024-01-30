@@ -37,6 +37,7 @@ Using the following categories, list your changes in this order:
 ### Added
 
 -   An "offline component" can now be displayed when the client disconnects from the server.
+-   URL router now supports a `*` wildcard to create default routes.
 
 ## [3.6.0] - 2024-01-10
 
