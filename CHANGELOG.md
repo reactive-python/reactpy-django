@@ -34,6 +34,10 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+-   Nothing (yet)!
+
+## [3.7.0] - 2024-01-30
+
 ### Added
 
 -   An "offline component" can now be displayed when the client disconnects from the server.
@@ -445,7 +449,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.6.0...HEAD
+[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.7.0...HEAD
+[3.7.0]: https://github.com/reactive-python/reactpy-django/compare/3.6.0...3.7.0
 [3.6.0]: https://github.com/reactive-python/reactpy-django/compare/3.5.1...3.6.0
 [3.5.1]: https://github.com/reactive-python/reactpy-django/compare/3.5.0...3.5.1
 [3.5.0]: https://github.com/reactive-python/reactpy-django/compare/3.4.0...3.5.0
