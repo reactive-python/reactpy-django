@@ -3,7 +3,6 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from reactpy_router.core import create_router
 from reactpy_router.simple import ConverterMapping
 from reactpy_router.types import Route
 
@@ -33,6 +32,7 @@ class DjangoResolver:
 
 # TODO: Make reactpy_router's parse_path generic enough to where we don't have to define our own
 def parse_path(path: str) -> tuple[re.Pattern[str], ConverterMapping]:
+    # Convert path to regex pattern, and make sure to interpret the registered converters (ex. <int:foo>)
     pattern = "^"
     last_match_end = 0
     converters: ConverterMapping = {}
@@ -50,7 +50,9 @@ def parse_path(path: str) -> tuple[re.Pattern[str], ConverterMapping]:
         converters[param_name] = param_conv["func"]
         last_match_end = match.end()
     pattern += f"{re.escape(path[last_match_end:])}$"
+
+    # Replace literal `*` with "match anything" regex pattern, if it's at the end of the path
+    if pattern.endswith("\*$"):
+        pattern = f"{pattern[:-3]}.*$"
+
     return re.compile(pattern), converters
-
-
-django_router = create_router(DjangoResolver)

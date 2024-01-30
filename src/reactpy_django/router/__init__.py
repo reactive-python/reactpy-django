@@ -1,3 +1,5 @@
-from reactpy_django.router.components import django_router
+from reactpy_router.core import create_router
 
-__all__ = ["django_router"]
+from reactpy_django.router.resolvers import DjangoResolver
+
+django_router = create_router(DjangoResolver)
