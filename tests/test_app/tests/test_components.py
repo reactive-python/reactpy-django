@@ -606,6 +606,21 @@ class ComponentTests(ChannelsLiveServerTestCase):
             path = new_page.wait_for_selector("#router-path")
             self.assertIn("/router/two/123/abc/", path.get_attribute("data-path"))
 
+            new_page.goto(f"{self.live_server_url}/router/star/one/")
+            path = new_page.wait_for_selector("#router-path")
+            self.assertIn("/router/star/one/", path.get_attribute("data-path"))
+
+            new_page.goto(
+                f"{self.live_server_url}/router/star/adslkjgklasdjhfah/6789543256/"
+            )
+            path = new_page.wait_for_selector("#router-path")
+            self.assertIn(
+                "/router/star/adslkjgklasdjhfah/6789543256/",
+                path.get_attribute("data-path"),
+            )
+            string = new_page.query_selector("#router-string")
+            self.assertEquals("Path 12", string.text_content())
+
         finally:
             new_page.close()
 

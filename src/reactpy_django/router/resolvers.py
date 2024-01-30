@@ -51,7 +51,8 @@ def parse_path(path: str) -> tuple[re.Pattern[str], ConverterMapping]:
         last_match_end = match.end()
     pattern += f"{re.escape(path[last_match_end:])}$"
 
-    # Replace literal `*` with "match anything" regex pattern
-    pattern = pattern.replace("\*", ".*")
+    # Replace literal `*` with "match anything" regex pattern, if it's at the end of the path
+    if pattern.endswith("\*$"):
+        pattern = f"{pattern[:-3]}.*$"
 
     return re.compile(pattern), converters
