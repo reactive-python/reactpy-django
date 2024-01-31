@@ -394,17 +394,18 @@ def use_channel_layer(
             " have settings.CHANNEL_LAYERS configured properly?"
         )
 
-    @use_effect
-    async def channel_listener():
-        # Add the channel to the group, if defined
+    @use_effect(dependencies=[])
+    async def register_group():
+        """Add the channel to the group, if defined"""
         if group_name:
             await layer.group_add(group_name, channel_name)
 
-        # Only receive messages if a `receiver` is defined
+    @use_effect
+    async def channel_listener():
+        """Listen for messages on the channel"""
         if not receiver:
             return
 
-        # Listen for messages on the channel
         while True:
             message = await layer.receive(channel_name)
             await receiver(message)
