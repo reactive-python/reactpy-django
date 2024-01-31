@@ -367,8 +367,9 @@ def use_user_data(
 
 
 def use_channel_layer(
-    receiver: AsyncMessageReceiver,
     channel_name: str,
+    receiver: AsyncMessageReceiver | None = None,
+    group_name: str | None = None,
     layer_name: str = DEFAULT_CHANNEL_LAYER,
 ) -> AsyncMessageSender:
     """
@@ -376,12 +377,15 @@ def use_channel_layer(
 
     Args:
         receiver: An async function that receives messages from the channel layer. \
-            If more than one receivers wait on the same channel, a random one \
-            will get the result.
+            If more than one receiver waits on the same channel, a random one \
+            will get the result (unless a `group_name` is defined).
         channel_name: The name of the channel to subscribe to.
+        group_name: The name of the group to subscribe to. If defined, the `receiver` \
+            will be called for every message in the group channel's message history.
         layer_name: The channel layer to use. These layers must be defined in \
             `settings.CHANNEL_LAYERS`.
     """
+    # TODO: See if it's better to get the `channel_layer` from the websocket connection
     layer: InMemoryChannelLayer | RedisChannelLayer = get_channel_layer(layer_name)
 
     if not layer:
@@ -392,6 +396,9 @@ def use_channel_layer(
 
     @use_effect
     async def channel_listener():
+        if not receiver:
+            return
+
         while True:
             message = await layer.receive(channel_name)
             await receiver(message)
