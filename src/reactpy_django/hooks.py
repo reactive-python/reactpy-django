@@ -15,7 +15,9 @@ from typing import (
 )
 
 import orjson as pickle
+from channels import DEFAULT_CHANNEL_LAYER
 from channels.db import database_sync_to_async
+from channels.layers import InMemoryChannelLayer, get_channel_layer
 from reactpy import use_callback, use_effect, use_ref, use_state
 from reactpy import use_connection as _use_connection
 from reactpy import use_location as _use_location
@@ -24,6 +26,8 @@ from reactpy.backend.types import Location
 
 from reactpy_django.exceptions import UserNotFoundError
 from reactpy_django.types import (
+    AsyncMessageReceiver,
+    AsyncMessageSender,
     ConnectionType,
     FuncParams,
     Inferred,
@@ -36,6 +40,7 @@ from reactpy_django.types import (
 from reactpy_django.utils import generate_obj_name, get_user_pk
 
 if TYPE_CHECKING:
+    from channels_redis.core import RedisChannelLayer
     from django.contrib.auth.models import AbstractUser
 
 
@@ -359,6 +364,42 @@ def use_user_data(
     mutation = use_mutation(_set_user_data, refetch=_get_user_data)
 
     return UserData(query, mutation)
+
+
+def use_channel_layer(
+    receiver: AsyncMessageReceiver,
+    channel_name: str,
+    layer_name: str = DEFAULT_CHANNEL_LAYER,
+) -> AsyncMessageSender:
+    """
+    Subscribe to a channel layer to send/receive messages.
+
+    Args:
+        receiver: An async function that receives messages from the channel layer. \
+            If more than one receivers wait on the same channel, a random one \
+            will get the result.
+        channel_name: The name of the channel to subscribe to.
+        layer_name: The channel layer to use. These layers must be defined in \
+            `settings.CHANNEL_LAYERS`.
+    """
+    layer: InMemoryChannelLayer | RedisChannelLayer = get_channel_layer(layer_name)
+
+    if not layer:
+        raise ValueError(
+            f"Channel layer {layer_name} is not available. Are you sure you"
+            " have settings.CHANNEL_LAYERS configured properly?"
+        )
+
+    @use_effect
+    async def channel_listener():
+        while True:
+            message = await layer.receive(channel_name)
+            await receiver(message)
+
+    async def send(message):
+        await layer.send(channel_name, message)
+
+    return send
 
 
 def _use_query_args_1(options: QueryOptions, /, query: Query, *args, **kwargs):
