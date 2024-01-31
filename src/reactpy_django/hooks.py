@@ -371,7 +371,7 @@ def use_channel_layer(
     name: str,
     receiver: AsyncMessageReceiver | None = None,
     group: bool = False,
-    layer_name: str = DEFAULT_CHANNEL_LAYER,
+    layer: str = DEFAULT_CHANNEL_LAYER,
 ) -> AsyncMessageSender:
     """
     Subscribe to a Django Channels layer to send/receive messages.
@@ -383,28 +383,30 @@ def use_channel_layer(
             will get the result (unless you configured `group=True`)
         group: If True, a group channel will be used instead of a single channel. \
             This means that all subscribers to the group will receive the message.
-        layer_name: The channel layer to use. These layers must be defined in \
+        layer: The channel layer to use. These layers must be defined in \
             `settings.CHANNEL_LAYERS`.
     """
     # TODO: See if it's better to get the `channel_layer` from the websocket connection
-    layer: InMemoryChannelLayer | RedisChannelLayer = get_channel_layer(layer_name)
+    channel_layer: InMemoryChannelLayer | RedisChannelLayer = get_channel_layer(layer)
     channel_name = use_memo(lambda: str(uuid4() if group else name))
     group_name = name if group else None
 
-    if not layer:
+    if not channel_layer:
         raise ValueError(
-            f"Channel layer {layer_name} is not available. Are you sure you"
-            " have settings.CHANNEL_LAYERS configured properly?"
+            f"Channel layer {layer} is not available. Are you sure you"
+            " have settings.py:CHANNEL_LAYERS configured properly?"
         )
 
     @use_effect(dependencies=[])
     async def group_manager():
         """Add/remove a group's channel during component mount/dismount respectively."""
         if group:
-            await layer.group_add(group_name, channel_name)
+            await channel_layer.group_add(group_name, channel_name)
 
             # Group cleanup function
-            return lambda: asyncio.run(layer.group_discard(group_name, channel_name))
+            return lambda: asyncio.run(
+                channel_layer.group_discard(group_name, channel_name)
+            )
 
     @use_effect
     async def message_receiver():
@@ -413,15 +415,15 @@ def use_channel_layer(
             return
 
         while True:
-            message = await layer.receive(channel_name)
+            message = await channel_layer.receive(channel_name)
             await receiver(message)
 
     async def message_sender(message):
-        """Send a message to the channel layer."""
+        """Send a message to the channel or group."""
         if group:
-            await layer.group_send(group_name, message)
+            await channel_layer.group_send(group_name, message)
         else:
-            await layer.send(channel_name, message)
+            await channel_layer.send(channel_name, message)
 
     return message_sender
 
