@@ -33,7 +33,7 @@ from reactpy_django.types import (
     QueryOptions,
     UserData,
 )
-from reactpy_django.utils import generate_obj_name, get_user_pk
+from reactpy_django.utils import generate_obj_name, get_pk
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import AbstractUser
@@ -344,7 +344,7 @@ def use_user_data(
         if user.is_anonymous:
             raise ValueError("AnonymousUser cannot have user data.")
 
-        pk = get_user_pk(user)
+        pk = get_pk(user)
         model, _ = await UserDataModel.objects.aget_or_create(user_pk=pk)
         model.data = pickle.dumps(data)
         await model.asave()
@@ -386,7 +386,7 @@ async def _get_user_data(
     if not user or user.is_anonymous:
         return None
 
-    pk = get_user_pk(user)
+    pk = get_pk(user)
     model, _ = await UserDataModel.objects.aget_or_create(user_pk=pk)
     data = pickle.loads(model.data) if model.data else {}
 
