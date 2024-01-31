@@ -393,8 +393,8 @@ def use_channel_layer(
 
     if not channel_layer:
         raise ValueError(
-            f"Channel layer {layer} is not available. Are you sure you"
-            " have settings.py:CHANNEL_LAYERS configured properly?"
+            f"Channel layer '{layer}' is not available. Are you sure you"
+            " configured settings.py:CHANNEL_LAYERS properly?"
         )
 
     @use_effect(dependencies=[])
