@@ -13,12 +13,13 @@ from typing import (
     cast,
     overload,
 )
+from uuid import uuid4
 
 import orjson as pickle
 from channels import DEFAULT_CHANNEL_LAYER
 from channels.db import database_sync_to_async
 from channels.layers import InMemoryChannelLayer, get_channel_layer
-from reactpy import use_callback, use_effect, use_ref, use_state
+from reactpy import use_callback, use_effect, use_memo, use_ref, use_state
 from reactpy import use_connection as _use_connection
 from reactpy import use_location as _use_location
 from reactpy import use_scope as _use_scope
@@ -367,26 +368,28 @@ def use_user_data(
 
 
 def use_channel_layer(
-    channel_name: str,
+    name: str,
     receiver: AsyncMessageReceiver | None = None,
-    group_name: str | None = None,
+    group: bool = False,
     layer_name: str = DEFAULT_CHANNEL_LAYER,
 ) -> AsyncMessageSender:
     """
-    Subscribe to a channel layer to send/receive messages.
+    Subscribe to a Django Channels layer to send/receive messages.
 
     Args:
+        name: The name of the channel to subscribe to.
         receiver: An async function that receives messages from the channel layer. \
             If more than one receiver waits on the same channel, a random one \
-            will get the result (unless a `group_name` is defined).
-        channel_name: The name of the channel to subscribe to.
-        group_name: The name of the group to subscribe to. If defined, the `receiver` \
-            will be called for every message in the group channel's message history.
+            will get the result (unless you configured `group=True`)
+        group: If True, a group channel will be used instead of a single channel. \
+            This means that all subscribers to the group will receive the message.
         layer_name: The channel layer to use. These layers must be defined in \
             `settings.CHANNEL_LAYERS`.
     """
     # TODO: See if it's better to get the `channel_layer` from the websocket connection
     layer: InMemoryChannelLayer | RedisChannelLayer = get_channel_layer(layer_name)
+    channel_name = use_memo(lambda: str(uuid4() if group else name))
+    group_name = name if group else None
 
     if not layer:
         raise ValueError(
@@ -395,14 +398,17 @@ def use_channel_layer(
         )
 
     @use_effect(dependencies=[])
-    async def register_group():
-        """Add the channel to the group, if defined"""
-        if group_name:
+    async def group_manager():
+        """Add/remove a group's channel during component mount/dismount respectively."""
+        if group:
             await layer.group_add(group_name, channel_name)
 
+            # Group cleanup function
+            return lambda: asyncio.run(layer.group_discard(group_name, channel_name))
+
     @use_effect
-    async def channel_listener():
-        """Listen for messages on the channel"""
+    async def message_receiver():
+        """Listen for messages on the channel using the provided `receiver` function."""
         if not receiver:
             return
 
@@ -410,14 +416,14 @@ def use_channel_layer(
             message = await layer.receive(channel_name)
             await receiver(message)
 
-    async def send(message):
+    async def message_sender(message):
         """Send a message to the channel layer."""
-        if group_name:
+        if group:
             await layer.group_send(group_name, message)
         else:
             await layer.send(channel_name, message)
 
-    return send
+    return message_sender
 
 
 def _use_query_args_1(options: QueryOptions, /, query: Query, *args, **kwargs):
