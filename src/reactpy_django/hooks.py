@@ -386,7 +386,6 @@ def use_channel_layer(
         layer: The channel layer to use. These layers must be defined in \
             `settings.CHANNEL_LAYERS`.
     """
-    # TODO: See if it's better to get the `channel_layer` from the websocket connection
     channel_layer: InMemoryChannelLayer | RedisChannelLayer = get_channel_layer(layer)
     channel_name = use_memo(lambda: str(uuid4() if group else name))
     group_name = name if group else None
