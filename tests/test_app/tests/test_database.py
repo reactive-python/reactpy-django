@@ -10,44 +10,73 @@ from reactpy_django.types import ComponentParams
 
 
 class RoutedDatabaseTests(TransactionTestCase):
+    """Database tests that should only exclusively access the ReactPy database."""
+
     from reactpy_django import config
 
     databases = {config.REACTPY_DATABASE}
 
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        clean.clean_sessions(immediate=True)
-
     def test_component_params(self):
-        # Make sure the ComponentParams table is empty
-        self.assertEqual(ComponentSession.objects.count(), 0)
-        params_1 = self._save_params_to_db(1)
-
-        # Check if a component params are in the database
-        self.assertEqual(ComponentSession.objects.count(), 1)
-        self.assertEqual(
-            pickle.loads(ComponentSession.objects.first().params), params_1
-        )
-
-        # Force `params_1` to expire
         from reactpy_django import config
 
+        initial_clean_interval = config.REACTPY_CLEAN_INTERVAL
+        initial_session_max_age = config.REACTPY_SESSION_MAX_AGE
+        initial_clean_user_data = config.REACTPY_CLEAN_USER_DATA
+        config.REACTPY_CLEAN_INTERVAL = 1
         config.REACTPY_SESSION_MAX_AGE = 1
-        sleep(config.REACTPY_SESSION_MAX_AGE + 0.1)
+        config.REACTPY_CLEAN_USER_DATA = False
 
-        # Create a new, non-expired component params
-        params_2 = self._save_params_to_db(2)
-        self.assertEqual(ComponentSession.objects.count(), 2)
+        try:
+            clean.clean_all(immediate=True)
 
-        # Delete the first component params based on expiration time
-        clean.clean_sessions()  # Don't use `immediate` to test timestamping logic
+            # Make sure the ComponentParams table is empty
+            self.assertEqual(ComponentSession.objects.count(), 0)
+            params_1 = self._save_params_to_db(1)
 
-        # Make sure `params_1` has expired
-        self.assertEqual(ComponentSession.objects.count(), 1)
-        self.assertEqual(
-            pickle.loads(ComponentSession.objects.first().params), params_2
-        )
+            # Check if a component params are in the database
+            self.assertEqual(ComponentSession.objects.count(), 1)
+            self.assertEqual(
+                pickle.loads(ComponentSession.objects.first().params), params_1  # type: ignore
+            )
+
+            # Force `params_1` to expire
+            sleep(config.REACTPY_CLEAN_INTERVAL)
+
+            # Create a new, non-expired component params
+            params_2 = self._save_params_to_db(2)
+            self.assertEqual(ComponentSession.objects.count(), 2)
+
+            # Try to delete the `params_1` via cleaning (it should be expired)
+            # Note: We don't use `immediate` here in order to test timestamping logic
+            clean.clean_all()
+
+            # Make sure `params_1` has expired, but `params_2` is still there
+            self.assertEqual(ComponentSession.objects.count(), 1)
+            self.assertEqual(
+                pickle.loads(ComponentSession.objects.first().params), params_2  # type: ignore
+            )
+        finally:
+            config.REACTPY_CLEAN_INTERVAL = initial_clean_interval
+            config.REACTPY_SESSION_MAX_AGE = initial_session_max_age
+            config.REACTPY_CLEAN_USER_DATA = initial_clean_user_data
+
+    def _save_params_to_db(self, value: Any) -> ComponentParams:
+        db = list(self.databases)[0]
+        param_data = ComponentParams((value,), {"test_value": value})
+        model = ComponentSession(uuid4().hex, params=pickle.dumps(param_data))
+        model.clean_fields()
+        model.clean()
+        model.save(using=db)
+
+        return param_data
+
+
+class MultiDatabaseTests(TransactionTestCase):
+    """Database tests that need to access both the default and ReactPy databases."""
+
+    from reactpy_django import config
+
+    databases = {"default", config.REACTPY_DATABASE}
 
     def test_user_data_cleanup(self):
         from django.contrib.auth.models import User
@@ -62,28 +91,21 @@ class RoutedDatabaseTests(TransactionTestCase):
         user_data = UserDataModel(user_pk=user.pk)
         user_data.save()
 
-        # Keep track of the count of UserData objects
-        original_count = UserDataModel.objects.count()
+        # Store the initial amount of UserData objects
+        initial_count = UserDataModel.objects.count()
 
-        # Create UserData for a fake user (orphaned)
+        # Create UserData for a user that doesn't exist (effectively orphaned)
         user_data = UserDataModel(user_pk=uuid4().hex)
         user_data.save()
 
         # Make sure the orphaned user data object is deleted
-        self.assertNotEqual(UserDataModel.objects.count(), original_count)
+        self.assertEqual(UserDataModel.objects.count(), initial_count + 1)
         clean.clean_user_data()
-        self.assertEqual(UserDataModel.objects.count(), original_count)
+        self.assertEqual(UserDataModel.objects.count(), initial_count)
 
         # Check if deleting a user deletes the associated UserData
         user.delete()
-        self.assertEqual(UserDataModel.objects.count(), original_count - 1)
+        self.assertEqual(UserDataModel.objects.count(), initial_count - 1)
 
-    def _save_params_to_db(self, value: Any) -> ComponentParams:
-        db = list(self.databases)[0]
-        param_data = ComponentParams((value,), {"test_value": value})
-        model = ComponentSession(uuid4().hex, params=pickle.dumps(param_data))
-        model.clean_fields()
-        model.clean()
-        model.save(using=db)
-
-        return param_data
+        # Make sure one user data object remains
+        self.assertEqual(UserDataModel.objects.count(), 1)

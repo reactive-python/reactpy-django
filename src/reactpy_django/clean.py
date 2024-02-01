@@ -63,6 +63,8 @@ def clean_user_data():
     user_model = get_user_model()
     all_users = user_model.objects.all()
     all_user_pks = all_users.values_list(user_model._meta.pk.name, flat=True)  # type: ignore
+    if user_model.objects.db != UserDataModel.objects.db:
+        all_user_pks = list(all_user_pks)  # type: ignore
     UserDataModel.objects.exclude(user_pk__in=all_user_pks).delete()
 
     if REACTPY_DEBUG_MODE:
