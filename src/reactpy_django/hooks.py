@@ -13,10 +13,13 @@ from typing import (
     cast,
     overload,
 )
+from uuid import uuid4
 
 import orjson as pickle
+from channels import DEFAULT_CHANNEL_LAYER
 from channels.db import database_sync_to_async
-from reactpy import use_callback, use_effect, use_ref, use_state
+from channels.layers import InMemoryChannelLayer, get_channel_layer
+from reactpy import use_callback, use_effect, use_memo, use_ref, use_state
 from reactpy import use_connection as _use_connection
 from reactpy import use_location as _use_location
 from reactpy import use_scope as _use_scope
@@ -24,6 +27,8 @@ from reactpy.backend.types import Location
 
 from reactpy_django.exceptions import UserNotFoundError
 from reactpy_django.types import (
+    AsyncMessageReceiver,
+    AsyncMessageSender,
     ConnectionType,
     FuncParams,
     Inferred,
@@ -36,6 +41,7 @@ from reactpy_django.types import (
 from reactpy_django.utils import generate_obj_name, get_user_pk
 
 if TYPE_CHECKING:
+    from channels_redis.core import RedisChannelLayer
     from django.contrib.auth.models import AbstractUser
 
 
@@ -359,6 +365,65 @@ def use_user_data(
     mutation = use_mutation(_set_user_data, refetch=_get_user_data)
 
     return UserData(query, mutation)
+
+
+def use_channel_layer(
+    name: str,
+    receiver: AsyncMessageReceiver | None = None,
+    group: bool = False,
+    layer: str = DEFAULT_CHANNEL_LAYER,
+) -> AsyncMessageSender:
+    """
+    Subscribe to a Django Channels layer to send/receive messages.
+
+    Args:
+        name: The name of the channel to subscribe to.
+        receiver: An async function that receives a `message: dict` from the channel layer. \
+            If more than one receiver waits on the same channel, a random one \
+            will get the result (unless `group=True` is defined).
+        group: If `True`, a "group channel" will be used. Messages sent within a \
+            group are broadcasted to all receivers on that channel.
+        layer: The channel layer to use. These layers must be defined in \
+            `settings.py:CHANNEL_LAYERS`.
+    """
+    channel_layer: InMemoryChannelLayer | RedisChannelLayer = get_channel_layer(layer)
+    channel_name = use_memo(lambda: str(uuid4() if group else name))
+    group_name = name if group else ""
+
+    if not channel_layer:
+        raise ValueError(
+            f"Channel layer '{layer}' is not available. Are you sure you"
+            " configured settings.py:CHANNEL_LAYERS properly?"
+        )
+
+    # Add/remove a group's channel during component mount/dismount respectively.
+    @use_effect(dependencies=[])
+    async def group_manager():
+        if group:
+            await channel_layer.group_add(group_name, channel_name)
+
+            return lambda: asyncio.run(
+                channel_layer.group_discard(group_name, channel_name)
+            )
+
+    # Listen for messages on the channel using the provided `receiver` function.
+    @use_effect
+    async def message_receiver():
+        if not receiver or not channel_name:
+            return
+
+        while True:
+            message = await channel_layer.receive(channel_name)
+            await receiver(message)
+
+    # User interface for sending messages to the channel
+    async def message_sender(message: dict):
+        if group:
+            await channel_layer.group_send(group_name, message)
+        else:
+            await channel_layer.send(channel_name, message)
+
+    return message_sender
 
 
 def _use_query_args_1(options: QueryOptions, /, query: Query, *args, **kwargs):

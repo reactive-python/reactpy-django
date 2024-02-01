@@ -640,3 +640,32 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
         finally:
             new_page.close()
+
+    def test_channel_layer_components(self):
+        new_page = self.browser.new_page()
+        try:
+            new_page.goto(f"{self.live_server_url}/channel-layers/")
+            sender = new_page.wait_for_selector("#sender")
+            sender.type("test", delay=CLICK_DELAY)
+            sender.press("Enter", delay=CLICK_DELAY)
+            receiver = new_page.wait_for_selector("#receiver[data-message='test']")
+            self.assertIsNotNone(receiver)
+
+            sender = new_page.wait_for_selector("#group-sender")
+            sender.type("1234", delay=CLICK_DELAY)
+            sender.press("Enter", delay=CLICK_DELAY)
+            receiver_1 = new_page.wait_for_selector(
+                "#group-receiver-1[data-message='1234']"
+            )
+            receiver_2 = new_page.wait_for_selector(
+                "#group-receiver-2[data-message='1234']"
+            )
+            receiver_3 = new_page.wait_for_selector(
+                "#group-receiver-3[data-message='1234']"
+            )
+            self.assertIsNotNone(receiver_1)
+            self.assertIsNotNone(receiver_2)
+            self.assertIsNotNone(receiver_3)
+
+        finally:
+            new_page.close()

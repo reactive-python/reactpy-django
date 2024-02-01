@@ -109,3 +109,13 @@ class ComponentParams:
 class UserData(NamedTuple):
     query: Query[dict | None]
     mutation: Mutation[dict]
+
+
+class AsyncMessageReceiver(Protocol):
+    async def __call__(self, message: dict) -> None:
+        ...
+
+
+class AsyncMessageSender(Protocol):
+    async def __call__(self, message: dict) -> None:
+        ...
