@@ -324,9 +324,9 @@ User data saved with this hook is stored within the `#!python REACTPY_DATABASE`.
 
 Subscribe to a [Django Channels layer](https://channels.readthedocs.io/en/latest/topics/channel_layers.html) to send/receive messages.
 
-Layers are a cross-process communication system that allows you to send/receive messages between different parts of your application.
+Layers are a multiprocessing-safe communication system that allows you to send/receive messages between different parts of your application.
 
-This is often used to create chat systems, synchronize data between components, or to signal re-renders from outside your components.
+This is often used to create chat systems, synchronize data between components, or signal re-renders from outside your components.
 
 === "components.py"
 
@@ -398,7 +398,7 @@ This is often used to create chat systems, synchronize data between components, 
 
     In these cases, you can use the `#!python use_channel_layer` hook to receive a signal within your component, and then use the `#!python get_channel_layer().send(...)` to send the signal.
 
-    Note that in the example below, the sender will signal on every time `#!python ExampleModel` is saved. Then, our receiver component must explicitly call `#!python set_message(...)` to trigger a re-render.
+    In the example below, the sender will send a signal every time `#!python ExampleModel` is saved. Then, when the receiver component gets this signal, it explicitly calls `#!python set_message(...)` to trigger a re-render.
 
     === "components.py"
 
