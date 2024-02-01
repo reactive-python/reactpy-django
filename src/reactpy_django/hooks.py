@@ -378,13 +378,13 @@ def use_channel_layer(
 
     Args:
         name: The name of the channel to subscribe to.
-        receiver: An async function that receives messages from the channel layer. \
+        receiver: An async function that receives a `message: dict` from the channel layer. \
             If more than one receiver waits on the same channel, a random one \
             will get the result (unless `group=True` is defined).
         group: If `True`, a "group channel" will be used. Messages sent within a \
-            group are broadcasted to all channel subscribers.
+            group are broadcasted to all receivers on that channel.
         layer: The channel layer to use. These layers must be defined in \
-            `settings.CHANNEL_LAYERS`.
+            `settings.py:CHANNEL_LAYERS`.
     """
     channel_layer: InMemoryChannelLayer | RedisChannelLayer = get_channel_layer(layer)
     channel_name = use_memo(lambda: str(uuid4() if group else name))
@@ -417,7 +417,7 @@ def use_channel_layer(
             await receiver(message)
 
     # User interface for sending messages to the channel
-    async def message_sender(message):
+    async def message_sender(message: dict):
         if group:
             await channel_layer.group_send(group_name, message)
         else:
