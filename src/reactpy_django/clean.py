@@ -5,15 +5,13 @@ from typing import TYPE_CHECKING
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from reactpy_django.utils import get_pk
-
 _logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from reactpy_django.models import Config
 
 
-def clean_all(immediate: bool = False, manual_clean=True):
+def clean_all(immediate: bool = False, ignore_config=False):
     from reactpy_django.config import (
         REACTPY_CLEAN_SESSIONS,
         REACTPY_CLEAN_USER_DATA,
@@ -22,9 +20,9 @@ def clean_all(immediate: bool = False, manual_clean=True):
 
     config = Config.load()
     if immediate or is_clean_needed(config):
-        if manual_clean or REACTPY_CLEAN_SESSIONS:
+        if ignore_config or REACTPY_CLEAN_SESSIONS:
             clean_sessions()
-        if manual_clean or REACTPY_CLEAN_USER_DATA:
+        if ignore_config or REACTPY_CLEAN_USER_DATA:
             clean_user_data()
         config.cleaned_at = timezone.now()
         config.save()
