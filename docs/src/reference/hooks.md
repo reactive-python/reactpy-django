@@ -275,7 +275,11 @@ Mutation functions can be sync or async.
 
 ### Use User Data
 
-Store or retrieve data (`#!python dict`) specific to the connection's `#!python User`. This data is stored in the `#!python REACTPY_DATABASE`.
+Store or retrieve a `#!python dict` containing user data specific to the connection's `#!python User`.
+
+This hook is useful for storing user-specific data, such as preferences, settings, or any generic key-value pairs.
+
+User data saved with this hook is stored within the `#!python REACTPY_DATABASE`.
 
 === "components.py"
 
