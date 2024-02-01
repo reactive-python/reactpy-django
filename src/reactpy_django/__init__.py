@@ -8,7 +8,7 @@ from reactpy_django.websocket.paths import (
     REACTPY_WEBSOCKET_ROUTE,
 )
 
-__version__ = "3.7.0"
+__version__ = "3.8.0"
 __all__ = [
     "REACTPY_WEBSOCKET_PATH",
     "REACTPY_WEBSOCKET_ROUTE",
