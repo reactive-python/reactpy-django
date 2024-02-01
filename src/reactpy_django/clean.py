@@ -15,16 +15,16 @@ if TYPE_CHECKING:
 
 def clean_all(immediate: bool = False, manual_clean=True):
     from reactpy_django.config import (
-        REACTPY_AUTO_CLEAN_SESSIONS,
-        REACTPY_AUTO_CLEAN_USER_DATA,
+        REACTPY_CLEAN_SESSIONS,
+        REACTPY_CLEAN_USER_DATA,
     )
     from reactpy_django.models import Config
 
     config = Config.load()
     if immediate or is_clean_needed(config):
-        if manual_clean or REACTPY_AUTO_CLEAN_SESSIONS:
+        if manual_clean or REACTPY_CLEAN_SESSIONS:
             clean_sessions()
-        if manual_clean or REACTPY_AUTO_CLEAN_USER_DATA:
+        if manual_clean or REACTPY_CLEAN_USER_DATA:
             clean_user_data()
         config.cleaned_at = timezone.now()
         config.save()

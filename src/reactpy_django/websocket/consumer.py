@@ -96,7 +96,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
     async def disconnect(self, code: int) -> None:
         """The browser has disconnected."""
-        from reactpy_django.config import REACTPY_AUTO_CLEAN_INTERVAL
+        from reactpy_django.config import REACTPY_CLEAN_INTERVAL
 
         self.dispatcher.cancel()
 
@@ -112,7 +112,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 )
 
         # Queue a cleanup, if needed
-        if REACTPY_AUTO_CLEAN_INTERVAL > -1:
+        if REACTPY_CLEAN_INTERVAL > -1:
             try:
                 await database_sync_to_async(clean_all)()
             except Exception:

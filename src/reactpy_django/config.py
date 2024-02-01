@@ -118,18 +118,18 @@ REACTPY_AUTO_RELOGIN: bool = getattr(
     "REACTPY_AUTO_RELOGIN",
     False,
 )
-REACTPY_AUTO_CLEAN_INTERVAL: int = getattr(
+REACTPY_CLEAN_INTERVAL: int = getattr(
     settings,
-    "REACTPY_AUTO_CLEAN_INTERVAL",
+    "REACTPY_CLEAN_INTERVAL",
     604800,  # Default to 7 days
 )
-REACTPY_AUTO_CLEAN_SESSIONS: bool = getattr(
+REACTPY_CLEAN_SESSIONS: bool = getattr(
     settings,
-    "REACTPY_AUTO_CLEAN_SESSIONS",
+    "REACTPY_CLEAN_SESSIONS",
     True,
 )
-REACTPY_AUTO_CLEAN_USER_DATA: bool = getattr(
+REACTPY_CLEAN_USER_DATA: bool = getattr(
     settings,
-    "REACTPY_AUTO_CLEAN_USER_DATA",
+    "REACTPY_CLEAN_USER_DATA",
     True,
 )
