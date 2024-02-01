@@ -259,7 +259,7 @@ def _django_js(static_path: str):
     return html.script(_cached_static_contents(static_path))
 
 
-def _cached_static_contents(static_path: str):
+def _cached_static_contents(static_path: str) -> str:
     from reactpy_django.config import REACTPY_CACHE
 
     # Try to find the file within Django's static files
@@ -272,7 +272,7 @@ def _cached_static_contents(static_path: str):
     # Fetch the file from cache, if available
     last_modified_time = os.stat(abs_path).st_mtime
     cache_key = f"reactpy_django:static_contents:{static_path}"
-    file_contents = caches[REACTPY_CACHE].get(
+    file_contents: str | None = caches[REACTPY_CACHE].get(
         cache_key, version=int(last_modified_time)
     )
     if file_contents is None:
