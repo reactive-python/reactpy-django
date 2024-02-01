@@ -409,7 +409,7 @@ def use_channel_layer(
     # Listen for messages on the channel using the provided `receiver` function.
     @use_effect
     async def message_receiver():
-        if not receiver:
+        if not receiver or not channel_name:
             return
 
         while True:
