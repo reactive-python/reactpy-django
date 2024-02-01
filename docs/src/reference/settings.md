@@ -84,7 +84,7 @@ This is useful to continuously update `#!python last_login` timestamps and refre
 
 **Example Value(s):** `#!python "my-reactpy-database"`
 
-Multiprocessing-safe database used by ReactPy for any [database hooks](./hooks.md#database-hooks).
+Multiprocessing-safe database used by ReactPy for database-backed hooks and features.
 
 If configuring this value, it is mandatory to enable our database router like such:
 
