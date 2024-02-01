@@ -5,23 +5,23 @@
 {% endif %}
 
 {% if not reactpy_failure %}
-<div id="{{ reactpy_uuid }}" class="{{ reactpy_class }}"></div>
+{% if reactpy_class %}<div id="{{reactpy_uuid}}" class="{{reactpy_class}}"></div>{% endif %}
+{% if not reactpy_class %}<div id="{{reactpy_uuid}}"></div>{% endif %}
+{% if reactpy_prerender_html %}<div id="{{reactpy_uuid}}-prerender">{{reactpy_prerender_html|safe}}</div>{% endif %}
+{% if reactpy_offline_html %}<div id="{{reactpy_uuid}}-offline" hidden>{{reactpy_offline_html|safe}}</div>{% endif %}
 <script type="module" crossorigin="anonymous">
   import { mountComponent } from "{% static 'reactpy_django/client.js' %}";
-  const mountElement = document.getElementById("{{ reactpy_uuid }}");
+  const mountElement = document.getElementById("{{reactpy_uuid}}");
   mountComponent(
     mountElement,
-    "{{ reactpy_host }}",
-    "{{ reactpy_url_prefix }}",
-    "{{ reactpy_component_path }}",
-    "{{ reactpy_resolved_web_modules_path }}",
-    Number("{{ reactpy_reconnect_interval }}"),
-    Number("{{ reactpy_reconnect_max_interval }}"),
-    Number("{{ reactpy_reconnect_max_retries }}"),
-    Number("{{ reactpy_reconnect_backoff_multiplier }}"),
+    "{{reactpy_host}}",
+    "{{reactpy_url_prefix}}",
+    "{{reactpy_component_path}}",
+    "{{reactpy_resolved_web_modules_path}}",
+    Number("{{reactpy_reconnect_interval}}"),
+    Number("{{reactpy_reconnect_max_interval}}"),
+    Number("{{reactpy_reconnect_max_retries}}"),
+    Number("{{reactpy_reconnect_backoff_multiplier}}"),
   );
 </script>
-{% if reactpy_prerender_html %}<div id="{{ reactpy_uuid }}-prerender">{{ reactpy_prerender_html|safe }}</div>{% endif %}
-{% if reactpy_offline_html %}<div id="{{ reactpy_uuid }}-offline" hidden>{{ reactpy_offline_html|safe }}</div>
-{% endif %}
 {% endif %}
