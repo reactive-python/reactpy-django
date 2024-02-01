@@ -380,15 +380,15 @@ def use_channel_layer(
         name: The name of the channel to subscribe to.
         receiver: An async function that receives messages from the channel layer. \
             If more than one receiver waits on the same channel, a random one \
-            will get the result (unless you configured `group=True`)
-        group: If True, a group channel will be used instead of a single channel. \
-            This means that all subscribers to the group will receive the message.
+            will get the result (unless `group=True` is defined).
+        group: If `True`, a "group channel" will be used. Messages sent within a \
+            group are broadcasted to all channel subscribers.
         layer: The channel layer to use. These layers must be defined in \
             `settings.CHANNEL_LAYERS`.
     """
     channel_layer: InMemoryChannelLayer | RedisChannelLayer = get_channel_layer(layer)
     channel_name = use_memo(lambda: str(uuid4() if group else name))
-    group_name = name if group else None
+    group_name = name if group else ""
 
     if not channel_layer:
         raise ValueError(
@@ -396,20 +396,19 @@ def use_channel_layer(
             " configured settings.py:CHANNEL_LAYERS properly?"
         )
 
+    # Add/remove a group's channel during component mount/dismount respectively.
     @use_effect(dependencies=[])
     async def group_manager():
-        """Add/remove a group's channel during component mount/dismount respectively."""
         if group:
             await channel_layer.group_add(group_name, channel_name)
 
-            # Group cleanup function
             return lambda: asyncio.run(
                 channel_layer.group_discard(group_name, channel_name)
             )
 
+    # Listen for messages on the channel using the provided `receiver` function.
     @use_effect
     async def message_receiver():
-        """Listen for messages on the channel using the provided `receiver` function."""
         if not receiver:
             return
 
@@ -417,8 +416,8 @@ def use_channel_layer(
             message = await channel_layer.receive(channel_name)
             await receiver(message)
 
+    # User interface for sending messages to the channel
     async def message_sender(message):
-        """Send a message to the channel or group."""
         if group:
             await channel_layer.group_send(group_name, message)
         else:
