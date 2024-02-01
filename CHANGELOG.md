@@ -34,7 +34,9 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Added
+
+-   Built-in cross-process communication mechanism via the `reactpy_django.hooks.use_channel_layer` hook.
 
 ## [3.7.0] - 2024-01-30
 

@@ -2,7 +2,7 @@
 
 <p class="intro" markdown>
 
-A variant of [`reactpy-router`](https://github.com/reactive-python/reactpy-router) that utilizes Django conventions.
+A Single Page Application URL router, which is a variant of [`reactpy-router`](https://github.com/reactive-python/reactpy-router) that uses Django conventions.
 
 </p>
 
