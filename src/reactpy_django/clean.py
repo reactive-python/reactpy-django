@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
@@ -10,8 +12,10 @@ _logger = logging.getLogger(__name__)
 if TYPE_CHECKING:
     from reactpy_django.models import Config
 
+CLEAN_NEEDED_BY: datetime = datetime(year=1, month=1, day=1)
 
-def clean_all(immediate: bool = False, ignore_config=False):
+
+def clean_all(immediate: bool = False, ignore_config: bool = False):
     from reactpy_django.config import (
         REACTPY_CLEAN_SESSIONS,
         REACTPY_CLEAN_USER_DATA,
@@ -20,12 +24,13 @@ def clean_all(immediate: bool = False, ignore_config=False):
 
     config = Config.load()
     if immediate or is_clean_needed(config):
+        config.cleaned_at = timezone.now()
+        config.save()
+
         if ignore_config or REACTPY_CLEAN_SESSIONS:
             clean_sessions()
         if ignore_config or REACTPY_CLEAN_USER_DATA:
             clean_user_data()
-        config.cleaned_at = timezone.now()
-        config.save()
 
 
 def clean_sessions():
@@ -65,14 +70,21 @@ def clean_user_data():
 
 
 def is_clean_needed(config: Config | None = None) -> bool:
-    from reactpy_django.config import REACTPY_SESSION_MAX_AGE
+    """Check if a clean is needed. This function avoids unnecessary database reads by caching the
+    CLEAN_NEEDED_BY date."""
+    from reactpy_django.config import REACTPY_CLEAN_INTERVAL
     from reactpy_django.models import Config
 
-    config = config or Config.load()
-    cleaned_at = config.cleaned_at
-    clean_needed_by = cleaned_at + timedelta(seconds=REACTPY_SESSION_MAX_AGE)
+    global CLEAN_NEEDED_BY
 
-    return timezone.now() >= clean_needed_by
+    if REACTPY_CLEAN_INTERVAL == 0:
+        return False
+
+    if CLEAN_NEEDED_BY.year == 1 or timezone.now() >= CLEAN_NEEDED_BY:
+        config = config or Config.load()
+        CLEAN_NEEDED_BY = config.cleaned_at + timedelta(seconds=REACTPY_CLEAN_INTERVAL)
+
+    return timezone.now() >= CLEAN_NEEDED_BY
 
 
 def inspect_clean_duration(start_time: datetime, task_name: str):
