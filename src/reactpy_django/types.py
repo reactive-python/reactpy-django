@@ -112,10 +112,10 @@ class UserData(NamedTuple):
 
 
 class AsyncMessageReceiver(Protocol):
-    async def __call__(self, message: Any) -> None:
+    async def __call__(self, message: dict) -> None:
         ...
 
 
 class AsyncMessageSender(Protocol):
-    async def __call__(self, message: Any) -> None:
+    async def __call__(self, message: dict) -> None:
         ...
