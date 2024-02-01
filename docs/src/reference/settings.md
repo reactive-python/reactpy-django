@@ -104,7 +104,7 @@ If configuring this value, it is mandatory to enable our database router like su
 
 Cache used by ReactPy, typically for caching disk operations.
 
-We recommend using [`redis`](https://docs.djangoproject.com/en/dev/topics/cache/#redis), [`memcache`](https://docs.djangoproject.com/en/5.0/topics/cache/#memcached), or [`local-memory caching`](https://docs.djangoproject.com/en/dev/topics/cache/#local-memory-caching).
+We recommend using [`redis`](https://docs.djangoproject.com/en/dev/topics/cache/#redis), [`memcache`](https://docs.djangoproject.com/en/dev/topics/cache/#memcached), or [`local-memory caching`](https://docs.djangoproject.com/en/dev/topics/cache/#local-memory-caching).
 
 ---
 
