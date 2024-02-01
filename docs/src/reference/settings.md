@@ -84,7 +84,7 @@ This is useful to continuously update `#!python last_login` timestamps and refre
 
 **Example Value(s):** `#!python "my-reactpy-database"`
 
-Multiprocessing-safe database used by ReactPy, typically for session data.
+Multiprocessing-safe database used by ReactPy for any [database hooks](./hooks.md#database-hooks).
 
 If configuring this value, it is mandatory to enable our database router like such:
 
@@ -104,7 +104,7 @@ If configuring this value, it is mandatory to enable our database router like su
 
 Cache used by ReactPy, typically for caching disk operations.
 
-We recommend using [`redis`](https://docs.djangoproject.com/en/dev/topics/cache/#redis), [`python-diskcache`](https://grantjenks.com/docs/diskcache/tutorial.html#djangocache), or [`LocMemCache`](https://docs.djangoproject.com/en/dev/topics/cache/#local-memory-caching).
+We recommend using [`redis`](https://docs.djangoproject.com/en/dev/topics/cache/#redis), [`memcache`](https://docs.djangoproject.com/en/5.0/topics/cache/#memcached), or [`local-memory caching`](https://docs.djangoproject.com/en/dev/topics/cache/#local-memory-caching).
 
 ---
 
