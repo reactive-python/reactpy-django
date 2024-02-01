@@ -44,7 +44,7 @@ def group_receiver(id: int):
 
     return html.div(
         {"id": f"group-receiver-{id}", "data-message": state},
-        f"Group Message Receiver: {state}",
+        f"Group Message Receiver #{id}: {state}",
     )
 
 
