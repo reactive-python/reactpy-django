@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -15,10 +15,9 @@ if TYPE_CHECKING:
 CLEAN_NEEDED_BY: datetime = datetime(year=1, month=1, day=1)
 
 
-def clean_all(
+def clean(
+    *args: Literal["session", "user_data"],
     immediate: bool = False,
-    no_session: bool = False,
-    no_user_data: bool = False,
     verbosity: int = 1,
 ):
     from reactpy_django.config import (
@@ -32,9 +31,12 @@ def clean_all(
         config.cleaned_at = timezone.now()
         config.save()
 
-        if no_session or REACTPY_CLEAN_SESSIONS:
+        sessions = "session" in args if args else REACTPY_CLEAN_SESSIONS
+        user_data = "user_data" in args if args else REACTPY_CLEAN_USER_DATA
+
+        if sessions:
             clean_sessions(verbosity)
-        if no_user_data or REACTPY_CLEAN_USER_DATA:
+        if user_data:
             clean_user_data(verbosity)
 
 
@@ -45,12 +47,19 @@ def clean_sessions(verbosity: int = 1):
     from reactpy_django.config import REACTPY_DEBUG_MODE, REACTPY_SESSION_MAX_AGE
     from reactpy_django.models import ComponentSession
 
-    if verbosity >= 1:
+    if verbosity >= 2:
         print("Cleaning ReactPy component sessions...")
 
     start_time = timezone.now()
     expiration_date = timezone.now() - timedelta(seconds=REACTPY_SESSION_MAX_AGE)
-    ComponentSession.objects.filter(last_accessed__lte=expiration_date).delete()
+    session_objects = ComponentSession.objects.filter(
+        last_accessed__lte=expiration_date
+    )
+
+    if verbosity >= 2:
+        print(f"Deleting {session_objects.count()} expired component sessions...")
+
+    session_objects.delete()
 
     if REACTPY_DEBUG_MODE or verbosity >= 2:
         inspect_clean_duration(start_time, "component sessions", verbosity)
@@ -67,7 +76,7 @@ def clean_user_data(verbosity: int = 1):
     from reactpy_django.config import REACTPY_DEBUG_MODE
     from reactpy_django.models import UserDataModel
 
-    if verbosity >= 1:
+    if verbosity >= 2:
         print("Cleaning ReactPy user data...")
 
     start_time = timezone.now()
@@ -76,7 +85,14 @@ def clean_user_data(verbosity: int = 1):
     all_user_pks = all_users.values_list(user_model._meta.pk.name, flat=True)  # type: ignore
     if user_model.objects.db != UserDataModel.objects.db:
         all_user_pks = list(all_user_pks)  # type: ignore
-    UserDataModel.objects.exclude(user_pk__in=all_user_pks).delete()
+    user_data_objects = UserDataModel.objects.exclude(user_pk__in=all_user_pks)
+
+    if verbosity >= 2:
+        print(
+            f"Deleting {user_data_objects.count()} user data objects not associated with an existing user..."
+        )
+
+    user_data_objects.delete()
 
     if REACTPY_DEBUG_MODE or verbosity >= 2:
         inspect_clean_duration(start_time, "user data", verbosity)

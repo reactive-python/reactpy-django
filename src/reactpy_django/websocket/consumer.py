@@ -23,7 +23,7 @@ from reactpy.backend.types import Connection, Location
 from reactpy.core.layout import Layout
 from reactpy.core.serve import serve_layout
 
-from reactpy_django.clean import clean_all
+from reactpy_django.clean import clean
 from reactpy_django.types import ComponentParams
 
 if TYPE_CHECKING:
@@ -114,7 +114,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         # Queue a cleanup, if needed
         if REACTPY_CLEAN_INTERVAL > -1:
             try:
-                await database_sync_to_async(clean_all)()
+                await database_sync_to_async(clean)()
             except Exception:
                 await asyncio.to_thread(
                     _logger.error,

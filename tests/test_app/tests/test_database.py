@@ -27,7 +27,7 @@ class RoutedDatabaseTests(TransactionTestCase):
         config.REACTPY_CLEAN_USER_DATA = False
 
         try:
-            clean.clean_all(immediate=True)
+            clean.clean(immediate=True)
 
             # Make sure the ComponentParams table is empty
             self.assertEqual(ComponentSession.objects.count(), 0)
@@ -48,7 +48,7 @@ class RoutedDatabaseTests(TransactionTestCase):
 
             # Try to delete the `params_1` via cleaning (it should be expired)
             # Note: We don't use `immediate` here in order to test timestamping logic
-            clean.clean_all()
+            clean.clean()
 
             # Make sure `params_1` has expired, but `params_2` is still there
             self.assertEqual(ComponentSession.objects.count(), 1)
