@@ -112,10 +112,10 @@ def is_clean_needed(config: Config | None = None) -> bool:
 
     global CLEAN_NEEDED_BY
 
-    if REACTPY_CLEAN_INTERVAL == 0:
+    if REACTPY_CLEAN_INTERVAL is None:
         return False
 
-    if CLEAN_NEEDED_BY.year == 1 or timezone.now() >= CLEAN_NEEDED_BY:
+    if timezone.now() >= CLEAN_NEEDED_BY:
         config = config or Config.load()
         CLEAN_NEEDED_BY = config.cleaned_at + timedelta(seconds=REACTPY_CLEAN_INTERVAL)
 

@@ -118,7 +118,7 @@ REACTPY_AUTO_RELOGIN: bool = getattr(
     "REACTPY_AUTO_RELOGIN",
     False,
 )
-REACTPY_CLEAN_INTERVAL: int = getattr(
+REACTPY_CLEAN_INTERVAL: int | None = getattr(
     settings,
     "REACTPY_CLEAN_INTERVAL",
     604800,  # Default to 7 days

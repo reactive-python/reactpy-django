@@ -112,7 +112,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 )
 
         # Queue a cleanup, if needed
-        if REACTPY_CLEAN_INTERVAL > -1:
+        if REACTPY_CLEAN_INTERVAL is not None:
             try:
                 await database_sync_to_async(clean)()
             except Exception:

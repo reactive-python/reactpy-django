@@ -228,9 +228,13 @@ Use `#!python 0` to not store any session data.
 
 **Default:** `#!python 604800`
 
-**Example Value(s):** `#!python 0`, `#!python 3600`, `#!python 86400`
+**Example Value(s):** `#!python 0`, `#!python 3600`, `#!python 86400`, `#!python None`
 
 Minimum seconds between ReactPy automatic clean up operations.
+
+The server will check if the interval has passed after every component disconnection, and will perform a clean if needed.
+
+Set this value to `#!python None` to disable automatic clean up operations.
 
 ---
 

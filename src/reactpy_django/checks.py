@@ -500,11 +500,11 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
-    if not isinstance(config.REACTPY_CLEAN_INTERVAL, int):
+    if not isinstance(config.REACTPY_CLEAN_INTERVAL, (int, type(None))):
         errors.append(
             Error(
                 "Invalid type for REACTPY_CLEAN_INTERVAL.",
-                hint="REACTPY_CLEAN_INTERVAL should be an integer.",
+                hint="REACTPY_CLEAN_INTERVAL should be an integer or None.",
                 id="reactpy_django.E023",
             )
         )
@@ -516,7 +516,7 @@ def reactpy_errors(app_configs, **kwargs):
         errors.append(
             Error(
                 "Invalid value for REACTPY_CLEAN_INTERVAL.",
-                hint="REACTPY_CLEAN_INTERVAL should be a positive integer.",
+                hint="REACTPY_CLEAN_INTERVAL should be a positive integer or None.",
                 id="reactpy_django.E024",
             )
         )
