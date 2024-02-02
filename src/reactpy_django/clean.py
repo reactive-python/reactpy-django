@@ -16,7 +16,7 @@ CLEAN_NEEDED_BY: datetime = datetime(year=1, month=1, day=1)
 
 
 def clean(
-    *args: Literal["session", "user_data"],
+    *args: Literal["all", "session", "user_data"],
     immediate: bool = False,
     verbosity: int = 1,
 ):
@@ -30,9 +30,12 @@ def clean(
     if immediate or is_clean_needed(config):
         config.cleaned_at = timezone.now()
         config.save()
+        sessions = REACTPY_CLEAN_SESSIONS
+        user_data = REACTPY_CLEAN_USER_DATA
 
-        sessions = "session" in args if args else REACTPY_CLEAN_SESSIONS
-        user_data = "user_data" in args if args else REACTPY_CLEAN_USER_DATA
+        if args:
+            sessions = any(value in args for value in {"session", "all"})
+            user_data = any(value in args for value in {"user_data", "all"})
 
         if sessions:
             clean_sessions(verbosity)
