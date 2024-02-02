@@ -56,9 +56,10 @@ Set `#!python REACTPY_DEFAULT_QUERY_POSTPROCESSOR` to `#!python None` to disable
 
 Dotted path to the Django authentication backend to use for ReactPy components. This is only needed if:
 
-1. You are using `#!python AuthMiddlewareStack` and...
-2. You are using Django's `#!python AUTHENTICATION_BACKENDS` setting and...
-3. Your Django user model does not define a `#!python backend` attribute.
+1. You are using `#!python settings.py:REACTPY_AUTO_RELOGIN=True` and...
+2. You are using `#!python AuthMiddlewareStack` and...
+3. You are using Django's `#!python AUTHENTICATION_BACKENDS` setting and...
+4. Your Django user model does not define a `#!python backend` attribute.
 
 ---
 
@@ -211,7 +212,7 @@ Maximum number of reconnection attempts before the client gives up.
 
 **Example Value(s):** `#!python 0`, `#!python 60`, `#!python 96000`
 
-Maximum seconds to store ReactPy component sessions.
+Maximum seconds a ReactPy component session is valid for. Invalid sessions are deleted during [ReactPy clean up](#auto-clean-settings).
 
 ReactPy sessions include data such as `#!python *args` and `#!python **kwargs` passed into your `#!jinja {% component %}` template tag.
 
