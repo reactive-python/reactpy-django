@@ -255,6 +255,15 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
+    if getattr(settings, "REACTPY_CLEAN_SESSION", None):
+        warnings.append(
+            Warning(
+                "REACTPY_CLEAN_SESSION is not a valid property value.",
+                hint="Did you mean to use REACTPY_CLEAN_SESSIONS instead?",
+                id="reactpy_django.W019",
+            )
+        )
+
     return warnings
 
 
