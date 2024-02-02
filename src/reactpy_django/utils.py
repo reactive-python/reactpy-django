@@ -44,7 +44,6 @@ COMPONENT_REGEX = re.compile(
     + rf"({_component_offline_kwarg}|{_component_generic_kwarg})*?"
     + r"\s*%}"
 )
-DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 async def render_view(
