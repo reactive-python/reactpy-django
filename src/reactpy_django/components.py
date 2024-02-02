@@ -8,14 +8,21 @@ from warnings import warn
 
 from django.contrib.staticfiles.finders import find
 from django.core.cache import caches
+from django.forms import Form
 from django.http import HttpRequest
 from django.urls import reverse
 from django.views import View
-from reactpy import component, hooks, html, utils
-from reactpy.types import Key, VdomDict
+from reactpy import component, event, hooks, html
+from reactpy.types import ComponentType, Key, VdomDict
+from reactpy.utils import _ModelTransform, del_html_head_body_transform, html_to_vdom
 
 from reactpy_django.exceptions import ViewNotRegisteredError
-from reactpy_django.utils import generate_obj_name, import_module, render_view
+from reactpy_django.utils import (
+    generate_obj_name,
+    import_module,
+    render_form,
+    render_view,
+)
 
 
 # Type hints for:
@@ -48,6 +55,7 @@ def view_to_component(
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
+    loading_placeholder: ComponentType | VdomDict | str | None = None,
 ) -> Any | Callable[[Callable], Any]:
     """Converts a Django view to a ReactPy component.
 
@@ -82,6 +90,7 @@ def view_to_component(
                 args=args,
                 kwargs=kwargs,
                 key=key,
+                loading_placeholder=loading_placeholder,
             )
 
         return constructor
@@ -122,6 +131,12 @@ def view_to_iframe(
     return constructor
 
 
+@component
+def django_form():
+    """TODO: Write this definition."""
+    ...
+
+
 def django_css(static_path: str, key: Key | None = None):
     """Fetches a CSS static file for use within ReactPy. This allows for deferred CSS loading.
 
@@ -152,11 +167,12 @@ def django_js(static_path: str, key: Key | None = None):
 def _view_to_component(
     view: Callable | View | str,
     compatibility: bool,
-    transforms: Sequence[Callable[[VdomDict], Any]],
+    transforms: Sequence[_ModelTransform],
     strict_parsing: bool,
     request: HttpRequest | None,
     args: Sequence | None,
     kwargs: dict | None,
+    loading_placeholder: ComponentType | VdomDict | str | None = None,
 ):
     """The actual component. Used to prevent pollution of acceptable kwargs keys."""
     converted_view, set_converted_view = hooks.use_state(
@@ -187,9 +203,9 @@ def _view_to_component(
         # Render the view
         response = await render_view(resolved_view, _request, _args, _kwargs)
         set_converted_view(
-            utils.html_to_vdom(
+            html_to_vdom(
                 response.content.decode("utf-8").strip(),
-                utils.del_html_head_body_transform,
+                del_html_head_body_transform,
                 *transforms,
                 strict=strict_parsing,
             )
@@ -207,7 +223,7 @@ def _view_to_component(
         return view_to_iframe(resolved_view)(*_args, **_kwargs)
 
     # Return the view if it's been rendered via the `async_render` hook
-    return converted_view
+    return converted_view or loading_placeholder
 
 
 @component
@@ -247,6 +263,65 @@ def _view_to_iframe(
         }
         | extra_props
     )
+
+
+@component
+def _django_form(
+    form: Form,
+    /,
+    top_children: Sequence = (),
+    bottom_children: Sequence = (),
+    template_name: str | None = None,
+    context: dict | None = None,
+    transforms: Sequence[_ModelTransform] = (),
+    strict_parsing: bool = True,
+    loading_placeholder: ComponentType | VdomDict | str | None = None,
+):
+    convertered_form, set_converted_form = hooks.use_state(
+        cast(Union[VdomDict, None], None)
+    )
+    render_needed, set_render_needed = hooks.use_state(True)
+    request, set_request = hooks.use_state(HttpRequest())
+
+    @hooks.use_effect
+    async def async_render():
+        """Render the form in an async hook to avoid blocking the main thread."""
+        if render_needed:
+            if not request.method:
+                request.method = "GET"
+            # TODO: Maybe I need to use FormView here instead? At that point may as well also use view_to_component.
+            form_html = await render_form(
+                form,
+                template_name=template_name,
+                context=context,
+                request=request,
+            )
+            set_converted_form(
+                html.form(
+                    {"on_submit": on_submit},
+                    *top_children or "",
+                    html_to_vdom(form_html, *transforms, strict=strict_parsing),
+                    *bottom_children or "",
+                )
+            )
+            # TODO: When ReactPy starts serializing the `name` field of input elements,
+            # we will need to make sure all inputs have a name attribute here
+            set_render_needed(False)
+
+    @event(prevent_default=True)
+    async def on_submit(event):
+        """Event handler attached to the rendered form to intercept submission."""
+        # Create a synthetic request object.
+        request_obj = HttpRequest()
+        request_obj.method = "POST"
+        # FIXME: Need to figure out how to get the form data from the event.
+        setattr(request_obj, "_body", event["target"])
+        set_request(request_obj)
+
+        # Queue a re-render of the form
+        set_render_needed(True)
+
+    return convertered_form or loading_placeholder
 
 
 @component

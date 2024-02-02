@@ -17,6 +17,7 @@ from channels.db import database_sync_to_async
 from django.db.models import ManyToManyField, ManyToOneRel, prefetch_related_objects
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
+from django.forms import Form
 from django.http import HttpRequest, HttpResponse
 from django.template import engines
 from django.utils import timezone
@@ -74,6 +75,18 @@ async def render_view(
         response = await database_sync_to_async(response.render)()
 
     return response
+
+
+async def render_form(
+    form: Form,
+    template_name: str | None,
+    context: dict | None,
+    request: HttpRequest | None = None,
+) -> str:
+    """Renders a Django form asynchronously."""
+    return await database_sync_to_async(form.renderer.render)(
+        template_name=template_name, context=context or {}, request=request
+    )
 
 
 def register_component(component: ComponentConstructor | str):
@@ -401,3 +414,32 @@ def get_user_pk(user, serialize=False):
     """Returns the primary key value for a user model instance."""
     pk = getattr(user, user._meta.pk.name)
     return pickle.dumps(pk) if serialize else pk
+
+
+def combine_event_and_form(target_elements: list[dict], form: Form) -> dict[str, str]:
+    """
+    Serialized DOM elements currently do not send over their `name` attribute. They only contain
+    `tagName` and `value` attributes.
+
+    However, since DOM elements are rendered in order, so we can reconstruct the form data by
+    generating a list of `name` attribute from the form and matching them with the `value` attributes
+    from the serialized DOM elements.
+
+    FIXME: https://github.com/reactive-python/reactpy/issues/1186
+    FIXME: https://github.com/reactive-python/reactpy/issues/1188
+    """
+    # TODO: FieldSet breaks this logic, will need to find a workaround
+    # Generate a list of names from the form
+    input_field_names = [field.name for field in form]
+
+    # Generate a list of values from the serialized DOM
+    input_field_values = [element["value"] for element in target_elements]
+
+    # Verify if something went wrong
+    if len(input_field_names) != len(input_field_values):
+        raise ValueError(
+            "The number of input fields in the form does not match the number of values in the serialized DOM elements."
+        )
+
+    # Combine the two lists into a dictionary
+    return dict(zip(input_field_names, input_field_values))
