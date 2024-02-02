@@ -216,3 +216,39 @@ Maximum seconds to store ReactPy component sessions.
 ReactPy sessions include data such as `#!python *args` and `#!python **kwargs` passed into your `#!jinja {% component %}` template tag.
 
 Use `#!python 0` to not store any session data.
+
+---
+
+## Auto-Clean Settings
+
+---
+
+### `#!python REACTPY_CLEAN_INTERVAL`
+
+**Default:** `#!python 604800`
+
+**Example Value(s):** `#!python 0`, `#!python 3600`, `#!python 86400`
+
+Minimum seconds between ReactPy automatic clean up operations.
+
+---
+
+### `#!python REACTPY_CLEAN_SESSIONS`
+
+**Default:** `#!python True`
+
+**Example Value(s):** `#!python False`
+
+Configures whether ReactPy should clean up expired component sessions during automatic clean up operations.
+
+---
+
+### `#!python REACTPY_CLEAN_USER_DATA`
+
+**Default:** `#!python True`
+
+**Example Value(s):** `#!python False`
+
+Configures whether ReactPy should clean up orphaned user data during automatic clean up operations.
+
+Typically, user data does not become orphaned unless the server crashes during a `#!python User` delete operation.
