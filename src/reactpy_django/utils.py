@@ -6,12 +6,10 @@ import logging
 import os
 import re
 from asyncio import iscoroutinefunction
-from datetime import timedelta
 from fnmatch import fnmatch
 from importlib import import_module
 from typing import Any, Callable, Sequence
 
-import orjson as pickle
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from django.db.models import ManyToManyField, ManyToOneRel, prefetch_related_objects
@@ -19,7 +17,6 @@ from django.db.models.base import Model
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.template import engines
-from django.utils import timezone
 from django.utils.encoding import smart_str
 from django.views import View
 from reactpy.core.layout import Layout
@@ -47,7 +44,6 @@ COMPONENT_REGEX = re.compile(
     + rf"({_component_offline_kwarg}|{_component_generic_kwarg})*?"
     + r"\s*%}"
 )
-DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 async def render_view(
@@ -351,36 +347,6 @@ def create_cache_key(*args):
     return f"reactpy_django:{':'.join(str(arg) for arg in args)}"
 
 
-def delete_expired_sessions(immediate: bool = False):
-    """Deletes expired component sessions from the database.
-    As a performance optimization, this is only run once every REACTPY_SESSION_MAX_AGE seconds.
-    """
-    from .config import REACTPY_DEBUG_MODE, REACTPY_SESSION_MAX_AGE
-    from .models import ComponentSession, Config
-
-    config = Config.load()
-    start_time = timezone.now()
-    cleaned_at = config.cleaned_at
-    clean_needed_by = cleaned_at + timedelta(seconds=REACTPY_SESSION_MAX_AGE)
-
-    # Delete expired component parameters
-    if immediate or timezone.now() >= clean_needed_by:
-        expiration_date = timezone.now() - timedelta(seconds=REACTPY_SESSION_MAX_AGE)
-        ComponentSession.objects.filter(last_accessed__lte=expiration_date).delete()
-        config.cleaned_at = timezone.now()
-        config.save()
-
-    # Check if cleaning took abnormally long
-    if REACTPY_DEBUG_MODE:
-        clean_duration = timezone.now() - start_time
-        if clean_duration.total_seconds() > 1:
-            _logger.warning(
-                "ReactPy has taken %s seconds to clean up expired component sessions. "
-                "This may indicate a performance issue with your system, cache, or database.",
-                clean_duration.total_seconds(),
-            )
-
-
 class SyncLayout(Layout):
     """Sync adapter for ReactPy's `Layout`. Allows it to be used in Django template tags.
     This can be removed when Django supports async template tags.
@@ -397,7 +363,6 @@ class SyncLayout(Layout):
         return async_to_sync(super().render)()
 
 
-def get_user_pk(user, serialize=False):
-    """Returns the primary key value for a user model instance."""
-    pk = getattr(user, user._meta.pk.name)
-    return pickle.dumps(pk) if serialize else pk
+def get_pk(model):
+    """Returns the value of the primary key for a Django model."""
+    return getattr(model, model._meta.pk.name)

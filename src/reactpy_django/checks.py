@@ -255,6 +255,15 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
+    if getattr(settings, "REACTPY_CLEAN_SESSION", None):
+        warnings.append(
+            Warning(
+                "REACTPY_CLEAN_SESSION is not a valid property value.",
+                hint="Did you mean to use REACTPY_CLEAN_SESSIONS instead?",
+                id="reactpy_django.W019",
+            )
+        )
+
     return warnings
 
 
@@ -488,6 +497,45 @@ def reactpy_errors(app_configs, **kwargs):
                 "Invalid type for REACTPY_AUTO_RELOGIN.",
                 hint="REACTPY_AUTO_RELOGIN should be a boolean.",
                 id="reactpy_django.E022",
+            )
+        )
+
+    if not isinstance(config.REACTPY_CLEAN_INTERVAL, (int, type(None))):
+        errors.append(
+            Error(
+                "Invalid type for REACTPY_CLEAN_INTERVAL.",
+                hint="REACTPY_CLEAN_INTERVAL should be an integer or None.",
+                id="reactpy_django.E023",
+            )
+        )
+
+    if (
+        isinstance(config.REACTPY_CLEAN_INTERVAL, int)
+        and config.REACTPY_CLEAN_INTERVAL < 0
+    ):
+        errors.append(
+            Error(
+                "Invalid value for REACTPY_CLEAN_INTERVAL.",
+                hint="REACTPY_CLEAN_INTERVAL should be a positive integer or None.",
+                id="reactpy_django.E024",
+            )
+        )
+
+    if not isinstance(config.REACTPY_CLEAN_SESSIONS, bool):
+        errors.append(
+            Error(
+                "Invalid type for REACTPY_CLEAN_SESSIONS.",
+                hint="REACTPY_CLEAN_SESSIONS should be a boolean.",
+                id="reactpy_django.E025",
+            )
+        )
+
+    if not isinstance(config.REACTPY_CLEAN_USER_DATA, bool):
+        errors.append(
+            Error(
+                "Invalid type for REACTPY_CLEAN_USER_DATA.",
+                hint="REACTPY_CLEAN_USER_DATA should be a boolean.",
+                id="reactpy_django.E026",
             )
         )
 

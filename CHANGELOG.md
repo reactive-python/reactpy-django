@@ -37,6 +37,11 @@ Using the following categories, list your changes in this order:
 ### Added
 
 -   Built-in cross-process communication mechanism via the `reactpy_django.hooks.use_channel_layer` hook.
+-   More robust control over ReactPy clean up tasks!
+    -   `settings.py:REACTPY_CLEAN_INTERVAL` to control how often ReactPy automatically performs cleaning tasks.
+    -   `settings.py:REACTPY_CLEAN_SESSIONS` to control whether ReactPy automatically cleans up expired sessions.
+    -   `settings.py:REACTPY_CLEAN_USER_DATA` to control whether ReactPy automatically cleans up orphaned user data.
+    -   `python manage.py clean_reactpy` command to manually perform ReactPy clean up tasks.
 
 ## [3.7.0] - 2024-01-30
 
