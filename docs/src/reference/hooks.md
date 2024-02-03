@@ -275,7 +275,11 @@ Mutation functions can be sync or async.
 
 ### Use User Data
 
-Store or retrieve data (`#!python dict`) specific to the connection's `#!python User`. This data is stored in the `#!python REACTPY_DATABASE`.
+Store or retrieve a `#!python dict` containing user data specific to the connection's `#!python User`.
+
+This hook is useful for storing user-specific data, such as preferences, settings, or any generic key-value pairs.
+
+User data saved with this hook is stored within the `#!python REACTPY_DATABASE`.
 
 === "components.py"
 
@@ -308,6 +312,108 @@ Store or retrieve data (`#!python dict`) specific to the connection's `#!python 
 
         ```python
         {% include "../../examples/python/use-user-data-defaults.py" %}
+        ```
+
+---
+
+## Communication Hooks
+
+---
+
+### Use Channel Layer
+
+Subscribe to a [Django Channels layer](https://channels.readthedocs.io/en/latest/topics/channel_layers.html) to send/receive messages.
+
+Layers are a multiprocessing-safe communication system that allows you to send/receive messages between different parts of your application.
+
+This is often used to create chat systems, synchronize data between components, or signal re-renders from outside your components.
+
+=== "components.py"
+
+    ```python
+    {% include "../../examples/python/use-channel-layer.py" %}
+    ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    | Name | Type | Description | Default |
+    | --- | --- | --- | --- |
+    | `#!python name` | `#!python str | None` | The name of the channel to subscribe to. If you define a `#!python group_name`, you can keep `#!python name` undefined to auto-generate a unique name. | `#!python None` |
+    | `#!python group_name` | `#!python str | None` | If configured, any messages sent within this hook will be broadcasted to all channels in this group. | `#!python None` |
+    | `#!python group_add` | `#!python bool` | If `#!python True`, the channel will automatically be added to the group when the component mounts. | `#!python True` |
+    | `#!python group_discard` | `#!python bool` | If `#!python True`, the channel will automatically be removed from the group when the component dismounts. | `#!python True` |
+    | `#!python receiver` | `#!python AsyncMessageReceiver | None` | An async function that receives a `#!python message: dict` from a channel. If more than one receiver waits on the same channel name, a random receiver will get the result. | `#!python None` |
+    | `#!python layer` | `#!python str` | The channel layer to use. This layer must be defined in `#!python settings.py:CHANNEL_LAYERS`. | `#!python 'default'` |
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `#!python AsyncMessageSender` | An async callable that can send a `#!python message: dict`. |
+
+??? warning "Extra Django configuration required"
+
+    In order to use this hook, you will need to configure Django to enable channel layers.
+
+    The [Django Channels documentation](https://channels.readthedocs.io/en/latest/topics/channel_layers.html#configuration) has information on what steps you need to take.
+
+    In summary, you will need to:
+
+    1. Install [`redis`](https://redis.io/download/) on your machine.
+
+    2. Run the following command to install `channels-redis` in your Python environment.
+
+        ```bash linenums="0"
+        pip install channels-redis
+        ```
+
+    3. Configure your `settings.py` to use `RedisChannelLayer` as your layer backend.
+
+        ```python linenums="0"
+        CHANNEL_LAYERS = {
+            "default": {
+                "BACKEND": "channels_redis.core.RedisChannelLayer",
+                "CONFIG": {
+                    "hosts": [("127.0.0.1", 6379)],
+                },
+            },
+        }
+        ```
+
+??? question "How do I broadcast a message to multiple components?"
+
+    If more than one receiver waits on the same channel, a random one will get the result.
+
+    To get around this, you can define a `#!python group_name` to broadcast messages to all channels within a specific group. If you do not define a channel `#!python name` while using groups, ReactPy will automatically generate a unique channel name for you.
+
+    In the example below, all messages sent by the `#!python sender` component will be received by all `#!python receiver` components that exist (across every active client browser).
+
+    === "components.py"
+
+        ```python
+        {% include "../../examples/python/use-channel-layer-group.py" %}
+        ```
+
+??? question "How do I signal a re-render from something that isn't a component?"
+
+    There are occasions where you may want to signal a re-render from something that isn't a component, such as a Django model signal.
+
+    In these cases, you can use the `#!python use_channel_layer` hook to receive a signal within your component, and then use the `#!python get_channel_layer().send(...)` to send the signal.
+
+    In the example below, the sender will send a signal every time `#!python ExampleModel` is saved. Then, when the receiver component gets this signal, it explicitly calls `#!python set_message(...)` to trigger a re-render.
+
+    === "signals.py"
+
+        ```python
+        {% include "../../examples/python/use-channel-layer-signal-sender.py" %}
+        ```
+
+    === "components.py"
+
+        ```python
+        {% include "../../examples/python/use-channel-layer-signal-receiver.py" %}
         ```
 
 ---

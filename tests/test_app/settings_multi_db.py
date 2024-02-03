@@ -155,5 +155,8 @@ LOGGING = {
     },
 }
 
+# Django Channels Settings
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
+
 # ReactPy-Django Settings
 REACTPY_BACKHAUL_THREAD = "test" not in sys.argv and "runserver" not in sys.argv

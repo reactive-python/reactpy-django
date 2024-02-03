@@ -12,7 +12,7 @@ We supply some pre-designed that components can be used to help simplify develop
 
 Automatically convert a Django view into a component.
 
-At this time, this works best with static views that do not rely on HTTP methods other than `GET`.
+At this time, this works best with static views with no interactivity.
 
 Compatible with sync or async [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/).
 
@@ -186,7 +186,7 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
 
     - No built-in method of signalling events back to the parent component.
     - All provided `#!python *args` and `#!python *kwargs` must be serializable values, since they are encoded into the URL.
-    - The `#!python iframe`'s contents will always load **after** the parent component.
+    - The `#!python iframe` will always load **after** the parent component.
     - CSS styling for `#!python iframe` elements tends to be awkward/difficult.
 
 ??? question "How do I use this for Class Based Views?"

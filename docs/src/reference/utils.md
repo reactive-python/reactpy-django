@@ -84,7 +84,7 @@ Typically, this function is automatically called on all components contained wit
 
 This is the default postprocessor for the `#!python use_query` hook.
 
-This postprocessor is designed to avoid Django's `#!python SynchronousOnlyException` by recursively fetching all fields within a `#!python Model` or `#!python QuerySet` to prevent [lazy execution](https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy).
+Since ReactPy is rendered within an `#!python asyncio` loop, this postprocessor is exists to prevent Django's `#!python SynchronousOnlyException` by recursively prefetching fields within a `#!python Model` or `#!python QuerySet`. This prefetching step works to eliminate Django's [lazy execution](https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy) behavior.
 
 === "components.py"
 

@@ -23,8 +23,8 @@ from reactpy.backend.types import Connection, Location
 from reactpy.core.layout import Layout
 from reactpy.core.serve import serve_layout
 
+from reactpy_django.clean import clean
 from reactpy_django.types import ComponentParams
-from reactpy_django.utils import delete_expired_sessions
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import AbstractUser
@@ -96,20 +96,12 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
     async def disconnect(self, code: int) -> None:
         """The browser has disconnected."""
+        from reactpy_django.config import REACTPY_CLEAN_INTERVAL
+
         self.dispatcher.cancel()
 
+        # Update the component's last_accessed timestamp
         if self.component_session:
-            # Clean up expired component sessions
-            try:
-                await database_sync_to_async(delete_expired_sessions)()
-            except Exception:
-                await asyncio.to_thread(
-                    _logger.error,
-                    "ReactPy has failed to delete expired component sessions!\n"
-                    f"{traceback.format_exc()}",
-                )
-
-            # Update the last_accessed timestamp
             try:
                 await self.component_session.asave()
             except Exception:
@@ -117,6 +109,16 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                     _logger.error,
                     "ReactPy has failed to save component session!\n"
                     f"{traceback.format_exc()}",
+                )
+
+        # Queue a cleanup, if needed
+        if REACTPY_CLEAN_INTERVAL is not None:
+            try:
+                await database_sync_to_async(clean)()
+            except Exception:
+                await asyncio.to_thread(
+                    _logger.error,
+                    "ReactPy cleaning failed!\n" f"{traceback.format_exc()}",
                 )
 
         await super().disconnect(code)

@@ -12,6 +12,7 @@ nav:
           - Utilities: reference/utils.md
           - Template Tag: reference/template-tag.md
           - Settings: reference/settings.md
+          - Management Commands: reference/management-commands.md
     - About:
           - Changelog: about/changelog.md
           - Contributor Guide:

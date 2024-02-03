@@ -13,10 +13,13 @@ from typing import (
     cast,
     overload,
 )
+from uuid import uuid4
 
 import orjson as pickle
+from channels import DEFAULT_CHANNEL_LAYER
 from channels.db import database_sync_to_async
-from reactpy import use_callback, use_effect, use_ref, use_state
+from channels.layers import InMemoryChannelLayer, get_channel_layer
+from reactpy import use_callback, use_effect, use_memo, use_ref, use_state
 from reactpy import use_connection as _use_connection
 from reactpy import use_location as _use_location
 from reactpy import use_scope as _use_scope
@@ -24,6 +27,8 @@ from reactpy.backend.types import Location
 
 from reactpy_django.exceptions import UserNotFoundError
 from reactpy_django.types import (
+    AsyncMessageReceiver,
+    AsyncMessageSender,
     ConnectionType,
     FuncParams,
     Inferred,
@@ -33,16 +38,17 @@ from reactpy_django.types import (
     QueryOptions,
     UserData,
 )
-from reactpy_django.utils import generate_obj_name, get_user_pk
+from reactpy_django.utils import generate_obj_name, get_pk
 
 if TYPE_CHECKING:
+    from channels_redis.core import RedisChannelLayer
     from django.contrib.auth.models import AbstractUser
 
 
 _logger = logging.getLogger(__name__)
-_REFETCH_CALLBACKS: DefaultDict[
-    Callable[..., Any], set[Callable[[], None]]
-] = DefaultDict(set)
+_REFETCH_CALLBACKS: DefaultDict[Callable[..., Any], set[Callable[[], None]]] = (
+    DefaultDict(set)
+)
 
 
 # TODO: Deprecate this once the equivalent hook gets moved to reactpy.hooks.*
@@ -103,8 +109,7 @@ def use_query(
     query: Callable[FuncParams, Awaitable[Inferred]] | Callable[FuncParams, Inferred],
     *args: FuncParams.args,
     **kwargs: FuncParams.kwargs,
-) -> Query[Inferred]:
-    ...
+) -> Query[Inferred]: ...
 
 
 @overload
@@ -112,8 +117,7 @@ def use_query(
     query: Callable[FuncParams, Awaitable[Inferred]] | Callable[FuncParams, Inferred],
     *args: FuncParams.args,
     **kwargs: FuncParams.kwargs,
-) -> Query[Inferred]:
-    ...
+) -> Query[Inferred]: ...
 
 
 def use_query(*args, **kwargs) -> Query[Inferred]:
@@ -215,20 +219,20 @@ def use_query(*args, **kwargs) -> Query[Inferred]:
 @overload
 def use_mutation(
     options: MutationOptions,
-    mutation: Callable[FuncParams, bool | None]
-    | Callable[FuncParams, Awaitable[bool | None]],
+    mutation: (
+        Callable[FuncParams, bool | None] | Callable[FuncParams, Awaitable[bool | None]]
+    ),
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
-) -> Mutation[FuncParams]:
-    ...
+) -> Mutation[FuncParams]: ...
 
 
 @overload
 def use_mutation(
-    mutation: Callable[FuncParams, bool | None]
-    | Callable[FuncParams, Awaitable[bool | None]],
+    mutation: (
+        Callable[FuncParams, bool | None] | Callable[FuncParams, Awaitable[bool | None]]
+    ),
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
-) -> Mutation[FuncParams]:
-    ...
+) -> Mutation[FuncParams]: ...
 
 
 def use_mutation(*args: Any, **kwargs: Any) -> Mutation[FuncParams]:
@@ -321,8 +325,9 @@ def use_user() -> AbstractUser:
 
 
 def use_user_data(
-    default_data: None
-    | dict[str, Callable[[], Any] | Callable[[], Awaitable[Any]] | Any] = None,
+    default_data: (
+        None | dict[str, Callable[[], Any] | Callable[[], Awaitable[Any]] | Any]
+    ) = None,
     save_default_data: bool = False,
 ) -> UserData:
     """Get or set user data stored within the REACTPY_DATABASE.
@@ -344,7 +349,7 @@ def use_user_data(
         if user.is_anonymous:
             raise ValueError("AnonymousUser cannot have user data.")
 
-        pk = get_user_pk(user)
+        pk = get_pk(user)
         model, _ = await UserDataModel.objects.aget_or_create(user_pk=pk)
         model.data = pickle.dumps(data)
         await model.asave()
@@ -359,6 +364,76 @@ def use_user_data(
     mutation = use_mutation(_set_user_data, refetch=_get_user_data)
 
     return UserData(query, mutation)
+
+
+def use_channel_layer(
+    name: str | None = None,
+    *,
+    group_name: str | None = None,
+    group_add: bool = True,
+    group_discard: bool = True,
+    receiver: AsyncMessageReceiver | None = None,
+    layer: str = DEFAULT_CHANNEL_LAYER,
+) -> AsyncMessageSender:
+    """
+    Subscribe to a Django Channels layer to send/receive messages.
+
+    Args:
+        name: The name of the channel to subscribe to. If you define a `group_name`, you \
+            can keep `name` undefined to auto-generate a unique name.
+        group_name: If configured, any messages sent within this hook will be broadcasted \
+            to all channels in this group.
+        group_add: If `True`, the channel will automatically be added to the group \
+            when the component mounts.
+        group_discard: If `True`, the channel will automatically be removed from the \
+            group when the component dismounts.
+        receiver: An async function that receives a `message: dict` from a channel. \
+            If more than one receiver waits on the same channel name, a random receiver \
+            will get the result.
+        layer: The channel layer to use. This layer must be defined in \
+            `settings.py:CHANNEL_LAYERS`.
+    """
+    channel_layer: InMemoryChannelLayer | RedisChannelLayer = get_channel_layer(layer)
+    channel_name = use_memo(lambda: str(name or uuid4()))
+
+    if not name and not group_name:
+        raise ValueError("You must define a `name` or `group_name` for the channel.")
+
+    if not channel_layer:
+        raise ValueError(
+            f"Channel layer '{layer}' is not available. Are you sure you"
+            " configured settings.py:CHANNEL_LAYERS properly?"
+        )
+
+    # Add/remove a group's channel during component mount/dismount respectively.
+    @use_effect(dependencies=[])
+    async def group_manager():
+        if group_name and group_add:
+            await channel_layer.group_add(group_name, channel_name)
+
+        if group_name and group_discard:
+            return lambda: asyncio.run(
+                channel_layer.group_discard(group_name, channel_name)
+            )
+
+    # Listen for messages on the channel using the provided `receiver` function.
+    @use_effect
+    async def message_receiver():
+        if not receiver:
+            return
+
+        while True:
+            message = await channel_layer.receive(channel_name)
+            await receiver(message)
+
+    # User interface for sending messages to the channel
+    async def message_sender(message: dict):
+        if group_name:
+            await channel_layer.group_send(group_name, message)
+        else:
+            await channel_layer.send(channel_name, message)
+
+    return message_sender
 
 
 def _use_query_args_1(options: QueryOptions, /, query: Query, *args, **kwargs):
@@ -386,7 +461,7 @@ async def _get_user_data(
     if not user or user.is_anonymous:
         return None
 
-    pk = get_user_pk(user)
+    pk = get_pk(user)
     model, _ = await UserDataModel.objects.aget_or_create(user_pk=pk)
     data = pickle.loads(model.data) if model.data else {}
 
