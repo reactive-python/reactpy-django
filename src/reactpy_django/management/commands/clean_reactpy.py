@@ -11,9 +11,9 @@ class Command(BaseCommand):
 
         verbosity = options.get("verbosity", 1)
 
-        cleaning_args: set[Literal["all", "session", "user_data"]] = set()
-        if options.get("session"):
-            cleaning_args.add("session")
+        cleaning_args: set[Literal["all", "sessions", "user_data"]] = set()
+        if options.get("sessions"):
+            cleaning_args.add("sessions")
         if options.get("user_data"):
             cleaning_args.add("user_data")
         if not cleaning_args:
@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--session",
+            "--sessions",
             action="store_true",
             help="Configure this clean to only clean session data (and other configured cleaning options).",
         )

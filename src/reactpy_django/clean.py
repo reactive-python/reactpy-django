@@ -16,7 +16,7 @@ CLEAN_NEEDED_BY: datetime = datetime(year=1, month=1, day=1)
 
 
 def clean(
-    *args: Literal["all", "session", "user_data"],
+    *args: Literal["all", "sessions", "user_data"],
     immediate: bool = False,
     verbosity: int = 1,
 ):
@@ -34,7 +34,7 @@ def clean(
         user_data = REACTPY_CLEAN_USER_DATA
 
         if args:
-            sessions = any(value in args for value in {"session", "all"})
+            sessions = any(value in args for value in {"sessions", "all"})
             user_data = any(value in args for value in {"user_data", "all"})
 
         if sessions:
