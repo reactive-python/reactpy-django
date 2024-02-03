@@ -366,30 +366,6 @@ def use_user_data(
     return UserData(query, mutation)
 
 
-@overload
-def use_channel_layer(
-    name: None,
-    *,
-    group_name: str,
-    group_add: bool,
-    group_discard: bool,
-    receiver: AsyncMessageReceiver | None,
-    layer: str,
-) -> AsyncMessageSender: ...
-
-
-@overload
-def use_channel_layer(
-    name: str,
-    *,
-    group_name: str | None,
-    group_add: bool,
-    group_discard: bool,
-    receiver: AsyncMessageReceiver | None,
-    layer: str,
-) -> AsyncMessageSender: ...
-
-
 def use_channel_layer(
     name: str | None = None,
     *,
