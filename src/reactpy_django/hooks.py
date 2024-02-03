@@ -404,7 +404,7 @@ def use_channel_layer(
 
     Args:
         name: The name of the channel to subscribe to. If you define a `group_name`, you \
-            can keep this undefined to generate a random name.
+            can keep `name` undefined to auto-generate a unique name.
         group_name: If configured, any messages sent within this hook will be broadcasted \
             to all channels in this group.
         group_add: If `True`, the channel will automatically be added to the group \
@@ -414,13 +414,13 @@ def use_channel_layer(
         receiver: An async function that receives a `message: dict` from a channel. \
             If more than one receiver waits on the same channel name, a random receiver \
             will get the result.
-        layer: The channel layer to use. These layers must be defined in \
+        layer: The channel layer to use. This layer must be defined in \
             `settings.py:CHANNEL_LAYERS`.
     """
     channel_layer: InMemoryChannelLayer | RedisChannelLayer = get_channel_layer(layer)
     channel_name = use_memo(lambda: str(name or uuid4()))
 
-    if not name or not group_name:
+    if not name and not group_name:
         raise ValueError("You must define a `name` or `group_name` for the channel.")
 
     if not channel_layer:
