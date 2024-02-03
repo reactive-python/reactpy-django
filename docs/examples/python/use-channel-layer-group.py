@@ -23,7 +23,7 @@ def my_receiver_component_1():
     async def receive_event(message):
         set_message(message["text"])
 
-    use_channel_layer(receiver=receive_event, group_name="my-group-name")
+    use_channel_layer(group_name="my-group-name", receiver=receive_event)
 
     return html.div(f"Message Receiver 1: {message}")
 
@@ -35,6 +35,6 @@ def my_receiver_component_2():
     async def receive_event(message):
         set_message(message["text"])
 
-    use_channel_layer(receiver=receive_event, group_name="my-group-name")
+    use_channel_layer(group_name="my-group-name", receiver=receive_event)
 
     return html.div(f"Message Receiver 2: {message}")

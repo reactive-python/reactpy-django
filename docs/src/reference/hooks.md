@@ -340,16 +340,18 @@ This is often used to create chat systems, synchronize data between components, 
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `#!python name` | `#!python str` | The name of the channel to subscribe to. | N/A |
-    | `#!python receiver` | `#!python AsyncMessageReceiver | None` | An async function that receives a `#!python message: dict` from the channel layer. If more than one receiver waits on the same channel, a random one will get the result (unless `#!python group=True` is defined). | `#!python None` |
-    | `#!python group` | `#!python bool` | If `#!python True`, a "group channel" will be used. Messages sent within a group are broadcasted to all receivers on that channel. | `#!python False` |
-    | `#!python layer` | `#!python str` | The channel layer to use. These layers must be defined in `#!python settings.py:CHANNEL_LAYERS`. | `#!python 'default'` |
+    | `#!python name` | `#!python str | None` | The name of the channel to subscribe to. If you define a `#!python group_name`, you can keep `#!python name` undefined to auto-generate a unique name. | `#!python None` |
+    | `#!python group_name` | `#!python str | None` | If configured, any messages sent within this hook will be broadcasted to all channels in this group. | `#!python None` |
+    | `#!python group_add` | `#!python bool` | If `#!python True`, the channel will automatically be added to the group when the component mounts. | `#!python True` |
+    | `#!python group_discard` | `#!python bool` | If `#!python True`, the channel will automatically be removed from the group when the component dismounts. | `#!python True` |
+    | `#!python receiver` | `#!python AsyncMessageReceiver | None` | An async function that receives a `#!python message: dict` from a channel. If more than one receiver waits on the same channel name, a random receiver will get the result. | `#!python None` |
+    | `#!python layer` | `#!python str` | The channel layer to use. This layer must be defined in `#!python settings.py:CHANNEL_LAYERS`. | `#!python 'default'` |
 
     <font size="4">**Returns**</font>
 
     | Type | Description |
     | --- | --- |
-    | `#!python AsyncMessageSender` | An async callable that can send a `#!python message: dict` |
+    | `#!python AsyncMessageSender` | An async callable that can send a `#!python message: dict`. |
 
 ??? warning "Extra Django configuration required"
 
@@ -359,13 +361,15 @@ This is often used to create chat systems, synchronize data between components, 
 
     In summary, you will need to:
 
-    1. Run the following command to install `channels-redis` in your Python environment.
+    1. Install [`redis`](https://redis.io/download/) on your machine.
+
+    2. Run the following command to install `channels-redis` in your Python environment.
 
         ```bash linenums="0"
         pip install channels-redis
         ```
 
-    2. Configure your `settings.py` to use `RedisChannelLayer` as your layer backend.
+    3. Configure your `settings.py` to use `RedisChannelLayer` as your layer backend.
 
         ```python linenums="0"
         CHANNEL_LAYERS = {
@@ -380,9 +384,9 @@ This is often used to create chat systems, synchronize data between components, 
 
 ??? question "How do I broadcast a message to multiple components?"
 
-    By default, if more than one receiver waits on the same channel, a random one will get the result.
+    If more than one receiver waits on the same channel, a random one will get the result.
 
-    However, by defining `#!python group=True` you can configure a "group channel", which will broadcast messages to all receivers.
+    To get around this, you can define a `#!python group_name` to broadcast messages to all channels within a specific group. If you do not define a channel `#!python name` while using groups, ReactPy will automatically generate a unique channel name for you.
 
     In the example below, all messages sent by the `#!python sender` component will be received by all `#!python receiver` components that exist (across every active client browser).
 
@@ -400,15 +404,16 @@ This is often used to create chat systems, synchronize data between components, 
 
     In the example below, the sender will send a signal every time `#!python ExampleModel` is saved. Then, when the receiver component gets this signal, it explicitly calls `#!python set_message(...)` to trigger a re-render.
 
-    === "components.py"
-
-        ```python
-        {% include "../../examples/python/use-channel-layer-signal-receiver.py" %}
-        ```
     === "signals.py"
 
         ```python
         {% include "../../examples/python/use-channel-layer-signal-sender.py" %}
+        ```
+
+    === "components.py"
+
+        ```python
+        {% include "../../examples/python/use-channel-layer-signal-receiver.py" %}
         ```
 
 ---
