@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Literal
 
 from django.contrib.auth import get_user_model
-from django.utils import timezone
 
 _logger = logging.getLogger(__name__)
 
@@ -28,7 +27,7 @@ def clean(
 
     config = Config.load()
     if immediate or is_clean_needed(config):
-        config.cleaned_at = timezone.now()
+        config.cleaned_at = datetime.now()
         config.save()
         sessions = REACTPY_CLEAN_SESSIONS
         user_data = REACTPY_CLEAN_USER_DATA
@@ -53,8 +52,8 @@ def clean_sessions(verbosity: int = 1):
     if verbosity >= 2:
         print("Cleaning ReactPy component sessions...")
 
-    start_time = timezone.now()
-    expiration_date = timezone.now() - timedelta(seconds=REACTPY_SESSION_MAX_AGE)
+    start_time = datetime.now()
+    expiration_date = datetime.now() - timedelta(seconds=REACTPY_SESSION_MAX_AGE)
     session_objects = ComponentSession.objects.filter(
         last_accessed__lte=expiration_date
     )
@@ -82,7 +81,7 @@ def clean_user_data(verbosity: int = 1):
     if verbosity >= 2:
         print("Cleaning ReactPy user data...")
 
-    start_time = timezone.now()
+    start_time = datetime.now()
     user_model = get_user_model()
     all_users = user_model.objects.all()
     all_user_pks = all_users.values_list(user_model._meta.pk.name, flat=True)  # type: ignore
@@ -115,15 +114,15 @@ def is_clean_needed(config: Config | None = None) -> bool:
     if REACTPY_CLEAN_INTERVAL is None:
         return False
 
-    if timezone.now() >= CLEAN_NEEDED_BY:
+    if datetime.now() >= CLEAN_NEEDED_BY:
         config = config or Config.load()
         CLEAN_NEEDED_BY = config.cleaned_at + timedelta(seconds=REACTPY_CLEAN_INTERVAL)
 
-    return timezone.now() >= CLEAN_NEEDED_BY
+    return datetime.now() >= CLEAN_NEEDED_BY
 
 
 def inspect_clean_duration(start_time: datetime, task_name: str, verbosity: int):
-    clean_duration = timezone.now() - start_time
+    clean_duration = datetime.now() - start_time
 
     if verbosity >= 3:
         print(
