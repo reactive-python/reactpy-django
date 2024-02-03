@@ -12,7 +12,9 @@ _logger = logging.getLogger(__name__)
 if TYPE_CHECKING:
     from reactpy_django.models import Config
 
-CLEAN_NEEDED_BY: datetime = datetime(year=1, month=1, day=1)
+CLEAN_NEEDED_BY: datetime = datetime(
+    year=1, month=1, day=1, tzinfo=timezone.now().tzinfo
+)
 
 
 def clean(
@@ -115,7 +117,7 @@ def is_clean_needed(config: Config | None = None) -> bool:
     if REACTPY_CLEAN_INTERVAL is None:
         return False
 
-    if CLEAN_NEEDED_BY.year == 1 or timezone.now() >= CLEAN_NEEDED_BY:
+    if timezone.now() >= CLEAN_NEEDED_BY:
         config = config or Config.load()
         CLEAN_NEEDED_BY = config.cleaned_at + timedelta(seconds=REACTPY_CLEAN_INTERVAL)
 
