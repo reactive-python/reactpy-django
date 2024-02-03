@@ -12,11 +12,13 @@ ReactPy exposes Django management commands that can be used to perform various R
 
 Command used to manually clean ReactPy data.
 
-When using this command without args, it will perform all cleaning operations. You can specify only performing specific cleaning operations through arguments such as `--sessions`.
+When using this command without arguments, it will perform all cleaning operations. You can specify only performing specific cleaning operations through arguments such as `--sessions`.
 
-```bash linenums="0"
-python manage.py clean_reactpy
-```
+!!! example "Terminal"
+
+    ```bash linenums="0"
+    python manage.py clean_reactpy
+    ```
 
 ??? example "See Interface"
 
