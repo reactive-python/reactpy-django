@@ -51,6 +51,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://reactive-python.github.io/reactpy-django/develop/reference/management-commands/</loc>
+         <lastmod>2024-02-03</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://reactive-python.github.io/reactpy-django/develop/reference/router/</loc>
          <lastmod>2024-02-03</lastmod>
          <changefreq>daily</changefreq>
