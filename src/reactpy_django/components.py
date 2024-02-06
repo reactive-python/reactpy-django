@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import contextlib
 import json
 import os
 from typing import Any, Callable, Sequence, Union, cast, overload
@@ -123,7 +122,7 @@ def view_to_iframe(
     return constructor
 
 
-def django_css(static_path: str, only_once: bool = True, key: Key | None = None):
+def django_css(static_path: str, only_once: bool = False, key: Key | None = None):
     """Fetches a CSS static file for use within ReactPy. This allows for deferred CSS loading.
 
     Args:
@@ -136,7 +135,7 @@ def django_css(static_path: str, only_once: bool = True, key: Key | None = None)
     return _django_css(static_path=static_path, only_once=only_once, key=key)
 
 
-def django_js(static_path: str, only_once: bool = True, key: Key | None = None):
+def django_js(static_path: str, only_once: bool = False, key: Key | None = None):
     """Fetches a JS static file for use within ReactPy. This allows for deferred JS loading.
 
     Args:

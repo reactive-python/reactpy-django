@@ -140,7 +140,11 @@ def django_css():
 def django_css_only_once():
     scope = reactpy_django.hooks.use_scope()
     css_files, set_css_files = hooks.use_state(
-        [reactpy_django.components.django_css("django-css-only-once-test.css")]
+        [
+            reactpy_django.components.django_css(
+                "django-css-only-once-test.css", only_once=True
+            )
+        ]
     )
 
     async def add_end_css(event):
@@ -148,7 +152,7 @@ def django_css_only_once():
             css_files
             + [
                 reactpy_django.components.django_css(
-                    "django-css-only-once-test.css", key=str(uuid4())
+                    "django-css-only-once-test.css", only_once=True, key=str(uuid4())
                 )
             ]
         )
@@ -157,7 +161,7 @@ def django_css_only_once():
         set_css_files(
             [
                 reactpy_django.components.django_css(
-                    "django-css-only-once-test.css", key=str(uuid4())
+                    "django-css-only-once-test.css", only_once=True, key=str(uuid4())
                 )
             ]
             + css_files
