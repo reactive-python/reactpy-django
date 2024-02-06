@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 from typing import Any, Callable, Sequence, Union, cast, overload
 from urllib.parse import urlencode
+from uuid import uuid4
 from warnings import warn
 
 from django.contrib.staticfiles.finders import find
@@ -15,6 +17,7 @@ from reactpy import component, hooks, html, utils
 from reactpy.types import Key, VdomDict
 
 from reactpy_django.exceptions import ViewNotRegisteredError
+from reactpy_django.hooks import use_scope
 from reactpy_django.utils import generate_obj_name, import_module, render_view
 
 
@@ -27,8 +30,7 @@ def view_to_component(
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-) -> Any:
-    ...
+) -> Any: ...
 
 
 # Type hints for:
@@ -39,8 +41,7 @@ def view_to_component(
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-) -> Callable[[Callable], Any]:
-    ...
+) -> Callable[[Callable], Any]: ...
 
 
 def view_to_component(
@@ -122,7 +123,7 @@ def view_to_iframe(
     return constructor
 
 
-def django_css(static_path: str, key: Key | None = None):
+def django_css(static_path: str, only_once: bool = True, key: Key | None = None):
     """Fetches a CSS static file for use within ReactPy. This allows for deferred CSS loading.
 
     Args:
@@ -132,10 +133,10 @@ def django_css(static_path: str, key: Key | None = None):
             immediate siblings
     """
 
-    return _django_css(static_path=static_path, key=key)
+    return _django_css(static_path=static_path, only_once=only_once, key=key)
 
 
-def django_js(static_path: str, key: Key | None = None):
+def django_js(static_path: str, only_once: bool = True, key: Key | None = None):
     """Fetches a JS static file for use within ReactPy. This allows for deferred JS loading.
 
     Args:
@@ -145,7 +146,7 @@ def django_js(static_path: str, key: Key | None = None):
             immediate siblings
     """
 
-    return _django_js(static_path=static_path, key=key)
+    return _django_js(static_path=static_path, only_once=only_once, key=key)
 
 
 @component
@@ -250,12 +251,34 @@ def _view_to_iframe(
 
 
 @component
-def _django_css(static_path: str):
-    return html.style(_cached_static_contents(static_path))
+def _django_css(static_path: str, only_once: bool):
+    scope = use_scope()
+    ownership_uuid = hooks.use_memo(lambda: uuid4())
+    scope.setdefault("reactpy_css", {}).setdefault(static_path, ownership_uuid)
+
+    # Load the CSS file if no other component has loaded it
+    @hooks.use_effect(dependencies=None)
+    async def only_once_manager():
+        if not only_once:
+            return
+
+        # If the CSS file currently isn't rendered, let this component render it
+        if not scope["reactpy_css"].get(static_path):
+            scope["reactpy_css"].setdefault(static_path, ownership_uuid)
+
+        # Only the component that loaded the CSS file should remove it from the scope
+        def unmount():
+            if scope["reactpy_css"].get(static_path) == ownership_uuid:
+                scope["reactpy_css"].pop(static_path)
+
+        return unmount
+
+    if not only_once or (scope["reactpy_css"].get(static_path) == ownership_uuid):
+        return html.style(_cached_static_contents(static_path))
 
 
 @component
-def _django_js(static_path: str):
+def _django_js(static_path: str, only_once: bool):
     return html.script(_cached_static_contents(static_path))
 
 
