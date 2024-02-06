@@ -254,32 +254,56 @@ def _view_to_iframe(
 def _django_css(static_path: str, only_once: bool):
     scope = use_scope()
     ownership_uuid = hooks.use_memo(lambda: uuid4())
-    scope.setdefault("reactpy_css", {}).setdefault(static_path, ownership_uuid)
+    scope.setdefault("reactpy", {}).setdefault("css", {})
+    scope["reactpy"]["css"].setdefault(static_path, ownership_uuid)
 
-    # Load the CSS file if no other component has loaded it
+    # Load the file if no other component has loaded it
     @hooks.use_effect(dependencies=None)
     async def only_once_manager():
         if not only_once:
             return
 
-        # If the CSS file currently isn't rendered, let this component render it
-        if not scope["reactpy_css"].get(static_path):
-            scope["reactpy_css"].setdefault(static_path, ownership_uuid)
+        # If the file currently isn't rendered, let this component render it
+        if not scope["reactpy"]["css"].get(static_path):
+            scope["reactpy"]["css"].setdefault(static_path, ownership_uuid)
 
-        # Only the component that loaded the CSS file should remove it from the scope
+        # Only the component that loaded the file should remove it from the scope
         def unmount():
-            if scope["reactpy_css"].get(static_path) == ownership_uuid:
-                scope["reactpy_css"].pop(static_path)
+            if scope["reactpy"]["css"].get(static_path) == ownership_uuid:
+                scope["reactpy"]["css"].pop(static_path)
 
         return unmount
 
-    if not only_once or (scope["reactpy_css"].get(static_path) == ownership_uuid):
+    if not only_once or (scope["reactpy"]["css"].get(static_path) == ownership_uuid):
         return html.style(_cached_static_contents(static_path))
 
 
 @component
 def _django_js(static_path: str, only_once: bool):
-    return html.script(_cached_static_contents(static_path))
+    scope = use_scope()
+    ownership_uuid = hooks.use_memo(lambda: uuid4())
+    scope.setdefault("reactpy", {}).setdefault("js", {})
+    scope["reactpy"]["js"].setdefault(static_path, ownership_uuid)
+
+    # Load the file if no other component has loaded it
+    @hooks.use_effect(dependencies=None)
+    async def only_once_manager():
+        if not only_once:
+            return
+
+        # If the file currently isn't rendered, let this component render it
+        if not scope["reactpy"]["js"].get(static_path):
+            scope["reactpy"]["js"].setdefault(static_path, ownership_uuid)
+
+        # Only the component that loaded the file should remove it from the scope
+        def unmount():
+            if scope["reactpy"]["js"].get(static_path) == ownership_uuid:
+                scope["reactpy"]["js"].pop(static_path)
+
+        return unmount
+
+    if not only_once or (scope["reactpy"]["js"].get(static_path) == ownership_uuid):
+        return html.script(_cached_static_contents(static_path))
 
 
 def _cached_static_contents(static_path: str) -> str:
