@@ -1,6 +1,7 @@
 import asyncio
 import inspect
 from pathlib import Path
+from uuid import uuid4
 
 import reactpy_django
 from channels.auth import login, logout
@@ -132,6 +133,59 @@ def django_css():
         reactpy_django.components.django_css("django-css-test.css", key="test"),
         html.div({"style": {"display": "inline"}}, "django_css: "),
         html.button("This text should be blue."),
+    )
+
+
+@component
+def django_css_only_once():
+    scope = reactpy_django.hooks.use_scope()
+    css_files, set_css_files = hooks.use_state(
+        [reactpy_django.components.django_css("django-css-only-once-test.css")]
+    )
+
+    async def add_end_css(event):
+        set_css_files(
+            css_files
+            + [
+                reactpy_django.components.django_css(
+                    "django-css-only-once-test.css", key=str(uuid4())
+                )
+            ]
+        )
+
+    async def add_front_css(event):
+        set_css_files(
+            [
+                reactpy_django.components.django_css(
+                    "django-css-only-once-test.css", key=str(uuid4())
+                )
+            ]
+            + css_files
+        )
+
+    async def remove_end_css(event):
+        if css_files:
+            set_css_files(css_files[:-1])
+
+    async def remove_front_css(event):
+        if css_files:
+            set_css_files(css_files[1:])
+
+    return html.div(
+        {"id": "django-css-only-once"},
+        html.div({"style": {"display": "inline"}}, "django_css_only_once: "),
+        html.button(
+            "This text should be blue. The stylesheet for this component should only be added once."
+        ),
+        html.div(
+            html.button({"on_click": add_end_css}, "Add End File"),
+            html.button({"on_click": add_front_css}, "Add Front File"),
+            html.button({"on_click": remove_end_css}, "Remove End File"),
+            html.button({"on_click": remove_front_css}, "Remove Front File"),
+        ),
+        html.div(f'CSS ownership tracked via ASGI scope: {scope.get("reactpy_css")}'),
+        html.div(f"Components with CSS: {css_files}"),
+        css_files,
     )
 
 
@@ -720,9 +774,9 @@ def use_user_data():
             "data-fetch-error": bool(user_data_query.error),
             "data-mutation-error": bool(user_data_mutation.error),
             "data-loading": user_data_query.loading or user_data_mutation.loading,
-            "data-username": "AnonymousUser"
-            if current_user.is_anonymous
-            else current_user.username,
+            "data-username": (
+                "AnonymousUser" if current_user.is_anonymous else current_user.username
+            ),
         },
         html.div("use_user_data"),
         html.button({"class": "login-1", "on_click": login_user1}, "Login 1"),
@@ -788,9 +842,9 @@ def use_user_data_with_default():
             "data-fetch-error": bool(user_data_query.error),
             "data-mutation-error": bool(user_data_mutation.error),
             "data-loading": user_data_query.loading or user_data_mutation.loading,
-            "data-username": "AnonymousUser"
-            if current_user.is_anonymous
-            else current_user.username,
+            "data-username": (
+                "AnonymousUser" if current_user.is_anonymous else current_user.username
+            ),
         },
         html.div("use_user_data_with_default"),
         html.button({"class": "login-3", "on_click": login_user3}, "Login 3"),
