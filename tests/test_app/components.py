@@ -137,12 +137,12 @@ def django_css():
 
 
 @component
-def django_css_only_once():
+def django_css_allow_duplicates():
     scope = reactpy_django.hooks.use_scope()
     css_files, set_css_files = hooks.use_state(
         [
             reactpy_django.components.django_css(
-                "django-css-only-once-test.css", only_once=True
+                "django-css-only-once-test.css", allow_duplicates=True
             )
         ]
     )
@@ -152,7 +152,9 @@ def django_css_only_once():
             css_files
             + [
                 reactpy_django.components.django_css(
-                    "django-css-only-once-test.css", only_once=True, key=str(uuid4())
+                    "django-css-only-once-test.css",
+                    allow_duplicates=True,
+                    key=str(uuid4()),
                 )
             ]
         )
@@ -161,7 +163,9 @@ def django_css_only_once():
         set_css_files(
             [
                 reactpy_django.components.django_css(
-                    "django-css-only-once-test.css", only_once=True, key=str(uuid4())
+                    "django-css-only-once-test.css",
+                    allow_duplicates=True,
+                    key=str(uuid4()),
                 )
             ]
             + css_files
@@ -177,7 +181,7 @@ def django_css_only_once():
 
     return html.div(
         {"id": "django-css-only-once"},
-        html.div({"style": {"display": "inline"}}, "django_css_only_once: "),
+        html.div({"style": {"display": "inline"}}, "django_css_allow_duplicates: "),
         html.button(
             "This text should be blue. The stylesheet for this component should only be added once."
         ),
