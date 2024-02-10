@@ -232,7 +232,7 @@ Use `#!python 0` to not store any session data.
 
 Minimum seconds between ReactPy automatic clean up operations.
 
-The server will check if the interval has passed after every component disconnection, and will perform a clean if needed.
+After a component disconnection, the server will perform a clean up if this amount of time has passed since the last clean up.
 
 Set this value to `#!python None` to disable automatic clean up operations.
 
