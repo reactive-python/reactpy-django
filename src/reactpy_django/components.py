@@ -259,12 +259,16 @@ def _view_to_iframe(
 def _django_css(static_path: str, allow_duplicates: bool):
     scope = use_scope()
     ownership_uuid = hooks.use_memo(lambda: uuid4())
-    scope.setdefault("reactpy", {}).setdefault("css", {})
-    scope["reactpy"]["css"].setdefault(static_path, ownership_uuid)
+
+    # Configure the scope to track the file
+    if not allow_duplicates:
+        scope.setdefault("reactpy", {}).setdefault("css", {})
+        scope["reactpy"]["css"].setdefault(static_path, ownership_uuid)
 
     # Load the file if no other component has loaded it
     @hooks.use_effect(dependencies=None)
     async def duplicate_manager():
+        """Note: This hook runs on every render. This is intentional."""
         if allow_duplicates:
             return
 
@@ -287,12 +291,16 @@ def _django_css(static_path: str, allow_duplicates: bool):
 def _django_js(static_path: str, allow_duplicates: bool):
     scope = use_scope()
     ownership_uuid = hooks.use_memo(lambda: uuid4())
-    scope.setdefault("reactpy", {}).setdefault("js", {})
-    scope["reactpy"]["js"].setdefault(static_path, ownership_uuid)
+
+    # Configure the scope to track the file
+    if not allow_duplicates:
+        scope.setdefault("reactpy", {}).setdefault("js", {})
+        scope["reactpy"]["js"].setdefault(static_path, ownership_uuid)
 
     # Load the file if no other component has loaded it
     @hooks.use_effect(dependencies=None)
     async def duplicate_manager():
+        """Note: This hook runs on every render. This is intentional."""
         if allow_duplicates:
             return
 
