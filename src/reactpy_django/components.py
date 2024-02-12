@@ -1,23 +1,26 @@
 from __future__ import annotations
 
 import json
-import os
 from typing import Any, Callable, Sequence, Union, cast, overload
 from urllib.parse import urlencode
 from uuid import uuid4
 from warnings import warn
 
-from django.contrib.staticfiles.finders import find
-from django.core.cache import caches
 from django.http import HttpRequest
 from django.urls import reverse
 from django.views import View
 from reactpy import component, hooks, html, utils
+from reactpy.core.types import VdomDictConstructor
 from reactpy.types import Key, VdomDict
 
 from reactpy_django.exceptions import ViewNotRegisteredError
 from reactpy_django.hooks import use_scope
-from reactpy_django.utils import generate_obj_name, import_module, render_view
+from reactpy_django.utils import (
+    cached_static_contents,
+    generate_obj_name,
+    import_module,
+    render_view,
+)
 
 
 # Type hints for:
@@ -123,7 +126,7 @@ def view_to_iframe(
 
 
 def django_css(
-    static_path: str, allow_duplicates: bool = False, key: Key | None = None
+    static_path: str, prevent_duplicates: bool = True, key: Key | None = None
 ):
     """Fetches a CSS static file for use within ReactPy. This allows for deferred CSS loading.
 
@@ -134,12 +137,18 @@ def django_css(
             immediate siblings
     """
 
-    return _django_css(
-        static_path=static_path, allow_duplicates=allow_duplicates, key=key
+    return _django_static_file(
+        static_path=static_path,
+        prevent_duplicates=prevent_duplicates,
+        file_type="css",
+        vdom_constructor=html.style,
+        key=key,
     )
 
 
-def django_js(static_path: str, allow_duplicates: bool = False, key: Key | None = None):
+def django_js(
+    static_path: str, prevent_duplicates: bool = True, key: Key | None = None
+):
     """Fetches a JS static file for use within ReactPy. This allows for deferred JS loading.
 
     Args:
@@ -149,8 +158,12 @@ def django_js(static_path: str, allow_duplicates: bool = False, key: Key | None 
             immediate siblings
     """
 
-    return _django_js(
-        static_path=static_path, allow_duplicates=allow_duplicates, key=key
+    return _django_static_file(
+        static_path=static_path,
+        prevent_duplicates=prevent_duplicates,
+        file_type="js",
+        vdom_constructor=html.script,
+        key=key,
     )
 
 
@@ -256,91 +269,39 @@ def _view_to_iframe(
 
 
 @component
-def _django_css(static_path: str, allow_duplicates: bool):
+def _django_static_file(
+    static_path: str,
+    prevent_duplicates: bool,
+    file_type: str,
+    vdom_constructor: VdomDictConstructor,
+):
     scope = use_scope()
     ownership_uuid = hooks.use_memo(lambda: uuid4())
 
-    # Configure the scope to track the file
-    if not allow_duplicates:
-        scope.setdefault("reactpy", {}).setdefault("css", {})
-        scope["reactpy"]["css"].setdefault(static_path, ownership_uuid)
+    # Configure the ASGI scope to track the file
+    if prevent_duplicates:
+        scope.setdefault("reactpy", {}).setdefault(file_type, {})
+        scope["reactpy"][file_type].setdefault(static_path, ownership_uuid)
 
     # Load the file if no other component has loaded it
     @hooks.use_effect(dependencies=None)
     async def duplicate_manager():
         """Note: This hook runs on every render. This is intentional."""
-        if allow_duplicates:
+        if not prevent_duplicates:
             return
 
         # If the file currently isn't rendered, let this component render it
-        if not scope["reactpy"]["css"].get(static_path):
-            scope["reactpy"]["css"].setdefault(static_path, ownership_uuid)
+        if not scope["reactpy"][file_type].get(static_path):
+            scope["reactpy"][file_type].setdefault(static_path, ownership_uuid)
 
         # The component that loaded the file should notify when it's removed
         def unmount():
-            if scope["reactpy"]["css"].get(static_path) == ownership_uuid:
-                scope["reactpy"]["css"].pop(static_path)
+            if scope["reactpy"][file_type].get(static_path) == ownership_uuid:
+                scope["reactpy"][file_type].pop(static_path)
 
         return unmount
 
-    if allow_duplicates or (scope["reactpy"]["css"].get(static_path) == ownership_uuid):
-        return html.style(_cached_static_contents(static_path))
-
-
-@component
-def _django_js(static_path: str, allow_duplicates: bool):
-    scope = use_scope()
-    ownership_uuid = hooks.use_memo(lambda: uuid4())
-
-    # Configure the scope to track the file
-    if not allow_duplicates:
-        scope.setdefault("reactpy", {}).setdefault("js", {})
-        scope["reactpy"]["js"].setdefault(static_path, ownership_uuid)
-
-    # Load the file if no other component has loaded it
-    @hooks.use_effect(dependencies=None)
-    async def duplicate_manager():
-        """Note: This hook runs on every render. This is intentional."""
-        if allow_duplicates:
-            return
-
-        # If the file currently isn't rendered, let this component render it
-        if not scope["reactpy"]["js"].get(static_path):
-            scope["reactpy"]["js"].setdefault(static_path, ownership_uuid)
-
-        # The component that loaded the file should notify when it's removed
-        def unmount():
-            if scope["reactpy"]["js"].get(static_path) == ownership_uuid:
-                scope["reactpy"]["js"].pop(static_path)
-
-        return unmount
-
-    if allow_duplicates or (scope["reactpy"]["js"].get(static_path) == ownership_uuid):
-        return html.script(_cached_static_contents(static_path))
-
-
-def _cached_static_contents(static_path: str) -> str:
-    from reactpy_django.config import REACTPY_CACHE
-
-    # Try to find the file within Django's static files
-    abs_path = find(static_path)
-    if not abs_path:
-        raise FileNotFoundError(
-            f"Could not find static file {static_path} within Django's static files."
-        )
-
-    # Fetch the file from cache, if available
-    last_modified_time = os.stat(abs_path).st_mtime
-    cache_key = f"reactpy_django:static_contents:{static_path}"
-    file_contents: str | None = caches[REACTPY_CACHE].get(
-        cache_key, version=int(last_modified_time)
-    )
-    if file_contents is None:
-        with open(abs_path, encoding="utf-8") as static_file:
-            file_contents = static_file.read()
-        caches[REACTPY_CACHE].delete(cache_key)
-        caches[REACTPY_CACHE].set(
-            cache_key, file_contents, timeout=None, version=int(last_modified_time)
-        )
-
-    return file_contents
+    if not prevent_duplicates or (
+        scope["reactpy"][file_type].get(static_path) == ownership_uuid
+    ):
+        return vdom_constructor(cached_static_contents(static_path))

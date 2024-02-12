@@ -137,14 +137,10 @@ def django_css():
 
 
 @component
-def django_css_allow_duplicates():
+def django_css_prevent_duplicates():
     scope = reactpy_django.hooks.use_scope()
     css_files, set_css_files = hooks.use_state(
-        [
-            reactpy_django.components.django_css(
-                "django-css-only-once-test.css", allow_duplicates=True
-            )
-        ]
+        [reactpy_django.components.django_css("django-css-only-once-test.css")]
     )
 
     async def add_end_css(event):
@@ -153,7 +149,6 @@ def django_css_allow_duplicates():
             + [
                 reactpy_django.components.django_css(
                     "django-css-only-once-test.css",
-                    allow_duplicates=True,
                     key=str(uuid4()),
                 )
             ]
@@ -164,7 +159,6 @@ def django_css_allow_duplicates():
             [
                 reactpy_django.components.django_css(
                     "django-css-only-once-test.css",
-                    allow_duplicates=True,
                     key=str(uuid4()),
                 )
             ]
@@ -181,7 +175,7 @@ def django_css_allow_duplicates():
 
     return html.div(
         {"id": "django-css-only-once"},
-        html.div({"style": {"display": "inline"}}, "django_css_allow_duplicates: "),
+        html.div({"style": {"display": "inline"}}, "django_css_prevent_duplicates: "),
         html.button(
             "This text should be blue. The stylesheet for this component should only be added once."
         ),
