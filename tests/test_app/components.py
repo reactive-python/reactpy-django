@@ -140,7 +140,7 @@ def django_css():
 def django_css_prevent_duplicates():
     scope = reactpy_django.hooks.use_scope()
     css_files, set_css_files = hooks.use_state(
-        [reactpy_django.components.django_css("django-css-only-once-test.css")]
+        [reactpy_django.components.django_css("django-css-prevent-duplicates-test.css")]
     )
 
     async def add_end_css(event):
@@ -148,7 +148,7 @@ def django_css_prevent_duplicates():
             css_files
             + [
                 reactpy_django.components.django_css(
-                    "django-css-only-once-test.css",
+                    "django-css-prevent-duplicates-test.css",
                     key=str(uuid4()),
                 )
             ]
@@ -158,7 +158,7 @@ def django_css_prevent_duplicates():
         set_css_files(
             [
                 reactpy_django.components.django_css(
-                    "django-css-only-once-test.css",
+                    "django-css-prevent-duplicates-test.css",
                     key=str(uuid4()),
                 )
             ]
@@ -174,18 +174,18 @@ def django_css_prevent_duplicates():
             set_css_files(css_files[1:])
 
     return html.div(
-        {"id": "django-css-only-once"},
+        {"id": "django-css-prevent-duplicates"},
         html.div({"style": {"display": "inline"}}, "django_css_prevent_duplicates: "),
-        html.button(
-            "This text should be blue. The stylesheet for this component should only be added once."
-        ),
+        html.button("This text should be blue."),
         html.div(
             html.button({"on_click": add_end_css}, "Add End File"),
             html.button({"on_click": add_front_css}, "Add Front File"),
             html.button({"on_click": remove_end_css}, "Remove End File"),
             html.button({"on_click": remove_front_css}, "Remove Front File"),
         ),
-        html.div(f'CSS ownership tracked via ASGI scope: {scope.get("reactpy_css")}'),
+        html.div(
+            f'CSS ownership tracked via ASGI scope: {scope.get("reactpy",{}).get("css")}'
+        ),
         html.div(f"Components with CSS: {css_files}"),
         css_files,
     )
@@ -200,6 +200,69 @@ def django_js():
             f"django_js: {success}",
             reactpy_django.components.django_js("django-js-test.js", key="test"),
         )
+    )
+
+
+@component
+def django_js_prevent_duplicates():
+    scope = reactpy_django.hooks.use_scope()
+    js_files, set_js_files = hooks.use_state(
+        [reactpy_django.components.django_js("django-js-prevent-duplicates-test.js")]
+    )
+
+    async def add_end_js(event):
+        set_js_files(
+            js_files
+            + [
+                reactpy_django.components.django_js(
+                    "django-js-prevent-duplicates-test.js",
+                    key=str(uuid4()),
+                )
+            ]
+        )
+
+    async def add_front_js(event):
+        set_js_files(
+            [
+                reactpy_django.components.django_js(
+                    "django-js-prevent-duplicates-test.js",
+                    key=str(uuid4()),
+                )
+            ]
+            + js_files
+        )
+
+    async def remove_end_js(event):
+        if js_files:
+            set_js_files(js_files[:-1])
+
+    async def remove_front_js(event):
+        if js_files:
+            set_js_files(js_files[1:])
+
+    return html.div(
+        {"id": "django-js-prevent-duplicates"},
+        html.div(
+            {"style": {"display": "inline"}},
+            "django_js_prevent_duplicates: ",
+            html.div(
+                {
+                    "id": "django-js-prevent-duplicates-value",
+                    "style": {"display": "inline"},
+                }
+            ),
+        ),
+        html.div(
+            html.button({"on_click": add_end_js}, "Add End File"),
+            html.button({"on_click": add_front_js}, "Add Front File"),
+            html.button({"on_click": remove_end_js}, "Remove End File"),
+            html.button({"on_click": remove_front_js}, "Remove Front File"),
+        ),
+        html.div(
+            f'JS ownership tracked via ASGI scope: {scope.get("reactpy",{}).get("js")}'
+        ),
+        html.div(f"Components with JS: {js_files}"),
+        js_files,
     )
 
 
