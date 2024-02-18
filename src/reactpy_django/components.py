@@ -133,6 +133,8 @@ def django_css(
     Args:
         static_path: The path to the static file. This path is identical to what you would \
             use on Django's `{% static %}` template tag
+        prevent_duplicates: If True, this component will only load the file if no other \
+            component (in your connection's component tree) has already loaded it.
         key: A key to uniquely identify this component which is unique amongst a component's \
             immediate siblings
     """
@@ -154,6 +156,8 @@ def django_js(
     Args:
         static_path: The path to the static file. This path is identical to what you would \
             use on Django's `{% static %}` template tag.
+        prevent_duplicates: If True, this component will only load the file if no other \
+            component (in your connection's component tree) has already loaded it.
         key: A key to uniquely identify this component which is unique amongst a component's \
             immediate siblings
     """
