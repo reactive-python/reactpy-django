@@ -135,7 +135,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
     def test_use_origin(self):
         self.page.locator("#use-origin[data-success=true]").wait_for()
 
-    def test_static_css(self):
+    def test_django_css(self):
         self.assertEqual(
             self.page.wait_for_selector("#django-css button").evaluate(
                 "e => window.getComputedStyle(e).getPropertyValue('color')"
@@ -143,8 +143,12 @@ class ComponentTests(ChannelsLiveServerTestCase):
             "rgb(0, 0, 255)",
         )
 
-    def test_static_js(self):
+    def test_django_css_prevent_duplicates(self): ...
+
+    def test_django_js(self):
         self.page.locator("#django-js[data-success=true]").wait_for()
+
+    def test_django_js_prevent_duplicates(self): ...
 
     def test_unauthorized_user(self):
         self.assertRaises(
