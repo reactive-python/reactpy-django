@@ -139,39 +139,37 @@ def django_css():
 @component
 def django_css_prevent_duplicates():
     scope = reactpy_django.hooks.use_scope()
-    css_files, set_css_files = hooks.use_state(
+    components = hooks.use_ref(
         [reactpy_django.components.django_css("django-css-prevent-duplicates-test.css")]
     )
+    uuid, set_uuid = hooks.use_state(uuid4())
 
     async def add_end_css(event):
-        set_css_files(
-            css_files
-            + [
-                reactpy_django.components.django_css(
-                    "django-css-prevent-duplicates-test.css",
-                    key=str(uuid4()),
-                )
-            ]
+        components.current.append(
+            reactpy_django.components.django_css(
+                "django-css-prevent-duplicates-test.css"
+            )
         )
+        set_uuid(uuid4())
 
     async def add_front_css(event):
-        set_css_files(
-            [
-                reactpy_django.components.django_css(
-                    "django-css-prevent-duplicates-test.css",
-                    key=str(uuid4()),
-                )
-            ]
-            + css_files
+        components.current.insert(
+            0,
+            reactpy_django.components.django_css(
+                "django-css-prevent-duplicates-test.css"
+            ),
         )
+        set_uuid(uuid4())
 
     async def remove_end_css(event):
-        if css_files:
-            set_css_files(css_files[:-1])
+        if components.current:
+            components.current.pop()
+            set_uuid(uuid4())
 
     async def remove_front_css(event):
-        if css_files:
-            set_css_files(css_files[1:])
+        if components.current:
+            components.current.pop(0)
+            set_uuid(uuid4())
 
     return html.div(
         {"id": "django-css-prevent-duplicates"},
@@ -186,8 +184,8 @@ def django_css_prevent_duplicates():
         html.div(
             f'CSS ownership tracked via ASGI scope: {scope.get("reactpy",{}).get("css")}'
         ),
-        html.div(f"Components with CSS: {css_files}"),
-        css_files,
+        html.div(f"Components with CSS: {components.current}"),
+        components.current,
     )
 
 
@@ -206,51 +204,43 @@ def django_js():
 @component
 def django_js_prevent_duplicates():
     scope = reactpy_django.hooks.use_scope()
-    js_files, set_js_files = hooks.use_state(
+    components = hooks.use_ref(
         [reactpy_django.components.django_js("django-js-prevent-duplicates-test.js")]
     )
+    uuid, set_uuid = hooks.use_state(uuid4())
 
     async def add_end_js(event):
-        set_js_files(
-            js_files
-            + [
-                reactpy_django.components.django_js(
-                    "django-js-prevent-duplicates-test.js",
-                    key=str(uuid4()),
-                )
-            ]
+        components.current.append(
+            reactpy_django.components.django_js(
+                "django-js-prevent-duplicates-test.js", key=str(uuid4())
+            )
         )
+        set_uuid(uuid4())
 
     async def add_front_js(event):
-        set_js_files(
-            [
-                reactpy_django.components.django_js(
-                    "django-js-prevent-duplicates-test.js",
-                    key=str(uuid4()),
-                )
-            ]
-            + js_files
+        components.current.insert(
+            0,
+            reactpy_django.components.django_js(
+                "django-js-prevent-duplicates-test.js", key=str(uuid4())
+            ),
         )
+        set_uuid(uuid4())
 
     async def remove_end_js(event):
-        if js_files:
-            set_js_files(js_files[:-1])
+        if components.current:
+            components.current.pop()
+            set_uuid(uuid4())
 
     async def remove_front_js(event):
-        if js_files:
-            set_js_files(js_files[1:])
+        if components.current:
+            components.current.pop(0)
+            set_uuid(uuid4())
 
     return html.div(
         {"id": "django-js-prevent-duplicates"},
         html.div(
-            {"style": {"display": "inline"}},
             "django_js_prevent_duplicates: ",
-            html.div(
-                {
-                    "id": "django-js-prevent-duplicates-value",
-                    "style": {"display": "inline"},
-                }
-            ),
+            html.div({"id": "django-js-prevent-duplicates-value"}),
         ),
         html.div(
             html.button({"on_click": add_end_js}, "Add End File"),
@@ -261,8 +251,8 @@ def django_js_prevent_duplicates():
         html.div(
             f'JS ownership tracked via ASGI scope: {scope.get("reactpy",{}).get("js")}'
         ),
-        html.div(f"Components with JS: {js_files}"),
-        js_files,
+        html.div(f"Components with JS: {components.current}"),
+        components.current,
     )
 
 

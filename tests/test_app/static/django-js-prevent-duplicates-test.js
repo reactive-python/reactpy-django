@@ -6,10 +6,12 @@
         el.dataset.django_js = 0;
     }
     el.dataset.django_js = Number(el.dataset.django_js) + 1;
-    el.textContent = "Loaded JS file " + el.dataset.django_js + " time(s)";
+    el.textContent =
+        "Currently loaded by " + el.dataset.django_js + " component(s)";
     return () => {
         // this is run when the script is unloaded (i.e. it's removed from the tree) or just before its content changes
         el.dataset.django_js = Number(el.dataset.django_js) - 1;
-        el.textContent = "Loaded JS file " + el.dataset.django_js + " time(s)";
+        el.textContent =
+            "Currently loaded by " + el.dataset.django_js + " component(s)";
     };
 };
