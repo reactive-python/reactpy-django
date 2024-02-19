@@ -140,14 +140,18 @@ def django_css():
 def django_css_prevent_duplicates():
     scope = reactpy_django.hooks.use_scope()
     components = hooks.use_ref(
-        [reactpy_django.components.django_css("django-css-prevent-duplicates-test.css")]
+        [
+            reactpy_django.components.django_css(
+                "django-css-prevent-duplicates-test.css", key=str(uuid4())
+            )
+        ]
     )
     uuid, set_uuid = hooks.use_state(uuid4())
 
     async def add_end_css(event):
         components.current.append(
             reactpy_django.components.django_css(
-                "django-css-prevent-duplicates-test.css"
+                "django-css-prevent-duplicates-test.css", key=str(uuid4())
             )
         )
         set_uuid(uuid4())
@@ -156,7 +160,7 @@ def django_css_prevent_duplicates():
         components.current.insert(
             0,
             reactpy_django.components.django_css(
-                "django-css-prevent-duplicates-test.css"
+                "django-css-prevent-duplicates-test.css", key=str(uuid4())
             ),
         )
         set_uuid(uuid4())
@@ -205,7 +209,11 @@ def django_js():
 def django_js_prevent_duplicates():
     scope = reactpy_django.hooks.use_scope()
     components = hooks.use_ref(
-        [reactpy_django.components.django_js("django-js-prevent-duplicates-test.js")]
+        [
+            reactpy_django.components.django_js(
+                "django-js-prevent-duplicates-test.js", key=str(uuid4())
+            )
+        ]
     )
     uuid, set_uuid = hooks.use_state(uuid4())
 
