@@ -280,6 +280,7 @@ def _django_static_file(
     vdom_constructor: VdomDictConstructor,
 ):
     scope = use_scope()
+    mount_trigger, set_mount_trigger = hooks.use_state(True)
     ownership_uuid = hooks.use_memo(lambda: uuid4())
 
     # Configure the ASGI scope to track the file
@@ -287,24 +288,31 @@ def _django_static_file(
         scope.setdefault("reactpy", {}).setdefault(file_type, {})
         scope["reactpy"][file_type].setdefault(static_path, ownership_uuid)
 
-    # Load the file if no other component has loaded it
+    # Check if other _django_static_file components have unmounted
     @hooks.use_effect(dependencies=None)
-    async def duplicate_manager():
-        """Note: This hook runs on every render. This is intentional."""
+    async def mount_manager():
+        if prevent_duplicates and not scope["reactpy"][file_type].get(static_path):
+            print("new mount host: ", ownership_uuid)
+            scope["reactpy"][file_type].setdefault(static_path, ownership_uuid)
+            set_mount_trigger(not mount_trigger)
+
+    # Notify other components that we've unmounted
+    @hooks.use_effect(dependencies=[])
+    async def unmount_manager():
+        # FIXME: This is not working as expected. Dismount is not being called when the component is removed from a list.
         if not prevent_duplicates:
             return
+        print("registering new unmount func")
 
-        # If the file currently isn't rendered, let this component render it
-        if not scope["reactpy"][file_type].get(static_path):
-            scope["reactpy"][file_type].setdefault(static_path, ownership_uuid)
-
-        # The component that loaded the file should notify when it's removed
         def unmount():
+            print("unmount func called")
             if scope["reactpy"][file_type].get(static_path) == ownership_uuid:
+                print("unmounting")
                 scope["reactpy"][file_type].pop(static_path)
 
         return unmount
 
+    # Render the component, if needed
     if not prevent_duplicates or (
         scope["reactpy"][file_type].get(static_path) == ownership_uuid
     ):
