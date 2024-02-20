@@ -77,7 +77,7 @@ def component(
         or (next(config.REACTPY_DEFAULT_HOSTS) if config.REACTPY_DEFAULT_HOSTS else "")
     ).strip("/")
     is_local = not host or host.startswith(perceived_host)
-    uuid = uuid4().hex
+    uuid = str(uuid4())
     class_ = kwargs.pop("class", "")
     has_args = bool(args or kwargs)
     user_component: ComponentConstructor | None = None
