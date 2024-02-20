@@ -203,7 +203,7 @@ def prerender_component(
 ):
     search = request.GET.urlencode()
     scope = getattr(request, "scope", {})
-    scope["reactpy"] = {"uuid": uuid}
+    scope["reactpy"] = {"id": str(uuid)}
 
     with SyncLayout(
         ConnectionContext(
