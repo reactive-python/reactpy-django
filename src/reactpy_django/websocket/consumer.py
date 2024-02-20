@@ -151,6 +151,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         scope = self.scope
         self.dotted_path = dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
         uuid = scope["url_route"]["kwargs"].get("uuid")
+        has_args = scope["url_route"]["kwargs"].get("has_args")
         query_string = parse_qs(scope["query_string"].decode(), strict_parsing=True)
         http_pathname = query_string.get("http_pathname", [""])[0]
         http_search = query_string.get("http_search", [""])[0]
@@ -176,7 +177,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
         # Fetch the component's args/kwargs from the database, if needed
         try:
-            if uuid:
+            if has_args:
                 # Get the component session from the DB
                 self.component_session = await models.ComponentSession.objects.aget(
                     uuid=uuid,

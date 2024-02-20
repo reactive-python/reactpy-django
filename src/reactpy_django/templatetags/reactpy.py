@@ -79,7 +79,7 @@ def component(
     is_local = not host or host.startswith(perceived_host)
     uuid = uuid4().hex
     class_ = kwargs.pop("class", "")
-    component_has_args = args or kwargs
+    has_args = bool(args or kwargs)
     user_component: ComponentConstructor | None = None
     _prerender_html = ""
     _offline_html = ""
@@ -108,7 +108,7 @@ def component(
             return failure_context(dotted_path, e)
 
     # Store args & kwargs in the database (fetched by our websocket later)
-    if component_has_args:
+    if has_args:
         try:
             save_component_params(args, kwargs, uuid)
         except Exception as e:
@@ -159,7 +159,7 @@ def component(
         "reactpy_uuid": uuid,
         "reactpy_host": host or perceived_host,
         "reactpy_url_prefix": config.REACTPY_URL_PREFIX,
-        "reactpy_component_path": f"{dotted_path}/{uuid}/",
+        "reactpy_component_path": f"{dotted_path}/{uuid}/{int(has_args)}/",
         "reactpy_resolved_web_modules_path": RESOLVED_WEB_MODULES_PATH,
         "reactpy_reconnect_interval": config.REACTPY_RECONNECT_INTERVAL,
         "reactpy_reconnect_max_interval": config.REACTPY_RECONNECT_MAX_INTERVAL,
