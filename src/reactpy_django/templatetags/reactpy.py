@@ -135,7 +135,9 @@ def component(
             )
             _logger.error(msg)
             return failure_context(dotted_path, ComponentCarrierError(msg))
-        _prerender_html = prerender_component(user_component, args, kwargs, request)
+        _prerender_html = prerender_component(
+            user_component, args, kwargs, uuid, request
+        )
 
     # Fetch the offline component's HTML, if requested
     if offline:
@@ -151,7 +153,7 @@ def component(
             )
             _logger.error(msg)
             return failure_context(dotted_path, ComponentCarrierError(msg))
-        _offline_html = prerender_component(offline_component, [], {}, request)
+        _offline_html = prerender_component(offline_component, [], {}, uuid, request)
 
     # Return the template rendering context
     return {
@@ -197,14 +199,17 @@ def validate_host(host: str):
 
 
 def prerender_component(
-    user_component: ComponentConstructor, args, kwargs, request: HttpRequest
+    user_component: ComponentConstructor, args, kwargs, uuid, request: HttpRequest
 ):
     search = request.GET.urlencode()
+    scope = getattr(request, "scope", {})
+    scope["reactpy"] = {"uuid": uuid}
+
     with SyncLayout(
         ConnectionContext(
             user_component(*args, **kwargs),
             value=Connection(
-                scope=getattr(request, "scope", {}),
+                scope=scope,
                 location=Location(
                     pathname=request.path, search=f"?{search}" if search else ""
                 ),

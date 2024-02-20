@@ -152,6 +152,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         self.dotted_path = dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
         uuid = scope["url_route"]["kwargs"].get("uuid")
         has_args = scope["url_route"]["kwargs"].get("has_args")
+        scope["reactpy"] = {"uuid": uuid}
         query_string = parse_qs(scope["query_string"].decode(), strict_parsing=True)
         http_pathname = query_string.get("http_pathname", [""])[0]
         http_search = query_string.get("http_search", [""])[0]
@@ -196,7 +197,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 _logger.warning,
                 f"Component session for '{dotted_path}:{uuid}' not found. The "
                 "session may have already expired beyond REACTPY_SESSION_MAX_AGE. "
-                "If you are using a custom host, you may have forgotten to provide "
+                "If you are using a custom `host`, you may have forgotten to provide "
                 "args/kwargs.",
             )
             return
