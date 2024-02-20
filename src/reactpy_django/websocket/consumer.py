@@ -30,16 +30,16 @@ if TYPE_CHECKING:
     from django.contrib.auth.models import AbstractUser
 
 _logger = logging.getLogger(__name__)
-backhaul_loop = asyncio.new_event_loop()
+BACKHAUL_LOOP = asyncio.new_event_loop()
 
 
 def start_backhaul_loop():
     """Starts the asyncio event loop that will perform component rendering tasks."""
-    asyncio.set_event_loop(backhaul_loop)
-    backhaul_loop.run_forever()
+    asyncio.set_event_loop(BACKHAUL_LOOP)
+    BACKHAUL_LOOP.run_forever()
 
 
-backhaul_thread = Thread(
+BACKHAUL_THREAD = Thread(
     target=start_backhaul_loop, daemon=True, name="ReactPyBackhaul"
 )
 
@@ -83,13 +83,13 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         self.threaded = REACTPY_BACKHAUL_THREAD
         self.component_session: models.ComponentSession | None = None
         if self.threaded:
-            if not backhaul_thread.is_alive():
+            if not BACKHAUL_THREAD.is_alive():
                 await asyncio.to_thread(
                     _logger.debug, "Starting ReactPy backhaul thread."
                 )
-                backhaul_thread.start()
+                BACKHAUL_THREAD.start()
             self.dispatcher = asyncio.run_coroutine_threadsafe(
-                self.run_dispatcher(), backhaul_loop
+                self.run_dispatcher(), BACKHAUL_LOOP
             )
         else:
             self.dispatcher = asyncio.create_task(self.run_dispatcher())
@@ -127,7 +127,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         """Receive a message from the browser. Typically, messages are event signals."""
         if self.threaded:
             asyncio.run_coroutine_threadsafe(
-                self.recv_queue.put(content), backhaul_loop
+                self.recv_queue.put(content), BACKHAUL_LOOP
             )
         else:
             await self.recv_queue.put(content)
