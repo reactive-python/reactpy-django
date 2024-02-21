@@ -399,12 +399,15 @@ class ComponentTests(ChannelsLiveServerTestCase):
             string = new_page.locator("#prerender_string")
             vdom = new_page.locator("#prerender_vdom")
             component = new_page.locator("#prerender_component")
+            use_root_id_http = new_page.locator("#use-root-id-http")
+            use_root_id_ws = new_page.locator("#use-root-id-ws")
             use_user_http = new_page.locator("#use-user-http[data-success=True]")
             use_user_ws = new_page.locator("#use-user-ws[data-success=true]")
 
             string.wait_for()
             vdom.wait_for()
             component.wait_for()
+            use_root_id_http.wait_for()
             use_user_http.wait_for()
 
             # Check if the prerender occurred
@@ -415,7 +418,10 @@ class ComponentTests(ChannelsLiveServerTestCase):
             self.assertEqual(
                 component.all_inner_texts(), ["prerender_component: Prerendered"]
             )
+            root_id_value = use_root_id_http.get_attribute("data-value")
+            self.assertEqual(len(root_id_value), 36)
 
+            # Check if the full render occurred
             sleep(1)
             self.assertEqual(
                 string.all_inner_texts(), ["prerender_string: Fully Rendered"]
@@ -424,7 +430,10 @@ class ComponentTests(ChannelsLiveServerTestCase):
             self.assertEqual(
                 component.all_inner_texts(), ["prerender_component: Fully Rendered"]
             )
+            use_root_id_ws.wait_for()
             use_user_ws.wait_for()
+            self.assertEqual(use_root_id_ws.get_attribute("data-value"), root_id_value)
+
         finally:
             new_page.close()
 
