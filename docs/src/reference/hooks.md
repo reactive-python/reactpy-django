@@ -526,7 +526,7 @@ Shortcut that returns the root component's `#!python id` from the WebSocket or H
 
 The root ID is currently a randomly generated `#!python uuid4` (unique across all root component).
 
-This is useful when used in combination with [`#!python use_channel_layer`](#use-channel-layer) to send messages to a specific component instance, and retain a backlog of messages in case that component is disconnected via `#!python group_discard=False`.
+This is useful when used in combination with [`#!python use_channel_layer`](#use-channel-layer) to send messages to a specific component instance, and/or retain a backlog of messages in case that component is disconnected via `#!python use_channel_layer( ... , group_discard=False)`.
 
 === "components.py"
 
