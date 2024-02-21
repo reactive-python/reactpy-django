@@ -63,11 +63,11 @@ def use_root_id():
 
     if scope.get("type") == "http":
         return html.div(
-            {"id": "use-root-id-http", "data-root-id": root_id},
+            {"id": "use-root-id-http", "data-value": root_id},
             f"use_root_id: {root_id} (HTTP)",
         )
 
     return html.div(
-        {"id": "use-root-id-ws", "data-root-id": root_id},
+        {"id": "use-root-id-ws", "data-value": root_id},
         f"use_root_id: {root_id} (WebSocket)",
     )
