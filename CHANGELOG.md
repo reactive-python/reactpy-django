@@ -34,14 +34,18 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+-   Nothing (yet)!
+
+## [3.8.0] - 2024-02-20
+
 ### Added
 
 -   Built-in cross-process communication mechanism via the `reactpy_django.hooks.use_channel_layer` hook.
 -   Access to the root component's `id` via the `reactpy_django.hooks.use_root_id` hook.
 -   More robust control over ReactPy clean up tasks!
     -   `settings.py:REACTPY_CLEAN_INTERVAL` to control how often ReactPy automatically performs cleaning tasks.
-    -   `settings.py:REACTPY_CLEAN_SESSIONS` to control whether ReactPy automatically cleans up expired sessions.
-    -   `settings.py:REACTPY_CLEAN_USER_DATA` to control whether ReactPy automatically cleans up orphaned user data.
+    -   `settings.py:REACTPY_CLEAN_SESSIONS` to control whether ReactPy should clean up expired sessions during automatic cleanups.
+    -   `settings.py:REACTPY_CLEAN_USER_DATA` to control whether ReactPy should clean up orphaned user data during automatic cleanups.
     -   `python manage.py clean_reactpy` command to manually perform ReactPy clean up tasks.
 
 ### Changed
@@ -461,7 +465,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.7.0...HEAD
+[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.8.0...HEAD
+[3.8.0]: https://github.com/reactive-python/reactpy-django/compare/3.7.0...3.8.0
 [3.7.0]: https://github.com/reactive-python/reactpy-django/compare/3.6.0...3.7.0
 [3.6.0]: https://github.com/reactive-python/reactpy-django/compare/3.5.1...3.6.0
 [3.5.1]: https://github.com/reactive-python/reactpy-django/compare/3.5.0...3.5.1

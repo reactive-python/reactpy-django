@@ -369,7 +369,7 @@ This is often used to create chat systems, synchronize data between components, 
         pip install channels-redis
         ```
 
-    3. Configure your `settings.py` to use `RedisChannelLayer` as your layer backend.
+    3. Configure your `settings.py` to use `#!python RedisChannelLayer` as your layer backend.
 
         ```python linenums="0"
         CHANNEL_LAYERS = {

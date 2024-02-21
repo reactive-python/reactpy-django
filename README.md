@@ -27,6 +27,7 @@
 -   [Customizable reconnection behavior](https://reactive-python.github.io/reactpy-django/latest/reference/settings/#stability-settings)
 -   [Customizable disconnection behavior](https://reactive-python.github.io/reactpy-django/latest/reference/template-tag)
 -   [Multiple root components](https://reactive-python.github.io/reactpy-django/latest/reference/template-tag/)
+-   [Cross-process communication/signaling (Channel Layers)](https://reactive-python.github.io/reactpy-django/latest/reference/hooks/#use-channel-layer)
 -   [Django view to ReactPy component conversion](https://reactive-python.github.io/reactpy-django/latest/reference/components/#view-to-component)
 -   [Django static file access](https://reactive-python.github.io/reactpy-django/latest/reference/components/#django-css)
 -   [Django database access](https://reactive-python.github.io/reactpy-django/latest/reference/hooks/#use-query)
