@@ -63,7 +63,7 @@ class RoutedDatabaseTests(TransactionTestCase):
     def _save_params_to_db(self, value: Any) -> ComponentParams:
         db = list(self.databases)[0]
         param_data = ComponentParams((value,), {"test_value": value})
-        model = ComponentSession(uuid4().hex, params=pickle.dumps(param_data))
+        model = ComponentSession(str(uuid4()), params=pickle.dumps(param_data))
         model.clean_fields()
         model.clean()
         model.save(using=db)
@@ -82,12 +82,12 @@ class MultiDatabaseTests(TransactionTestCase):
         from django.contrib.auth.models import User
 
         # Create UserData for real user #1
-        user = User.objects.create_user(username=uuid4().hex, password=uuid4().hex)
+        user = User.objects.create_user(username=str(uuid4()), password=str(uuid4()))
         user_data = UserDataModel(user_pk=user.pk)
         user_data.save()
 
         # Create UserData for real user #2
-        user = User.objects.create_user(username=uuid4().hex, password=uuid4().hex)
+        user = User.objects.create_user(username=str(uuid4()), password=str(uuid4()))
         user_data = UserDataModel(user_pk=user.pk)
         user_data.save()
 
@@ -95,7 +95,7 @@ class MultiDatabaseTests(TransactionTestCase):
         initial_count = UserDataModel.objects.count()
 
         # Create UserData for a user that doesn't exist (effectively orphaned)
-        user_data = UserDataModel(user_pk=uuid4().hex)
+        user_data = UserDataModel(user_pk=str(uuid4()))
         user_data.save()
 
         # Make sure the orphaned user data object is deleted

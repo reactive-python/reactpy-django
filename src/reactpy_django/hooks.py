@@ -436,6 +436,14 @@ def use_channel_layer(
     return message_sender
 
 
+def use_root_id() -> str:
+    """Get the root element's ID. This value is guaranteed to be unique. Current versions of \
+        ReactPy-Django return a `uuid4` string."""
+    scope = use_scope()
+
+    return scope["reactpy"]["id"]
+
+
 def _use_query_args_1(options: QueryOptions, /, query: Query, *args, **kwargs):
     return options, query, args, kwargs
 

@@ -492,6 +492,8 @@ Shortcut that returns the browser's current `#!python Location`.
     | --- | --- |
     | `#!python Location` | An object containing the current URL's `#!python pathname` and `#!python search` query. |
 
+---
+
 ### Use Origin
 
 Shortcut that returns the WebSocket or HTTP connection's `#!python origin`.
@@ -515,6 +517,34 @@ You can expect this hook to provide strings such as `http://example.com`.
     | Type | Description |
     | --- | --- |
     | `#!python str | None` | A string containing the browser's current origin, obtained from WebSocket or HTTP headers (if available). |
+
+---
+
+### Use Root ID
+
+Shortcut that returns the root component's `#!python id` from the WebSocket or HTTP connection.
+
+The root ID is currently a randomly generated `#!python uuid4` (unique across all root component).
+
+This is useful when used in combination with [`#!python use_channel_layer`](#use-channel-layer) to send messages to a specific component instance, and/or retain a backlog of messages in case that component is disconnected via `#!python use_channel_layer( ... , group_discard=False)`.
+
+=== "components.py"
+
+    ```python
+    {% include "../../examples/python/use-root-id.py" %}
+    ```
+
+??? example "See Interface"
+
+        <font size="4">**Parameters**</font>
+
+        `#!python None`
+
+        <font size="4">**Returns**</font>
+
+        | Type | Description |
+        | --- | --- |
+        | `#!python str` | A string containing the root component's `#!python id`. |
 
 ---
 

@@ -54,3 +54,20 @@ def use_user():
     return html.div(
         {"id": "use-user-ws", "data-success": success}, f"use_user: {user} (WebSocket)"
     )
+
+
+@component
+def use_root_id():
+    scope = reactpy_django.hooks.use_scope()
+    root_id = reactpy_django.hooks.use_root_id()
+
+    if scope.get("type") == "http":
+        return html.div(
+            {"id": "use-root-id-http", "data-value": root_id},
+            f"use_root_id: {root_id} (HTTP)",
+        )
+
+    return html.div(
+        {"id": "use-root-id-ws", "data-value": root_id},
+        f"use_root_id: {root_id} (WebSocket)",
+    )

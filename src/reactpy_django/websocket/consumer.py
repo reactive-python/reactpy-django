@@ -30,16 +30,16 @@ if TYPE_CHECKING:
     from django.contrib.auth.models import AbstractUser
 
 _logger = logging.getLogger(__name__)
-backhaul_loop = asyncio.new_event_loop()
+BACKHAUL_LOOP = asyncio.new_event_loop()
 
 
 def start_backhaul_loop():
     """Starts the asyncio event loop that will perform component rendering tasks."""
-    asyncio.set_event_loop(backhaul_loop)
-    backhaul_loop.run_forever()
+    asyncio.set_event_loop(BACKHAUL_LOOP)
+    BACKHAUL_LOOP.run_forever()
 
 
-backhaul_thread = Thread(
+BACKHAUL_THREAD = Thread(
     target=start_backhaul_loop, daemon=True, name="ReactPyBackhaul"
 )
 
@@ -83,13 +83,13 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         self.threaded = REACTPY_BACKHAUL_THREAD
         self.component_session: models.ComponentSession | None = None
         if self.threaded:
-            if not backhaul_thread.is_alive():
+            if not BACKHAUL_THREAD.is_alive():
                 await asyncio.to_thread(
                     _logger.debug, "Starting ReactPy backhaul thread."
                 )
-                backhaul_thread.start()
+                BACKHAUL_THREAD.start()
             self.dispatcher = asyncio.run_coroutine_threadsafe(
-                self.run_dispatcher(), backhaul_loop
+                self.run_dispatcher(), BACKHAUL_LOOP
             )
         else:
             self.dispatcher = asyncio.create_task(self.run_dispatcher())
@@ -127,7 +127,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         """Receive a message from the browser. Typically, messages are event signals."""
         if self.threaded:
             asyncio.run_coroutine_threadsafe(
-                self.recv_queue.put(content), backhaul_loop
+                self.recv_queue.put(content), BACKHAUL_LOOP
             )
         else:
             await self.recv_queue.put(content)
@@ -151,6 +151,8 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         scope = self.scope
         self.dotted_path = dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
         uuid = scope["url_route"]["kwargs"].get("uuid")
+        has_args = scope["url_route"]["kwargs"].get("has_args")
+        scope["reactpy"] = {"id": str(uuid)}
         query_string = parse_qs(scope["query_string"].decode(), strict_parsing=True)
         http_pathname = query_string.get("http_pathname", [""])[0]
         http_search = query_string.get("http_search", [""])[0]
@@ -166,7 +168,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
         # Verify the component has already been registered
         try:
-            component_constructor = REACTPY_REGISTERED_COMPONENTS[dotted_path]
+            root_component_constructor = REACTPY_REGISTERED_COMPONENTS[dotted_path]
         except KeyError:
             await asyncio.to_thread(
                 _logger.warning,
@@ -174,10 +176,9 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             )
             return
 
-        # Fetch the component's args/kwargs from the database, if needed
+        # Construct the component. This may require fetching the component's args/kwargs from the database.
         try:
-            if uuid:
-                # Get the component session from the DB
+            if has_args:
                 self.component_session = await models.ComponentSession.objects.aget(
                     uuid=uuid,
                     last_accessed__gt=now - timedelta(seconds=REACTPY_SESSION_MAX_AGE),
@@ -187,7 +188,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 component_session_kwargs = params.kwargs
 
             # Generate the initial component instance
-            component_instance = component_constructor(
+            root_component = root_component_constructor(
                 *component_session_args, **component_session_kwargs
             )
         except models.ComponentSession.DoesNotExist:
@@ -195,14 +196,14 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 _logger.warning,
                 f"Component session for '{dotted_path}:{uuid}' not found. The "
                 "session may have already expired beyond REACTPY_SESSION_MAX_AGE. "
-                "If you are using a custom host, you may have forgotten to provide "
+                "If you are using a custom `host`, you may have forgotten to provide "
                 "args/kwargs.",
             )
             return
         except Exception:
             await asyncio.to_thread(
                 _logger.error,
-                f"Failed to construct component {component_constructor} "
+                f"Failed to construct component {root_component_constructor} "
                 f"with args='{component_session_args}' kwargs='{component_session_kwargs}'!\n"
                 f"{traceback.format_exc()}",
             )
@@ -211,7 +212,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         # Start the ReactPy component rendering loop
         with contextlib.suppress(Exception):
             await serve_layout(
-                Layout(ConnectionContext(component_instance, value=connection)),
+                Layout(ConnectionContext(root_component, value=connection)),
                 self.send_json,
                 self.recv_queue.get,
             )

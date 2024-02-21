@@ -77,9 +77,9 @@ def component(
         or (next(config.REACTPY_DEFAULT_HOSTS) if config.REACTPY_DEFAULT_HOSTS else "")
     ).strip("/")
     is_local = not host or host.startswith(perceived_host)
-    uuid = uuid4().hex
+    uuid = str(uuid4())
     class_ = kwargs.pop("class", "")
-    component_has_args = args or kwargs
+    has_args = bool(args or kwargs)
     user_component: ComponentConstructor | None = None
     _prerender_html = ""
     _offline_html = ""
@@ -108,7 +108,7 @@ def component(
             return failure_context(dotted_path, e)
 
     # Store args & kwargs in the database (fetched by our websocket later)
-    if component_has_args:
+    if has_args:
         try:
             save_component_params(args, kwargs, uuid)
         except Exception as e:
@@ -135,7 +135,9 @@ def component(
             )
             _logger.error(msg)
             return failure_context(dotted_path, ComponentCarrierError(msg))
-        _prerender_html = prerender_component(user_component, args, kwargs, request)
+        _prerender_html = prerender_component(
+            user_component, args, kwargs, uuid, request
+        )
 
     # Fetch the offline component's HTML, if requested
     if offline:
@@ -151,7 +153,7 @@ def component(
             )
             _logger.error(msg)
             return failure_context(dotted_path, ComponentCarrierError(msg))
-        _offline_html = prerender_component(offline_component, [], {}, request)
+        _offline_html = prerender_component(offline_component, [], {}, uuid, request)
 
     # Return the template rendering context
     return {
@@ -159,9 +161,7 @@ def component(
         "reactpy_uuid": uuid,
         "reactpy_host": host or perceived_host,
         "reactpy_url_prefix": config.REACTPY_URL_PREFIX,
-        "reactpy_component_path": f"{dotted_path}/{uuid}/"
-        if component_has_args
-        else f"{dotted_path}/",
+        "reactpy_component_path": f"{dotted_path}/{uuid}/{int(has_args)}/",
         "reactpy_resolved_web_modules_path": RESOLVED_WEB_MODULES_PATH,
         "reactpy_reconnect_interval": config.REACTPY_RECONNECT_INTERVAL,
         "reactpy_reconnect_max_interval": config.REACTPY_RECONNECT_MAX_INTERVAL,
@@ -199,14 +199,17 @@ def validate_host(host: str):
 
 
 def prerender_component(
-    user_component: ComponentConstructor, args, kwargs, request: HttpRequest
+    user_component: ComponentConstructor, args, kwargs, uuid, request: HttpRequest
 ):
     search = request.GET.urlencode()
+    scope = getattr(request, "scope", {})
+    scope["reactpy"] = {"id": str(uuid)}
+
     with SyncLayout(
         ConnectionContext(
             user_component(*args, **kwargs),
             value=Connection(
-                scope=getattr(request, "scope", {}),
+                scope=scope,
                 location=Location(
                     pathname=request.path, search=f"?{search}" if search else ""
                 ),
