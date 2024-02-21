@@ -37,6 +37,7 @@ Using the following categories, list your changes in this order:
 ### Added
 
 -   Built-in cross-process communication mechanism via the `reactpy_django.hooks.use_channel_layer` hook.
+-   Access to the root component's `id` via the `reactpy_django.hooks.use_root_id` hook.
 -   More robust control over ReactPy clean up tasks!
     -   `settings.py:REACTPY_CLEAN_INTERVAL` to control how often ReactPy automatically performs cleaning tasks.
     -   `settings.py:REACTPY_CLEAN_SESSIONS` to control whether ReactPy automatically cleans up expired sessions.
