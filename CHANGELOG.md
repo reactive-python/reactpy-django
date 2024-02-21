@@ -43,6 +43,10 @@ Using the following categories, list your changes in this order:
     -   `settings.py:REACTPY_CLEAN_USER_DATA` to control whether ReactPy automatically cleans up orphaned user data.
     -   `python manage.py clean_reactpy` command to manually perform ReactPy clean up tasks.
 
+### Changed
+
+-   Simplified code for casading deletion of UserData.
+
 ## [3.7.0] - 2024-01-30
 
 ### Added

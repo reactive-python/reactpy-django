@@ -1,5 +1,3 @@
-import contextlib
-
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.signals import pre_delete
@@ -45,5 +43,4 @@ def delete_user_data(sender, instance, **kwargs):
     """Delete ReactPy's `UserDataModel` when a Django `User` is deleted."""
     pk = getattr(instance, instance._meta.pk.name)
 
-    with contextlib.suppress(Exception):
-        UserDataModel.objects.get(user_pk=pk).delete()
+    UserDataModel.objects.filter(user_pk=pk).delete()
