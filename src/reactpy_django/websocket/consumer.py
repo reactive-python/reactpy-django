@@ -168,7 +168,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
         # Verify the component has already been registered
         try:
-            component_constructor = REACTPY_REGISTERED_COMPONENTS[dotted_path]
+            root_component_constructor = REACTPY_REGISTERED_COMPONENTS[dotted_path]
         except KeyError:
             await asyncio.to_thread(
                 _logger.warning,
@@ -176,10 +176,9 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             )
             return
 
-        # Fetch the component's args/kwargs from the database, if needed
+        # Construct the component. This may require fetching the component's args/kwargs from the database.
         try:
             if has_args:
-                # Get the component session from the DB
                 self.component_session = await models.ComponentSession.objects.aget(
                     uuid=uuid,
                     last_accessed__gt=now - timedelta(seconds=REACTPY_SESSION_MAX_AGE),
@@ -189,7 +188,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 component_session_kwargs = params.kwargs
 
             # Generate the initial component instance
-            component_instance = component_constructor(
+            root_component = root_component_constructor(
                 *component_session_args, **component_session_kwargs
             )
         except models.ComponentSession.DoesNotExist:
@@ -204,7 +203,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         except Exception:
             await asyncio.to_thread(
                 _logger.error,
-                f"Failed to construct component {component_constructor} "
+                f"Failed to construct component {root_component_constructor} "
                 f"with args='{component_session_args}' kwargs='{component_session_kwargs}'!\n"
                 f"{traceback.format_exc()}",
             )
@@ -213,7 +212,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         # Start the ReactPy component rendering loop
         with contextlib.suppress(Exception):
             await serve_layout(
-                Layout(ConnectionContext(component_instance, value=connection)),
+                Layout(ConnectionContext(root_component, value=connection)),
                 self.send_json,
                 self.recv_queue.get,
             )
