@@ -2,11 +2,11 @@ from reactpy import component, html
 from reactpy_django.decorators import user_passes_test
 
 
-def auth_check(user):
+def is_authenticated(user):
     return user.is_authenticated
 
 
-@user_passes_test(auth_check)
+@user_passes_test(is_authenticated)
 @component
 def my_component():
     return html.div("I am logged in!")

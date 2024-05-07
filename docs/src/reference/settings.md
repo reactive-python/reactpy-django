@@ -131,7 +131,7 @@ This setting is incompatible with [`daphne`](https://github.com/django/daphne).
 
 The default host(s) that can render your ReactPy components.
 
-ReactPy will use these hosts in a round-robin fashion, allowing for easy distributed computing.
+ReactPy will use these hosts in a round-robin fashion, allowing for easy distributed computing. This is typically useful for self-hosted applications.
 
 You can use the `#!python host` argument in your [template tag](../reference/template-tag.md#component) to manually override this default.
 
@@ -147,9 +147,10 @@ Configures whether to pre-render your components via HTTP, which enables SEO com
 
 During pre-rendering, there are some key differences in behavior:
 
-1. Only the component's first render is pre-rendered.
+1. Only the component's first paint is pre-rendered.
 2. All [`connection` hooks](https://reactive-python.github.io/reactpy-django/latest/reference/hooks/#connection-hooks) will provide HTTP variants.
 3. The component will be non-interactive until a WebSocket connection is formed.
+4. The component is re-rendered once a WebSocket connection is formed.
 
 <!-- TODO: The comment below will become true when ReactPy no longer strips scripts from the DOM -->
 <!-- 4. `#!python html.script` elements are executed twice (pre-render and post-render). -->

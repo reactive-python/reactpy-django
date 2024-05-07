@@ -3,26 +3,20 @@ from reactpy_django.hooks import use_channel_layer
 
 
 @component
-def my_sender_component():
-    sender = use_channel_layer("my-channel-name")
+def my_component():
+    async def receive_message(message):
+        set_message(message["text"])
 
-    async def submit_event(event):
+    async def send_message(event):
         if event["key"] == "Enter":
             await sender({"text": event["target"]["value"]})
 
-    return html.div(
-        "Message Sender: ",
-        html.input({"type": "text", "onKeyDown": submit_event}),
-    )
-
-
-@component
-def my_receiver_component():
     message, set_message = hooks.use_state("")
+    sender = use_channel_layer("my-channel-name", receiver=receive_message)
 
-    async def receive_event(message):
-        set_message(message["text"])
-
-    use_channel_layer("my-channel-name", receiver=receive_event)
-
-    return html.div(f"Message Receiver: {message}")
+    return html.div(
+        f"Received: {message}",
+        html.br(),
+        "Send: ",
+        html.input({"type": "text", "onKeyDown": send_message}),
+    )
