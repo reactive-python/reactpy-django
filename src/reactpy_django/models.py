@@ -3,6 +3,8 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from reactpy_django.utils import get_pk
+
 
 class ComponentSession(models.Model):
     """A model for storing component sessions."""
@@ -41,6 +43,6 @@ class UserDataModel(models.Model):
 @receiver(pre_delete, sender=get_user_model(), dispatch_uid="reactpy_delete_user_data")
 def delete_user_data(sender, instance, **kwargs):
     """Delete ReactPy's `UserDataModel` when a Django `User` is deleted."""
-    pk = getattr(instance, instance._meta.pk.name)
+    pk = get_pk(instance)
 
     UserDataModel.objects.filter(user_pk=pk).delete()

@@ -52,7 +52,7 @@ def parse_path(path: str) -> tuple[re.Pattern[str], ConverterMapping]:
     pattern += f"{re.escape(path[last_match_end:])}$"
 
     # Replace literal `*` with "match anything" regex pattern, if it's at the end of the path
-    if pattern.endswith("\*$"):
+    if pattern.endswith(r"\*$"):
         pattern = f"{pattern[:-3]}.*$"
 
     return re.compile(pattern), converters
