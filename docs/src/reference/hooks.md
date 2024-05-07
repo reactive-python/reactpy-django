@@ -536,15 +536,15 @@ This is useful when used in combination with [`#!python use_channel_layer`](#use
 
 ??? example "See Interface"
 
-        <font size="4">**Parameters**</font>
+    <font size="4">**Parameters**</font>
 
-        `#!python None`
+    `#!python None`
 
-        <font size="4">**Returns**</font>
+    <font size="4">**Returns**</font>
 
-        | Type | Description |
-        | --- | --- |
-        | `#!python str` | A string containing the root component's `#!python id`. |
+    | Type | Description |
+    | --- | --- |
+    | `#!python str` | A string containing the root component's `#!python id`. |
 
 ---
 

@@ -34,7 +34,9 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Added
+
+-   Python 3.12 compatibility
 
 ## [3.8.0] - 2024-02-20
 
@@ -50,7 +52,7 @@ Using the following categories, list your changes in this order:
 
 ### Changed
 
--   Simplified code for cascading deletion of UserData.
+-   Simplified code for cascading deletion of user data.
 
 ## [3.7.0] - 2024-01-30
 

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from distutils.util import strtobool
 from logging import getLogger
 from uuid import uuid4
 
@@ -22,7 +21,7 @@ from reactpy_django.exceptions import (
     OfflineComponentMissing,
 )
 from reactpy_django.types import ComponentParams
-from reactpy_django.utils import SyncLayout, validate_component_args
+from reactpy_django.utils import SyncLayout, strtobool, validate_component_args
 
 try:
     RESOLVED_WEB_MODULES_PATH = reverse("reactpy:web_modules", args=["/"]).strip("/")

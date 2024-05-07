@@ -15,7 +15,7 @@ from typing import (
 )
 from uuid import uuid4
 
-import orjson as pickle
+import orjson
 from channels import DEFAULT_CHANNEL_LAYER
 from channels.db import database_sync_to_async
 from channels.layers import InMemoryChannelLayer, get_channel_layer
@@ -351,7 +351,7 @@ def use_user_data(
 
         pk = get_pk(user)
         model, _ = await UserDataModel.objects.aget_or_create(user_pk=pk)
-        model.data = pickle.dumps(data)
+        model.data = orjson.dumps(data)
         await model.asave()
 
     query: Query[dict | None] = use_query(
@@ -471,7 +471,7 @@ async def _get_user_data(
 
     pk = get_pk(user)
     model, _ = await UserDataModel.objects.aget_or_create(user_pk=pk)
-    data = pickle.loads(model.data) if model.data else {}
+    data = orjson.loads(model.data) if model.data else {}
 
     if not isinstance(data, dict):
         raise TypeError(f"Expected dict while loading user data, got {type(data)}")
@@ -489,7 +489,7 @@ async def _get_user_data(
                 data[key] = new_value
                 changed = True
         if changed:
-            model.data = pickle.dumps(data)
+            model.data = orjson.dumps(data)
             if save_default_data:
                 await model.asave()
 

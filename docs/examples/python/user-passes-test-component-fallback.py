@@ -7,11 +7,11 @@ def my_component_fallback():
     return html.div("I am NOT logged in!")
 
 
-def auth_check(user):
+def is_authenticated(user):
     return user.is_authenticated
 
 
-@user_passes_test(auth_check, fallback=my_component_fallback)
+@user_passes_test(is_authenticated, fallback=my_component_fallback)
 @component
 def my_component():
     return html.div("I am logged in!")
