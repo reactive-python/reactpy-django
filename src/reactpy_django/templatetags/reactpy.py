@@ -10,7 +10,7 @@ from django.urls import NoReverseMatch, reverse
 from reactpy.backend.hooks import ConnectionContext
 from reactpy.backend.types import Connection, Location
 from reactpy.core.types import ComponentConstructor
-from reactpy.utils import strtobool, vdom_to_html
+from reactpy.utils import vdom_to_html
 
 from reactpy_django import config, models
 from reactpy_django.exceptions import (
@@ -21,7 +21,7 @@ from reactpy_django.exceptions import (
     OfflineComponentMissing,
 )
 from reactpy_django.types import ComponentParams
-from reactpy_django.utils import SyncLayout, validate_component_args
+from reactpy_django.utils import SyncLayout, strtobool, validate_component_args
 
 try:
     RESOLVED_WEB_MODULES_PATH = reverse("reactpy:web_modules", args=["/"]).strip("/")
