@@ -18,7 +18,7 @@
     </a>
 </p>
 
-[ReactPy-Django](https://github.com/reactive-python/reactpy-django) is used to add used to add [ReactPy](https://reactpy.dev/) support to an existing **Django project**. This package also turbocharges ReactPy with features such as...
+[ReactPy-Django](https://github.com/reactive-python/reactpy-django) is used to add [ReactPy](https://reactpy.dev/) support to an existing **Django project**. This package also turbocharges ReactPy with features such as...
 
 -   [SEO compatible rendering](https://reactive-python.github.io/reactpy-django/latest/reference/settings/#reactpy_prerender)
 -   [Single page application (SPA) capabilities](https://reactive-python.github.io/reactpy-django/latest/reference/router/#django-router)
