@@ -2,7 +2,6 @@ import asyncio
 import os
 import socket
 import sys
-from distutils.util import strtobool
 from functools import partial
 from time import sleep
 
@@ -14,6 +13,7 @@ from django.db import connections
 from django.test.utils import modify_settings
 from playwright.sync_api import TimeoutError, sync_playwright
 from reactpy_django.models import ComponentSession
+from reactpy_django.utils import strtobool
 
 GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "False")
 CLICK_DELAY = 250 if strtobool(GITHUB_ACTIONS) else 25  # Delay in miliseconds.

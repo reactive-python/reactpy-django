@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from distutils.util import strtobool
 from logging import getLogger
 from uuid import uuid4
 
@@ -11,7 +10,7 @@ from django.urls import NoReverseMatch, reverse
 from reactpy.backend.hooks import ConnectionContext
 from reactpy.backend.types import Connection, Location
 from reactpy.core.types import ComponentConstructor
-from reactpy.utils import vdom_to_html
+from reactpy.utils import strtobool, vdom_to_html
 
 from reactpy_django import config, models
 from reactpy_django.exceptions import (
