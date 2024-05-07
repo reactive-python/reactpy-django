@@ -489,7 +489,7 @@ async def _get_user_data(
                 data[key] = new_value
                 changed = True
         if changed:
-            model.data = pickle.dumps(data)
+            model.data = orjson.dumps(data)
             if save_default_data:
                 await model.asave()
 
