@@ -628,7 +628,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
                 path.get_attribute("data-path"),
             )
             string = new_page.query_selector("#router-string")
-            self.assertEquals("Path 12", string.text_content())
+            self.assertEqual("Path 12", string.text_content())
 
         finally:
             new_page.close()

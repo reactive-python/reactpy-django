@@ -99,25 +99,25 @@ class RegexTests(TestCase):
         self.assertNotRegex(r'{% component "my.component" %}', COMMENT_REGEX)
 
         # Components surrounded by comments
-        self.assertEquals(
+        self.assertEqual(
             COMMENT_REGEX.sub(
                 "", r'{% component "my.component" %} <!-- comment -->'
             ).strip(),
             '{% component "my.component" %}',
         )
-        self.assertEquals(
+        self.assertEqual(
             COMMENT_REGEX.sub(
                 "", r'<!-- comment --> {% component "my.component" %}'
             ).strip(),
             '{% component "my.component" %}',
         )
-        self.assertEquals(
+        self.assertEqual(
             COMMENT_REGEX.sub(
                 "", r'<!-- comment --> {% component "my.component" %} <!-- comment -->'
             ).strip(),
             '{% component "my.component" %}',
         )
-        self.assertEquals(
+        self.assertEqual(
             COMMENT_REGEX.sub(
                 "",
                 r"""<!-- comment
@@ -130,11 +130,11 @@ class RegexTests(TestCase):
         )
 
         # Components surrounded by comments
-        self.assertEquals(
+        self.assertEqual(
             COMMENT_REGEX.sub("", r'<!-- {% component "my.component" %} -->'),
             "",
         )
-        self.assertEquals(
+        self.assertEqual(
             COMMENT_REGEX.sub(
                 "",
                 r"""<!--
