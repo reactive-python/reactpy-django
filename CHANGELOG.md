@@ -34,6 +34,10 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+-   Nothing (yet)!
+
+## [3.8.1] - 2024-05-07
+
 ### Added
 
 -   Python 3.12 compatibility
@@ -467,7 +471,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.8.0...HEAD
+[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.8.1...HEAD
+[3.8.1]: https://github.com/reactive-python/reactpy-django/compare/3.8.0...3.8.1
 [3.8.0]: https://github.com/reactive-python/reactpy-django/compare/3.7.0...3.8.0
 [3.7.0]: https://github.com/reactive-python/reactpy-django/compare/3.6.0...3.7.0
 [3.6.0]: https://github.com/reactive-python/reactpy-django/compare/3.5.1...3.6.0
