@@ -34,7 +34,9 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Changed
+
+- Use `ReactDOM.createRoot` instead of the deprecated `ReactDOM.render`
 
 ## [3.8.1] - 2024-05-07
 
