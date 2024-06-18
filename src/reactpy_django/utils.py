@@ -262,7 +262,7 @@ def django_query_postprocessor(
 ) -> QuerySet | Model:
     """Recursively fetch all fields within a `Model` or `QuerySet` to ensure they are not performed lazily.
 
-    Behaviors can be modified through `QueryOptions` within your `use_query` hook.
+    Behavior can be modified through `postprocessor_kwargs` within your `use_query` hook.
 
     Args:
         data: The `Model` or `QuerySet` to recursively fetch fields from.
@@ -275,8 +275,7 @@ def django_query_postprocessor(
         The `Model` or `QuerySet` with all fields fetched.
     """
 
-    # `QuerySet`, which is an iterable of `Model`/`QuerySet` instances
-    # https://github.com/typeddjango/django-stubs/issues/704
+    # `QuerySet`, which is an iterable containing `Model`/`QuerySet` objects.
     if isinstance(data, QuerySet):
         for model in data:
             django_query_postprocessor(
@@ -314,7 +313,7 @@ def django_query_postprocessor(
             "One of the following may have occurred:\n"
             "  - You are using a non-Django ORM.\n"
             "  - You are attempting to use `use_query` to fetch non-ORM data.\n\n"
-            "If these situations seem correct, you may want to consider disabling the postprocessor via `QueryOptions`."
+            "If these situations seem correct, you may want to consider disabling the postprocessor."
         )
 
     return data

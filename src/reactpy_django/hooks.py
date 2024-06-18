@@ -11,7 +11,6 @@ from typing import (
     Sequence,
     Union,
     cast,
-    overload,
 )
 from uuid import uuid4
 
@@ -34,13 +33,11 @@ from reactpy_django.types import (
     FuncParams,
     Inferred,
     Mutation,
-    MutationOptions,
     Query,
-    QueryOptions,
     SyncPostprocessor,
     UserData,
 )
-from reactpy_django.utils import generate_obj_name, get_pk
+from reactpy_django.utils import django_query_postprocessor, generate_obj_name, get_pk
 
 if TYPE_CHECKING:
     from channels_redis.core import RedisChannelLayer
@@ -106,19 +103,19 @@ def use_connection() -> ConnectionType:
 
 def use_query(
     query: Callable[FuncParams, Awaitable[Inferred]] | Callable[FuncParams, Inferred],
-    /,
-    *args: FuncParams.args,
+    *,
+    kwargs: dict[str, Any] | None = None,
     thread_sensitive: bool = True,
-    postprocessor: AsyncPostprocessor | SyncPostprocessor | None = None,
+    postprocessor: (
+        AsyncPostprocessor | SyncPostprocessor | None
+    ) = django_query_postprocessor,
     postprocessor_kwargs: dict[str, Any] | None = None,
-    **kwargs: FuncParams.kwargs,
 ) -> Query[Inferred]:
     """This hook is used to execute functions in the background and return the result, \
         typically to read data the Django ORM.
 
     Args:
         query: A callable that returns a Django `Model` or `QuerySet`.
-        args: Positional arguments to passed into the `query` function.
         kwargs: Keyword arguments to passed into the `query` function.
         thread_sensitive: Whether to run the query in thread-sensitive mode. \
             This setting only applies to sync query functions.
@@ -131,6 +128,10 @@ def use_query(
             is used to prevent Django's lazy query execution and supports `many_to_many` \
             and `many_to_one` as `postprocessor_kwargs`.
         postprocessor_kwargs: Keyworded arguments passed into the `postprocessor` function.
+
+    Returns:
+        A `Query` object containing the query result, loading state, error state, and a `refetch` \
+        function to re-execute the query.
     """
 
     should_execute, set_should_execute = use_state(True)
@@ -138,6 +139,9 @@ def use_query(
     loading, set_loading = use_state(True)
     error, set_error = use_state(cast(Union[Exception, None], None))
     query_ref = use_ref(query)
+    kwargs = kwargs or {}
+    postprocessor_kwargs = postprocessor_kwargs or {}
+
     if query_ref.current is not query:
         raise ValueError(f"Query function changed from {query_ref.current} to {query}.")
 
@@ -146,12 +150,12 @@ def use_query(
         try:
             # Run the query
             if asyncio.iscoroutinefunction(query):
-                new_data = await query(*args, **kwargs)
+                new_data = await query(**kwargs)
             else:
                 new_data = await database_sync_to_async(
                     query,
                     thread_sensitive=thread_sensitive,
-                )(*args, **kwargs)
+                )(**kwargs)
 
             # Run the postprocessor
             if postprocessor:
@@ -202,7 +206,7 @@ def use_query(
         _REFETCH_CALLBACKS[query].add(refetch)
         return lambda: _REFETCH_CALLBACKS[query].remove(refetch)
 
-    # The query's user API
+    # Return Query user API
     return Query(data, loading, error, refetch)
 
 
@@ -210,7 +214,7 @@ def use_mutation(
     mutation: (
         Callable[FuncParams, bool | None] | Callable[FuncParams, Awaitable[bool | None]]
     ),
-    /,
+    *,
     thread_sensitive: bool = True,
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
 ) -> Mutation[FuncParams]:
@@ -230,6 +234,10 @@ def use_mutation(
             hook) or a sequence of query functions that need a `refetch` if the \
             mutation succeeds. This is useful for refreshing data after a mutation \
             has been performed.
+
+    Returns:
+        A `Mutation` object that can be called to execute the mutation. This object \
+        also contains loading state, error state, and a `reset` function.
     """
 
     loading, set_loading = use_state(False)
@@ -287,7 +295,7 @@ def use_mutation(
         set_loading(False)
         set_error(None)
 
-    # The mutation's user API
+    # Return mutation user API
     return Mutation(schedule_mutation, loading, error, reset)
 
 
@@ -331,11 +339,13 @@ def use_user_data(
         await model.asave()
 
     query: Query[dict | None] = use_query(
-        QueryOptions(postprocessor=None),
         _get_user_data,
-        user=user,
-        default_data=default_data,
-        save_default_data=save_default_data,
+        kwargs={
+            "user": user,
+            "default_data": default_data,
+            "save_default_data": save_default_data,
+        },
+        postprocessor=None,
     )
     mutation = use_mutation(_set_user_data, refetch=_get_user_data)
 

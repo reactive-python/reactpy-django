@@ -10,7 +10,6 @@ from django.http import HttpRequest
 from django.shortcuts import render
 from reactpy import component, hooks, html, web
 from reactpy_django.components import view_to_component, view_to_iframe
-from reactpy_django.types import QueryOptions
 
 from test_app.models import (
     AsyncForiegnChild,
@@ -659,7 +658,7 @@ def custom_host(number=0):
 @component
 def broken_postprocessor_query():
     relational_parent = reactpy_django.hooks.use_query(
-        QueryOptions(postprocessor=None), get_relational_parent_query
+        get_relational_parent_query, postprocessor=None
     )
 
     if not relational_parent.data:
@@ -720,9 +719,9 @@ def use_user_data():
             "data-fetch-error": bool(user_data_query.error),
             "data-mutation-error": bool(user_data_mutation.error),
             "data-loading": user_data_query.loading or user_data_mutation.loading,
-            "data-username": "AnonymousUser"
-            if current_user.is_anonymous
-            else current_user.username,
+            "data-username": (
+                "AnonymousUser" if current_user.is_anonymous else current_user.username
+            ),
         },
         html.div("use_user_data"),
         html.button({"class": "login-1", "on_click": login_user1}, "Login 1"),
@@ -788,9 +787,9 @@ def use_user_data_with_default():
             "data-fetch-error": bool(user_data_query.error),
             "data-mutation-error": bool(user_data_mutation.error),
             "data-loading": user_data_query.loading or user_data_mutation.loading,
-            "data-username": "AnonymousUser"
-            if current_user.is_anonymous
-            else current_user.username,
+            "data-username": (
+                "AnonymousUser" if current_user.is_anonymous else current_user.username
+            ),
         },
         html.div("use_user_data_with_default"),
         html.button({"class": "login-3", "on_click": login_user3}, "Login 3"),
