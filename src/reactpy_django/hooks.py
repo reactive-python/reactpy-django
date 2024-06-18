@@ -29,6 +29,7 @@ from reactpy_django.exceptions import UserNotFoundError
 from reactpy_django.types import (
     AsyncMessageReceiver,
     AsyncMessageSender,
+    AsyncPostprocessor,
     ConnectionType,
     FuncParams,
     Inferred,
@@ -36,6 +37,7 @@ from reactpy_django.types import (
     MutationOptions,
     Query,
     QueryOptions,
+    SyncPostprocessor,
     UserData,
 )
 from reactpy_django.utils import generate_obj_name, get_pk
@@ -102,48 +104,39 @@ def use_connection() -> ConnectionType:
     return _use_connection()
 
 
-@overload
 def use_query(
-    options: QueryOptions,
+    query: Callable[FuncParams, Awaitable[Inferred]] | Callable[FuncParams, Inferred],
     /,
-    query: Callable[FuncParams, Awaitable[Inferred]] | Callable[FuncParams, Inferred],
     *args: FuncParams.args,
+    thread_sensitive: bool = True,
+    postprocessor: AsyncPostprocessor | SyncPostprocessor | None = None,
+    postprocessor_kwargs: dict[str, Any] | None = None,
     **kwargs: FuncParams.kwargs,
-) -> Query[Inferred]: ...
-
-
-@overload
-def use_query(
-    query: Callable[FuncParams, Awaitable[Inferred]] | Callable[FuncParams, Inferred],
-    *args: FuncParams.args,
-    **kwargs: FuncParams.kwargs,
-) -> Query[Inferred]: ...
-
-
-def use_query(*args, **kwargs) -> Query[Inferred]:
+) -> Query[Inferred]:
     """This hook is used to execute functions in the background and return the result, \
         typically to read data the Django ORM.
 
     Args:
-        options: An optional `QueryOptions` object that can modify how the query is executed.
         query: A callable that returns a Django `Model` or `QuerySet`.
-        *args: Positional arguments to pass into `query`.
-
-    Keyword Args:
-        **kwargs: Keyword arguments to pass into `query`."""
+        args: Positional arguments to passed into the `query` function.
+        kwargs: Keyword arguments to passed into the `query` function.
+        thread_sensitive: Whether to run the query in thread-sensitive mode. \
+            This setting only applies to sync query functions.
+        postprocessor: A callable that processes the query result prior to returning it. \
+            The first argument of postprocessor function must be the query `data`. All \
+            proceeding arguments are optional `postprocessor_kwargs` (see below). This \
+            postprocessor function must return the modified `data`. \
+            \
+            If unset, `REACTPY_DEFAULT_QUERY_POSTPROCESSOR` is used. By default, this \
+            is used to prevent Django's lazy query execution and supports `many_to_many` \
+            and `many_to_one` as `postprocessor_kwargs`.
+        postprocessor_kwargs: Keyworded arguments passed into the `postprocessor` function.
+    """
 
     should_execute, set_should_execute = use_state(True)
     data, set_data = use_state(cast(Inferred, None))
     loading, set_loading = use_state(True)
     error, set_error = use_state(cast(Union[Exception, None], None))
-    if isinstance(args[0], QueryOptions):
-        query_options, query, query_args, query_kwargs = _use_query_args_1(
-            *args, **kwargs
-        )
-    else:
-        query_options, query, query_args, query_kwargs = _use_query_args_2(
-            *args, **kwargs
-        )
     query_ref = use_ref(query)
     if query_ref.current is not query:
         raise ValueError(f"Query function changed from {query_ref.current} to {query}.")
@@ -153,24 +146,21 @@ def use_query(*args, **kwargs) -> Query[Inferred]:
         try:
             # Run the query
             if asyncio.iscoroutinefunction(query):
-                new_data = await query(*query_args, **query_kwargs)
+                new_data = await query(*args, **kwargs)
             else:
                 new_data = await database_sync_to_async(
                     query,
-                    thread_sensitive=query_options.thread_sensitive,
-                )(*query_args, **query_kwargs)
+                    thread_sensitive=thread_sensitive,
+                )(*args, **kwargs)
 
             # Run the postprocessor
-            if query_options.postprocessor:
-                if asyncio.iscoroutinefunction(query_options.postprocessor):
-                    new_data = await query_options.postprocessor(
-                        new_data, **query_options.postprocessor_kwargs
-                    )
+            if postprocessor:
+                if asyncio.iscoroutinefunction(postprocessor):
+                    new_data = await postprocessor(new_data, **postprocessor_kwargs)
                 else:
                     new_data = await database_sync_to_async(
-                        query_options.postprocessor,
-                        thread_sensitive=query_options.thread_sensitive,
-                    )(new_data, **query_options.postprocessor_kwargs)
+                        postprocessor, thread_sensitive=thread_sensitive
+                    )(new_data, **postprocessor_kwargs)
 
         # Log any errors and set the error state
         except Exception as e:
@@ -216,26 +206,14 @@ def use_query(*args, **kwargs) -> Query[Inferred]:
     return Query(data, loading, error, refetch)
 
 
-@overload
-def use_mutation(
-    options: MutationOptions,
-    mutation: (
-        Callable[FuncParams, bool | None] | Callable[FuncParams, Awaitable[bool | None]]
-    ),
-    refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
-) -> Mutation[FuncParams]: ...
-
-
-@overload
 def use_mutation(
     mutation: (
         Callable[FuncParams, bool | None] | Callable[FuncParams, Awaitable[bool | None]]
     ),
+    /,
+    thread_sensitive: bool = True,
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
-) -> Mutation[FuncParams]: ...
-
-
-def use_mutation(*args: Any, **kwargs: Any) -> Mutation[FuncParams]:
+) -> Mutation[FuncParams]:
     """This hook is used to modify data in the background, typically to create/update/delete \
     data from the Django ORM.
         
@@ -246,6 +224,8 @@ def use_mutation(*args: Any, **kwargs: Any) -> Mutation[FuncParams]:
         mutation: A callable that performs Django ORM create, update, or delete \
             functionality. If this function returns `False`, then your `refetch` \
             function will not be used.
+        thread_sensitive: Whether to run the mutation in thread-sensitive mode. \
+            This setting only applies to sync mutation functions.
         refetch:  A query function (the function you provide to your `use_query` \
             hook) or a sequence of query functions that need a `refetch` if the \
             mutation succeeds. This is useful for refreshing data after a mutation \
@@ -254,10 +234,6 @@ def use_mutation(*args: Any, **kwargs: Any) -> Mutation[FuncParams]:
 
     loading, set_loading = use_state(False)
     error, set_error = use_state(cast(Union[Exception, None], None))
-    if isinstance(args[0], MutationOptions):
-        mutation_options, mutation, refetch = _use_mutation_args_1(*args, **kwargs)
-    else:
-        mutation_options, mutation, refetch = _use_mutation_args_2(*args, **kwargs)
 
     # The main "running" function for `use_mutation`
     async def execute_mutation(exec_args, exec_kwargs) -> None:
@@ -267,7 +243,7 @@ def use_mutation(*args: Any, **kwargs: Any) -> Mutation[FuncParams]:
                 should_refetch = await mutation(*exec_args, **exec_kwargs)
             else:
                 should_refetch = await database_sync_to_async(
-                    mutation, thread_sensitive=mutation_options.thread_sensitive
+                    mutation, thread_sensitive=thread_sensitive
                 )(*exec_args, **exec_kwargs)
 
         # Log any errors and set the error state
@@ -442,22 +418,6 @@ def use_root_id() -> str:
     scope = use_scope()
 
     return scope["reactpy"]["id"]
-
-
-def _use_query_args_1(options: QueryOptions, /, query: Query, *args, **kwargs):
-    return options, query, args, kwargs
-
-
-def _use_query_args_2(query: Query, *args, **kwargs):
-    return QueryOptions(), query, args, kwargs
-
-
-def _use_mutation_args_1(options: MutationOptions, mutation: Mutation, refetch=None):
-    return options, mutation, refetch
-
-
-def _use_mutation_args_2(mutation, refetch=None):
-    return MutationOptions(), mutation, refetch
 
 
 async def _get_user_data(
