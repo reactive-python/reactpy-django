@@ -75,7 +75,7 @@ Query functions can be sync or async.
 
     <font size="4">**`#!python thread_sensitive`**</font>
 
-    Whether to run your synchronous query function in thread-sensitive mode. Thread-sensitive mode is turned on by default due to Django ORM limitations. See Django's [`sync_to_async` docs](https://docs.djangoproject.com/en/stable/topics/async/#sync-to-async) docs for more information.
+    Whether to run your synchronous query function in thread-sensitive mode. Thread-sensitive mode is turned on by default due to Django ORM limitations. See Django's [`sync_to_async` docs](https://docs.djangoproject.com/en/dev/topics/async/#sync-to-async) docs for more information.
 
     This setting only applies to sync query functions, and will be ignored for async functions.
 
@@ -132,7 +132,7 @@ Query functions can be sync or async.
         {% include "../../examples/python/use-query-postprocessor-kwargs.py" %}
         ```
 
-    _Note: In Django's ORM design, the field name to access foreign keys is [postfixed with `_set`](https://docs.djangoproject.com/en/stable/topics/db/examples/many_to_one/) by default._
+    _Note: In Django's ORM design, the field name to access foreign keys is [postfixed with `_set`](https://docs.djangoproject.com/en/dev/topics/db/examples/many_to_one/) by default._
 
 ??? question "Can I make ORM calls without hooks?"
 
@@ -160,7 +160,7 @@ Query functions can be sync or async.
 
     This design decision was based on [Apollo's `#!javascript useQuery` hook](https://www.apollographql.com/docs/react/data/queries/), but ultimately helps avoid Django's `#!python SynchronousOnlyOperation` exceptions.
 
-    With the `#!python Model` or `#!python QuerySet` your function returns, this hook uses the [default postprocessor](../reference/utils.md#django-query-postprocessor) to ensure that all [deferred](https://docs.djangoproject.com/en/stable/ref/models/instances/#django.db.models.Model.get_deferred_fields) or [lazy](https://docs.djangoproject.com/en/stable/topics/db/queries/#querysets-are-lazy) fields are executed.
+    With the `#!python Model` or `#!python QuerySet` your function returns, this hook uses the [default postprocessor](../reference/utils.md#django-query-postprocessor) to ensure that all [deferred](https://docs.djangoproject.com/en/dev/ref/models/instances/#django.db.models.Model.get_deferred_fields) or [lazy](https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy) fields are executed.
 
 ---
 
@@ -219,7 +219,7 @@ Mutation functions can be sync or async.
 
     <font size="4">**`#!python thread_sensitive`**</font>
 
-    Whether to run your synchronous mutation function in thread-sensitive mode. Thread-sensitive mode is turned on by default due to Django ORM limitations. See Django's [`sync_to_async` docs](https://docs.djangoproject.com/en/stable/topics/async/#sync-to-async) docs for more information.
+    Whether to run your synchronous mutation function in thread-sensitive mode. Thread-sensitive mode is turned on by default due to Django ORM limitations. See Django's [`sync_to_async` docs](https://docs.djangoproject.com/en/dev/topics/async/#sync-to-async) docs for more information.
 
     This setting only applies to sync query functions, and will be ignored for async functions.
 
