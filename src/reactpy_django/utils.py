@@ -277,7 +277,7 @@ def django_query_postprocessor(
 
     # `QuerySet`, which is an iterable of `Model`/`QuerySet` instances
     # https://github.com/typeddjango/django-stubs/issues/704
-    if isinstance(data, QuerySet):  # type: ignore[misc]
+    if isinstance(data, QuerySet):
         for model in data:
             django_query_postprocessor(
                 model,

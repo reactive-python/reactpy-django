@@ -51,7 +51,7 @@ def component(
         class: The HTML class to apply to the top-level component div.
         key: Force the component's root node to use a specific key value. Using \
             key within a template tag is effectively useless.
-        host: The host to use for the ReactPy connections. If set to `None`, \
+        host: The host to use for ReactPy connections. If set to `None`, \
             the host will be automatically configured. \
             Example values include: `localhost:8000`, `example.com`, `example.com/subdir`
         prerender: Configures whether to pre-render this component, which \
