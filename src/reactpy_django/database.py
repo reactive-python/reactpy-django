@@ -21,7 +21,7 @@ class Router:
 
     def allow_relation(self, obj1, obj2, **hints):
         """Returning `None` only allow relations within the same database.
-        https://docs.djangoproject.com/en/dev/topics/db/multi-db/#limitations-of-multiple-databases
+        https://docs.djangoproject.com/en/stable/topics/db/multi-db/#limitations-of-multiple-databases
         """
         return None
 

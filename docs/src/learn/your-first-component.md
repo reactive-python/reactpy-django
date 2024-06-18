@@ -18,7 +18,7 @@ You will now need to pick at least one **Django app** to start using ReactPy-Dja
 
 For the following examples, we will assume the following:
 
-1. You have a **Django app** named `my_app`, which was created by Django's [`startapp` command](https://docs.djangoproject.com/en/dev/intro/tutorial01/#creating-the-polls-app).
+1. You have a **Django app** named `my_app`, which was created by Django's [`startapp` command](https://docs.djangoproject.com/en/stable/intro/tutorial01/#creating-the-polls-app).
 2. You have placed `my_app` directly into your **Django project** folder (`./example_project/my_app`). This is common for small projects.
 
 ??? question "How do I organize my Django project for ReactPy?"
@@ -72,11 +72,11 @@ Additionally, you can pass in `#!python args` and `#!python kwargs` into your co
 
 ??? question "Where is my templates folder?"
 
-       If you do not have a `./templates/` folder in your **Django app**, you can simply create one! Keep in mind, templates within this folder will not be detected by Django unless you [add the corresponding **Django app** to `settings.py:INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/applications/#configuring-applications).
+       If you do not have a `./templates/` folder in your **Django app**, you can simply create one! Keep in mind, templates within this folder will not be detected by Django unless you [add the corresponding **Django app** to `settings.py:INSTALLED_APPS`](https://docs.djangoproject.com/en/stable/ref/applications/#configuring-applications).
 
 ## Setting up a Django view
 
-Within your **Django app**'s `views.py` file, you will need to [create a view function](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view) to render the HTML template `my-template.html` ([_from the previous step_](#embedding-in-a-template)).
+Within your **Django app**'s `views.py` file, you will need to [create a view function](https://docs.djangoproject.com/en/stable/intro/tutorial01/#write-your-first-view) to render the HTML template `my-template.html` ([_from the previous step_](#embedding-in-a-template)).
 
 === "views.py"
 
@@ -84,7 +84,7 @@ Within your **Django app**'s `views.py` file, you will need to [create a view fu
     {% include "../../examples/python/example/views.py" %}
     ```
 
-We will add this new view into your [`urls.py`](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view) and define what URL it should be accessible at.
+We will add this new view into your [`urls.py`](https://docs.djangoproject.com/en/stable/intro/tutorial01/#write-your-first-view) and define what URL it should be accessible at.
 
 === "urls.py"
 
@@ -98,7 +98,7 @@ We will add this new view into your [`urls.py`](https://docs.djangoproject.com/e
 
     Once you reach that point, we recommend creating an individual `urls.py` within each of your **Django apps**.
 
-    Then, within your **Django project's** `urls.py` you will use Django's [`include` function](https://docs.djangoproject.com/en/dev/ref/urls/#include) to link it all together.
+    Then, within your **Django project's** `urls.py` you will use Django's [`include` function](https://docs.djangoproject.com/en/stable/ref/urls/#include) to link it all together.
 
 ## Viewing your component
 
@@ -114,7 +114,7 @@ If you copy-pasted our example component, you will now see your component displa
 
 ??? warning "Do not use `manage.py runserver` for production"
 
-    This command is only intended for development purposes. For production deployments make sure to read [Django's documentation](https://docs.djangoproject.com/en/dev/howto/deployment/).
+    This command is only intended for development purposes. For production deployments make sure to read [Django's documentation](https://docs.djangoproject.com/en/stable/howto/deployment/).
 
 ## Learn more
 
