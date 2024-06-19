@@ -34,7 +34,21 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Changed
+
+-   New syntax for `use_query` and `use_mutation` hooks. Here's a quick comparison of the changes:
+
+    ```python
+    query = use_query(QueryOptions(thread_sensitive=True), get_items, value=123456, foo="bar") # Old
+    query = use_query(get_items, {"value":12356, "foo":"bar"}, thread_sensitive=True) # New
+
+    mutation = use_mutation(MutationOptions(thread_sensitive=True), remove_item) # Old
+    mutation = use_mutation(remove_item, thread_sensitive=True) # New
+    ```
+
+### Removed
+
+-   `QueryOptions` and `MutationOptions` have been removed. Their values are now passed direct into the hook.
 
 ## [3.8.1] - 2024-05-07
 

@@ -50,7 +50,6 @@ _REFETCH_CALLBACKS: DefaultDict[Callable[..., Any], set[Callable[[], None]]] = (
 )
 
 
-# TODO: Deprecate this once the equivalent hook gets moved to reactpy.hooks.*
 def use_location() -> Location:
     """Get the current route as a `Location` object"""
     return _use_location()
@@ -84,7 +83,6 @@ def use_origin() -> str | None:
     return None
 
 
-# TODO: Deprecate this once the equivalent hook gets moved to reactpy.hooks.*
 def use_scope() -> dict[str, Any]:
     """Get the current ASGI scope dictionary"""
     scope = _use_scope()
@@ -95,7 +93,6 @@ def use_scope() -> dict[str, Any]:
     raise TypeError(f"Expected scope to be a dict, got {type(scope)}")
 
 
-# TODO: Deprecate this once the equivalent hook gets moved to reactpy.hooks.*
 def use_connection() -> ConnectionType:
     """Get the current `Connection` object"""
     return _use_connection()
@@ -115,16 +112,17 @@ def use_query(
         typically to read data the Django ORM.
 
     Args:
-        query: A callable that returns a Django `Model` or `QuerySet`.
+        query: A function that executes a query and returns some data.
 
     Kwargs:
         kwargs: Keyword arguments to passed into the `query` function.
-        thread_sensitive: Whether to run the query in thread-sensitive mode. \
-            This setting only applies to sync query functions.
-        postprocessor: A callable that processes the query result prior to returning it. \
+        thread_sensitive: Whether to run the query in thread sensitive mode. \
+            This mode only applies to sync query functions, and is turned on by default \
+            due to Django ORM limitations.
+        postprocessor: A callable that processes the query `data` before it is returned. \
             The first argument of postprocessor function must be the query `data`. All \
-            proceeding arguments are optional `postprocessor_kwargs` (see below). This \
-            postprocessor function must return the modified `data`. \
+            proceeding arguments are optional `postprocessor_kwargs`. This postprocessor \
+            function must return the modified `data`. \
             \
             If unset, `REACTPY_DEFAULT_QUERY_POSTPROCESSOR` is used. By default, this \
             is used to prevent Django's lazy query execution and supports `many_to_many` \
@@ -132,8 +130,8 @@ def use_query(
         postprocessor_kwargs: Keyworded arguments passed into the `postprocessor` function.
 
     Returns:
-        A `Query` object containing the query result, loading state, error state, and a `refetch` \
-        function to re-execute the query.
+         An object containing `loading`/`#!python error` states, your `data` (if the query \
+         has successfully executed), and a `refetch` callable that can be used to re-run the query.
     """
 
     should_execute, set_should_execute = use_state(True)
@@ -231,16 +229,18 @@ def use_mutation(
             function will not be used.
 
     Kwargs:
-        thread_sensitive: Whether to run the mutation in thread-sensitive mode. \
-            This setting only applies to sync mutation functions.
+        thread_sensitive: Whether to run the mutation in thread sensitive mode. \
+            This mode only applies to sync mutation functions, and is turned on by default \
+            due to Django ORM limitations.
         refetch:  A query function (the function you provide to your `use_query` \
             hook) or a sequence of query functions that need a `refetch` if the \
             mutation succeeds. This is useful for refreshing data after a mutation \
             has been performed.
 
     Returns:
-        A `Mutation` object that can be called to execute the mutation. This object \
-        also contains loading state, error state, and a `reset` function.
+        An object containing `#!python loading`/`#!python error` states, and a \
+        `#!python reset` callable that will set `#!python loading`/`#!python error` \
+        states to defaults. This object can be called to run the query.
     """
 
     loading, set_loading = use_state(False)
