@@ -55,13 +55,9 @@
 <span class=normal>17</span>
 <span class=normal>18</span>
 <span class=normal>19</span>
-<span class=normal>20</span>
-<span class=normal>21</span>
-<span class=normal>22</span>
-<span class=normal>23</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>example.models</span> <span class=kn>import</span> <span class=n>TodoItem</span>
+<span class=normal>20</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>example.models</span> <span class=kn>import</span> <span class=n>TodoItem</span>
 <span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span>
 <span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_query</span>
-<span class=kn>from</span> <span class=nn>reactpy_django.types</span> <span class=kn>import</span> <span class=n>QueryOptions</span>
 <span class=kn>from</span> <span class=nn>reactpy_django.utils</span> <span class=kn>import</span> <span class=n>django_query_postprocessor</span>
 
 
@@ -71,13 +67,11 @@
 
 <span class=nd>@component</span>
 <span class=k>def</span> <span class=nf>todo_list</span><span class=p>():</span>
-    <span class=c1># These `QueryOptions` are functionally equivalent to ReactPy-Django&#39;s default values</span>
+    <span class=c1># These postprocessor options are functionally equivalent to ReactPy-Django&#39;s default values</span>
     <span class=n>item_query</span> <span class=o>=</span> <span class=n>use_query</span><span class=p>(</span>
-        <span class=n>QueryOptions</span><span class=p>(</span>
-            <span class=n>postprocessor</span><span class=o>=</span><span class=n>django_query_postprocessor</span><span class=p>,</span>
-            <span class=n>postprocessor_kwargs</span><span class=o>=</span><span class=p>{</span><span class=s2>&quot;many_to_many&quot;</span><span class=p>:</span> <span class=kc>True</span><span class=p>,</span> <span class=s2>&quot;many_to_one&quot;</span><span class=p>:</span> <span class=kc>True</span><span class=p>},</span>
-        <span class=p>),</span>
         <span class=n>get_items</span><span class=p>,</span>
+        <span class=n>postprocessor</span><span class=o>=</span><span class=n>django_query_postprocessor</span><span class=p>,</span>
+        <span class=n>postprocessor_kwargs</span><span class=o>=</span><span class=p>{</span><span class=s2>&quot;many_to_many&quot;</span><span class=p>:</span> <span class=kc>True</span><span class=p>,</span> <span class=s2>&quot;many_to_one&quot;</span><span class=p>:</span> <span class=kc>True</span><span class=p>},</span>
     <span class=p>)</span>
 
     <span class=k>return</span> <span class=n>item_query</span><span class=o>.</span><span class=n>data</span>
