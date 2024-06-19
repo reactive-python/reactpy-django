@@ -29,19 +29,19 @@ from reactpy_django.exceptions import (
 )
 
 _logger = logging.getLogger(__name__)
-_component_tag = r"(?P<tag>component)"
-_component_path = r"""(?P<path>"[^"'\s]+"|'[^"'\s]+')"""
-_component_offline_kwarg = (
-    rf"""(\s*offline\s*=\s*{_component_path.replace(r"<path>", r"<offline_path>")})"""
+_TAG_PATTERN = r"(?P<tag>component)"
+_PATH_PATTERN = r"""(?P<path>"[^"'\s]+"|'[^"'\s]+')"""
+_OFFLINE_KWARG_PATTERN = (
+    rf"""(\s*offline\s*=\s*{_PATH_PATTERN.replace(r"<path>", r"<offline_path>")})"""
 )
-_component_generic_kwarg = r"""(\s*.*?)"""
+_GENERIC_KWARG_PATTERN = r"""(\s*.*?)"""
 COMMENT_REGEX = re.compile(r"<!--[\s\S]*?-->")
 COMPONENT_REGEX = re.compile(
     r"{%\s*"
-    + _component_tag
+    + _TAG_PATTERN
     + r"\s*"
-    + _component_path
-    + rf"({_component_offline_kwarg}|{_component_generic_kwarg})*?"
+    + _PATH_PATTERN
+    + rf"({_OFFLINE_KWARG_PATTERN}|{_GENERIC_KWARG_PATTERN})*?"
     + r"\s*%}"
 )
 
@@ -380,4 +380,4 @@ def strtobool(val):
     elif val in ("n", "no", "f", "false", "off", "0"):
         return 0
     else:
-        raise ValueError("invalid truth value %r" % (val,))
+        raise ValueError(f"invalid truth value {val}")

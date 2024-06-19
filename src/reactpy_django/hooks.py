@@ -103,8 +103,8 @@ def use_connection() -> ConnectionType:
 
 def use_query(
     query: Callable[FuncParams, Awaitable[Inferred]] | Callable[FuncParams, Inferred],
-    *,
     kwargs: dict[str, Any] | None = None,
+    *,
     thread_sensitive: bool = True,
     postprocessor: (
         AsyncPostprocessor | SyncPostprocessor | None
@@ -116,6 +116,8 @@ def use_query(
 
     Args:
         query: A callable that returns a Django `Model` or `QuerySet`.
+
+    Kwargs:
         kwargs: Keyword arguments to passed into the `query` function.
         thread_sensitive: Whether to run the query in thread-sensitive mode. \
             This setting only applies to sync query functions.
@@ -153,8 +155,7 @@ def use_query(
                 new_data = await query(**kwargs)
             else:
                 new_data = await database_sync_to_async(
-                    query,
-                    thread_sensitive=thread_sensitive,
+                    query, thread_sensitive=thread_sensitive
                 )(**kwargs)
 
             # Run the postprocessor
@@ -171,7 +172,7 @@ def use_query(
             set_data(cast(Inferred, None))
             set_loading(False)
             set_error(e)
-            _logger.exception(f"Failed to execute query: {generate_obj_name(query)}")
+            _logger.exception("Failed to execute query: %s", generate_obj_name(query))
             return
 
         # Query was successful
@@ -228,6 +229,8 @@ def use_mutation(
         mutation: A callable that performs Django ORM create, update, or delete \
             functionality. If this function returns `False`, then your `refetch` \
             function will not be used.
+
+    Kwargs:
         thread_sensitive: Whether to run the mutation in thread-sensitive mode. \
             This setting only applies to sync mutation functions.
         refetch:  A query function (the function you provide to your `use_query` \
@@ -259,7 +262,7 @@ def use_mutation(
             set_loading(False)
             set_error(e)
             _logger.exception(
-                f"Failed to execute mutation: {generate_obj_name(mutation)}"
+                "Failed to execute mutation: %s", generate_obj_name(mutation)
             )
 
         # Mutation was successful
