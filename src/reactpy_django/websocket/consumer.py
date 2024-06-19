@@ -29,6 +29,8 @@ from reactpy_django.types import ComponentParams
 if TYPE_CHECKING:
     from django.contrib.auth.models import AbstractUser
 
+    from reactpy_django import models
+
 _logger = logging.getLogger(__name__)
 BACKHAUL_LOOP = asyncio.new_event_loop()
 
@@ -47,9 +49,18 @@ BACKHAUL_THREAD = Thread(
 class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
     """Communicates with the browser to perform actions on-demand."""
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # New WebsocketConsumer attributes created by ReactPy
+        self.dispatcher: Future | asyncio.Task
+        self.threaded: bool
+        self.recv_queue: asyncio.Queue
+        self.dotted_path: str
+        self.component_session: "models.ComponentSession" | None = None
+
     async def connect(self) -> None:
         """The browser has connected."""
-        from reactpy_django import models
         from reactpy_django.config import (
             REACTPY_AUTH_BACKEND,
             REACTPY_AUTO_RELOGIN,
@@ -79,9 +90,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 )
 
         # Start the component dispatcher
-        self.dispatcher: Future | asyncio.Task
         self.threaded = REACTPY_BACKHAUL_THREAD
-        self.component_session: models.ComponentSession | None = None
         if self.threaded:
             if not BACKHAUL_THREAD.is_alive():
                 await asyncio.to_thread(
@@ -149,14 +158,14 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         )
 
         scope = self.scope
-        self.dotted_path = dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
+        self.dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
         uuid = scope["url_route"]["kwargs"].get("uuid")
         has_args = scope["url_route"]["kwargs"].get("has_args")
         scope["reactpy"] = {"id": str(uuid)}
         query_string = parse_qs(scope["query_string"].decode(), strict_parsing=True)
         http_pathname = query_string.get("http_pathname", [""])[0]
         http_search = query_string.get("http_search", [""])[0]
-        self.recv_queue: asyncio.Queue = asyncio.Queue()
+        self.recv_queue = asyncio.Queue()
         connection = Connection(  # For `use_connection`
             scope=scope,
             location=Location(pathname=http_pathname, search=http_search),
@@ -168,11 +177,11 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
         # Verify the component has already been registered
         try:
-            root_component_constructor = REACTPY_REGISTERED_COMPONENTS[dotted_path]
+            root_component_constructor = REACTPY_REGISTERED_COMPONENTS[self.dotted_path]
         except KeyError:
             await asyncio.to_thread(
                 _logger.warning,
-                f"Attempt to access invalid ReactPy component: {dotted_path!r}",
+                f"Attempt to access invalid ReactPy component: {self.dotted_path!r}",
             )
             return
 
@@ -194,7 +203,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         except models.ComponentSession.DoesNotExist:
             await asyncio.to_thread(
                 _logger.warning,
-                f"Component session for '{dotted_path}:{uuid}' not found. The "
+                f"Component session for '{self.dotted_path}:{uuid}' not found. The "
                 "session may have already expired beyond REACTPY_SESSION_MAX_AGE. "
                 "If you are using a custom `host`, you may have forgotten to provide "
                 "args/kwargs.",

@@ -1,6 +1,5 @@
 from reactpy import component
 from reactpy_django.hooks import use_query
-from reactpy_django.types import QueryOptions
 
 
 def execute_thread_safe_operation():
@@ -10,10 +9,7 @@ def execute_thread_safe_operation():
 
 @component
 def my_component():
-    query = use_query(
-        QueryOptions(thread_sensitive=False),
-        execute_thread_safe_operation,
-    )
+    query = use_query(execute_thread_safe_operation, thread_sensitive=False)
 
     if query.loading or query.error:
         return None

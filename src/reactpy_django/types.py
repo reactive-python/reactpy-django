@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -52,49 +52,11 @@ class Mutation(Generic[FuncParams]):
 
 
 class AsyncPostprocessor(Protocol):
-    async def __call__(self, data: Any) -> Any:
-        ...
+    async def __call__(self, data: Any) -> Any: ...
 
 
 class SyncPostprocessor(Protocol):
-    def __call__(self, data: Any) -> Any:
-        ...
-
-
-@dataclass
-class QueryOptions:
-    """Configuration options that can be provided to `use_query`."""
-
-    from reactpy_django.config import REACTPY_DEFAULT_QUERY_POSTPROCESSOR
-
-    postprocessor: AsyncPostprocessor | SyncPostprocessor | None = (
-        REACTPY_DEFAULT_QUERY_POSTPROCESSOR
-    )
-    """A callable that can modify the query `data` after the query has been executed.
-
-    The first argument of postprocessor must be the query `data`. All proceeding arguments
-    are optional `postprocessor_kwargs` (see below). This postprocessor function must return
-    the modified `data`.
-
-    If unset, REACTPY_DEFAULT_QUERY_POSTPROCESSOR is used.
-
-    ReactPy's default django_query_postprocessor prevents Django's lazy query execution, and
-    additionally can be configured via `postprocessor_kwargs` to recursively fetch
-    `many_to_many` and `many_to_one` fields."""
-
-    postprocessor_kwargs: MutableMapping[str, Any] = field(default_factory=lambda: {})
-    """Keyworded arguments directly passed into the `postprocessor` for configuration."""
-
-    thread_sensitive: bool = True
-    """Whether to run the query in thread-sensitive mode. This setting only applies to sync query functions."""
-
-
-@dataclass
-class MutationOptions:
-    """Configuration options that can be provided to `use_mutation`."""
-
-    thread_sensitive: bool = True
-    """Whether to run the mutation in thread-sensitive mode. This setting only applies to sync mutation functions."""
+    def __call__(self, data: Any) -> Any: ...
 
 
 @dataclass
@@ -112,10 +74,8 @@ class UserData(NamedTuple):
 
 
 class AsyncMessageReceiver(Protocol):
-    async def __call__(self, message: dict) -> None:
-        ...
+    async def __call__(self, message: dict) -> None: ...
 
 
 class AsyncMessageSender(Protocol):
-    async def __call__(self, message: dict) -> None:
-        ...
+    async def __call__(self, message: dict) -> None: ...

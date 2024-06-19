@@ -18,7 +18,7 @@ def todo_list():
         rendered_items = html.h2("Error when loading!")
     else:
         rendered_items = html.ul(
-            [html.li(item, key=item.pk) for item in item_query.data]
+            [html.li(item.text, key=item.pk) for item in item_query.data]
         )
 
     return html.div("Rendered items: ", rendered_items)
