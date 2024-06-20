@@ -33,18 +33,18 @@ class LayoutManagerUUID:
         else:
             root_model.update(update["model"])
 
-    def render_model(self, layout, model):
-        container = js.document.getElementById("UUID")
+    def render(self, layout, model):
+        container = js.document.getElementById("pyscript-UUID")
         container.innerHTML = ""
-        self._render_model(layout, container, model)
+        self.build_element_tree(layout, container, model)
 
-    def _render_model(self, layout, parent, model):
+    def build_element_tree(self, layout, parent, model):
         if isinstance(model, str):
             parent.appendChild(js.document.createTextNode(model))
         elif isinstance(model, dict):
             if not model["tagName"]:
                 for child in model.get("children", []):
-                    self._render_model(layout, parent, child)
+                    self.build_element_tree(layout, parent, child)
                 return
             tag = model["tagName"]
             attributes = model.get("attributes", {})
@@ -59,28 +59,22 @@ class LayoutManagerUUID:
             for event_name, event_handler_model in model.get(
                 "eventHandlers", {}
             ).items():
-                self._create_event_handler(
+                self.create_event_handler(
                     layout, element, event_name, event_handler_model
                 )
             for child in children:
-                self._render_model(layout, element, child)
+                self.build_element_tree(layout, element, child)
             parent.appendChild(element)
         else:
             raise ValueError(f"Unknown model type: {type(model)}")
 
     @staticmethod
-    def _create_event_handler(layout, element, event_name, event_handler_model):
+    def create_event_handler(layout, element, event_name, event_handler_model):
         target = event_handler_model["target"]
 
         def event_handler(*args):
             asyncio.create_task(
-                layout.deliver(
-                    {
-                        "type": "layout-event",
-                        "target": target,
-                        "data": args,
-                    }
-                )
+                layout.deliver({"type": "layout-event", "target": target, "data": args})
             )
 
         event_name = event_name.lstrip("on_").lower().replace("_", "")
@@ -92,7 +86,7 @@ class LayoutManagerUUID:
             while True:
                 update = await layout.render()
                 self.apply_update(update, root_model)
-                self.render_model(layout, root_model)
+                self.render(layout, root_model)
 
 
 asyncio.create_task(LayoutManagerUUID().run())

@@ -1,6 +1,7 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'reactpy_django/pyscript/core.css' %}" />
 <script type="module" src="{% static 'reactpy_django/pyscript/core.js' %}"></script>
-{% if reactpy_class %}<div id="{{reactpy_uuid}}" class="{{reactpy_class}}">{{reactpy_initial_html}}</div>{% endif %}
-{% if not reactpy_class %}<div id="{{reactpy_uuid}}">{{reactpy_initial_html}}</div>{% endif %}
+{% if reactpy_class %}<div id="pyscript-{{reactpy_uuid}}" class="{{reactpy_class}}">{{reactpy_initial_html}}</div>
+{% endif %}
+{% if not reactpy_class %}<div id="pyscript-{{reactpy_uuid}}">{{reactpy_initial_html}}</div>{% endif %}
 <py-script async config='{{ reactpy_config }}'>{{ reactpy_executor }}</py-script>

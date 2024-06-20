@@ -4,18 +4,29 @@ import json
 import os
 from typing import Any, Callable, Sequence, Union, cast, overload
 from urllib.parse import urlencode
+from uuid import uuid4
 from warnings import warn
 
+import orjson
 from django.contrib.staticfiles.finders import find
 from django.core.cache import caches
 from django.http import HttpRequest
+from django.templatetags.static import static
 from django.urls import reverse
 from django.views import View
 from reactpy import component, hooks, html, utils
-from reactpy.types import Key, VdomDict
+from reactpy.types import ComponentType, Key, VdomDict
 
 from reactpy_django.exceptions import ViewNotRegisteredError
-from reactpy_django.utils import generate_obj_name, import_module, render_view
+from reactpy_django.utils import (
+    PYSCRIPT_TAG,
+    extend_pyscript_config,
+    generate_obj_name,
+    import_module,
+    render_pyscript_template,
+    render_view,
+    vdom_or_component_to_string,
+)
 
 
 # Type hints for:
@@ -27,8 +38,7 @@ def view_to_component(
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-) -> Any:
-    ...
+) -> Any: ...
 
 
 # Type hints for:
@@ -39,8 +49,7 @@ def view_to_component(
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-) -> Callable[[Callable], Any]:
-    ...
+) -> Callable[[Callable], Any]: ...
 
 
 def view_to_component(
@@ -146,6 +155,24 @@ def django_js(static_path: str, key: Key | None = None):
     """
 
     return _django_js(static_path=static_path, key=key)
+
+
+def python_to_pyscript(
+    file_path: str,
+    *extra_packages: str,
+    extra_props: dict[str, Any] | None = None,
+    initial: str | VdomDict | ComponentType = "",
+    config: str | dict = "",
+    root: str = "root",
+):
+    return _python_to_pyscript(
+        file_path,
+        *extra_packages,
+        extra_props=extra_props,
+        initial=initial,
+        config=config,
+        root=root,
+    )
 
 
 @component
@@ -284,3 +311,44 @@ def _cached_static_contents(static_path: str) -> str:
         )
 
     return file_contents
+
+
+@component
+def _python_to_pyscript(
+    file_path: str,
+    *extra_packages: str,
+    extra_props: dict[str, Any] | None = None,
+    initial: str | VdomDict | ComponentType = "",
+    config: str | dict = "",
+    root: str = "root",
+):
+    uuid = uuid4().hex.replace("-", "")
+    initial = vdom_or_component_to_string(initial, uuid=uuid)
+    executor = render_pyscript_template(file_path, uuid, root)
+    new_config = extend_pyscript_config(config, extra_packages)
+
+    return html.div(
+        html.link(
+            {"rel": "stylesheet", "href": static("reactpy_django/pyscript/core.css")}
+        ),
+        html.script(
+            {
+                "type": "module",
+                "src": static(
+                    "reactpy_django/pyscript/core.js",
+                ),
+            }
+        ),
+        html.div((extra_props or {}) | {"id": f"pyscript-{uuid}"}, initial),
+        PYSCRIPT_TAG(
+            {
+                "async": "",
+                "config": orjson.dumps(new_config).decode(),
+                "id": f"script-{uuid}",
+            },
+            executor,
+        ),
+        html.script(
+            f"if (document.querySelector('#pyscript-{uuid}') && document.querySelector('#pyscript-{uuid}').childElementCount != 0 && document.querySelector('#script-{uuid}')) document.querySelector('#script-{uuid}').remove();"
+        ),
+    )
