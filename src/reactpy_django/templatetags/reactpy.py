@@ -20,7 +20,7 @@ from reactpy_django.exceptions import (
 )
 from reactpy_django.types import ComponentParams
 from reactpy_django.utils import (
-    PYSCRIPT_LAYOUT_MANAGER,
+    PYSCRIPT_LAYOUT_HANDLER,
     extend_pyscript_config,
     prerender_component,
     render_pyscript_template,
@@ -234,6 +234,6 @@ def pyscript_setup(
     print(reactpy_config.REACTPY_DEBUG_MODE)
     return {
         "pyscript_config": extend_pyscript_config(config, extra_packages),
-        "pyscript_layout_manager": PYSCRIPT_LAYOUT_MANAGER,
+        "pyscript_layout_handler": PYSCRIPT_LAYOUT_HANDLER,
         "reactpy_debug_mode": reactpy_config.REACTPY_DEBUG_MODE,
     }

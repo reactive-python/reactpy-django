@@ -57,8 +57,8 @@ COMPONENT_REGEX = re.compile(
 PYSCRIPT_COMPONENT_TEMPLATE = (
     Path(__file__).parent / "pyscript" / "component_template.py"
 ).read_text(encoding="utf-8")
-PYSCRIPT_LAYOUT_MANAGER = (
-    Path(__file__).parent / "pyscript" / "layout_manager.py"
+PYSCRIPT_LAYOUT_HANDLER = (
+    Path(__file__).parent / "pyscript" / "layout_handler.py"
 ).read_text(encoding="utf-8")
 PYSCRIPT_DEFAULT_CONFIG = {
     "packages": [

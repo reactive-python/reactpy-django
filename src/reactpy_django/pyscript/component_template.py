@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import asyncio
 
-    from reactpy_django.pyscript.layout_manager import ReactPyLayoutManager
+    from reactpy_django.pyscript.layout_handler import ReactPyLayoutHandler
 
 
 # User component is inserted below by regex replacement
@@ -25,4 +25,4 @@ def user_workspace_UUID():
 
 # PyScript allows top-level await, which allows us to not throw errors on components
 # that terminate early (such as hook-less components)
-task_UUID = asyncio.create_task(ReactPyLayoutManager("UUID").run(user_workspace_UUID))
+task_UUID = asyncio.create_task(ReactPyLayoutHandler("UUID").run(user_workspace_UUID))

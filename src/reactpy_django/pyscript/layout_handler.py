@@ -7,8 +7,8 @@ from pyodide.ffi.wrappers import add_event_listener
 from reactpy.core.layout import Layout
 
 
-class ReactPyLayoutManager:
-    """Encapsulate the entire layout manager with a class to prevent overlapping
+class ReactPyLayoutHandler:
+    """Encapsulate the entire layout handler with a class to prevent overlapping
     variable names between user code.
 
     This code is designed to be run directly by PyScript, and is not intended to be run
