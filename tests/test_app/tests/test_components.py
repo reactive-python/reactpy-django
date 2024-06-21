@@ -686,6 +686,8 @@ class ComponentTests(ChannelsLiveServerTestCase):
             new_page.wait_for_selector("#hello-world-loading")
             new_page.wait_for_selector("#hello-world")
             new_page.wait_for_selector("#custom-root")
+            new_page.wait_for_selector("#multifile-parent")
+            new_page.wait_for_selector("#multifile-child")
 
             new_page.wait_for_selector("#counter")
             new_page.wait_for_selector("#counter pre[data-value='0']")

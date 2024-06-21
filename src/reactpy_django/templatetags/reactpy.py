@@ -210,14 +210,14 @@ def validate_host(host: str):
 @register.inclusion_tag("reactpy/pyscript_component.html", takes_context=True)
 def pyscript_component(
     context: template.RequestContext,
-    file_path: str,
+    *file_paths: str,
     initial: str | VdomDict | ComponentType = "",
     root: str = "root",
 ):
     uuid = uuid4().hex
     request: HttpRequest | None = context.get("request")
     initial = vdom_or_component_to_string(initial, request=request, uuid=uuid)
-    executor = render_pyscript_template(file_path, uuid, root)
+    executor = render_pyscript_template(file_paths, uuid, root)
 
     return {
         "pyscript_executor": executor,
