@@ -11,15 +11,14 @@ import orjson
 from django.contrib.staticfiles.finders import find
 from django.core.cache import caches
 from django.http import HttpRequest
-from django.templatetags.static import static
 from django.urls import reverse
 from django.views import View
 from reactpy import component, hooks, html, utils
 from reactpy.types import ComponentType, Key, VdomDict
 
 from reactpy_django.exceptions import ViewNotRegisteredError
+from reactpy_django.html import pyscript
 from reactpy_django.utils import (
-    PYSCRIPT_TAG,
     extend_pyscript_config,
     generate_obj_name,
     import_module,
@@ -337,7 +336,7 @@ def _python_to_pyscript(
 
     return html.div(
         html.div((extra_props or {}) | {"id": f"pyscript-{uuid}"}, initial),
-        PYSCRIPT_TAG(
+        pyscript(
             {"async": "", "config": orjson.dumps(new_config).decode()},
             executor,
         ),

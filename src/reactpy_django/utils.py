@@ -30,7 +30,6 @@ from reactpy import vdom_to_html
 from reactpy.backend.hooks import ConnectionContext
 from reactpy.backend.types import Connection, Location
 from reactpy.core.layout import Layout
-from reactpy.core.vdom import make_vdom_constructor
 from reactpy.types import ComponentConstructor
 
 from reactpy_django.exceptions import (
@@ -58,7 +57,6 @@ COMPONENT_REGEX = re.compile(
 PYSCRIPT_COMPONENT_TEMPLATE = (
     Path(__file__).parent / "pyscript" / "component_template.py"
 ).read_text(encoding="utf-8")
-PYSCRIPT_TAG = make_vdom_constructor("py-script")
 PYSCRIPT_DEFAULT_CONFIG = {
     "packages": [
         f"reactpy=={reactpy.__version__}",
