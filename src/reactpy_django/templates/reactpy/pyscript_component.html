@@ -1,4 +1,2 @@
-{% if reactpy_class %}<div id="pyscript-{{pyscript_uuid}}" class="{{pyscript_class}}">{{pyscript_initial_html}}</div>
-{% endif %}
-{% if not reactpy_class %}<div id="pyscript-{{pyscript_uuid}}">{{pyscript_initial_html}}</div>{% endif %}
+<div id="pyscript-{{pyscript_uuid}}" class="pyscript" data-uuid="{{pyscript_uuid}}">{{pyscript_initial_html}}</div>
 <py-script async>{{pyscript_executor}}</py-script>

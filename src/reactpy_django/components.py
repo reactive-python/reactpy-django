@@ -7,7 +7,6 @@ from urllib.parse import urlencode
 from uuid import uuid4
 from warnings import warn
 
-import orjson
 from django.contrib.staticfiles.finders import find
 from django.core.cache import caches
 from django.http import HttpRequest
@@ -19,7 +18,6 @@ from reactpy.types import ComponentType, Key, VdomDict
 from reactpy_django.exceptions import ViewNotRegisteredError
 from reactpy_django.html import pyscript
 from reactpy_django.utils import (
-    extend_pyscript_config,
     generate_obj_name,
     import_module,
     render_pyscript_template,
@@ -324,13 +322,14 @@ def _python_to_pyscript(
         # FIXME: This is needed to properly re-render PyScript instances such as
         # when a component is re-rendered due to WebSocket disconnection.
         # There may be a better way to do this in the future.
-        # While this solution allows re-creating PyScript components, it also
-        # results in a browser memory leak. It currently unclear how to properly
-        # clean up unused code (user_workspace_UUID) from PyScript.
         set_rendered(True)
         return None
 
     return html.div(
-        html.div((extra_props or {}) | {"id": f"pyscript-{uuid}"}, initial),
+        html.div(
+            (extra_props or {})
+            | {"id": f"pyscript-{uuid}", "className": "pyscript", "data-uuid": uuid},
+            initial,
+        ),
         pyscript({"async": ""}, executor),
     )

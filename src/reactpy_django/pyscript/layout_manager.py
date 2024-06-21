@@ -9,7 +9,11 @@ from reactpy.core.layout import Layout
 
 class ReactPyLayoutManager:
     """Encapsulate the entire layout manager with a class to prevent overlapping
-    variable names between user code."""
+    variable names between user code.
+
+    This code is designed to be run directly by PyScript, and is not intended to be run
+    in a standard Python environment.
+    """
 
     def __init__(self, uuid):
         self.uuid = uuid
@@ -68,8 +72,38 @@ class ReactPyLayoutManager:
         event_name = event_name.lstrip("on_").lower().replace("_", "")
         add_event_listener(element, event_name, event_handler)
 
+    @staticmethod
+    def delete_old_workspaces():
+        dom_workspaces = js.document.querySelectorAll(".pyscript")
+        dom_uuids = {element.dataset.uuid for element in dom_workspaces}
+        python_uuids = {
+            value.split("_")[-1]
+            for value in globals()
+            if value.startswith("user_workspace_")
+        }
+
+        # Delete the workspace if it exists at the moment when we check
+        for uuid in python_uuids - dom_uuids:
+            task_name = f"task_{uuid}"
+            if task_name in globals():
+                task: asyncio.Task = globals()[task_name]
+                task.cancel()
+                del globals()[task_name]
+            else:
+                print(f"Warning: Could not auto delete PyScript task {task_name}")
+
+            workspace_name = f"user_workspace_{uuid}"
+            if workspace_name in globals():
+                del globals()[workspace_name]
+            else:
+                print(
+                    f"Warning: Could not auto delete PyScript workspace {workspace_name}"
+                )
+
     async def run(self, workspace_function: Coroutine):
+        self.delete_old_workspaces()
         root_model = {}
+
         async with Layout(workspace_function()) as layout:
             while True:
                 update = await layout.render()
