@@ -156,13 +156,11 @@ def django_js(static_path: str, key: Key | None = None):
 
 def python_to_pyscript(
     file_path: str,
-    extra_props: dict[str, Any] | None = None,
     initial: str | VdomDict | ComponentType = "",
     root: str = "root",
 ):
     return _python_to_pyscript(
         file_path,
-        extra_props=extra_props,
         initial=initial,
         root=root,
     )
@@ -308,15 +306,14 @@ def _cached_static_contents(static_path: str) -> str:
 
 @component
 def _python_to_pyscript(
-    file_path: str,
-    extra_props: dict[str, Any] | None = None,
+    *file_paths: str,
     initial: str | VdomDict | ComponentType = "",
     root: str = "root",
 ):
     rendered, set_rendered = hooks.use_state(False)
     uuid = uuid4().hex.replace("-", "")
     initial = vdom_or_component_to_string(initial, uuid=uuid)
-    executor = render_pyscript_template(file_path, uuid, root)
+    executor = render_pyscript_template(file_paths, uuid, root)
 
     if not rendered:
         # FIXME: This is needed to properly re-render PyScript such as
@@ -325,10 +322,9 @@ def _python_to_pyscript(
         set_rendered(True)
         return None
 
-    return html.div(
+    return html._(
         html.div(
-            (extra_props or {})
-            | {"id": f"pyscript-{uuid}", "className": "pyscript", "data-uuid": uuid},
+            {"id": f"pyscript-{uuid}", "className": "pyscript", "data-uuid": uuid},
             initial,
         ),
         pyscript({"async": ""}, executor),
