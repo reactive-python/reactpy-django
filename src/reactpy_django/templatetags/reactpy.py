@@ -231,7 +231,6 @@ def pyscript_setup(
     *extra_packages: str,
     config: str | dict = "",
 ):
-    print(reactpy_config.REACTPY_DEBUG_MODE)
     return {
         "pyscript_config": extend_pyscript_config(config, extra_packages),
         "pyscript_layout_handler": PYSCRIPT_LAYOUT_HANDLER,

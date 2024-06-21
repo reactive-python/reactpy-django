@@ -461,7 +461,7 @@ def vdom_or_component_to_string(
 
 
 def render_pyscript_template(file_path: str, uuid: str, root: str):
-    """Inserts the user's code into our PyScript template using pattern matching."""
+    """Inserts the user's code into the PyScript template using pattern matching."""
     # Create a valid PyScript executor by replacing the template values
     executor = PYSCRIPT_COMPONENT_TEMPLATE.replace("UUID", uuid)
     executor = executor.replace("return root()", f"return {root}()")
@@ -476,7 +476,7 @@ def render_pyscript_template(file_path: str, uuid: str, root: str):
 
 
 def extend_pyscript_config(config: dict | str, extra_packages: Sequence) -> str:
-    """Extends the default PyScript configuration with user configuration."""
+    """Extends ReactPy's default PyScript config with user provided values."""
     pyscript_config = deepcopy(PYSCRIPT_DEFAULT_CONFIG)
     pyscript_config["packages"].extend(extra_packages)
     if config and isinstance(config, str):

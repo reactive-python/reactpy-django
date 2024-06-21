@@ -28,10 +28,10 @@ class Command(BaseCommand):
         parser.add_argument(
             "--sessions",
             action="store_true",
-            help="Configure this clean to only clean session data (and other configured cleaning options).",
+            help="Clean session data. This value can be combined with other cleaning options.",
         )
         parser.add_argument(
             "--user-data",
             action="store_true",
-            help="Configure this clean to only clean user data (and other configured cleaning options).",
+            help="Clean user data. This value can be combined with other cleaning options.",
         )

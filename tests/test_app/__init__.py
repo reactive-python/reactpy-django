@@ -8,7 +8,7 @@ js_dir = Path(__file__).parent.parent.parent / "src" / "js"
 assert npm.call(["install"], cwd=str(js_dir)) == 0
 assert npm.call(["run", "build"], cwd=str(js_dir)) == 0
 
-# Make sure the current PyScript distribution is available
+# Make sure the the PyScript distribution is always available
 pyscript_dist = js_dir / "node_modules" / "@pyscript" / "core" / "dist"
 pyscript_static_dir = (
     Path(__file__).parent.parent.parent
