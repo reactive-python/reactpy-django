@@ -328,9 +328,12 @@ def _python_to_pyscript(
     new_config = extend_pyscript_config(config, extra_packages)
 
     if not rendered:
-        # FIXME: This is needed to properly kill off any previous PyScript instances
-        # such as when a component is re-rendered due to WebSocket disconnection.
-        # There may be a better way to do this, but it's not clear at the moment
+        # FIXME: This is needed to properly re-render PyScript instances such as
+        # when a component is re-rendered due to WebSocket disconnection.
+        # There may be a better way to do this in the future.
+        # While this solution allows re-creating PyScript components, it also
+        # results in a browser memory leak. It currently unclear how to properly
+        # clean up unused code (def user_workspace_UUID) from PyScript.
         set_rendered(True)
         return None
 
