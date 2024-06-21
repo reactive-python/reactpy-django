@@ -11,7 +11,7 @@ from copy import deepcopy
 from fnmatch import fnmatch
 from importlib import import_module
 from pathlib import Path
-from typing import Any, Callable, Sequence
+from typing import Any, Callable, Mapping, Sequence
 from uuid import UUID, uuid4
 
 import jsonpointer
@@ -407,7 +407,11 @@ def strtobool(val):
 
 
 def prerender_component(
-    user_component: ComponentConstructor, args, kwargs, uuid, request: HttpRequest
+    user_component: ComponentConstructor,
+    args: Sequence,
+    kwargs: Mapping,
+    uuid: str | UUID,
+    request: HttpRequest,
 ) -> str:
     """Prerenders a ReactPy component and returns the HTML string."""
     search = request.GET.urlencode()
@@ -432,12 +436,12 @@ def prerender_component(
 
 
 def vdom_or_component_to_string(
-    vdom_or_component: Any, request: HttpRequest | None = None, uuid: UUID | None = None
+    vdom_or_component: Any, request: HttpRequest | None = None, uuid: str | None = None
 ) -> str:
     """Converts a VdomDict or component to an HTML string. If a string is provided instead, it will be
     automatically returned."""
     if isinstance(vdom_or_component, dict):
-        return vdom_to_html(vdom_or_component)
+        return vdom_to_html(vdom_or_component)  # type: ignore
 
     if hasattr(vdom_or_component, "render"):
         if not request:

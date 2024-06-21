@@ -1,10 +1,12 @@
+# mypy: disable-error-code=attr-defined
 import asyncio
-from typing import Coroutine
+from typing import Callable
 
 import js
 from jsonpointer import set_pointer
 from pyodide.ffi.wrappers import add_event_listener
 from reactpy.core.layout import Layout
+from reactpy.types import ComponentType
 
 
 class ReactPyLayoutHandler:
@@ -100,9 +102,9 @@ class ReactPyLayoutHandler:
                     f"Warning: Could not auto delete PyScript workspace {workspace_name}"
                 )
 
-    async def run(self, workspace_function: Coroutine):
+    async def run(self, workspace_function: Callable[[], ComponentType]):
         self.delete_old_workspaces()
-        root_model = {}
+        root_model: dict = {}
 
         async with Layout(workspace_function()) as layout:
             while True:
