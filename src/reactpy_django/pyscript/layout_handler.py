@@ -1,12 +1,5 @@
 # mypy: disable-error-code=attr-defined
 import asyncio
-from typing import Callable
-
-import js
-from jsonpointer import set_pointer
-from pyodide.ffi.wrappers import add_event_listener
-from reactpy.core.layout import Layout
-from reactpy.types import ComponentType
 
 
 class ReactPyLayoutHandler:
@@ -23,6 +16,8 @@ class ReactPyLayoutHandler:
     @staticmethod
     def apply_update(update, root_model):
         """Apply an update ReactPy's internal DOM model."""
+        from jsonpointer import set_pointer
+
         if update["path"]:
             set_pointer(root_model, update["path"], update["model"])
         else:
@@ -30,6 +25,8 @@ class ReactPyLayoutHandler:
 
     def render(self, layout, model):
         """Submit ReactPy's internal DOM model into the HTML DOM."""
+        import js
+
         container = js.document.getElementById(f"pyscript-{self.uuid}")
 
         # FIXME: The current implementation completely recreates the DOM on every render.
@@ -39,6 +36,8 @@ class ReactPyLayoutHandler:
 
     def build_element_tree(self, layout, parent, model):
         """Recursively build an element tree, starting from the root component."""
+        import js
+
         if isinstance(model, str):
             parent.appendChild(js.document.createTextNode(model))
         elif isinstance(model, dict):
@@ -74,6 +73,8 @@ class ReactPyLayoutHandler:
     def create_event_handler(layout, element, event_name, event_handler_model):
         """Create an event handler for an element. This function is used as an
         adapter between ReactPy and browser events."""
+        from pyodide.ffi.wrappers import add_event_listener
+
         target = event_handler_model["target"]
 
         def event_handler(*args):
@@ -89,6 +90,8 @@ class ReactPyLayoutHandler:
         """To prevent memory leaks, we must delete all user generated Python code
         whe it is no longer on the page. To do this, we compare what UUIDs exist on
         the DOM, versus what UUIDs exist within the PyScript global interpreter."""
+        import js
+
         dom_workspaces = js.document.querySelectorAll(".pyscript")
         dom_uuids = {element.dataset.uuid for element in dom_workspaces}
         python_uuids = {
@@ -115,8 +118,10 @@ class ReactPyLayoutHandler:
                     f"Warning: Could not auto delete PyScript workspace {workspace_name}"
                 )
 
-    async def run(self, workspace_function: Callable[[], ComponentType]):
+    async def run(self, workspace_function):
         """Run the layout handler. This function is main executor for all user generated code."""
+        from reactpy.core.layout import Layout
+
         self.delete_old_workspaces()
         root_model: dict = {}
 

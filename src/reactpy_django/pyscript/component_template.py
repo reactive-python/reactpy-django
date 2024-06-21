@@ -1,4 +1,3 @@
-# pylint: disable=used-before-assignment
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
