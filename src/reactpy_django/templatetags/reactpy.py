@@ -4,7 +4,6 @@ from logging import getLogger
 from uuid import uuid4
 
 import dill as pickle
-import orjson
 from django import template
 from django.http import HttpRequest
 from django.urls import NoReverseMatch, reverse
@@ -21,6 +20,7 @@ from reactpy_django.exceptions import (
 )
 from reactpy_django.types import ComponentParams
 from reactpy_django.utils import (
+    PYSCRIPT_LAYOUT_MANAGER,
     extend_pyscript_config,
     prerender_component,
     render_pyscript_template,
@@ -211,25 +211,29 @@ def validate_host(host: str):
 def pyscript_component(
     context: template.RequestContext,
     file_path: str,
-    *extra_packages: str,
     initial: str | VdomDict | ComponentType = "",
-    config: str | dict = "",
     root: str = "root",
 ):
     uuid = uuid4().hex
     request: HttpRequest | None = context.get("request")
     initial = vdom_or_component_to_string(initial, request=request, uuid=uuid)
     executor = render_pyscript_template(file_path, uuid, root)
-    new_config = extend_pyscript_config(config, extra_packages)
 
     return {
-        "reactpy_executor": executor,
-        "reactpy_uuid": uuid,
-        "reactpy_initial_html": initial,
-        "reactpy_config": orjson.dumps(new_config).decode(),
+        "pyscript_executor": executor,
+        "pyscript_uuid": uuid,
+        "pyscript_initial_html": initial,
     }
 
 
-@register.inclusion_tag("reactpy/pyscript_static_files.html")
-def pyscript_static_files():
-    return {}
+@register.inclusion_tag("reactpy/pyscript_setup.html")
+def pyscript_setup(
+    *extra_packages: str,
+    config: str | dict = "",
+):
+    print(reactpy_config.REACTPY_DEBUG_MODE)
+    return {
+        "pyscript_config": extend_pyscript_config(config, extra_packages),
+        "pyscript_layout_manager": PYSCRIPT_LAYOUT_MANAGER,
+        "reactpy_debug_mode": reactpy_config.REACTPY_DEBUG_MODE,
+    }

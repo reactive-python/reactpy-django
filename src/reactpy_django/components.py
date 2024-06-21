@@ -158,18 +158,14 @@ def django_js(static_path: str, key: Key | None = None):
 
 def python_to_pyscript(
     file_path: str,
-    *extra_packages: str,
     extra_props: dict[str, Any] | None = None,
     initial: str | VdomDict | ComponentType = "",
-    config: str | dict = "",
     root: str = "root",
 ):
     return _python_to_pyscript(
         file_path,
-        *extra_packages,
         extra_props=extra_props,
         initial=initial,
-        config=config,
         root=root,
     )
 
@@ -315,17 +311,14 @@ def _cached_static_contents(static_path: str) -> str:
 @component
 def _python_to_pyscript(
     file_path: str,
-    *extra_packages: str,
     extra_props: dict[str, Any] | None = None,
     initial: str | VdomDict | ComponentType = "",
-    config: str | dict = "",
     root: str = "root",
 ):
     rendered, set_rendered = hooks.use_state(False)
     uuid = uuid4().hex.replace("-", "")
     initial = vdom_or_component_to_string(initial, uuid=uuid)
     executor = render_pyscript_template(file_path, uuid, root)
-    new_config = extend_pyscript_config(config, extra_packages)
 
     if not rendered:
         # FIXME: This is needed to properly re-render PyScript instances such as
@@ -333,14 +326,11 @@ def _python_to_pyscript(
         # There may be a better way to do this in the future.
         # While this solution allows re-creating PyScript components, it also
         # results in a browser memory leak. It currently unclear how to properly
-        # clean up unused code (def user_workspace_UUID) from PyScript.
+        # clean up unused code (user_workspace_UUID) from PyScript.
         set_rendered(True)
         return None
 
     return html.div(
         html.div((extra_props or {}) | {"id": f"pyscript-{uuid}"}, initial),
-        pyscript(
-            {"async": "", "config": orjson.dumps(new_config).decode()},
-            executor,
-        ),
+        pyscript({"async": ""}, executor),
     )

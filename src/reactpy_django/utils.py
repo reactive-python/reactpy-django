@@ -57,6 +57,9 @@ COMPONENT_REGEX = re.compile(
 PYSCRIPT_COMPONENT_TEMPLATE = (
     Path(__file__).parent / "pyscript" / "component_template.py"
 ).read_text(encoding="utf-8")
+PYSCRIPT_LAYOUT_MANAGER = (
+    Path(__file__).parent / "pyscript" / "layout_manager.py"
+).read_text(encoding="utf-8")
 PYSCRIPT_DEFAULT_CONFIG = {
     "packages": [
         f"reactpy=={reactpy.__version__}",
@@ -468,7 +471,7 @@ def render_pyscript_template(file_path: str, uuid: str, root: str):
     return executor
 
 
-def extend_pyscript_config(config: dict | str, extra_packages: Sequence) -> dict:
+def extend_pyscript_config(config: dict | str, extra_packages: Sequence) -> str:
     """Extends the default PyScript configuration with user configuration."""
     pyscript_config = deepcopy(PYSCRIPT_DEFAULT_CONFIG)
     pyscript_config["packages"].extend(extra_packages)
@@ -476,4 +479,4 @@ def extend_pyscript_config(config: dict | str, extra_packages: Sequence) -> dict
         pyscript_config.update(orjson.loads(config))
     elif isinstance(config, dict):
         pyscript_config.update(config)
-    return pyscript_config
+    return orjson.dumps(pyscript_config).decode("utf-8")
