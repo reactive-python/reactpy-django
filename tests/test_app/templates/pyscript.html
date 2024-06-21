@@ -14,7 +14,9 @@
 <body>
     <h1>ReactPy PyScript Test Page</h1>
     <hr>
-    {% pyscript_component "./test_app/pyscript/components/hello_world.py" %}
+    {% pyscript_component "./test_app/pyscript/components/hello_world.py" initial="<div id='hello-world-loading'>Loading...</div>" %}
+    <hr>
+    {% pyscript_component "./test_app/pyscript/components/custom_root.py" root="main" %}
     <hr>
     {% pyscript_component "./test_app/pyscript/components/counter.py" %}
     <hr>

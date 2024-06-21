@@ -683,7 +683,9 @@ class ComponentTests(ChannelsLiveServerTestCase):
         new_page = self.browser.new_page()
         try:
             new_page.goto(f"{self.live_server_url}/pyscript/")
+            new_page.wait_for_selector("#hello-world-loading")
             new_page.wait_for_selector("#hello-world")
+            new_page.wait_for_selector("#custom-root")
 
             new_page.wait_for_selector("#counter")
             new_page.wait_for_selector("#counter pre[data-value='0']")
