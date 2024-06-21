@@ -3,4 +3,4 @@ from reactpy import component, html
 
 @component
 def root():
-    return html.div("hello world")
+    return html.div({"id": "hello-world"}, "hello world")

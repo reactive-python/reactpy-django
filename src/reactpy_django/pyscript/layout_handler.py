@@ -48,6 +48,8 @@ class ReactPyLayoutHandler:
                 if key == "style":
                     for style_key, style_value in value.items():
                         setattr(element.style, style_key, style_value)
+                elif key == "className":
+                    element.className = value
                 else:
                     element.setAttribute(key, value)
             for event_name, event_handler_model in model.get(

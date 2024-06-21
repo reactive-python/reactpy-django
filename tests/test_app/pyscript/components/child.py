@@ -1,33 +1,25 @@
 from reactpy import component, html, use_state
-from reactpy_django.components import python_to_pyscript
 
 
 @component
-def embed():
-    return html.div(
-        {"className": "embeddable"},
-        python_to_pyscript("./test_app/pyscript/components/child_embed.py"),
-    )
-
-
-@component
-def toggeable_embed():
-    state, set_state = use_state(False)
-
-    if not state:
-        return html.div(
-            {"className": "embeddable"},
+def root():
+    value, set_value = use_state(0)
+    return html.article(
+        {"id": "child"},
+        "This was embedded via a server-side component.",
+        html.div(
+            {"className": "grid"},
             html.button(
-                {"onClick": lambda x: set_state(not state)},
-                "Click to show/hide",
+                {"className": "plus", "on_click": lambda event: set_value(value + 1)},
+                "+",
             ),
-        )
-
-    return html.div(
-        {"className": "embeddable"},
-        html.button(
-            {"onClick": lambda x: set_state(not state)},
-            "Click to show/hide",
+            html.button(
+                {"className": "minus", "on_click": lambda event: set_value(value - 1)},
+                "-",
+            ),
         ),
-        python_to_pyscript("./test_app/pyscript/components/child_embed.py"),
+        "Current value",
+        html.pre(
+            {"style": {"font-style": "bold"}, "data-value": str(value)}, str(value)
+        ),
     )
