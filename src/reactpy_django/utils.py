@@ -460,19 +460,43 @@ def vdom_or_component_to_string(
     )
 
 
-def render_pyscript_template(file_path: str, uuid: str, root: str):
+def render_pyscript_template(file_paths: Sequence[str], uuid: str, root: str):
     """Inserts the user's code into the PyScript template using pattern matching."""
+    from django.core.cache import caches
+
+    from reactpy_django.config import REACTPY_CACHE
+
     # Create a valid PyScript executor by replacing the template values
     executor = PYSCRIPT_COMPONENT_TEMPLATE.replace("UUID", uuid)
     executor = executor.replace("return root()", f"return {root}()")
 
-    # Insert the user code into the template
-    user_code = Path(file_path).read_text(encoding="utf-8")
-    user_code = user_code.strip().replace("\t", "    ")  # Normalize the code text
-    user_code = textwrap.indent(user_code, "    ")  # Add indentation to match template
-    executor = executor.replace("    def root(): ...", user_code)
+    # Fetch the user's PyScript code
+    all_file_contents: list[str] = []
+    for file_path in file_paths:
+        # Try to get user code from cache
+        cache_key = create_cache_key("pyscript", file_path)
+        last_modified_time = os.stat(file_path).st_mtime
+        file_contents: str = caches[REACTPY_CACHE].get(
+            cache_key, version=int(last_modified_time)
+        )
+        if file_contents:
+            all_file_contents.append(file_contents)
 
-    return executor
+        # If not cached, read from file system
+        else:
+            file_contents = Path(file_path).read_text(encoding="utf-8").strip()
+            all_file_contents.append(file_contents)
+            caches[REACTPY_CACHE].set(
+                cache_key, file_contents, version=int(last_modified_time)
+            )
+
+    # Prepare the PyScript code block
+    user_code = "\n".join(all_file_contents)  # Combine all user code
+    user_code = user_code.replace("\t", "    ")  # Normalize the text
+    user_code = textwrap.indent(user_code, "    ")  # Add indentation to match template
+
+    # Insert the user code into the PyScript template
+    return executor.replace("    def root(): ...", user_code)
 
 
 def extend_pyscript_config(config: dict | str, extra_packages: Sequence) -> str:
