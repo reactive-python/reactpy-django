@@ -89,4 +89,6 @@ class LayoutManagerUUID:
                 self.render(layout, root_model)
 
 
-asyncio.create_task(LayoutManagerUUID().run())
+# PyScript allows top-level await, which allows us to not throw errors on components
+# that terminate early (such as hook-less components)
+await LayoutManagerUUID().run()  # noqa: F704

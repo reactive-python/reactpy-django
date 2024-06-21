@@ -55,9 +55,9 @@ COMPONENT_REGEX = re.compile(
     + rf"({_OFFLINE_KWARG_PATTERN}|{_GENERIC_KWARG_PATTERN})*?"
     + r"\s*%}"
 )
-PYSCRIPT_TEMPLATE = (Path(__file__).parent / "pyscript_template.py").read_text(
-    encoding="utf-8"
-)
+PYSCRIPT_COMPONENT_TEMPLATE = (
+    Path(__file__).parent / "pyscript" / "component_template.py"
+).read_text(encoding="utf-8")
 PYSCRIPT_TAG = make_vdom_constructor("py-script")
 PYSCRIPT_DEFAULT_CONFIG = {
     "packages": [
@@ -458,7 +458,7 @@ def vdom_or_component_to_string(
 def render_pyscript_template(file_path: str, uuid: str, root: str):
     """Inserts the user's code into our PyScript template using pattern matching."""
     # Create a valid PyScript executor by replacing the template values
-    executor = PYSCRIPT_TEMPLATE.replace("UUID", uuid)
+    executor = PYSCRIPT_COMPONENT_TEMPLATE.replace("UUID", uuid)
     executor = executor.replace("return root()", f"return {root}()")
 
     # Insert the user code into the template

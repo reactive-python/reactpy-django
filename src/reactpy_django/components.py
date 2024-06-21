@@ -322,33 +322,23 @@ def _python_to_pyscript(
     config: str | dict = "",
     root: str = "root",
 ):
+    rendered, set_rendered = hooks.use_state(False)
     uuid = uuid4().hex.replace("-", "")
     initial = vdom_or_component_to_string(initial, uuid=uuid)
     executor = render_pyscript_template(file_path, uuid, root)
     new_config = extend_pyscript_config(config, extra_packages)
 
+    if not rendered:
+        # FIXME: This is needed to properly kill off any previous PyScript instances
+        # such as when a component is re-rendered due to WebSocket disconnection.
+        # There may be a better way to do this, but it's not clear at the moment
+        set_rendered(True)
+        return None
+
     return html.div(
-        html.link(
-            {"rel": "stylesheet", "href": static("reactpy_django/pyscript/core.css")}
-        ),
-        html.script(
-            {
-                "type": "module",
-                "src": static(
-                    "reactpy_django/pyscript/core.js",
-                ),
-            }
-        ),
         html.div((extra_props or {}) | {"id": f"pyscript-{uuid}"}, initial),
         PYSCRIPT_TAG(
-            {
-                "async": "",
-                "config": orjson.dumps(new_config).decode(),
-                "id": f"script-{uuid}",
-            },
+            {"async": "", "config": orjson.dumps(new_config).decode()},
             executor,
-        ),
-        html.script(
-            f"if (document.querySelector('#pyscript-{uuid}') && document.querySelector('#pyscript-{uuid}').childElementCount != 0 && document.querySelector('#script-{uuid}')) document.querySelector('#script-{uuid}').remove();"
         ),
     )

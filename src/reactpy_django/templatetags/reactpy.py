@@ -228,3 +228,8 @@ def pyscript_component(
         "reactpy_initial_html": initial,
         "reactpy_config": orjson.dumps(new_config).decode(),
     }
+
+
+@register.inclusion_tag("reactpy/pyscript_static_files.html")
+def pyscript_static_files():
+    return {}

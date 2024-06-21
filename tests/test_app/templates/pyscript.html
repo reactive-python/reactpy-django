@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
     <title>ReactPy</title>
+    {% pyscript_static_files %}
 </head>
 
 <body>
@@ -18,6 +19,8 @@
     {% pyscript_component "./test_app/pyscript/components/counter.py" %}
     <hr>
     {% component "test_app.pyscript.components.child.embed" %}
+    <hr>
+    {% component "test_app.pyscript.components.child.toggeable_embed" %}
     <hr>
 </body>
 
