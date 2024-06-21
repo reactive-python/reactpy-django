@@ -22,17 +22,23 @@ class ReactPyLayoutHandler:
 
     @staticmethod
     def apply_update(update, root_model):
+        """Apply an update ReactPy's internal DOM model."""
         if update["path"]:
             set_pointer(root_model, update["path"], update["model"])
         else:
             root_model.update(update["model"])
 
     def render(self, layout, model):
+        """Submit ReactPy's internal DOM model into the HTML DOM."""
         container = js.document.getElementById(f"pyscript-{self.uuid}")
+
+        # FIXME: The current implementation completely recreates the DOM on every render.
+        # This is not ideal, and should be optimized in the future.
         container.innerHTML = ""
         self.build_element_tree(layout, container, model)
 
     def build_element_tree(self, layout, parent, model):
+        """Recursively build an element tree, starting from the root component."""
         if isinstance(model, str):
             parent.appendChild(js.document.createTextNode(model))
         elif isinstance(model, dict):
@@ -66,6 +72,8 @@ class ReactPyLayoutHandler:
 
     @staticmethod
     def create_event_handler(layout, element, event_name, event_handler_model):
+        """Create an event handler for an element. This function is used as an
+        adapter between ReactPy and browser events."""
         target = event_handler_model["target"]
 
         def event_handler(*args):
@@ -78,6 +86,9 @@ class ReactPyLayoutHandler:
 
     @staticmethod
     def delete_old_workspaces():
+        """To prevent memory leaks, we must delete all user generated Python code
+        whe it is no longer on the page. To do this, we compare what UUIDs exist on
+        the DOM, versus what UUIDs exist within the PyScript global interpreter."""
         dom_workspaces = js.document.querySelectorAll(".pyscript")
         dom_uuids = {element.dataset.uuid for element in dom_workspaces}
         python_uuids = {
@@ -105,6 +116,7 @@ class ReactPyLayoutHandler:
                 )
 
     async def run(self, workspace_function: Callable[[], ComponentType]):
+        """Run the layout handler. This function is main executor for all user generated code."""
         self.delete_old_workspaces()
         root_model: dict = {}
 
