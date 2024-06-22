@@ -123,6 +123,14 @@ def build_javascript_first(build_cls: type):
             for file in pyscript_dist.iterdir():
                 shutil.copy(file, pyscript_static_dir / file.name)
 
+            log.info("Copying Morphdom distribution")
+            morphdom_dist = js_dir / "node_modules" / "morphdom" / "dist"
+            morphdom_static_dir = static_dir / "morphdom"
+            if not morphdom_static_dir.exists():
+                morphdom_static_dir.mkdir()
+            for file in morphdom_dist.iterdir():
+                shutil.copy(file, morphdom_static_dir / file.name)
+
             log.info("Successfully built Javascript")
             super().run()
 

@@ -26,13 +26,18 @@ class ReactPyLayoutHandler:
     def render(self, layout, model):
         """Submit ReactPy's internal DOM model into the HTML DOM."""
         import js
+        from pyscript.js_modules import morphdom
 
+        # Create a new container to render the layout into
         container = js.document.getElementById(f"pyscript-{self.uuid}")
+        temp_container = container.cloneNode(False)
+        self.build_element_tree(layout, temp_container, model)
 
-        # FIXME: The current implementation completely recreates the DOM on every render.
-        # This is not ideal, and should be optimized in the future.
-        container.innerHTML = ""
-        self.build_element_tree(layout, container, model)
+        # Use morphdom to update the DOM
+        morphdom.default(container, temp_container)
+
+        # Remove the cloned container to prevent memory leaks
+        temp_container.remove()
 
     def build_element_tree(self, layout, parent, model):
         """Recursively build an element tree, starting from the root component."""

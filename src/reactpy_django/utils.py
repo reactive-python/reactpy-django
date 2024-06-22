@@ -25,6 +25,7 @@ from django.db.models.base import Model
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.template import engines
+from django.templatetags.static import static
 from django.utils.encoding import smart_str
 from django.views import View
 from reactpy import vdom_to_html
@@ -62,13 +63,7 @@ PYSCRIPT_COMPONENT_TEMPLATE = (
 PYSCRIPT_LAYOUT_HANDLER = (
     Path(__file__).parent / "pyscript" / "layout_handler.py"
 ).read_text(encoding="utf-8")
-PYSCRIPT_DEFAULT_CONFIG = {
-    "packages": [
-        f"reactpy=={reactpy.__version__}",
-        f"jsonpointer=={jsonpointer.__version__}",
-        "ssl",
-    ]
-}
+PYSCRIPT_DEFAULT_CONFIG: dict[str, Any] = {}
 
 
 async def render_view(
@@ -503,6 +498,22 @@ def render_pyscript_template(file_paths: Sequence[str], uuid: str, root: str):
 
 def extend_pyscript_config(config: dict | str, extra_packages: Sequence) -> str:
     """Extends ReactPy's default PyScript config with user provided values."""
+    if not PYSCRIPT_DEFAULT_CONFIG:
+        # Need to perform this lazily in order to wait for static files to be available
+        PYSCRIPT_DEFAULT_CONFIG.update(
+            {
+                "packages": [
+                    f"reactpy=={reactpy.__version__}",
+                    f"jsonpointer=={jsonpointer.__version__}",
+                    "ssl",
+                ],
+                "js_modules": {
+                    "main": {
+                        static("reactpy_django/morphdom/morphdom-esm.js"): "morphdom"
+                    }
+                },
+            }
+        )
     pyscript_config = deepcopy(PYSCRIPT_DEFAULT_CONFIG)
     pyscript_config["packages"].extend(extra_packages)
     if config and isinstance(config, str):

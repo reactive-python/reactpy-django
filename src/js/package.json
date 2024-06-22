@@ -23,6 +23,7 @@
     "@pyscript/core": "^0.4.48",
     "@reactpy/client": "^0.3.1",
     "@rollup/plugin-typescript": "^11.1.6",
+    "morphdom": "^2.7.3",
     "tslib": "^2.6.2"
   }
 }
