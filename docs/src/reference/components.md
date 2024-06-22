@@ -12,7 +12,7 @@ We supply some pre-designed that components can be used to help simplify develop
 
 This component can be used to insert any number of client-side ReactPy components onto your page.
 
-This is an embeddable version of the [`#!jinja {% pyscript_component %}` template tag](./template-tag.md#pyscript-component).
+This allows you to embedded PyScript components within traditional ReactPy components.
 
 {% include-markdown "../reference/template-tag.md" start="<!--pyscript-def-start-->" end="<!--pyscript-def-end-->" %}
 
