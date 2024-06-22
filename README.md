@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg" align="left" height="45"/> ReactPy Django
+# <img src="https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg" align="left" height="45"/> ReactPy-Django
 
 <p>
     <a href="https://github.com/reactive-python/reactpy-django/actions?query=workflow%3ATest">
@@ -21,6 +21,7 @@
 [ReactPy-Django](https://github.com/reactive-python/reactpy-django) is used to add [ReactPy](https://reactpy.dev/) support to an existing **Django project**. This package also turbocharges ReactPy with features such as...
 
 -   [SEO compatible rendering](https://reactive-python.github.io/reactpy-django/latest/reference/settings/#reactpy_prerender)
+-   [Client-Side Python components](https://reactive-python.github.io/reactpy-django/latest/reference/template-tag/#pyscript-component)
 -   [Single page application (SPA) capabilities](https://reactive-python.github.io/reactpy-django/latest/reference/router/#django-router)
 -   [Distributed computing](https://reactive-python.github.io/reactpy-django/latest/reference/settings/#reactpy_default_hosts)
 -   [Performance enhancements](https://reactive-python.github.io/reactpy-django/latest/reference/settings/#performance-settings)
@@ -82,7 +83,7 @@ def hello_world(recipient: str):
 
 <!--py-code-end-->
 
-## [`my_app/templates/my-template.html`](https://docs.djangoproject.com/en/dev/topics/templates/)
+## [`my_app/templates/my_template.html`](https://docs.djangoproject.com/en/dev/topics/templates/)
 
 <!--html-header-start-->
 

@@ -3,14 +3,12 @@ from __future__ import annotations
 from logging import getLogger
 from uuid import uuid4
 
-import dill as pickle
 from django import template
 from django.http import HttpRequest
 from django.urls import NoReverseMatch, reverse
 from reactpy.core.types import ComponentConstructor, ComponentType, VdomDict
 
 from reactpy_django import config as reactpy_config
-from reactpy_django import models
 from reactpy_django.exceptions import (
     ComponentCarrierError,
     ComponentDoesNotExistError,
@@ -18,14 +16,15 @@ from reactpy_django.exceptions import (
     InvalidHostError,
     OfflineComponentMissing,
 )
-from reactpy_django.types import ComponentParams
 from reactpy_django.utils import (
     PYSCRIPT_LAYOUT_HANDLER,
     extend_pyscript_config,
     prerender_component,
     render_pyscript_template,
+    save_component_params,
     strtobool,
     validate_component_args,
+    validate_host,
     vdom_or_component_to_string,
 )
 
@@ -181,32 +180,6 @@ def component(
     }
 
 
-def failure_context(dotted_path: str, error: Exception):
-    return {
-        "reactpy_failure": True,
-        "reactpy_debug_mode": reactpy_config.REACTPY_DEBUG_MODE,
-        "reactpy_dotted_path": dotted_path,
-        "reactpy_error": type(error).__name__,
-    }
-
-
-def save_component_params(args, kwargs, uuid):
-    params = ComponentParams(args, kwargs)
-    model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
-    model.full_clean()
-    model.save()
-
-
-def validate_host(host: str):
-    if "://" in host:
-        protocol = host.split("://")[0]
-        msg = (
-            f"Invalid host provided to component. Contains a protocol '{protocol}://'."
-        )
-        _logger.error(msg)
-        raise InvalidHostError(msg)
-
-
 @register.inclusion_tag("reactpy/pyscript_component.html", takes_context=True)
 def pyscript_component(
     context: template.RequestContext,
@@ -214,6 +187,22 @@ def pyscript_component(
     initial: str | VdomDict | ComponentType = "",
     root: str = "root",
 ):
+    """
+    Args:
+        file_paths: File path to your client-side component. If multiple paths are \
+            provided, the contents are automatically merged.
+
+    Kwargs:
+        initial: The initial HTML that is displayed prior to the PyScript component \
+            loads. This can either be a string containing raw HTML, a \
+            `#!python reactpy.html` snippet, or a non-interactive component.
+        root: The name of the root component function.
+    """
+    if not file_paths:
+        raise ValueError(
+            "At least one file path must be provided to the 'pyscript_component' tag."
+        )
+
     uuid = uuid4().hex
     request: HttpRequest | None = context.get("request")
     initial = vdom_or_component_to_string(initial, request=request, uuid=uuid)
@@ -228,11 +217,30 @@ def pyscript_component(
 
 @register.inclusion_tag("reactpy/pyscript_setup.html")
 def pyscript_setup(
-    *extra_packages: str,
+    *dependencies: str,
     config: str | dict = "",
 ):
+    """
+    Args:
+        dependencies: Dependencies that need to be loaded on the page for \
+            your PyScript components. Each dependency must be contained \
+            within it's own string and written in Python requirements file syntax.
+    
+    Kwargs:
+        config: A JSON string or Python dictionary containing PyScript \
+            configuration values.
+    """
     return {
-        "pyscript_config": extend_pyscript_config(config, extra_packages),
+        "pyscript_config": extend_pyscript_config(config, dependencies),
         "pyscript_layout_handler": PYSCRIPT_LAYOUT_HANDLER,
         "reactpy_debug_mode": reactpy_config.REACTPY_DEBUG_MODE,
+    }
+
+
+def failure_context(dotted_path: str, error: Exception):
+    return {
+        "reactpy_failure": True,
+        "reactpy_debug_mode": reactpy_config.REACTPY_DEBUG_MODE,
+        "reactpy_dotted_path": dotted_path,
+        "reactpy_error": type(error).__name__,
     }

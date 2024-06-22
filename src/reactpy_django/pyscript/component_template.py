@@ -22,6 +22,5 @@ def user_workspace_UUID():
     return root()
 
 
-# PyScript allows top-level await, which allows us to not throw errors on components
-# that terminate early (such as hook-less components)
+# Create a task to run the user's component workspace
 task_UUID = asyncio.create_task(ReactPyLayoutHandler("UUID").run(user_workspace_UUID))

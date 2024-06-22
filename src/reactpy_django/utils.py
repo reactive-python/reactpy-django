@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
 from uuid import UUID, uuid4
 
+import dill
 import jsonpointer
 import orjson
 import reactpy
@@ -35,6 +36,7 @@ from reactpy.types import ComponentConstructor
 from reactpy_django.exceptions import (
     ComponentDoesNotExistError,
     ComponentParamError,
+    InvalidHostError,
     ViewDoesNotExistError,
 )
 
@@ -508,3 +510,27 @@ def extend_pyscript_config(config: dict | str, extra_packages: Sequence) -> str:
     elif isinstance(config, dict):
         pyscript_config.update(config)
     return orjson.dumps(pyscript_config).decode("utf-8")
+
+
+def save_component_params(args, kwargs, uuid) -> None:
+    """Saves the component parameters to the database.
+    This is used within our template tag in order to propogate
+    the parameters between the HTTP and WebSocket stack."""
+    from reactpy_django import models
+    from reactpy_django.types import ComponentParams
+
+    params = ComponentParams(args, kwargs)
+    model = models.ComponentSession(uuid=uuid, params=dill.dumps(params))
+    model.full_clean()
+    model.save()
+
+
+def validate_host(host: str) -> None:
+    """Validates the host string to ensure it does not contain a protocol."""
+    if "://" in host:
+        protocol = host.split("://")[0]
+        msg = (
+            f"Invalid host provided to component. Contains a protocol '{protocol}://'."
+        )
+        _logger.error(msg)
+        raise InvalidHostError(msg)

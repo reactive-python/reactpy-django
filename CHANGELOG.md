@@ -34,13 +34,19 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+### Added
+
+-   Client-side Python components can now be rendered via the new `pyscript_component` template tag
+-   Client-side components can be embedded into existing server-side components via `reactpy_django.components.pyscript_component`.
+-   You can now write Python code that runs within client browser via the `reactpy_django.html.pyscript` element. This is a viable substitution for most JavaScript code.
+
 ### Changed
 
 -   New syntax for `use_query` and `use_mutation` hooks. Here's a quick comparison of the changes:
 
     ```python
-    query = use_query(QueryOptions(thread_sensitive=True), get_items, value=123456, foo="bar") # Old
-    query = use_query(get_items, {"value":12356, "foo":"bar"}, thread_sensitive=True) # New
+    query = use_query(QueryOptions(thread_sensitive=True), get_items, foo="bar") # Old
+    query = use_query(get_items, {"foo":"bar"}, thread_sensitive=True) # New
 
     mutation = use_mutation(MutationOptions(thread_sensitive=True), remove_item) # Old
     mutation = use_mutation(remove_item, thread_sensitive=True) # New
@@ -49,6 +55,10 @@ Using the following categories, list your changes in this order:
 ### Removed
 
 -   `QueryOptions` and `MutationOptions` have been removed. Their values are now passed direct into the hook.
+
+### Fixed
+
+-   Resolved a bug where Django-ReactPy would not properly detect `settings.py:DEBUG`.
 
 ## [3.8.1] - 2024-05-07
 

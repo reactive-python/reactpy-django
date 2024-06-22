@@ -154,13 +154,24 @@ def django_js(static_path: str, key: Key | None = None):
     return _django_js(static_path=static_path, key=key)
 
 
-def python_to_pyscript(
-    file_path: str,
+def pyscript_component(
+    *file_paths: str,
     initial: str | VdomDict | ComponentType = "",
     root: str = "root",
 ):
-    return _python_to_pyscript(
-        file_path,
+    """
+    Args:
+        file_paths: File path to your client-side component. If multiple paths are \
+            provided, the contents are automatically merged.
+
+    Kwargs:
+        initial: The initial HTML that is displayed prior to the PyScript component \
+            loads. This can either be a string containing raw HTML, a \
+            `#!python reactpy.html` snippet, or a non-interactive component.
+        root: The name of the root component function.
+    """
+    return _pyscript_component(
+        *file_paths,
         initial=initial,
         root=root,
     )
@@ -305,7 +316,7 @@ def _cached_static_contents(static_path: str) -> str:
 
 
 @component
-def _python_to_pyscript(
+def _pyscript_component(
     *file_paths: str,
     initial: str | VdomDict | ComponentType = "",
     root: str = "root",
