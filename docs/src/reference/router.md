@@ -20,7 +20,7 @@ URL router that enables the ability to conditionally render other components bas
 
 !!! warning "Pitfall"
 
-    All pages where `django_router` is used must have the same, or more permissive URL exposure within Django's [URL patterns](https://docs.djangoproject.com/en/5.0/topics/http/urls/#example). You can think of this component as a secondary, client-side router. Django still handles the primary server-side routes.
+    All pages where `django_router` is used must have identical, or more permissive URL exposure within Django's [URL patterns](https://docs.djangoproject.com/en/5.0/topics/http/urls/#example). You can think of the router component as a secondary, client-side router. Django still handles the primary server-side routes.
 
     We recommend creating a route with a wildcard `.*` to forward routes to ReactPy. For example...
     `#!python re_path(r"^/router/.*$", my_reactpy_view)`

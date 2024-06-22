@@ -37,10 +37,10 @@ Using the following categories, list your changes in this order:
 ### Added
 
 -   Client-side Python components can now be rendered via the new `{% pyscript_component %}` template tag
--   PyScript's can be made accessible for an existing page using the `{% pyscript_setup %}` template tag
-    -   This tag can also be used to load additional dependencies, or change the default PyScript configuration.
+    -   You must first call the `{% pyscript_setup %}` template tag to load PyScript dependencies
 -   Client-side components can be embedded into existing server-side components via `reactpy_django.components.pyscript_component`.
--   You can now write Python code that runs within client browser via the `reactpy_django.html.pyscript` element. This is a viable substitution for most JavaScript code.
+-   Tired of writing JavaScript? You can now write PyScript code that runs directly within client browser via the `reactpy_django.html.pyscript` element.
+    -   This is a viable substitution for most JavaScript code.
 
 ### Changed
 
@@ -56,7 +56,7 @@ Using the following categories, list your changes in this order:
 
 ### Removed
 
--   `QueryOptions` and `MutationOptions` have been removed. Their values are now passed direct into the hook.
+-   `QueryOptions` and `MutationOptions` have been removed. The value contained within these objects are now passed directly into the hook.
 
 ### Fixed
 

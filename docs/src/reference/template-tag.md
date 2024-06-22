@@ -225,11 +225,13 @@ Your PyScript component file requires a `#!python def root()` component to funct
 
 ??? question "Does my entire component need to be contained in one file?"
 
-    PyScript components do not have access to your local disk, and thus cannot `#!python import` any local Python modules.
+    Splitting a large file into multiple files is a common practice in software development.
 
-    To bypass this, you can declare multiple file paths. These files will automatically combined during processing.
+    However, PyScript components are run on the client browser. As such, they do not have access to your local development environment, and thus cannot `#!python import` any local Python files.
 
-    Here is how we recommend doing that while retaining type hints.
+    If your PyScript component file gets too large, you can declare multiple file paths instead. These files will automatically combined by ReactPy.
+
+    Here is how we recommend splitting your component into multiple files while avoiding local imports but retaining type hints.
 
     <!--pyscript-multifile-end-->
 
@@ -295,9 +297,9 @@ Your PyScript component file requires a `#!python def root()` component to funct
 
 ## PyScript Setup
 
-This template tag configures the current page to be able to run `pyscript` by loading PyScript's static files.
+This template tag configures the current page to be able to run `pyscript`.
 
-You can optionally include a list of Python packages to install within the PyScript environment, or a [PyScript configuration dictionary](https://docs.pyscript.net/2024.6.1/user-guide/configuration/).
+You can optionally use this tag to configure the current PyScript enviroment. For example, you can include a list of Python packages to automatically install within the PyScript environment.
 
 === "my_template.html"
 

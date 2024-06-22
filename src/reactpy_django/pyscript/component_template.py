@@ -14,7 +14,7 @@ def user_workspace_UUID():
     This code is designed to be run directly by PyScript, and is not intended to be run
     in a normal Python environment.
 
-    ReactPy-Django's template tag performs string substitutions to turn this file into valid PyScript.
+    ReactPy-Django performs string substitutions to turn this file into valid PyScript.
     """
 
     def root(): ...

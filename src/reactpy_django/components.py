@@ -327,9 +327,8 @@ def _pyscript_component(
     executor = render_pyscript_template(file_paths, uuid, root)
 
     if not rendered:
-        # FIXME: This is needed to properly re-render PyScript such as
-        # during a WebSocket disconnection / reconnection.
-        # There may be a better way to do this in the future.
+        # FIXME: This is needed to properly re-render PyScript during a WebSocket
+        # disconnection / reconnection. There may be a better way to do this in the future.
         set_rendered(True)
         return None
 
