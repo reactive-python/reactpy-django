@@ -39,3 +39,5 @@ misconfigurations
 backhaul
 sublicense
 broadcasted
+hello_world
+my_template
