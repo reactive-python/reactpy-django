@@ -34,6 +34,10 @@ Using the following categories, list your changes in this order:
 
 ## [Unreleased]
 
+-   Nothing (yet)!
+
+## [4.0.0]
+
 ### Added
 
 -   Client-side Python components can now be rendered via the new `{% pyscript_component %}` template tag
@@ -497,7 +501,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.8.1...HEAD
+[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/4.0.0...HEAD
+[4.0.0]: https://github.com/reactive-python/reactpy-django/compare/3.8.1...4.0.0
 [3.8.1]: https://github.com/reactive-python/reactpy-django/compare/3.8.0...3.8.1
 [3.8.0]: https://github.com/reactive-python/reactpy-django/compare/3.7.0...3.8.0
 [3.7.0]: https://github.com/reactive-python/reactpy-django/compare/3.6.0...3.7.0
