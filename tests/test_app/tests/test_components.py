@@ -719,5 +719,6 @@ class ComponentTests(ChannelsLiveServerTestCase):
             new_page.wait_for_selector("#parent-toggle .minus").click(delay=CLICK_DELAY)
             new_page.wait_for_selector("#parent-toggle pre[data-value='1']")
 
+            new_page.wait_for_selector("#moment[data-success=true]")
         finally:
             new_page.close()

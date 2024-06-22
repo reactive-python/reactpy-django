@@ -195,14 +195,28 @@ Your PyScript component file requires a `#!python def root()` component to funct
 
 ??? question "How do I execute JavaScript within PyScript components?"
 
-    PyScript components have the ability to directly execute JavaScript using the [`pyodide` `js` module](https://pyodide.org/en/stable/usage/type-conversions.html#importing-javascript-objects-into-python) or [`pyscript` foreign function interface](https://docs.pyscript.net/2024.6.1/user-guide/dom/).
+    PyScript components have the ability to directly execute standard library JavaScript using the [`pyodide` `js` module](https://pyodide.org/en/stable/usage/type-conversions.html#importing-javascript-objects-into-python) or [`pyscript` foreign function interface](https://docs.pyscript.net/2024.6.1/user-guide/dom/).
 
-    _The `#!python js` module has access to everything within the browser's JavaScript environment. Therefore, any public JavaScript functions loaded within your HTML `#!html <head>` can be called as well. However, be mindful of JavaScript load order!_
+    The `#!python js` module has access to everything within the browser's JavaScript environment. Therefore, any global JavaScript functions loaded within your HTML `#!html <head>` can be called as well. However, be mindful of JavaScript load order!
 
     === "root.py"
 
         ```python
         {% include "../../examples/python/pyscript-js-execution.py" %}
+        ```
+
+    To import JavaScript modules in a fashion similar to `#!javascript import {moment} from 'static/moment.js'`, you will need to configure your `#!jinja {% pyscript_setup %}` block to make the module available to PyScript. This module will be accessed within `#!python pyscript.js_modules.*`. For more information, see the [PyScript JS modules docs](https://docs.pyscript.net/2024.6.2/user-guide/configuration/#javascript-modules).
+
+    === "root.py"
+
+        ```python
+        {% include "../../examples/python/pyscript-js-module.py" %}
+        ```
+
+    === "my_template.html"
+
+        ```jinja
+        {% include "../../examples/html/pyscript-js-module.html" %}
         ```
 
 <!--pyscript-js-exec-end-->
@@ -297,12 +311,13 @@ You can optionally include a list of Python packages to install within the PyScr
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `#!python *dependencies` | `#!python str` | Dependencies that need to be loaded on the page for your PyScript components. Each dependency must be contained within it's own string and written in Python requirements file syntax. | N/A |
+    | `#!python *extra_py` | `#!python str` | Dependencies that need to be loaded on the page for your PyScript components. Each dependency must be contained within it's own string and written in Python requirements file syntax. | N/A |
+    | `#!python extra_js` | `#!python str | dict` | A JSON string or Python dictionary containing a vanilla JavaScript module URL and the `#!python name: str` to access it within `#!python pyscript.js_modules.*`. | `#!python ""` |
     | `#!python config` | `#!python str | dict` | A JSON string or Python dictionary containing PyScript configuration values. | `#!python ""` |
 
-??? question "How do I define dependencies for my PyScript component?"
+??? question "How do I install additional Python dependencies?"
 
-    Dependencies must be available on [`pypi`](https://pypi.org/), written in pure Python, and declared in your `#!jinja {% pyscript_setup %}` block using Python requirements file syntax.
+    Dependencies must be available on [`pypi`](https://pypi.org/) and declared in your `#!jinja {% pyscript_setup %}` block using Python requirements file syntax.
 
     These dependencies are automatically downloaded and installed into the PyScript client-side environment when the page is loaded.
 
@@ -310,6 +325,30 @@ You can optionally include a list of Python packages to install within the PyScr
 
         ```jinja
         {% include "../../examples/html/pyscript-setup-dependencies.html" %}
+        ```
+
+??? question "How do I install additional Javascript dependencies?"
+
+    You can use the `#!python extra_js` keyword to load additional JavaScript modules into your PyScript environment.
+
+    === "my_template.html"
+
+        ```jinja
+        {% include "../../examples/html/pyscript-setup-extra-js-object.html" %}
+        ```
+
+    === "views.py"
+
+        ```python
+        {% include "../../examples/python/pyscript-setup-extra-js-object.py" %}
+        ```
+
+    The value for `#!python extra_js` is most commonly a Python dictionary, but JSON strings are also supported.
+
+    === "my_template.html"
+
+        ```jinja
+        {% include "../../examples/html/pyscript-setup-extra-js-string.html" %}
         ```
 
 ??? question "How do I modify the `pyscript` default configuration?"

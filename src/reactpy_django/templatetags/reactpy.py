@@ -217,21 +217,25 @@ def pyscript_component(
 
 @register.inclusion_tag("reactpy/pyscript_setup.html")
 def pyscript_setup(
-    *dependencies: str,
+    *extra_py: str,
+    extra_js: str | dict = "",
     config: str | dict = "",
 ):
     """
     Args:
-        dependencies: Dependencies that need to be loaded on the page for \
+        extra_py: Dependencies that need to be loaded on the page for \
             your PyScript components. Each dependency must be contained \
             within it's own string and written in Python requirements file syntax.
     
     Kwargs:
+        extra_js: A JSON string or Python dictionary containing a vanilla \
+            JavaScript module URL and the `name: str` to access it within \
+            `pyscript.js_modules.*`. 
         config: A JSON string or Python dictionary containing PyScript \
             configuration values.
     """
     return {
-        "pyscript_config": extend_pyscript_config(config, dependencies),
+        "pyscript_config": extend_pyscript_config(extra_py, extra_js, config),
         "pyscript_layout_handler": PYSCRIPT_LAYOUT_HANDLER,
         "reactpy_debug_mode": reactpy_config.REACTPY_DEBUG_MODE,
     }

@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
     <title>ReactPy</title>
-    {% pyscript_setup %}
+    {% pyscript_setup extra_js='{"/static/moment.js":"moment"}' config="{}" %}
 </head>
 
 <body>
@@ -25,6 +25,8 @@
     {% component "test_app.pyscript.components.server_side.parent" %}
     <hr>
     {% component "test_app.pyscript.components.server_side.parent_toggle" %}
+    <hr>
+    {% pyscript_component "./test_app/pyscript/components/remote_js_module.py" %}
     <hr>
 </body>
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import inspect
+import json
 import logging
 import os
 import re
@@ -496,10 +497,12 @@ def render_pyscript_template(file_paths: Sequence[str], uuid: str, root: str):
     return executor.replace("    def root(): ...", user_code)
 
 
-def extend_pyscript_config(config: dict | str, extra_packages: Sequence) -> str:
+def extend_pyscript_config(
+    extra_py: Sequence, extra_js: dict | str, config: dict | str
+) -> str:
     """Extends ReactPy's default PyScript config with user provided values."""
+    # Lazily set up the initial config in to wait for Django's static file system
     if not PYSCRIPT_DEFAULT_CONFIG:
-        # Need to perform this lazily in order to wait for static files to be available
         PYSCRIPT_DEFAULT_CONFIG.update(
             {
                 "packages": [
@@ -514,11 +517,21 @@ def extend_pyscript_config(config: dict | str, extra_packages: Sequence) -> str:
                 },
             }
         )
+
+    # Extend the Python dependency list
     pyscript_config = deepcopy(PYSCRIPT_DEFAULT_CONFIG)
-    pyscript_config["packages"].extend(extra_packages)
+    pyscript_config["packages"].extend(extra_py)
+
+    # Extend the JavaScript dependency list
+    if extra_js and isinstance(extra_js, str):
+        pyscript_config["js_modules"]["main"].update(json.loads(extra_js))
+    elif extra_js and isinstance(extra_js, dict):
+        pyscript_config["js_modules"]["main"].update(extra_py)
+
+    # Update the config
     if config and isinstance(config, str):
-        pyscript_config.update(orjson.loads(config))
-    elif isinstance(config, dict):
+        pyscript_config.update(json.loads(config))
+    elif config and isinstance(config, dict):
         pyscript_config.update(config)
     return orjson.dumps(pyscript_config).decode("utf-8")
 
