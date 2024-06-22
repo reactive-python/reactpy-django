@@ -44,13 +44,19 @@ This is an embeddable version of the [`#!jinja {% pyscript_component %}` templat
     | `#!python initial` | `#!python str | VdomDict | ComponentType` | The initial HTML that is displayed prior to the PyScript component loads. This can either be a string containing raw HTML, a `#!python reactpy.html` snippet, or a non-interactive component. | `#!python ""` |
     | `#!python root` | `#!python str` | The name of the root component function. | `#!python "root"` |
 
+<!--pyscript-setup-required-start-->
+
 ??? warning "You must call `pyscript_setup` in your Django template before using this tag!"
 
-    This component requires the use of the [`#!jinja {% pyscript_setup %}` template tag](./template-tag.md#pyscript-setup) to work correctly.
+    This requires using of the [`#!jinja {% pyscript_setup %}` template tag](./template-tag.md#pyscript-setup) to initialize PyScript on the client.
 
-    ```jinja
-    {% include "../../examples/html/pyscript-setup.html" %}
-    ```
+    === "my_template.html"
+
+        ```jinja
+        {% include "../../examples/html/pyscript-setup.html" %}
+        ```
+
+<!--pyscript-setup-required-end-->
 
 {% include-markdown "../reference/template-tag.md" start="<!--pyscript-js-exec-start-->" end="<!--pyscript-js-exec-end-->" %}
 

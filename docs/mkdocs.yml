@@ -7,6 +7,7 @@ nav:
     - Reference:
           - Components: reference/components.md
           - Hooks: reference/hooks.md
+          - HTML: reference/html.md
           - URL Router: reference/router.md
           - Decorators: reference/decorators.md
           - Utilities: reference/utils.md
