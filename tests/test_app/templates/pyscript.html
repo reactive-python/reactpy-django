@@ -1,0 +1,33 @@
+{% load static %} {% load reactpy %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
+    <title>ReactPy</title>
+    {% pyscript_setup extra_js='{"/static/moment.js":"moment"}' config="{}" %}
+</head>
+
+<body>
+    <h1>ReactPy PyScript Test Page</h1>
+    <hr>
+    {% pyscript_component "./test_app/pyscript/components/hello_world.py" initial="<div id='hello-world-loading'>Loading...</div>" %}
+    <hr>
+    {% pyscript_component "./test_app/pyscript/components/custom_root.py" root="main" %}
+    <hr>
+    {% pyscript_component "./test_app/pyscript/components/multifile_parent.py" "./test_app/pyscript/components/multifile_child.py" %}
+    <hr>
+    {% pyscript_component "./test_app/pyscript/components/counter.py" %}
+    <hr>
+    {% component "test_app.pyscript.components.server_side.parent" %}
+    <hr>
+    {% component "test_app.pyscript.components.server_side.parent_toggle" %}
+    <hr>
+    {% pyscript_component "./test_app/pyscript/components/remote_js_module.py" %}
+    <hr>
+</body>
+
+</html>

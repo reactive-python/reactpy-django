@@ -1,0 +1,8 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'reactpy_django/pyscript/core.css' %}" />
+<link rel="stylesheet" href="{% static 'reactpy_django/pyscript-custom.css' %}" />
+{% if not reactpy_debug_mode %}
+<link rel="stylesheet" href="{% static 'reactpy_django/pyscript-hide-debug.css' %}" />
+{% endif %}
+<script type="module" async crossorigin="anonymous" src="{% static 'reactpy_django/pyscript/core.js' %}"></script>
+<py-script async config='{{pyscript_config}}'>{{pyscript_layout_handler}}</py-script>

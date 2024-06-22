@@ -8,6 +8,114 @@ We supply some pre-designed that components can be used to help simplify develop
 
 ---
 
+## PyScript Component
+
+This allows you to embedded any number of client-side PyScript components within traditional ReactPy components.
+
+{% include-markdown "../reference/template-tag.md" start="<!--pyscript-def-start-->" end="<!--pyscript-def-end-->" %}
+
+=== "components.py"
+
+    ```python
+    {% include "../../examples/python/pyscript-ssr-parent.py" %}
+    ```
+
+=== "root.py"
+
+    ```python
+    {% include "../../examples/python/pyscript-ssr-child.py" %}
+    ```
+
+=== "my_template.html"
+
+    ```jinja
+    {% include "../../examples/html/pyscript-ssr-parent.html" %}
+    ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    | Name | Type | Description | Default |
+    | --- | --- | --- | --- |
+    | `#!python *file_paths` | `#!python str` | File path to your client-side component. If multiple paths are provided, the contents are automatically merged. | N/A |
+    | `#!python initial` | `#!python str | VdomDict | ComponentType` | The initial HTML that is displayed prior to the PyScript component loads. This can either be a string containing raw HTML, a `#!python reactpy.html` snippet, or a non-interactive component. | `#!python ""` |
+    | `#!python root` | `#!python str` | The name of the root component function. | `#!python "root"` |
+
+<!--pyscript-setup-required-start-->
+
+??? warning "You must call `pyscript_setup` in your Django template before using this tag!"
+
+    This requires using of the [`#!jinja {% pyscript_setup %}` template tag](./template-tag.md#pyscript-setup) to initialize PyScript on the client.
+
+    === "my_template.html"
+
+        ```jinja
+        {% include "../../examples/html/pyscript-setup.html" %}
+        ```
+
+<!--pyscript-setup-required-end-->
+
+{% include-markdown "../reference/template-tag.md" start="<!--pyscript-js-exec-start-->" end="<!--pyscript-js-exec-end-->" %}
+
+{% include-markdown "../reference/template-tag.md" start="<!--pyscript-multifile-start-->" end="<!--pyscript-multifile-end-->" trailing-newlines=false preserve-includer-indent=false %}
+
+    === "components.py"
+
+        ```python
+        {% include "../../examples/python/pyscript-component-multiple-files-root.py" %}
+        ```
+
+    === "root.py"
+
+        ```python
+        {% include "../../examples/python/pyscript-multiple-files-root.py" %}
+        ```
+
+    === "child.py"
+
+        ```python
+        {% include "../../examples/python/pyscript-multiple-files-child.py" %}
+        ```
+
+??? question "How do I display something while the component is loading?"
+
+    You can configure the `#!python initial` keyword to display HTML while your PyScript component is loading.
+
+    The value for `#!python initial` is most commonly be a `#!python reactpy.html` snippet or a non-interactive `#!python @component`.
+
+    === "components.py"
+
+        ```python
+        {% include "../../examples/python/pyscript-component-initial-object.py" %}
+        ```
+
+    However, you can also use a string containing raw HTML.
+
+    === "components.py"
+
+        ```python
+        {% include "../../examples/python/pyscript-component-initial-string.py" %}
+        ```
+
+??? question "Can I use a different name for my root component?"
+
+    Yes, you can use the `#!python root` keyword to specify a different name for your root function.
+
+    === "components.py"
+
+        ```python
+        {% include "../../examples/python/pyscript-component-root.py" %}
+        ```
+
+    === "main.py"
+
+        ```python
+        {% include "../../examples/python/pyscript-root.py" %}
+        ```
+
+---
+
 ## View To Component
 
 Automatically convert a Django view into a component.

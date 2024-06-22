@@ -678,3 +678,47 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
         finally:
             new_page.close()
+
+    def test_pyscript_components(self):
+        new_page = self.browser.new_page()
+        try:
+            new_page.goto(f"{self.live_server_url}/pyscript/")
+            new_page.wait_for_selector("#hello-world-loading")
+            new_page.wait_for_selector("#hello-world")
+            new_page.wait_for_selector("#custom-root")
+            new_page.wait_for_selector("#multifile-parent")
+            new_page.wait_for_selector("#multifile-child")
+
+            new_page.wait_for_selector("#counter")
+            new_page.wait_for_selector("#counter pre[data-value='0']")
+            new_page.wait_for_selector("#counter .plus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#counter pre[data-value='1']")
+            new_page.wait_for_selector("#counter .plus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#counter pre[data-value='2']")
+            new_page.wait_for_selector("#counter .minus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#counter pre[data-value='1']")
+
+            new_page.wait_for_selector("#parent")
+            new_page.wait_for_selector("#child")
+            new_page.wait_for_selector("#child pre[data-value='0']")
+            new_page.wait_for_selector("#child .plus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#child pre[data-value='1']")
+            new_page.wait_for_selector("#child .plus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#child pre[data-value='2']")
+            new_page.wait_for_selector("#child .minus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#child pre[data-value='1']")
+
+            new_page.wait_for_selector("#parent-toggle")
+            new_page.wait_for_selector("#parent-toggle button").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#parent-toggle")
+            new_page.wait_for_selector("#parent-toggle pre[data-value='0']")
+            new_page.wait_for_selector("#parent-toggle .plus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#parent-toggle pre[data-value='1']")
+            new_page.wait_for_selector("#parent-toggle .plus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#parent-toggle pre[data-value='2']")
+            new_page.wait_for_selector("#parent-toggle .minus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#parent-toggle pre[data-value='1']")
+
+            new_page.wait_for_selector("#moment[data-success=true]")
+        finally:
+            new_page.close()

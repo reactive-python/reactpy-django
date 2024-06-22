@@ -1,5 +1,7 @@
 # ReactPy-Django Build Artifacts
-src/reactpy_django/static/*
+src/reactpy_django/static/reactpy_django/client.js
+src/reactpy_django/static/reactpy_django/pyscript
+src/reactpy_django/static/reactpy_django/morphdom
 
 # Django #
 logs

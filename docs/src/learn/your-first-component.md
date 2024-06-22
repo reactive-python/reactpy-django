@@ -43,7 +43,7 @@ Within this file, you can define your component functions using ReactPy's `#!pyt
 
       We recommend creating a `components.py` for small **Django apps**. If your app has a lot of components, you should consider breaking them apart into individual modules such as `components/navbar.py`.
 
-      Ultimately, components are referenced by Python dotted path in `my-template.html` ([_see next step_](#embedding-in-a-template)). This path must be valid to Python's `#!python importlib`.
+      Ultimately, components are referenced by Python dotted path in `my_template.html` ([_see next step_](#embedding-in-a-template)). This path must be valid to Python's `#!python importlib`.
 
 ??? question "What does the decorator actually do?"
 
@@ -62,7 +62,7 @@ In your **Django app**'s HTML template, you can now embed your ReactPy component
 
 Additionally, you can pass in `#!python args` and `#!python kwargs` into your component function. After reading the code below, pay attention to how the function definition for `#!python hello_world` ([_from the previous step_](#defining-a-component)) accepts a `#!python recipient` argument.
 
-=== "my-template.html"
+=== "my_template.html"
 
        {% include-markdown "../../../README.md" start="<!--html-code-start-->" end="<!--html-code-end-->" %}
 
@@ -76,7 +76,7 @@ Additionally, you can pass in `#!python args` and `#!python kwargs` into your co
 
 ## Setting up a Django view
 
-Within your **Django app**'s `views.py` file, you will need to [create a view function](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view) to render the HTML template `my-template.html` ([_from the previous step_](#embedding-in-a-template)).
+Within your **Django app**'s `views.py` file, you will need to [create a view function](https://docs.djangoproject.com/en/dev/intro/tutorial01/#write-your-first-view) to render the HTML template `my_template.html` ([_from the previous step_](#embedding-in-a-template)).
 
 === "views.py"
 

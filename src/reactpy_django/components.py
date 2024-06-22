@@ -4,6 +4,7 @@ import json
 import os
 from typing import Any, Callable, Sequence, Union, cast, overload
 from urllib.parse import urlencode
+from uuid import uuid4
 from warnings import warn
 
 from django.contrib.staticfiles.finders import find
@@ -12,10 +13,17 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.views import View
 from reactpy import component, hooks, html, utils
-from reactpy.types import Key, VdomDict
+from reactpy.types import ComponentType, Key, VdomDict
 
 from reactpy_django.exceptions import ViewNotRegisteredError
-from reactpy_django.utils import generate_obj_name, import_module, render_view
+from reactpy_django.html import pyscript
+from reactpy_django.utils import (
+    generate_obj_name,
+    import_module,
+    render_pyscript_template,
+    render_view,
+    vdom_or_component_to_string,
+)
 
 
 # Type hints for:
@@ -27,8 +35,7 @@ def view_to_component(
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-) -> Any:
-    ...
+) -> Any: ...
 
 
 # Type hints for:
@@ -39,8 +46,7 @@ def view_to_component(
     compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-) -> Callable[[Callable], Any]:
-    ...
+) -> Callable[[Callable], Any]: ...
 
 
 def view_to_component(
@@ -146,6 +152,29 @@ def django_js(static_path: str, key: Key | None = None):
     """
 
     return _django_js(static_path=static_path, key=key)
+
+
+def pyscript_component(
+    *file_paths: str,
+    initial: str | VdomDict | ComponentType = "",
+    root: str = "root",
+):
+    """
+    Args:
+        file_paths: File path to your client-side component. If multiple paths are \
+            provided, the contents are automatically merged.
+
+    Kwargs:
+        initial: The initial HTML that is displayed prior to the PyScript component \
+            loads. This can either be a string containing raw HTML, a \
+            `#!python reactpy.html` snippet, or a non-interactive component.
+        root: The name of the root component function.
+    """
+    return _pyscript_component(
+        *file_paths,
+        initial=initial,
+        root=root,
+    )
 
 
 @component
@@ -284,3 +313,29 @@ def _cached_static_contents(static_path: str) -> str:
         )
 
     return file_contents
+
+
+@component
+def _pyscript_component(
+    *file_paths: str,
+    initial: str | VdomDict | ComponentType = "",
+    root: str = "root",
+):
+    rendered, set_rendered = hooks.use_state(False)
+    uuid = uuid4().hex.replace("-", "")
+    initial = vdom_or_component_to_string(initial, uuid=uuid)
+    executor = render_pyscript_template(file_paths, uuid, root)
+
+    if not rendered:
+        # FIXME: This is needed to properly re-render PyScript during a WebSocket
+        # disconnection / reconnection. There may be a better way to do this in the future.
+        set_rendered(True)
+        return None
+
+    return html._(
+        html.div(
+            {"id": f"pyscript-{uuid}", "className": "pyscript", "data-uuid": uuid},
+            initial,
+        ),
+        pyscript({"async": ""}, executor),
+    )

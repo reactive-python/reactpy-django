@@ -125,6 +125,6 @@ Prefer a quick summary? Read the **At a Glance** section below.
 
     ---
 
-    <font size="5">**`my_app/templates/my-template.html`**</font>
+    <font size="5">**`my_app/templates/my_template.html`**</font>
 
     {% include-markdown "../../../README.md" start="<!--html-header-start-->" end="<!--html-code-end-->" %}

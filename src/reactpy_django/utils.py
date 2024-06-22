@@ -2,14 +2,23 @@ from __future__ import annotations
 
 import contextlib
 import inspect
+import json
 import logging
 import os
 import re
+import textwrap
 from asyncio import iscoroutinefunction
+from copy import deepcopy
 from fnmatch import fnmatch
 from importlib import import_module
-from typing import Any, Callable, Sequence
+from pathlib import Path
+from typing import Any, Callable, Mapping, Sequence
+from uuid import UUID, uuid4
 
+import dill
+import jsonpointer
+import orjson
+import reactpy
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from django.db.models import ManyToManyField, ManyToOneRel, prefetch_related_objects
@@ -17,14 +26,19 @@ from django.db.models.base import Model
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.template import engines
+from django.templatetags.static import static
 from django.utils.encoding import smart_str
 from django.views import View
+from reactpy import vdom_to_html
+from reactpy.backend.hooks import ConnectionContext
+from reactpy.backend.types import Connection, Location
 from reactpy.core.layout import Layout
 from reactpy.types import ComponentConstructor
 
 from reactpy_django.exceptions import (
     ComponentDoesNotExistError,
     ComponentParamError,
+    InvalidHostError,
     ViewDoesNotExistError,
 )
 
@@ -44,6 +58,13 @@ COMPONENT_REGEX = re.compile(
     + rf"({_OFFLINE_KWARG_PATTERN}|{_GENERIC_KWARG_PATTERN})*?"
     + r"\s*%}"
 )
+PYSCRIPT_COMPONENT_TEMPLATE = (
+    Path(__file__).parent / "pyscript" / "component_template.py"
+).read_text(encoding="utf-8")
+PYSCRIPT_LAYOUT_HANDLER = (
+    Path(__file__).parent / "pyscript" / "layout_handler.py"
+).read_text(encoding="utf-8")
+PYSCRIPT_DEFAULT_CONFIG: dict[str, Any] = {}
 
 
 async def render_view(
@@ -381,3 +402,159 @@ def strtobool(val):
         return 0
     else:
         raise ValueError(f"invalid truth value {val}")
+
+
+def prerender_component(
+    user_component: ComponentConstructor,
+    args: Sequence,
+    kwargs: Mapping,
+    uuid: str | UUID,
+    request: HttpRequest,
+) -> str:
+    """Prerenders a ReactPy component and returns the HTML string."""
+    search = request.GET.urlencode()
+    scope = getattr(request, "scope", {})
+    scope["reactpy"] = {"id": str(uuid)}
+
+    with SyncLayout(
+        ConnectionContext(
+            user_component(*args, **kwargs),
+            value=Connection(
+                scope=scope,
+                location=Location(
+                    pathname=request.path, search=f"?{search}" if search else ""
+                ),
+                carrier=request,
+            ),
+        )
+    ) as layout:
+        vdom_tree = layout.render()["model"]
+
+    return vdom_to_html(vdom_tree)
+
+
+def vdom_or_component_to_string(
+    vdom_or_component: Any, request: HttpRequest | None = None, uuid: str | None = None
+) -> str:
+    """Converts a VdomDict or component to an HTML string. If a string is provided instead, it will be
+    automatically returned."""
+    if isinstance(vdom_or_component, dict):
+        return vdom_to_html(vdom_or_component)  # type: ignore
+
+    if hasattr(vdom_or_component, "render"):
+        if not request:
+            request = HttpRequest()
+            request.method = "GET"
+        if not uuid:
+            uuid = uuid4().hex
+        return prerender_component(vdom_or_component, [], {}, uuid, request)
+
+    if isinstance(vdom_or_component, str):
+        return vdom_or_component
+
+    raise ValueError(
+        f"Invalid type for vdom_or_component: {type(vdom_or_component)}. "
+        "Expected a VdomDict, component, or string."
+    )
+
+
+def render_pyscript_template(file_paths: Sequence[str], uuid: str, root: str):
+    """Inserts the user's code into the PyScript template using pattern matching."""
+    from django.core.cache import caches
+
+    from reactpy_django.config import REACTPY_CACHE
+
+    # Create a valid PyScript executor by replacing the template values
+    executor = PYSCRIPT_COMPONENT_TEMPLATE.replace("UUID", uuid)
+    executor = executor.replace("return root()", f"return {root}()")
+
+    # Fetch the user's PyScript code
+    all_file_contents: list[str] = []
+    for file_path in file_paths:
+        # Try to get user code from cache
+        cache_key = create_cache_key("pyscript", file_path)
+        last_modified_time = os.stat(file_path).st_mtime
+        file_contents: str = caches[REACTPY_CACHE].get(
+            cache_key, version=int(last_modified_time)
+        )
+        if file_contents:
+            all_file_contents.append(file_contents)
+
+        # If not cached, read from file system
+        else:
+            file_contents = Path(file_path).read_text(encoding="utf-8").strip()
+            all_file_contents.append(file_contents)
+            caches[REACTPY_CACHE].set(
+                cache_key, file_contents, version=int(last_modified_time)
+            )
+
+    # Prepare the PyScript code block
+    user_code = "\n".join(all_file_contents)  # Combine all user code
+    user_code = user_code.replace("\t", "    ")  # Normalize the text
+    user_code = textwrap.indent(user_code, "    ")  # Add indentation to match template
+
+    # Insert the user code into the PyScript template
+    return executor.replace("    def root(): ...", user_code)
+
+
+def extend_pyscript_config(
+    extra_py: Sequence, extra_js: dict | str, config: dict | str
+) -> str:
+    """Extends ReactPy's default PyScript config with user provided values."""
+    # Lazily set up the initial config in to wait for Django's static file system
+    if not PYSCRIPT_DEFAULT_CONFIG:
+        PYSCRIPT_DEFAULT_CONFIG.update(
+            {
+                "packages": [
+                    f"reactpy=={reactpy.__version__}",
+                    f"jsonpointer=={jsonpointer.__version__}",
+                    "ssl",
+                ],
+                "js_modules": {
+                    "main": {
+                        static("reactpy_django/morphdom/morphdom-esm.js"): "morphdom"
+                    }
+                },
+            }
+        )
+
+    # Extend the Python dependency list
+    pyscript_config = deepcopy(PYSCRIPT_DEFAULT_CONFIG)
+    pyscript_config["packages"].extend(extra_py)
+
+    # Extend the JavaScript dependency list
+    if extra_js and isinstance(extra_js, str):
+        pyscript_config["js_modules"]["main"].update(json.loads(extra_js))
+    elif extra_js and isinstance(extra_js, dict):
+        pyscript_config["js_modules"]["main"].update(extra_py)
+
+    # Update the config
+    if config and isinstance(config, str):
+        pyscript_config.update(json.loads(config))
+    elif config and isinstance(config, dict):
+        pyscript_config.update(config)
+    return orjson.dumps(pyscript_config).decode("utf-8")
+
+
+def save_component_params(args, kwargs, uuid) -> None:
+    """Saves the component parameters to the database.
+    This is used within our template tag in order to propogate
+    the parameters between the HTTP and WebSocket stack."""
+    from reactpy_django import models
+    from reactpy_django.types import ComponentParams
+
+    params = ComponentParams(args, kwargs)
+    model = models.ComponentSession(uuid=uuid, params=dill.dumps(params))
+    model.full_clean()
+    model.save()
+
+
+def validate_host(host: str) -> None:
+    """Validates the host string to ensure it does not contain a protocol."""
+    if "://" in host:
+        protocol = host.split("://")[0]
+        msg = (
+            f"Invalid host provided to component. Contains a protocol '{protocol}://'."
+        )
+        _logger.error(msg)
+        raise InvalidHostError(msg)
