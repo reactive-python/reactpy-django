@@ -7,7 +7,7 @@ class ReactPyLayoutHandler:
     variable names between user code.
 
     This code is designed to be run directly by PyScript, and is not intended to be run
-    in a standard Python environment.
+    in a normal Python environment.
     """
 
     def __init__(self, uuid):
@@ -87,9 +87,10 @@ class ReactPyLayoutHandler:
 
     @staticmethod
     def delete_old_workspaces():
-        """To prevent memory leaks, we must delete all user generated Python code
-        whe it is no longer on the page. To do this, we compare what UUIDs exist on
-        the DOM, versus what UUIDs exist within the PyScript global interpreter."""
+        """To prevent memory leaks, we must delete all user generated Python code when
+        it is no longer in use (removed from the page). To do this, we compare what
+        UUIDs exist on the DOM, versus what UUIDs exist within the PyScript global
+        interpreter."""
         import js
 
         dom_workspaces = js.document.querySelectorAll(".pyscript")

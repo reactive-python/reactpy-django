@@ -36,7 +36,9 @@ Using the following categories, list your changes in this order:
 
 ### Added
 
--   Client-side Python components can now be rendered via the new `pyscript_component` template tag
+-   Client-side Python components can now be rendered via the new `{% pyscript_component %}` template tag
+-   PyScript's can be made accessible for an existing page using the `{% pyscript_setup %}` template tag
+    -   This tag can also be used to load additional dependencies, or change the default PyScript configuration.
 -   Client-side components can be embedded into existing server-side components via `reactpy_django.components.pyscript_component`.
 -   You can now write Python code that runs within client browser via the `reactpy_django.html.pyscript` element. This is a viable substitution for most JavaScript code.
 

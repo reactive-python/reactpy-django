@@ -12,9 +12,9 @@ def user_workspace_UUID():
     to prevent overlapping imports and variable names between different components.
 
     This code is designed to be run directly by PyScript, and is not intended to be run
-    in a standard Python environment.
+    in a normal Python environment.
 
-    Our template tag performs string substitutions to turn this file into valid PyScript.
+    ReactPy-Django's template tag performs string substitutions to turn this file into valid PyScript.
     """
 
     def root(): ...

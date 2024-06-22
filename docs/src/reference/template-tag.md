@@ -39,7 +39,7 @@ Each component loaded via this template tag will receive a dedicated WebSocket c
 
     The ReactPy component finder requires that your component path is a string.
 
-    **Do not** use Django template/context variables for the component path. Failure to follow this warning will result in components that will not render.
+    **Do not** use Django template/context variables for the component path. Failure to follow this warning will result in render failures.
 
     For example, **do not** do the following:
 
@@ -157,7 +157,7 @@ This template tag can be used to insert any number of **client-side** ReactPy co
 
 <!--pyscript-def-start-->
 
-By default, the only dependencies available are the standard Python library, `pyscript`, `pyodide`, `reactpy` core.
+By default, the only dependencies available are the Python standard library, `pyscript`, `pyodide`, `reactpy` core.
 
 Your PyScript component file requires a `#!python def root()` component to function as the entry point.
 
@@ -196,6 +196,8 @@ Your PyScript component file requires a `#!python def root()` component to funct
 ??? question "How do I execute JavaScript within PyScript components?"
 
     PyScript components have the ability to directly execute JavaScript using the [`pyodide` `js` module](https://pyodide.org/en/stable/usage/type-conversions.html#importing-javascript-objects-into-python) or [`pyscript` foreign function interface](https://docs.pyscript.net/2024.6.1/user-guide/dom/).
+
+    _The `#!python js` module has access to everything within the browser's JavaScript environment. Therefore, any public JavaScript functions loaded within your HTML `#!html <head>` can be called as well. However, be mindful of JavaScript load order!_
 
     === "root.py"
 
@@ -279,7 +281,7 @@ Your PyScript component file requires a `#!python def root()` component to funct
 
 ## PyScript Setup
 
-This template tag configures the current page to be able to run `pyscript` by loading JavaScript, CSS, and settings values.
+This template tag configures the current page to be able to run `pyscript` by loading PyScript's static files.
 
 You can optionally include a list of Python packages to install within the PyScript environment, or a [PyScript configuration dictionary](https://docs.pyscript.net/2024.6.1/user-guide/configuration/).
 
