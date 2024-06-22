@@ -299,7 +299,7 @@ Your PyScript component file requires a `#!python def root()` component to funct
 
 This template tag configures the current page to be able to run `pyscript`.
 
-You can optionally use this tag to configure the current PyScript enviroment. For example, you can include a list of Python packages to automatically install within the PyScript environment.
+You can optionally use this tag to configure the current PyScript environment. For example, you can include a list of Python packages to automatically install within the PyScript environment.
 
 === "my_template.html"
 
