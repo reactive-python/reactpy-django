@@ -10,9 +10,7 @@ We supply some pre-designed that components can be used to help simplify develop
 
 ## PyScript Component
 
-This component can be used to insert any number of client-side ReactPy components onto your page.
-
-This allows you to embedded PyScript components within traditional ReactPy components.
+This allows you to embedded any number of client-side PyScript components within traditional ReactPy components.
 
 {% include-markdown "../reference/template-tag.md" start="<!--pyscript-def-start-->" end="<!--pyscript-def-end-->" %}
 
