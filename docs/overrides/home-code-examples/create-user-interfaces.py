@@ -1,22 +1,20 @@
 from reactpy import component, html
 
 
-def thumbnail(video):
-    return None
+def thumbnail(*_, **__): ...
 
 
-def like_button(video):
-    return None
+def like_button(*_, **__): ...
 
 
 @component
-def video(video):
+def video(data):
     return html.div(
-        thumbnail(video),
+        thumbnail(data),
         html.a(
-            {"href": video.url},
-            html.h3(video.title),
-            html.p(video.description),
+            {"href": data.url},
+            html.h3(data.title),
+            html.p(data.description),
         ),
-        like_button(video),
+        like_button(data),
     )
