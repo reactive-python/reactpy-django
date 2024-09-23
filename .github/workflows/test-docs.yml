@@ -23,6 +23,8 @@ jobs:
             - name: Check docs links
               uses: umbrelladocs/action-linkspector@v1
               with:
+                  github_token: ${{ secrets.github_token }}
+                  reporter: github-pr-review
                   fail_on_error: true
             - name: Check docs build
               run: |
