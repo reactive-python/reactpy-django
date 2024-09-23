@@ -21,3 +21,5 @@ jobs:
                   git config user.email github-actions@github.com
                   cd docs
                   mike deploy --push develop
+        concurrency:
+            group: publish-docs

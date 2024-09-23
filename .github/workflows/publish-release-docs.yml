@@ -21,3 +21,5 @@ jobs:
                   git config user.email github-actions@github.com
                   cd docs
                   mike deploy --push --update-aliases ${{ github.event.release.name }} latest
+        concurrency:
+            group: publish-docs
