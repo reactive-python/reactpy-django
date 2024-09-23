@@ -10,11 +10,11 @@ We supply some pre-generated that HTML nodes can be used to help simplify develo
 
 ## PyScript
 
-Primitive HTML tag that is leveraged by [`reactpy_django.components.pyscript_component`](./components.md#pyscript-component).
+PyScript code block. The text content of this tag are executed within the PyScript interpreter. This can be used as an alternative to the `#!python reactpy.html.script`.
 
-This can be used as an alternative to the `#!python reactpy.html.script` tag to execute JavaScript and run client-side Python code.
+This is a primitive HTML tag that is leveraged by [`reactpy_django.components.pyscript_component`](./components.md#pyscript-component).
 
-Additionally, this tag functions identically to any other tag contained within `#!python reactpy.html`, and can be used in the same way.
+The `pyscript` tag functions identically to HTML tags contained within `#!python reactpy.html`.
 
 === "components.py"
 

@@ -14,6 +14,8 @@ This allows you to embedded any number of client-side PyScript components within
 
 {% include-markdown "../reference/template-tag.md" start="<!--pyscript-def-start-->" end="<!--pyscript-def-end-->" %}
 
+{% include-markdown "../reference/template-tag.md" start="<!--pyscript-raw-text-start-->" end="<!--pyscript-raw-text-end-->" %}
+
 === "components.py"
 
     ```python
