@@ -1,6 +1,6 @@
 import { ReactPyDjangoClient } from "./client";
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom";
 import { Layout } from "@reactpy/client/src/components";
 
 export function mountComponent(
@@ -77,5 +77,6 @@ export function mountComponent(
   }
 
   // Start rendering the component
-  render(<Layout client={client} />, client.mountElement);
+  const root = createRoot(client.mountElement);
+  root.render(<Layout client={client} />);
 }

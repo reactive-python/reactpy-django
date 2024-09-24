@@ -36,7 +36,9 @@ Don't forget to remove deprecated code on each major release!
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Changed
+
+- Use `ReactDOM.createRoot` instead of the deprecated `ReactDOM.render`
 
 ## [4.0.0]
 
