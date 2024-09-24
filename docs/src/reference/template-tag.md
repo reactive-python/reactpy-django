@@ -10,7 +10,7 @@ Django template tags can be used within your HTML templates to provide ReactPy f
 
 ## Component
 
-This template tag can be used to insert any number of ReactPy components onto your page.
+This template tag can be used to insert any number of **server-side** ReactPy components onto your page.
 
 Each component loaded via this template tag will receive a dedicated WebSocket connection to the server.
 
@@ -159,15 +159,18 @@ This template tag can be used to insert any number of **client-side** ReactPy co
 
 By default, the only dependencies available are the Python standard library, `pyscript`, `pyodide`, `reactpy` core.
 
-Your PyScript component file requires a `#!python def root()` component to function as the entry point.
+The entire file path provided is loaded directly into the browser, and must have a `#!python def root()` component to act as the entry point.
 
 <!--pyscript-def-end-->
+<!--pyscript-raw-text-start-->
 
 !!! warning "Pitfall"
 
     Your provided Python file is loaded directly into the client (web browser) **as raw text**, and ran using a PyScript interpreter. Be cautious about what you include in your Python file.
 
     As a result of running client-side, Python packages within your local environment (such as those installed via `pip install ...`)  are **not accessible** within PyScript components.
+
+<!--pyscript-raw-text-end-->
 
 === "my_template.html"
 

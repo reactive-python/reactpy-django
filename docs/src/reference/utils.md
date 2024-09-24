@@ -14,7 +14,7 @@ Utility functions provide various miscellaneous functionality for advanced use c
 
 ## Register Iframe
 
-This function is used register a view as an `#!python iframe` with ReactPy.
+This function is used register a Django view as a ReactPy `#!python iframe`.
 
 It is mandatory to use this function alongside [`view_to_iframe`](../reference/components.md#view-to-iframe).
 

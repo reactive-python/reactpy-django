@@ -1,16 +1,14 @@
+# pylint: disable=assignment-from-no-return, unnecessary-lambda
 from reactpy import component, html, use_state
 
 
-def filter_videos(videos, search_text):
-    return None
+def filter_videos(*_, **__): ...
 
 
-def search_input(dictionary, value):
-    return None
+def search_input(*_, **__): ...
 
 
-def video_list(videos, empty_heading):
-    return None
+def video_list(*_, **__): ...
 
 
 @component
@@ -20,7 +18,7 @@ def searchable_video_list(videos):
 
     return html._(
         search_input(
-            {"on_change": lambda new_text: set_search_text(new_text)},
+            {"onChange": lambda new_text: set_search_text(new_text)},
             value=search_text,
         ),
         video_list(

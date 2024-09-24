@@ -400,7 +400,7 @@ This is often used to create chat systems, synchronize data between components, 
 
     In these cases, you can use the `#!python use_channel_layer` hook to receive a signal within your component, and then use the `#!python get_channel_layer().send(...)` to send the signal.
 
-    In the example below, the sender will send a signal every time `#!python ExampleModel` is saved. Then, when the receiver component gets this signal, it explicitly calls `#!python set_message(...)` to trigger a re-render.
+    In the example below, the sender will signal every time `#!python ExampleModel` is saved. Then, when the receiver gets this signal, it explicitly calls `#!python set_message(...)` to trigger a re-render.
 
     === "signals.py"
 
@@ -522,7 +522,7 @@ You can expect this hook to provide strings such as `http://example.com`.
 
 Shortcut that returns the root component's `#!python id` from the WebSocket or HTTP connection.
 
-The root ID is currently a randomly generated `#!python uuid4` (unique across all root component).
+The root ID is a randomly generated `#!python uuid4`. It is notable to mention that it is persistent across the current connection. The `uuid` is reset when the page is refreshed.
 
 This is useful when used in combination with [`#!python use_channel_layer`](#use-channel-layer) to send messages to a specific component instance, and/or retain a backlog of messages in case that component is disconnected via `#!python use_channel_layer( ... , group_discard=False)`.
 

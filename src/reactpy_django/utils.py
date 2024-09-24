@@ -334,7 +334,7 @@ def django_query_postprocessor(
             "One of the following may have occurred:\n"
             "  - You are using a non-Django ORM.\n"
             "  - You are attempting to use `use_query` to fetch non-ORM data.\n\n"
-            "If these situations seem correct, you may want to consider disabling the postprocessor."
+            "If these situations apply, you may want to disable the postprocessor."
         )
 
     return data
