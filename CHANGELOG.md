@@ -40,6 +40,15 @@ Don't forget to remove deprecated code on each major release!
 
 -   Removed dependency on `aiofile`.
 
+### Removed
+
+-   Removed the following **deprecated** features:
+    -   The `compatibility` argument on `reactpy_django.components.view_to_component`
+    -   `reactpy_django.components.view_to_component` **usage as a decorator**
+    -   `reactpy_django.decorators.auth_required`
+    -   `reactpy_django.REACTPY_WEBSOCKET_PATH`
+    -   `settings.py:REACTPY_WEBSOCKET_URL`
+
 ## [4.0.0] - 2024-06-22
 
 ### Added

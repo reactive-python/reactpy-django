@@ -10,8 +10,6 @@ REACTPY_WEBSOCKET_ROUTE = path(
 )
 """A URL path for :class:`ReactpyAsyncWebsocketConsumer`.
 
-Required since the `reverse()` function does not exist for Django Channels, but we need
-to know the websocket path.
+Required since the `reverse()` function does not exist for Django Channels, but ReactPy needs
+to know the current websocket path.
 """
-
-REACTPY_WEBSOCKET_PATH = REACTPY_WEBSOCKET_ROUTE

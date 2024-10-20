@@ -102,16 +102,7 @@ def reactpy_warnings(app_configs, **kwargs):
 
     # DELETED W007: Check if REACTPY_WEBSOCKET_URL doesn't end with a slash
     # DELETED W008: Check if REACTPY_WEBSOCKET_URL doesn't start with an alphanumeric character
-
-    # Removed REACTPY_WEBSOCKET_URL setting
-    if getattr(settings, "REACTPY_WEBSOCKET_URL", None):
-        warnings.append(
-            Warning(
-                "REACTPY_WEBSOCKET_URL has been removed.",
-                hint="Use REACTPY_URL_PREFIX instead.",
-                id="reactpy_django.W009",
-            )
-        )
+    # DELETED W009: Check if deprecated value REACTPY_WEBSOCKET_URL exists
 
     # Check if REACTPY_URL_PREFIX is being used properly in our HTTP URLs
     with contextlib.suppress(NoReverseMatch):
@@ -158,15 +149,7 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
-    # Removed REACTPY_RECONNECT_MAX setting
-    if getattr(settings, "REACTPY_RECONNECT_MAX", None):
-        warnings.append(
-            Warning(
-                "REACTPY_RECONNECT_MAX has been removed.",
-                hint="See the docs for the new REACTPY_RECONNECT_* settings.",
-                id="reactpy_django.W013",
-            )
-        )
+    # DELETED W013: Check if deprecated value REACTPY_RECONNECT_MAX exists
 
     if (
         isinstance(config.REACTPY_RECONNECT_INTERVAL, int)

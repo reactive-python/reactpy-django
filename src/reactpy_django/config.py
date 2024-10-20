@@ -23,19 +23,11 @@ REACTPY_REGISTERED_COMPONENTS: dict[str, ComponentConstructor] = {}
 REACTPY_FAILED_COMPONENTS: set[str] = set()
 REACTPY_REGISTERED_IFRAME_VIEWS: dict[str, Callable | View] = {}
 
-
-# Remove in a future release
-REACTPY_WEBSOCKET_URL = getattr(
-    settings,
-    "REACTPY_WEBSOCKET_URL",
-    "reactpy/",
-)
-
 # Configurable through Django settings.py
 REACTPY_URL_PREFIX: str = getattr(
     settings,
     "REACTPY_URL_PREFIX",
-    REACTPY_WEBSOCKET_URL,
+    "reactpy/",
 ).strip("/")
 REACTPY_SESSION_MAX_AGE: int = getattr(
     settings,
