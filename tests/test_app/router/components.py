@@ -1,12 +1,13 @@
 from reactpy import component, html, use_location
+from reactpy_router import route, use_params, use_search_params
+
 from reactpy_django.router import django_router
-from reactpy_router import route, use_params, use_query
 
 
 @component
 def display_params(string: str):
     location = use_location()
-    query = use_query()
+    query = use_search_params()
     params = use_params()
 
     return html._(
@@ -37,9 +38,10 @@ def main():
             display_params("Path 9"),
         ),
         route(
-            "/router/star/",
+            "/router/any/",
             None,
             route("one/", display_params("Path 11")),
-            route("*", display_params("Path 12")),
+            route("{name:any}", display_params("Path 12")),
         ),
+        route("{404:any}", display_params("Not Found")),
     )

@@ -27,7 +27,7 @@
   <hr>
   {% component "test_app.components.object_in_templatetag" my_object %}
   <hr>
-  {% component "test_app.components.simple_button" %}
+  {% component "test_app.components.button_from_js_module" %}
   <hr>
   {% component "test_app.components.use_connection" %}
   <hr>
@@ -44,10 +44,6 @@
   {% component "test_app.components.unauthorized_user" %}
   <hr>
   {% component "test_app.components.authorized_user" %}
-  <hr>
-  {% component "test_app.components.unauthorized_user_test" %}
-  <hr>
-  {% component "test_app.components.authorized_user_test" %}
   <hr>
   {% component "test_app.components.relational_query" %}
   <hr>
@@ -75,19 +71,15 @@
   <hr>
   {% component "test_app.components.view_to_component_kwargs" %}
   <hr>
-  {% component "test_app.components.view_to_component_decorator" %}
+  {% component "test_app.components.view_to_iframe_sync_func" %}
   <hr>
-  {% component "test_app.components.view_to_component_decorator_args" %}
+  {% component "test_app.components.view_to_iframe_async_func" %}
   <hr>
-  {% component "test_app.components.view_to_component_sync_func_compatibility" %}
+  {% component "test_app.components.view_to_iframe_sync_class" %}
   <hr>
-  {% component "test_app.components.view_to_component_async_func_compatibility" %}
+  {% component "test_app.components.view_to_iframe_async_class" %}
   <hr>
-  {% component "test_app.components.view_to_component_sync_class_compatibility" %}
-  <hr>
-  {% component "test_app.components.view_to_component_async_class_compatibility" %}
-  <hr>
-  {% component "test_app.components.view_to_component_template_view_class_compatibility" %}
+  {% component "test_app.components.view_to_iframe_template_view_class" %}
   <hr>
   {% component "test_app.components.view_to_iframe_args" %}
   <hr>

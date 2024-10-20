@@ -3,8 +3,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from reactpy_router.simple import ConverterMapping
-from reactpy_router.types import Route
+from reactpy_router.types import ConverterMapping, Route
 
 from reactpy_django.router.converters import CONVERTERS
 

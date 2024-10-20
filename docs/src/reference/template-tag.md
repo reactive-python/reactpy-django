@@ -78,7 +78,7 @@ Each component loaded via this template tag will receive a dedicated WebSocket c
             <body>
                 <h1>{% component "example_project.my_app.components.my_title" %}</h1>
                 <p>{% component "example_project.my_app_2.components.goodbye_world" class="bold small-font" %}</p>
-                {% component "example_project.my_app_3.components.simple_button" %}
+                {% component "example_project.my_app_3.components.my_button" %}
             </body>
         </html>
         ```

@@ -87,7 +87,7 @@ class ViewToComponentTemplateViewClass(TemplateView):
         return {"test_name": self.__class__.__name__}
 
 
-def view_to_component_sync_func_compatibility(request):
+def view_to_iframe_sync_func(request):
     return render(
         request,
         "view_to_component.html",
@@ -95,7 +95,7 @@ def view_to_component_sync_func_compatibility(request):
     )
 
 
-async def view_to_component_async_func_compatibility(request):
+async def view_to_iframe_async_func(request):
     return await database_sync_to_async(render)(
         request,
         "view_to_component.html",
@@ -103,7 +103,7 @@ async def view_to_component_async_func_compatibility(request):
     )
 
 
-class ViewToComponentSyncClassCompatibility(View):
+class ViewToIframeSyncClass(View):
     def get(self, request, *args, **kwargs):
         return render(
             request,
@@ -112,7 +112,7 @@ class ViewToComponentSyncClassCompatibility(View):
         )
 
 
-class ViewToComponentAsyncClassCompatibility(View):
+class ViewToIframeAsyncClass(View):
     async def get(self, request, *args, **kwargs):
         return await database_sync_to_async(render)(
             request,
@@ -121,7 +121,7 @@ class ViewToComponentAsyncClassCompatibility(View):
         )
 
 
-class ViewToComponentTemplateViewClassCompatibility(TemplateView):
+class ViewToIframeTemplateViewClass(TemplateView):
     template_name = "view_to_component.html"
 
     def get_context_data(self, **kwargs):

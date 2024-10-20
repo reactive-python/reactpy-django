@@ -12,6 +12,7 @@ from django.core.management import call_command
 from django.db import connections
 from django.test.utils import modify_settings
 from playwright.sync_api import TimeoutError, sync_playwright
+
 from reactpy_django.models import ComponentSession
 from reactpy_django.utils import strtobool
 
@@ -21,6 +22,7 @@ CLICK_DELAY = 250 if strtobool(GITHUB_ACTIONS) else 25  # Delay in miliseconds.
 
 class ComponentTests(ChannelsLiveServerTestCase):
     from django.db import DEFAULT_DB_ALIAS
+
     from reactpy_django import config
 
     databases = {"default"}
@@ -121,7 +123,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
         self.page.locator("#object_in_templatetag[data-success=true]").wait_for()
 
     def test_component_from_web_module(self):
-        self.page.wait_for_selector("#simple-button")
+        self.page.wait_for_selector("#button-from-js-module")
 
     def test_use_connection(self):
         self.page.locator("#use-connection[data-success=true]").wait_for()
@@ -163,24 +165,6 @@ class ComponentTests(ChannelsLiveServerTestCase):
             timeout=1,
         )
         self.page.wait_for_selector("#authorized-user")
-
-    def test_unauthorized_user_test(self):
-        self.assertRaises(
-            TimeoutError,
-            self.page.wait_for_selector,
-            "#unauthorized-user-test",
-            timeout=1,
-        )
-        self.page.wait_for_selector("#unauthorized-user-test-fallback")
-
-    def test_authorized_user_test(self):
-        self.assertRaises(
-            TimeoutError,
-            self.page.wait_for_selector,
-            "#authorized-user-test-fallback",
-            timeout=1,
-        )
-        self.page.wait_for_selector("#authorized-user-test")
 
     def test_relational_query(self):
         self.page.locator("#relational-query[data-success=true]").wait_for()
@@ -260,52 +244,34 @@ class ComponentTests(ChannelsLiveServerTestCase):
     def test_view_to_component_kwargs(self):
         self._click_btn_and_check_success("view_to_component_kwargs")
 
-    def test_view_to_component_sync_func_compatibility(self):
-        self.page.frame_locator(
-            "#view_to_component_sync_func_compatibility > iframe"
-        ).locator(
-            "#view_to_component_sync_func_compatibility[data-success=true]"
+    def test_view_to_iframe_sync_func(self):
+        self.page.frame_locator("#view_to_iframe_sync_func > iframe").locator(
+            "#view_to_iframe_sync_func[data-success=true]"
         ).wait_for()
 
-    def test_view_to_component_async_func_compatibility(self):
-        self.page.frame_locator(
-            "#view_to_component_async_func_compatibility > iframe"
-        ).locator(
-            "#view_to_component_async_func_compatibility[data-success=true]"
+    def test_view_to_iframe_async_func(self):
+        self.page.frame_locator("#view_to_iframe_async_func > iframe").locator(
+            "#view_to_iframe_async_func[data-success=true]"
         ).wait_for()
 
-    def test_view_to_component_sync_class_compatibility(self):
-        self.page.frame_locator(
-            "#view_to_component_sync_class_compatibility > iframe"
-        ).locator(
-            "#ViewToComponentSyncClassCompatibility[data-success=true]"
+    def test_view_to_iframe_sync_class(self):
+        self.page.frame_locator("#view_to_iframe_sync_class > iframe").locator(
+            "#ViewToComponentSyncClass[data-success=true]"
         ).wait_for()
 
-    def test_view_to_component_async_class_compatibility(self):
-        self.page.frame_locator(
-            "#view_to_component_async_class_compatibility > iframe"
-        ).locator(
-            "#ViewToComponentAsyncClassCompatibility[data-success=true]"
+    def test_view_to_iframe_async_class(self):
+        self.page.frame_locator("#view_to_iframe_async_class > iframe").locator(
+            "#ViewToComponentAsyncClass[data-success=true]"
         ).wait_for()
 
-    def test_view_to_component_template_view_class_compatibility(self):
-        self.page.frame_locator(
-            "#view_to_component_template_view_class_compatibility > iframe"
-        ).locator(
-            "#ViewToComponentTemplateViewClassCompatibility[data-success=true]"
+    def test_view_to_iframe_template_view_class(self):
+        self.page.frame_locator("#view_to_iframe_template_view_class > iframe").locator(
+            "#ViewToComponentTemplateViewClass[data-success=true]"
         ).wait_for()
 
     def test_view_to_iframe_args(self):
         self.page.frame_locator("#view_to_iframe_args > iframe").locator(
             "#view_to_iframe_args[data-success=Success]"
-        ).wait_for()
-
-    def test_view_to_component_decorator(self):
-        self.page.locator("#view_to_component_decorator[data-success=true]").wait_for()
-
-    def test_view_to_component_decorator_args(self):
-        self.page.locator(
-            "#view_to_component_decorator_args[data-success=true]"
         ).wait_for()
 
     def test_component_session_exists(self):
@@ -322,7 +288,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
     def test_component_session_missing(self):
         """No session should exist for components that don't have args/kwargs."""
-        component = self.page.locator("#simple-button")
+        component = self.page.locator("#button-from-js-module")
         component.wait_for()
         parent = component.locator("..")
         session_id = parent.get_attribute("id")
@@ -615,16 +581,16 @@ class ComponentTests(ChannelsLiveServerTestCase):
             path = new_page.wait_for_selector("#router-path")
             self.assertIn("/router/two/123/abc/", path.get_attribute("data-path"))
 
-            new_page.goto(f"{self.live_server_url}/router/star/one/")
+            new_page.goto(f"{self.live_server_url}/router/any/one/")
             path = new_page.wait_for_selector("#router-path")
-            self.assertIn("/router/star/one/", path.get_attribute("data-path"))
+            self.assertIn("/router/any/one/", path.get_attribute("data-path"))
 
             new_page.goto(
-                f"{self.live_server_url}/router/star/adslkjgklasdjhfah/6789543256/"
+                f"{self.live_server_url}/router/any/adslkjgklasdjhfah/6789543256/"
             )
             path = new_page.wait_for_selector("#router-path")
             self.assertIn(
-                "/router/star/adslkjgklasdjhfah/6789543256/",
+                "/router/any/adslkjgklasdjhfah/6789543256/",
                 path.get_attribute("data-path"),
             )
             string = new_page.query_selector("#router-string")

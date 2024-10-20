@@ -19,7 +19,7 @@ def reactpy_warnings(app_configs, **kwargs):
     warnings = []
     INSTALLED_APPS: list[str] = getattr(settings, "INSTALLED_APPS", [])
 
-    # REACTPY_DATABASE is not an in-memory database.
+    # Check if REACTPY_DATABASE is not an in-memory database.
     if (
         getattr(settings, "DATABASES", {})
         .get(getattr(settings, "REACTPY_DATABASE", "default"), {})
@@ -36,7 +36,7 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
-    # ReactPy URLs exist
+    # Check if ReactPy URLs are reachable
     try:
         reverse("reactpy:web_modules", kwargs={"file": "example"})
         reverse("reactpy:view_to_iframe", kwargs={"dotted_path": "example"})
@@ -143,7 +143,8 @@ def reactpy_warnings(app_configs, **kwargs):
     ):
         warnings.append(
             Warning(
-                "You have not configured runserver to use ASGI.",
+                "You have not configured the `runserver` command to use ASGI. "
+                "ReactPy will work properly in this configuration.",
                 hint="Add daphne to settings.py:INSTALLED_APPS.",
                 id="reactpy_django.W012",
             )
@@ -151,6 +152,7 @@ def reactpy_warnings(app_configs, **kwargs):
 
     # DELETED W013: Check if deprecated value REACTPY_RECONNECT_MAX exists
 
+    # Check if REACTPY_RECONNECT_INTERVAL is set to a large value
     if (
         isinstance(config.REACTPY_RECONNECT_INTERVAL, int)
         and config.REACTPY_RECONNECT_INTERVAL > 30000
@@ -164,20 +166,22 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_RECONNECT_MAX_RETRIES is set to a large value
     if (
         isinstance(config.REACTPY_RECONNECT_MAX_RETRIES, int)
         and config.REACTPY_RECONNECT_MAX_RETRIES > 5000
     ):
         warnings.append(
             Warning(
-                "REACTPY_RECONNECT_MAX_RETRIES is set to a very large value. Are you sure this is intentional? "
+                "REACTPY_RECONNECT_MAX_RETRIES is set to a very large value "
+                f"{config.REACTPY_RECONNECT_MAX_RETRIES}. Are you sure this is intentional? "
                 "This may leave your clients attempting reconnections for a long time.",
                 hint="Check your value for REACTPY_RECONNECT_MAX_RETRIES or suppress this warning.",
                 id="reactpy_django.W015",
             )
         )
 
-    # Check if the value is too large (greater than 50)
+    # Check if the REACTPY_RECONNECT_BACKOFF_MULTIPLIER is set to a large value
     if (
         isinstance(config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER, (int, float))
         and config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER > 100
@@ -190,6 +194,7 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_RECONNECT_MAX_INTERVAL is reachable
     if (
         isinstance(config.REACTPY_RECONNECT_MAX_INTERVAL, int)
         and isinstance(config.REACTPY_RECONNECT_INTERVAL, int)
@@ -222,6 +227,7 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
+    # Check if 'reactpy_django' is in the correct position in INSTALLED_APPS
     position_to_beat = 0
     for app in INSTALLED_APPS:
         if app.startswith("django.contrib."):
@@ -238,6 +244,7 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_CLEAN_SESSION is not a valid property
     if getattr(settings, "REACTPY_CLEAN_SESSION", None):
         warnings.append(
             Warning(
@@ -284,7 +291,7 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
-    # All settings in reactpy_django.conf are the correct data type
+    # Check if REACTPY_URL_PREFIX is a valid data type
     if not isinstance(getattr(settings, "REACTPY_URL_PREFIX", ""), str):
         errors.append(
             Error(
@@ -294,6 +301,8 @@ def reactpy_errors(app_configs, **kwargs):
                 id="reactpy_django.E003",
             )
         )
+
+    # Check if REACTPY_SESSION_MAX_AGE is a valid data type
     if not isinstance(getattr(settings, "REACTPY_SESSION_MAX_AGE", 0), int):
         errors.append(
             Error(
@@ -303,6 +312,8 @@ def reactpy_errors(app_configs, **kwargs):
                 id="reactpy_django.E004",
             )
         )
+
+    # Check if REACTPY_CACHE is a valid data type
     if not isinstance(getattr(settings, "REACTPY_CACHE", ""), str):
         errors.append(
             Error(
@@ -312,6 +323,8 @@ def reactpy_errors(app_configs, **kwargs):
                 id="reactpy_django.E005",
             )
         )
+
+    # Check if REACTPY_DATABASE is a valid data type
     if not isinstance(getattr(settings, "REACTPY_DATABASE", ""), str):
         errors.append(
             Error(
@@ -321,6 +334,8 @@ def reactpy_errors(app_configs, **kwargs):
                 id="reactpy_django.E006",
             )
         )
+
+    # Check if REACTPY_DEFAULT_QUERY_POSTPROCESSOR is a valid data type
     if not isinstance(
         getattr(settings, "REACTPY_DEFAULT_QUERY_POSTPROCESSOR", ""), (str, type(None))
     ):
@@ -332,6 +347,8 @@ def reactpy_errors(app_configs, **kwargs):
                 id="reactpy_django.E007",
             )
         )
+
+    # Check if REACTPY_AUTH_BACKEND is a valid data type
     if not isinstance(getattr(settings, "REACTPY_AUTH_BACKEND", ""), str):
         errors.append(
             Error(
@@ -344,6 +361,7 @@ def reactpy_errors(app_configs, **kwargs):
 
     # DELETED E009: Check if `channels` is in INSTALLED_APPS
 
+    # Check if REACTPY_DEFAULT_HOSTS is a valid data type
     if not isinstance(getattr(settings, "REACTPY_DEFAULT_HOSTS", []), list):
         errors.append(
             Error(
@@ -354,7 +372,7 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
-    # Check of all values in the list are strings
+    # Check of all values in the REACTPY_DEFAULT_HOSTS are strings
     if isinstance(getattr(settings, "REACTPY_DEFAULT_HOSTS", None), list):
         for host in settings.REACTPY_DEFAULT_HOSTS:
             if not isinstance(host, str):
@@ -368,6 +386,7 @@ def reactpy_errors(app_configs, **kwargs):
                 )
                 break
 
+    # Check if REACTPY_RECONNECT_INTERVAL is a valid data type
     if not isinstance(config.REACTPY_RECONNECT_INTERVAL, int):
         errors.append(
             Error(
@@ -377,6 +396,7 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_RECONNECT_INTERVAL is a positive integer
     if (
         isinstance(config.REACTPY_RECONNECT_INTERVAL, int)
         and config.REACTPY_RECONNECT_INTERVAL < 0
@@ -389,6 +409,7 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_RECONNECT_MAX_INTERVAL is a valid data type
     if not isinstance(config.REACTPY_RECONNECT_MAX_INTERVAL, int):
         errors.append(
             Error(
@@ -398,6 +419,7 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_RECONNECT_MAX_INTERVAL is a positive integer
     if (
         isinstance(config.REACTPY_RECONNECT_MAX_INTERVAL, int)
         and config.REACTPY_RECONNECT_MAX_INTERVAL < 0
@@ -410,6 +432,7 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_RECONNECT_MAX_INTERVAL is greater than REACTPY_RECONNECT_INTERVAL
     if (
         isinstance(config.REACTPY_RECONNECT_MAX_INTERVAL, int)
         and isinstance(config.REACTPY_RECONNECT_INTERVAL, int)
@@ -423,6 +446,7 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_RECONNECT_MAX_RETRIES is a valid data type
     if not isinstance(config.REACTPY_RECONNECT_MAX_RETRIES, int):
         errors.append(
             Error(
@@ -432,6 +456,7 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_RECONNECT_MAX_RETRIES is a positive integer
     if (
         isinstance(config.REACTPY_RECONNECT_MAX_RETRIES, int)
         and config.REACTPY_RECONNECT_MAX_RETRIES < 0
@@ -444,6 +469,7 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_RECONNECT_BACKOFF_MULTIPLIER is a valid data type
     if not isinstance(config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER, (int, float)):
         errors.append(
             Error(
@@ -453,6 +479,7 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_RECONNECT_BACKOFF_MULTIPLIER is greater than or equal to 1
     if (
         isinstance(config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER, (int, float))
         and config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER < 1
@@ -465,6 +492,7 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_PRERENDER is a valid data type
     if not isinstance(config.REACTPY_PRERENDER, bool):
         errors.append(
             Error(
@@ -474,6 +502,7 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_AUTO_RELOGIN is a valid data type
     if not isinstance(config.REACTPY_AUTO_RELOGIN, bool):
         errors.append(
             Error(
@@ -483,6 +512,7 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_CLEAN_INTERVAL is a valid data type
     if not isinstance(config.REACTPY_CLEAN_INTERVAL, (int, type(None))):
         errors.append(
             Error(
@@ -492,6 +522,7 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_CLEAN_INTERVAL is a positive integer
     if (
         isinstance(config.REACTPY_CLEAN_INTERVAL, int)
         and config.REACTPY_CLEAN_INTERVAL < 0
@@ -504,6 +535,7 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_CLEAN_SESSIONS is a valid data type
     if not isinstance(config.REACTPY_CLEAN_SESSIONS, bool):
         errors.append(
             Error(
@@ -513,6 +545,7 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_CLEAN_USER_DATA is a valid data type
     if not isinstance(config.REACTPY_CLEAN_USER_DATA, bool):
         errors.append(
             Error(
