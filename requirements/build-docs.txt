@@ -5,5 +5,4 @@ mkdocs-include-markdown-plugin
 mkdocs-spellcheck[all]
 mkdocs-git-authors-plugin
 mkdocs-minify-plugin
-mkdocs-section-index
 mike

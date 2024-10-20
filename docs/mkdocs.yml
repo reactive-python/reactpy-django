@@ -89,8 +89,6 @@ plugins:
     - spellcheck:
           known_words: dictionary.txt
           allow_unicode: no
-          ignore_code: yes
-    # - section-index
 
 extra:
     generator: false

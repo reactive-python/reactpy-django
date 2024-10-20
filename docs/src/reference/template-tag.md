@@ -157,7 +157,7 @@ This template tag can be used to insert any number of **client-side** ReactPy co
 
 <!--pyscript-def-start-->
 
-By default, the only dependencies available are the Python standard library, `pyscript`, `pyodide`, `reactpy` core.
+By default, the only [available dependencies](./template-tag.md#pyscript-setup) are the Python standard library, `pyscript`, `pyodide`, `reactpy` core.
 
 The entire file path provided is loaded directly into the browser, and must have a `#!python def root()` component to act as the entry point.
 
@@ -166,9 +166,9 @@ The entire file path provided is loaded directly into the browser, and must have
 
 !!! warning "Pitfall"
 
-    Your provided Python file is loaded directly into the client (web browser) **as raw text**, and ran using a PyScript interpreter. Be cautious about what you include in your Python file.
+    Similar to JavaScript, your provided Python file is loaded directly into the client (web browser) **as raw text** to run using the PyScript interpreter. Be cautious about what you include in your Python file.
 
-    As a result of running client-side, Python packages within your local environment (such as those installed via `pip install ...`)  are **not accessible** within PyScript components.
+    As a result being client-sided, Python packages within your local environment (such as those installed via `pip install ...`)  are **not accessible** within PyScript components.
 
 <!--pyscript-raw-text-end-->
 
@@ -198,28 +198,40 @@ The entire file path provided is loaded directly into the browser, and must have
 
 ??? question "How do I execute JavaScript within PyScript components?"
 
-    PyScript components have the ability to directly execute standard library JavaScript using the [`pyodide` `js` module](https://pyodide.org/en/stable/usage/type-conversions.html#importing-javascript-objects-into-python) or [`pyscript` foreign function interface](https://docs.pyscript.net/2024.6.1/user-guide/dom/).
+    PyScript components several options available to execute JavaScript, including...
 
-    The `#!python js` module has access to everything within the browser's JavaScript environment. Therefore, any global JavaScript functions loaded within your HTML `#!html <head>` can be called as well. However, be mindful of JavaScript load order!
+    - [Pyodide's `js` module](https://pyodide.org/en/stable/usage/type-conversions.html#importing-javascript-objects-into-python)
+    - [Pyscript's foreign function interface](https://docs.pyscript.net/latest/user-guide/dom/#ffi)
+    - [Pyscript's JavaScript modules](https://docs.pyscript.net/latest/user-guide/configuration/#javascript-modules).
+
+    **Pyodide JS Module**
+
+    The Pyodide `#!python js` module has access to everything within the browser's JavaScript environment. Therefore, any global JavaScript functions loaded within your HTML `#!html <head>` can be called as well. However, you will need to be mindful of JavaScript load order if using [`async` or `deferred`](https://javascript.info/script-async-defer) loading!
 
     === "root.py"
 
         ```python
-        {% include "../../examples/python/pyscript-js-execution.py" %}
+        {% include "../../examples/python/pyodide-js-module.py" %}
         ```
 
-    To import JavaScript modules in a fashion similar to `#!javascript import {moment} from 'static/moment.js'`, you will need to configure your `#!jinja {% pyscript_setup %}` block to make the module available to PyScript. This module will be accessed within `#!python pyscript.js_modules.*`. For more information, see the [PyScript JS modules docs](https://docs.pyscript.net/2024.6.2/user-guide/configuration/#javascript-modules).
+    **PyScript FFI**
+
+    ...
+
+    **PyScript JS Modules**
+
+    Assuming you have a local bundle stored within your project's static files, you can import JavaScript modules in a fashion similar to `#!javascript import {moment} from 'static/moment.js'`. You will first need to configure your `#!jinja {% pyscript_setup %}` block to make the `moment.js` module available to PyScript. Then, this module can be accessed within `#!python pyscript.js_modules.*`.
 
     === "root.py"
 
         ```python
-        {% include "../../examples/python/pyscript-js-module.py" %}
+        {% include "../../examples/python/pyscript-local-import.py" %}
         ```
 
     === "my_template.html"
 
         ```jinja
-        {% include "../../examples/html/pyscript-js-module.html" %}
+        {% include "../../examples/html/pyscript-local-import.html" %}
         ```
 
 <!--pyscript-js-exec-end-->

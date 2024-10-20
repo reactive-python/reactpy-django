@@ -2,7 +2,7 @@
 
 <p class="intro" markdown>
 
-We supply some pre-generated that HTML nodes can be used to help simplify development.
+We supply some HTML elements can be used to help simplify development.
 
 </p>
 
