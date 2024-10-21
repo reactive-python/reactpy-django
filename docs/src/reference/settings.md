@@ -152,9 +152,6 @@ During pre-rendering, there are some key differences in behavior:
 3. The component will be non-interactive until a WebSocket connection is formed.
 4. The component is re-rendered once a WebSocket connection is formed.
 
-<!-- TODO: The comment below will become true when ReactPy no longer strips scripts from the DOM -->
-<!-- 4. `#!python html.script` elements are executed twice (pre-render and post-render). -->
-
 You can use the `#!python prerender` argument in your [template tag](../reference/template-tag.md#component) to manually override this default.
 
 ---

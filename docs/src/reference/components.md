@@ -439,8 +439,8 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 Allows you to defer loading JavaScript until a component begins rendering. This JavaScript must be stored within [Django's static files](https://docs.djangoproject.com/en/stable/howto/static-files/).
 
 <!--
-TODO: This is no longer true since we don't insert elements on the page via JSON Patch anymore.
-However, we may go back to diffing at some point in the future.
+TODO: The following is no longer true since we don't insert elements on the page via JSON Patch anymore.
+However, we may go back to diffing at some point in the future so this is kept here for now.
 
 !!! warning "Pitfall"
 
