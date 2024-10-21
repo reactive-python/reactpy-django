@@ -38,10 +38,9 @@ def main():
             display_params("Path 9"),
         ),
         route(
-            "/router/any/",
+            "/router/<any:name1>/",
             None,
             route("one/", display_params("Path 11")),
-            route("{name:any}", display_params("Path 12")),
+            route("<any:name2>", display_params("Path 12")),
         ),
-        route("{404:any}", display_params("Not Found")),
     )
