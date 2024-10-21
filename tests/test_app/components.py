@@ -149,7 +149,7 @@ def django_js():
 
 @reactpy_django.decorators.user_passes_test(
     lambda user: user.is_anonymous,
-    fallback=html.div({"id": "authorized-user-test-fallback"}, "authorized_user: Fail"),
+    fallback=html.div({"id": "authorized-user-fallback"}, "authorized_user: Fail"),
 )
 @component
 def authorized_user():
@@ -159,7 +159,7 @@ def authorized_user():
 @reactpy_django.decorators.user_passes_test(
     lambda user: user.is_active,
     fallback=html.div(
-        {"id": "unauthorized-user-test-fallback"}, "unauthorized_user: Success"
+        {"id": "unauthorized-user-fallback"}, "unauthorized_user: Success"
     ),
 )
 @component

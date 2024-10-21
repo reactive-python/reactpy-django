@@ -67,6 +67,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
         headless = strtobool(os.environ.get("PLAYWRIGHT_HEADLESS", GITHUB_ACTIONS))
         cls.browser = cls.playwright.chromium.launch(headless=bool(headless))
         cls.page = cls.browser.new_page()
+        cls.page.set_default_timeout(5000)
 
     @classmethod
     def tearDownClass(cls):
@@ -256,17 +257,17 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
     def test_view_to_iframe_sync_class(self):
         self.page.frame_locator("#view_to_iframe_sync_class > iframe").locator(
-            "#ViewToComponentSyncClass[data-success=true]"
+            "#ViewToIframeSyncClass[data-success=true]"
         ).wait_for()
 
     def test_view_to_iframe_async_class(self):
         self.page.frame_locator("#view_to_iframe_async_class > iframe").locator(
-            "#ViewToComponentAsyncClass[data-success=true]"
+            "#ViewToIframeAsyncClass[data-success=true]"
         ).wait_for()
 
     def test_view_to_iframe_template_view_class(self):
         self.page.frame_locator("#view_to_iframe_template_view_class > iframe").locator(
-            "#ViewToComponentTemplateViewClass[data-success=true]"
+            "#ViewToIframeTemplateViewClass[data-success=true]"
         ).wait_for()
 
     def test_view_to_iframe_args(self):
