@@ -4,12 +4,14 @@ import shutil
 import subprocess
 import sys
 import traceback
-from distutils import log
+from logging import getLogger
 from pathlib import Path
 
 from setuptools import find_namespace_packages, setup
 from setuptools.command.develop import develop
 from setuptools.command.sdist import sdist
+
+log = getLogger(__name__)
 
 # -----------------------------------------------------------------------------
 # Basic Constants
