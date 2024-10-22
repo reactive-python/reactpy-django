@@ -38,6 +38,7 @@ Don't forget to remove deprecated code on each major release!
 
 ### Changed
 
+-   Now using ReactPy-Router v1 for URL routing, which comes with a slightly different API than before.
 -   Removed dependency on `aiofile`.
 
 ### Removed
