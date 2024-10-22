@@ -1,12 +1,12 @@
 from __future__ import annotations, print_function
 
 import shutil
+import subprocess
 import sys
 import traceback
 from distutils import log
 from pathlib import Path
 
-from nodejs import npm
 from setuptools import find_namespace_packages, setup
 from setuptools.command.develop import develop
 from setuptools.command.sdist import sdist
@@ -102,14 +102,27 @@ def build_javascript_first(build_cls: type):
         def run(self):
 
             log.info("Installing Javascript...")
-            result = npm.call(["install"], cwd=str(js_dir))
+            result = subprocess.run(
+                ["bun", "install"], cwd=str(js_dir), check=True
+            ).returncode
             if result != 0:
                 log.error(traceback.format_exc())
                 log.error("Failed to install Javascript")
                 raise RuntimeError("Failed to install Javascript")
 
             log.info("Building Javascript...")
-            result = npm.call(["run", "build"], cwd=str(js_dir))
+            result = subprocess.run(
+                [
+                    "bun",
+                    "build",
+                    "./src/index.tsx",
+                    "--outfile",
+                    str(static_dir / "client.js"),
+                    "--minify",
+                ],
+                cwd=str(js_dir),
+                check=True,
+            ).returncode
             if result != 0:
                 log.error(traceback.format_exc())
                 log.error("Failed to build Javascript")

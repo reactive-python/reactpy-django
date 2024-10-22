@@ -19,6 +19,7 @@
 If you plan to make code changes to this repository, you will need to install the following dependencies first:
 
 -   [Python 3.9+](https://www.python.org/downloads/)
+-   [Bun](https://bun.sh/)
 -   [Git](https://git-scm.com/downloads)
 
 Once done, you should clone this repository:

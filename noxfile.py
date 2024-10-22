@@ -31,14 +31,14 @@ def test_python(session: Session) -> None:
     settings_files = glob(settings_glob)
     assert settings_files, f"No Django settings files found at '{settings_glob}'!"
     for settings_file in settings_files:
-        settings_module = settings_file.strip(".py").replace("/", ".").replace("\\", ".")
+        settings_module = (
+            settings_file.strip(".py").replace("/", ".").replace("\\", ".")
+        )
         session.run(
             "python",
             "manage.py",
             "test",
             *posargs,
-            "-v",
-            "2",
             "--settings",
             settings_module,
         )
@@ -62,8 +62,8 @@ def test_style(session: Session) -> None:
 def test_javascript(session: Session) -> None:
     install_requirements_file(session, "test-env")
     session.chdir(ROOT_DIR / "src" / "js")
-    session.run("python", "-m", "nodejs.npm", "install", external=True)
-    session.run("python", "-m", "nodejs.npm", "run", "check")
+    session.run("bun", "install", external=True)
+    session.run("bun", "run", "check", external=True)
 
 
 def install_requirements_file(session: Session, name: str) -> None:

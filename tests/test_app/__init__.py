@@ -1,12 +1,25 @@
 import shutil
+import subprocess
 from pathlib import Path
-
-from nodejs import npm
 
 # Make sure the JS is always re-built before running the tests
 js_dir = Path(__file__).parent.parent.parent / "src" / "js"
-assert npm.call(["install"], cwd=str(js_dir)) == 0
-assert npm.call(["run", "build"], cwd=str(js_dir)) == 0
+static_dir = (
+    Path(__file__).parent.parent.parent
+    / "src"
+    / "reactpy_django"
+    / "static"
+    / "reactpy_django"
+)
+assert subprocess.run(["bun", "install"], cwd=str(js_dir), check=True).returncode == 0
+assert (
+    subprocess.run(
+        ["bun", "build", "./src/index.tsx", "--outfile", str(static_dir / "client.js")],
+        cwd=str(js_dir),
+        check=True,
+    ).returncode
+    == 0
+)
 
 # Make sure the current PyScript distribution is always available
 pyscript_dist = js_dir / "node_modules" / "@pyscript" / "core" / "dist"
