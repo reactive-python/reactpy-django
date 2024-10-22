@@ -4,10 +4,10 @@
     "module": "esnext",
     "moduleResolution": "node",
     "jsx": "react",
-    "allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": true
   },
   "paths": {
     "react": ["./node_modules/preact/compat/"],
-    "react-dom": ["./node_modules/preact/compat/"],
-  },
+    "react-dom": ["./node_modules/preact/compat/"]
+  }
 }
