@@ -36,9 +36,9 @@ It is mandatory to use this function alongside [`view_to_iframe`](../reference/c
 
     `#!python None`
 
-??? warning "Only use this within `#!python MyAppConfig.ready()`"
+??? warning "Only use this within `#!python AppConfig.ready()`"
 
-    You should always call `#!python register_iframe` within a Django [`MyAppConfig.ready()` method](https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.AppConfig.ready). This ensures you will retain multiprocessing compatibility, such as with ASGI web server workers.
+    You should always call `#!python register_iframe` within a Django [`AppConfig.ready()` method](https://docs.djangoproject.com/en/stable/ref/applications/#django.apps.AppConfig.ready). This ensures you will retain multiprocessing compatibility, such as with ASGI web server workers.
 
 ---
 
@@ -68,7 +68,7 @@ Typically, this function is automatically called on all components contained wit
 
 ??? warning "Only use this within `#!python MyAppConfig.ready()`"
 
-    You should always call `#!python register_component` within a Django [`MyAppConfig.ready()` method](https://docs.djangoproject.com/en/dev/ref/applications/#django.apps.AppConfig.ready). This ensures you will retain multiprocessing compatibility, such as with ASGI web server workers.
+    You should always call `#!python register_component` within a Django [`MyAppConfig.ready()` method](https://docs.djangoproject.com/en/stable/ref/applications/#django.apps.AppConfig.ready). This ensures you will retain multiprocessing compatibility, such as with ASGI web server workers.
 
 ??? question "Do I need to use this?"
 
@@ -84,7 +84,7 @@ Typically, this function is automatically called on all components contained wit
 
 This is the default postprocessor for the `#!python use_query` hook.
 
-Since ReactPy is rendered within an `#!python asyncio` loop, this postprocessor is exists to prevent Django's `#!python SynchronousOnlyException` by recursively prefetching fields within a `#!python Model` or `#!python QuerySet`. This prefetching step works to eliminate Django's [lazy execution](https://docs.djangoproject.com/en/dev/topics/db/queries/#querysets-are-lazy) behavior.
+Since ReactPy is rendered within an `#!python asyncio` loop, this postprocessor is exists to prevent Django's `#!python SynchronousOnlyException` by recursively prefetching fields within Django's ORM. Note that this effectively eliminates Django's [lazy execution](https://docs.djangoproject.com/en/stable/topics/db/queries/#querysets-are-lazy) behavior.
 
 === "components.py"
 

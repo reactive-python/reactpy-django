@@ -10,7 +10,7 @@ ReactPy exposes Django management commands that can be used to perform various R
 
 ## Clean ReactPy Command
 
-Command used to manually clean ReactPy data.
+Command used to manually clean expired ReactPy data from the database and/or cache.
 
 When using this command without arguments, it will perform all cleaning operations. You can limit cleaning to specific operations through arguments such as `--sessions`.
 

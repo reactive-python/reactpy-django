@@ -2,15 +2,14 @@ import asyncio
 import inspect
 from pathlib import Path
 
-import reactpy_django
 from channels.auth import login, logout
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from django.http import HttpRequest
-from django.shortcuts import render
 from reactpy import component, hooks, html, web
-from reactpy_django.components import view_to_component, view_to_iframe
 
+import reactpy_django
+from reactpy_django.components import view_to_component, view_to_iframe
 from test_app.models import (
     AsyncForiegnChild,
     AsyncRelationalChild,
@@ -72,7 +71,7 @@ def object_in_templatetag(my_object: TestObject):
 
 SimpleButtonModule = web.module_from_file(
     "SimpleButton",
-    Path(__file__).parent / "tests" / "js" / "simple-button.js",
+    Path(__file__).parent / "tests" / "js" / "button-from-js-module.js",
     resolve_exports=False,
     fallback="...",
 )
@@ -80,8 +79,10 @@ SimpleButton = web.export(SimpleButtonModule, "SimpleButton")
 
 
 @component
-def simple_button():
-    return html._("simple_button:", SimpleButton({"id": "simple-button"}))
+def button_from_js_module():
+    return html._(
+        "button_from_js_module:", SimpleButton({"id": "button-from-js-module"})
+    )
 
 
 @component
@@ -146,45 +147,24 @@ def django_js():
     )
 
 
-@component
-@reactpy_django.decorators.auth_required(
-    fallback=html.div(
-        {"id": "unauthorized-user-fallback"}, "unauthorized_user: Success"
-    )
-)
-def unauthorized_user():
-    return html.div({"id": "unauthorized-user"}, "unauthorized_user: Fail")
-
-
-@component
-@reactpy_django.decorators.auth_required(
-    auth_attribute="is_anonymous",
+@reactpy_django.decorators.user_passes_test(
+    lambda user: user.is_anonymous,
     fallback=html.div({"id": "authorized-user-fallback"}, "authorized_user: Fail"),
 )
+@component
 def authorized_user():
     return html.div({"id": "authorized-user"}, "authorized_user: Success")
 
 
 @reactpy_django.decorators.user_passes_test(
-    lambda user: user.is_anonymous,
-    fallback=html.div(
-        {"id": "authorized-user-test-fallback"}, "authorized_user_test: Fail"
-    ),
-)
-@component
-def authorized_user_test():
-    return html.div({"id": "authorized-user-test"}, "authorized_user_test: Success")
-
-
-@reactpy_django.decorators.user_passes_test(
     lambda user: user.is_active,
     fallback=html.div(
-        {"id": "unauthorized-user-test-fallback"}, "unauthorized_user_test: Success"
+        {"id": "unauthorized-user-fallback"}, "unauthorized_user: Success"
     ),
 )
 @component
-def unauthorized_user_test():
-    return html.div({"id": "unauthorized-user-test"}, "unauthorized_user_test: Fail")
+def unauthorized_user():
+    return html.div({"id": "unauthorized-user"}, "unauthorized_user: Fail")
 
 
 @reactpy_django.decorators.user_passes_test(lambda user: True)
@@ -485,20 +465,12 @@ view_to_component_async_class = view_to_component(
 view_to_component_template_view_class = view_to_component(
     views.ViewToComponentTemplateViewClass.as_view()
 )
-_view_to_component_sync_func_compatibility = view_to_component(
-    views.view_to_component_sync_func_compatibility, compatibility=True
-)
-_view_to_component_async_func_compatibility = view_to_component(
-    views.view_to_component_async_func_compatibility, compatibility=True
-)
-_view_to_component_sync_class_compatibility = view_to_component(
-    views.ViewToComponentSyncClassCompatibility.as_view(), compatibility=True
-)
-_view_to_component_async_class_compatibility = view_to_component(
-    views.ViewToComponentAsyncClassCompatibility.as_view(), compatibility=True
-)
-_view_to_component_template_view_class_compatibility = view_to_component(
-    views.ViewToComponentTemplateViewClassCompatibility.as_view(), compatibility=True
+_view_to_iframe_sync_func = view_to_iframe(views.view_to_iframe_sync_func)
+_view_to_iframe_async_func = view_to_iframe(views.view_to_iframe_async_func)
+_view_to_iframe_sync_class = view_to_iframe(views.ViewToIframeSyncClass.as_view())
+_view_to_iframe_async_class = view_to_iframe(views.ViewToIframeAsyncClass.as_view())
+_view_to_iframe_template_view_class = view_to_iframe(
+    views.ViewToIframeTemplateViewClass.as_view()
 )
 _view_to_iframe_args = view_to_iframe(views.view_to_iframe_args)
 _view_to_iframe_not_registered = view_to_iframe("view_does_not_exist")
@@ -509,42 +481,42 @@ _view_to_component_kwargs = view_to_component(views.view_to_component_kwargs)
 
 
 @component
-def view_to_component_sync_func_compatibility():
+def view_to_iframe_sync_func():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},  # type: ignore
-        _view_to_component_sync_func_compatibility(key="test"),
+        _view_to_iframe_sync_func(key="test"),
     )
 
 
 @component
-def view_to_component_async_func_compatibility():
+def view_to_iframe_async_func():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},  # type: ignore
-        _view_to_component_async_func_compatibility(),
+        _view_to_iframe_async_func(),
     )
 
 
 @component
-def view_to_component_sync_class_compatibility():
+def view_to_iframe_sync_class():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},  # type: ignore
-        _view_to_component_sync_class_compatibility(),
+        _view_to_iframe_sync_class(),
     )
 
 
 @component
-def view_to_component_async_class_compatibility():
+def view_to_iframe_async_class():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},  # type: ignore
-        _view_to_component_async_class_compatibility(),
+        _view_to_iframe_async_class(),
     )
 
 
 @component
-def view_to_component_template_view_class_compatibility():
+def view_to_iframe_template_view_class():
     return html.div(
         {"id": inspect.currentframe().f_code.co_name},  # type: ignore
-        _view_to_component_template_view_class_compatibility(),
+        _view_to_iframe_template_view_class(),
     )
 
 
@@ -620,24 +592,6 @@ def view_to_component_kwargs():
             "Click me",
         ),
         _view_to_component_kwargs(success=success),
-    )
-
-
-@view_to_component
-def view_to_component_decorator(request):
-    return render(
-        request,
-        "view_to_component.html",
-        {"test_name": inspect.currentframe().f_code.co_name},  # type: ignore
-    )
-
-
-@view_to_component(strict_parsing=False)
-def view_to_component_decorator_args(request):
-    return render(
-        request,
-        "view_to_component.html",
-        {"test_name": inspect.currentframe().f_code.co_name},  # type: ignore
     )
 
 

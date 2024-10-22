@@ -83,7 +83,7 @@ def hello_world(recipient: str):
 
 <!--py-code-end-->
 
-## [`my_app/templates/my_template.html`](https://docs.djangoproject.com/en/dev/topics/templates/)
+## [`my_app/templates/my_template.html`](https://docs.djangoproject.com/en/stable/topics/templates/)
 
 <!--html-header-start-->
 

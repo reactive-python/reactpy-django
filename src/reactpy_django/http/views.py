@@ -1,7 +1,7 @@
+import asyncio
 import os
 from urllib.parse import parse_qs
 
-from aiofile import async_open
 from django.core.cache import caches
 from django.core.exceptions import SuspiciousOperation
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
@@ -31,8 +31,8 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
         cache_key, version=int(last_modified_time)
     )
     if file_contents is None:
-        async with async_open(path, "r") as fp:
-            file_contents = await fp.read()
+        with open(path, "r", encoding="utf-8") as fp:
+            file_contents = await asyncio.to_thread(fp.read)
         await caches[REACTPY_CACHE].adelete(cache_key)
         await caches[REACTPY_CACHE].aset(
             cache_key, file_contents, timeout=604800, version=int(last_modified_time)

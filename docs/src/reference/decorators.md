@@ -12,7 +12,7 @@ Decorator functions can be used within your `components.py` to help simplify dev
 
 You can limit component access to users that pass a test function by using this decorator.
 
-This decorator is inspired by Django's [`user_passes_test`](http://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test) decorator, but this one works with ReactPy components.
+This only works with ReactPy components, and is inspired by Django's [`user_passes_test`](http://docs.djangoproject.com/en/stable/topics/auth/default/#django.contrib.auth.decorators.user_passes_test) decorator.
 
 === "components.py"
 

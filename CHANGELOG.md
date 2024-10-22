@@ -36,9 +36,21 @@ Don't forget to remove deprecated code on each major release!
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Changed
 
-## [4.0.0]
+-   Now using ReactPy-Router v1 for URL routing, which comes with a slightly different API than before.
+-   Removed dependency on `aiofile`.
+
+### Removed
+
+-   Removed the following **deprecated** features:
+    -   The `compatibility` argument on `reactpy_django.components.view_to_component`
+    -   `reactpy_django.components.view_to_component` **usage as a decorator**
+    -   `reactpy_django.decorators.auth_required`
+    -   `reactpy_django.REACTPY_WEBSOCKET_PATH`
+    -   `settings.py:REACTPY_WEBSOCKET_URL`
+
+## [4.0.0] - 2024-06-22
 
 ### Added
 
@@ -112,8 +124,8 @@ Don't forget to remove deprecated code on each major release!
 -   New Django `User` related features!
     -   `reactpy_django.hooks.use_user` can be used to access the current user.
     -   `reactpy_django.hooks.use_user_data` provides a simplified interface for storing user key-value data.
-    -   `reactpy_django.decorators.user_passes_test` is inspired by the [equivalent Django decorator](http://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test), but ours works with ReactPy components.
-    -   `settings.py:REACTPY_AUTO_RELOGIN` will cause component WebSocket connections to automatically [re-login](https://channels.readthedocs.io/en/latest/topics/authentication.html#how-to-log-a-user-in-out) users that are already authenticated. This is useful to continuously update `last_login` timestamps and refresh the [Django login session](https://docs.djangoproject.com/en/dev/topics/http/sessions/).
+    -   `reactpy_django.decorators.user_passes_test` is inspired by the [equivalent Django decorator](http://docs.djangoproject.com/en/stable/topics/auth/default/#django.contrib.auth.decorators.user_passes_test), but ours works with ReactPy components.
+    -   `settings.py:REACTPY_AUTO_RELOGIN` will cause component WebSocket connections to automatically [re-login](https://channels.readthedocs.io/en/latest/topics/authentication.html#how-to-log-a-user-in-out) users that are already authenticated. This is useful to continuously update `last_login` timestamps and refresh the [Django login session](https://docs.djangoproject.com/en/stable/topics/http/sessions/).
 
 ### Changed
 

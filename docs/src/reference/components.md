@@ -124,7 +124,7 @@ Automatically convert a Django view into a component.
 
 At this time, this works best with static views with no interactivity.
 
-Compatible with sync or async [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/).
+Compatible with sync or async [Function Based Views](https://docs.djangoproject.com/en/stable/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/stable/topics/class-based-views/).
 
 === "components.py"
 
@@ -254,7 +254,7 @@ Automatically convert a Django view into an [`iframe` element](https://www.techt
 
 The contents of this `#!python iframe` is handled entirely by traditional Django view rendering. While this solution is compatible with more views than `#!python view_to_component`, it comes with different limitations.
 
-Compatible with sync or async [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/).
+Compatible with sync or async [Function Based Views](https://docs.djangoproject.com/en/stable/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/stable/topics/class-based-views/).
 
 === "components.py"
 
@@ -383,7 +383,7 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
 
 ## Django CSS
 
-Allows you to defer loading a CSS stylesheet until a component begins rendering. This stylesheet must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).
+Allows you to defer loading a CSS stylesheet until a component begins rendering. This stylesheet must be stored within [Django's static files](https://docs.djangoproject.com/en/stable/howto/static-files/).
 
 === "components.py"
 
@@ -436,11 +436,11 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
 ## Django JS
 
-Allows you to defer loading JavaScript until a component begins rendering. This JavaScript must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).
+Allows you to defer loading JavaScript until a component begins rendering. This JavaScript must be stored within [Django's static files](https://docs.djangoproject.com/en/stable/howto/static-files/).
 
 <!--
-TODO: This is no longer true since we don't insert elements on the page via JSON Patch anymore.
-However, we may go back to diffing at some point in the future.
+TODO: The following is no longer true since we don't insert elements on the page via JSON Patch anymore.
+However, we may go back to diffing at some point in the future so this is kept here for now.
 
 !!! warning "Pitfall"
 
