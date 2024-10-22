@@ -29,6 +29,8 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
+
         # Repurposed from ChannelsLiveServerTestCase._pre_setup
         for connection in connections.all():
             if cls._is_in_memory_db(cls, connection):
@@ -77,14 +79,14 @@ class ComponentTests(ChannelsLiveServerTestCase):
         cls.playwright.stop()
 
         # Close the other server processes
+        cls._server_process.terminate()
+        cls._server_process.join()
         cls._server_process2.terminate()
         cls._server_process2.join()
         cls._server_process3.terminate()
         cls._server_process3.join()
 
         # Repurposed from ChannelsLiveServerTestCase._post_teardown
-        cls._server_process.terminate()
-        cls._server_process.join()
         cls._live_server_modified_settings.disable()
         for db_name in {"default", config.REACTPY_DATABASE}:
             call_command(
@@ -95,15 +97,15 @@ class ComponentTests(ChannelsLiveServerTestCase):
                 reset_sequences=False,
             )
 
+        super().tearDownClass()
+
     def _pre_setup(self):
         """Handled manually in `setUpClass` to speed things up."""
-        pass
 
     def _post_teardown(self):
         """Handled manually in `tearDownClass` to prevent TransactionTestCase from doing
         database flushing. This is needed to prevent a `SynchronousOnlyOperation` from
         occuring due to a bug within `ChannelsLiveServerTestCase`."""
-        pass
 
     def setUp(self):
         if self.page.url == "about:blank":
@@ -544,26 +546,44 @@ class ComponentTests(ChannelsLiveServerTestCase):
             new_page.goto(f"{self.live_server_url}/router/")
             path = new_page.wait_for_selector("#router-path")
             self.assertIn("/router/", path.get_attribute("data-path"))
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("/router/", string.text_content())
 
-            new_page.goto(f"{self.live_server_url}/router/any/123/")
+            new_page.goto(f"{self.live_server_url}/router/subroute/")
             path = new_page.wait_for_selector("#router-path")
-            self.assertIn("/router/any/123/", path.get_attribute("data-path"))
+            self.assertIn("/router/subroute/", path.get_attribute("data-path"))
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("subroute/", string.text_content())
+
+            new_page.goto(f"{self.live_server_url}/router/unspecified/123/")
+            path = new_page.wait_for_selector("#router-path")
+            self.assertIn("/router/unspecified/123/", path.get_attribute("data-path"))
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("/router/unspecified/<value>/", string.text_content())
 
             new_page.goto(f"{self.live_server_url}/router/integer/123/")
             path = new_page.wait_for_selector("#router-path")
             self.assertIn("/router/integer/123/", path.get_attribute("data-path"))
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("/router/integer/<int:value>/", string.text_content())
 
             new_page.goto(f"{self.live_server_url}/router/path/abc/123/")
             path = new_page.wait_for_selector("#router-path")
             self.assertIn("/router/path/abc/123/", path.get_attribute("data-path"))
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("/router/path/<path:value>/", string.text_content())
 
             new_page.goto(f"{self.live_server_url}/router/slug/abc-123/")
             path = new_page.wait_for_selector("#router-path")
             self.assertIn("/router/slug/abc-123/", path.get_attribute("data-path"))
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("/router/slug/<slug:value>/", string.text_content())
 
             new_page.goto(f"{self.live_server_url}/router/string/abc/")
             path = new_page.wait_for_selector("#router-path")
             self.assertIn("/router/string/abc/", path.get_attribute("data-path"))
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("/router/string/<str:value>/", string.text_content())
 
             new_page.goto(
                 f"{self.live_server_url}/router/uuid/123e4567-e89b-12d3-a456-426614174000/"
@@ -573,18 +593,8 @@ class ComponentTests(ChannelsLiveServerTestCase):
                 "/router/uuid/123e4567-e89b-12d3-a456-426614174000/",
                 path.get_attribute("data-path"),
             )
-
-            new_page.goto(f"{self.live_server_url}/router/abc/")
-            path = new_page.wait_for_selector("#router-path")
-            self.assertIn("/router/abc/", path.get_attribute("data-path"))
-
-            new_page.goto(f"{self.live_server_url}/router/two/123/abc/")
-            path = new_page.wait_for_selector("#router-path")
-            self.assertIn("/router/two/123/abc/", path.get_attribute("data-path"))
-
-            new_page.goto(f"{self.live_server_url}/router/any/one/")
-            path = new_page.wait_for_selector("#router-path")
-            self.assertIn("/router/any/one/", path.get_attribute("data-path"))
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("/router/uuid/<uuid:value>/", string.text_content())
 
             new_page.goto(
                 f"{self.live_server_url}/router/any/adslkjgklasdjhfah/6789543256/"
@@ -595,7 +605,15 @@ class ComponentTests(ChannelsLiveServerTestCase):
                 path.get_attribute("data-path"),
             )
             string = new_page.query_selector("#router-string")
-            self.assertEqual("Path 12", string.text_content())
+            self.assertEqual("/router/any/<any:name>", string.text_content())
+
+            new_page.goto(f"{self.live_server_url}/router/two/123/abc/")
+            path = new_page.wait_for_selector("#router-path")
+            self.assertIn("/router/two/123/abc/", path.get_attribute("data-path"))
+            string = new_page.query_selector("#router-string")
+            self.assertEqual(
+                "/router/two/<int:value>/<str:value2>/", string.text_content()
+            )
 
         finally:
             new_page.close()
