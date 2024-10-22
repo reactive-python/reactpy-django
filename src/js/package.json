@@ -20,7 +20,7 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
-    "@pyscript/core": "^0.6.7",
+    "@pyscript/core": "^0.4.56",
     "@reactpy/client": "^0.3.1",
     "@rollup/plugin-typescript": "^12.1.1",
     "morphdom": "^2.7.4",

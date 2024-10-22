@@ -14,7 +14,7 @@ class ReactPyLayoutHandler:
         self.uuid = uuid
 
     @staticmethod
-    def apply_update(update, root_model):
+    def update_model(update, root_model):
         """Apply an update ReactPy's internal DOM model."""
         from jsonpointer import set_pointer
 
@@ -23,21 +23,22 @@ class ReactPyLayoutHandler:
         else:
             root_model.update(update["model"])
 
-    def render(self, layout, model):
+    def render_html(self, layout, model):
         """Submit ReactPy's internal DOM model into the HTML DOM."""
-        import js
         from pyscript.js_modules import morphdom
+
+        import js
 
         # Create a new container to render the layout into
         container = js.document.getElementById(f"pyscript-{self.uuid}")
-        temp_container = container.cloneNode(False)
-        self.build_element_tree(layout, temp_container, model)
+        temp_root_container = container.cloneNode(False)
+        self.build_element_tree(layout, temp_root_container, model)
 
         # Use morphdom to update the DOM
-        morphdom.default(container, temp_container)
+        morphdom.default(container, temp_root_container)
 
         # Remove the cloned container to prevent memory leaks
-        temp_container.remove()
+        temp_root_container.remove()
 
     def build_element_tree(self, layout, parent, model):
         """Recursively build an element tree, starting from the root component."""
@@ -131,8 +132,8 @@ class ReactPyLayoutHandler:
         self.delete_old_workspaces()
         root_model: dict = {}
 
-        async with Layout(workspace_function()) as layout:
+        async with Layout(workspace_function()) as root_layout:
             while True:
-                update = await layout.render()
-                self.apply_update(update, root_model)
-                self.render(layout, root_model)
+                update = await root_layout.render()
+                self.update_model(update, root_model)
+                self.render_html(root_layout, root_model)
