@@ -29,8 +29,6 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        super().setUpClass()
-
         # Repurposed from ChannelsLiveServerTestCase._pre_setup
         for connection in connections.all():
             if cls._is_in_memory_db(cls, connection):
@@ -96,8 +94,6 @@ class ComponentTests(ChannelsLiveServerTestCase):
                 database=db_name,
                 reset_sequences=False,
             )
-
-        super().tearDownClass()
 
     def _pre_setup(self):
         """Handled manually in `setUpClass` to speed things up."""
