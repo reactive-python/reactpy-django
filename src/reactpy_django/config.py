@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.cache import DEFAULT_CACHE_ALIAS
 from django.db import DEFAULT_DB_ALIAS
 from django.views import View
-from reactpy.config import REACTPY_DEBUG_MODE
+from reactpy.config import REACTPY_DEBUG_MODE as _REACTPY_DEBUG_MODE
 from reactpy.core.types import ComponentConstructor
 
 from reactpy_django.types import (
@@ -17,24 +17,17 @@ from reactpy_django.types import (
 from reactpy_django.utils import import_dotted_path
 
 # Non-configurable values
-REACTPY_DEBUG_MODE.set_current(getattr(settings, "DEBUG"))
+_REACTPY_DEBUG_MODE.set_current(getattr(settings, "DEBUG"))
+REACTPY_DEBUG_MODE = _REACTPY_DEBUG_MODE.current
 REACTPY_REGISTERED_COMPONENTS: dict[str, ComponentConstructor] = {}
 REACTPY_FAILED_COMPONENTS: set[str] = set()
 REACTPY_REGISTERED_IFRAME_VIEWS: dict[str, Callable | View] = {}
-
-
-# Remove in a future release
-REACTPY_WEBSOCKET_URL = getattr(
-    settings,
-    "REACTPY_WEBSOCKET_URL",
-    "reactpy/",
-)
 
 # Configurable through Django settings.py
 REACTPY_URL_PREFIX: str = getattr(
     settings,
     "REACTPY_URL_PREFIX",
-    REACTPY_WEBSOCKET_URL,
+    "reactpy/",
 ).strip("/")
 REACTPY_SESSION_MAX_AGE: int = getattr(
     settings,

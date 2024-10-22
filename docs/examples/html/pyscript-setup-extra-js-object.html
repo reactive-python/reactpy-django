@@ -1,0 +1,14 @@
+{% load reactpy %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ReactPy</title>
+    {% pyscript_setup extra_js=my_extra_js_object %}
+</head>
+
+<body>
+    {% component "example_project.my_app.components.root.py" %}
+</body>
+
+</html>

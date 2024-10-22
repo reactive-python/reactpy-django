@@ -71,7 +71,7 @@ Dotted path to the Django authentication backend to use for ReactPy components. 
 
 Enabling this will cause component WebSocket connections to automatically [re-login](https://channels.readthedocs.io/en/latest/topics/authentication.html#how-to-log-a-user-in-out) users that are already authenticated.
 
-This is useful to continuously update `#!python last_login` timestamps and refresh the [Django login session](https://docs.djangoproject.com/en/dev/topics/http/sessions/).
+This is useful to continuously update `#!python last_login` timestamps and refresh the [Django login session](https://docs.djangoproject.com/en/stable/topics/http/sessions/).
 
 ---
 
@@ -105,7 +105,7 @@ If configuring this value, it is mandatory to enable our database router like su
 
 Cache used by ReactPy, typically for caching disk operations.
 
-We recommend using [`redis`](https://docs.djangoproject.com/en/dev/topics/cache/#redis), [`memcache`](https://docs.djangoproject.com/en/dev/topics/cache/#memcached), or [`local-memory caching`](https://docs.djangoproject.com/en/dev/topics/cache/#local-memory-caching).
+We recommend using [`redis`](https://docs.djangoproject.com/en/stable/topics/cache/#redis), [`memcache`](https://docs.djangoproject.com/en/stable/topics/cache/#memcached), or [`local-memory caching`](https://docs.djangoproject.com/en/stable/topics/cache/#local-memory-caching).
 
 ---
 
@@ -151,9 +151,6 @@ During pre-rendering, there are some key differences in behavior:
 2. All [`connection` hooks](https://reactive-python.github.io/reactpy-django/latest/reference/hooks/#connection-hooks) will provide HTTP variants.
 3. The component will be non-interactive until a WebSocket connection is formed.
 4. The component is re-rendered once a WebSocket connection is formed.
-
-<!-- TODO: The comment below will become true when ReactPy no longer strips scripts from the DOM -->
-<!-- 4. `#!python html.script` elements are executed twice (pre-render and post-render). -->
 
 You can use the `#!python prerender` argument in your [template tag](../reference/template-tag.md#component) to manually override this default.
 

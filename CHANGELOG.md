@@ -28,7 +28,9 @@ Using the following categories, list your changes in this order:
 
 ### Security
 -   for vulnerability fixes.
- -->
+
+Don't forget to remove deprecated code on each major release!
+-->
 
 <!--changelog-start-->
 
@@ -36,7 +38,47 @@ Using the following categories, list your changes in this order:
 
 ### Changed
 
-- Use `ReactDOM.createRoot` instead of the deprecated `ReactDOM.render`
+-   Now using ReactPy-Router v1 for URL routing, which comes with a slightly different API than before.
+-   Removed dependency on `aiofile`.
+
+### Removed
+
+-   Removed the following **deprecated** features:
+    -   The `compatibility` argument on `reactpy_django.components.view_to_component`
+    -   `reactpy_django.components.view_to_component` **usage as a decorator**
+    -   `reactpy_django.decorators.auth_required`
+    -   `reactpy_django.REACTPY_WEBSOCKET_PATH`
+    -   `settings.py:REACTPY_WEBSOCKET_URL`
+
+## [4.0.0] - 2024-06-22
+
+### Added
+
+-   Client-side Python components can now be rendered via the new `{% pyscript_component %}` template tag
+    -   You must first call the `{% pyscript_setup %}` template tag to load PyScript dependencies
+-   Client-side components can be embedded into existing server-side components via `reactpy_django.components.pyscript_component`.
+-   Tired of writing JavaScript? You can now write PyScript code that runs directly within client browser via the `reactpy_django.html.pyscript` element.
+    -   This is a viable substitution for most JavaScript code.
+
+### Changed
+
+-   New syntax for `use_query` and `use_mutation` hooks. Here's a quick comparison of the changes:
+
+    ```python
+    query = use_query(QueryOptions(thread_sensitive=True), get_items, foo="bar") # Old
+    query = use_query(get_items, {"foo":"bar"}, thread_sensitive=True) # New
+
+    mutation = use_mutation(MutationOptions(thread_sensitive=True), remove_item) # Old
+    mutation = use_mutation(remove_item, thread_sensitive=True) # New
+    ```
+
+### Removed
+
+-   `QueryOptions` and `MutationOptions` have been removed. The value contained within these objects are now passed directly into the hook.
+
+### Fixed
+
+-   Resolved a bug where Django-ReactPy would not properly detect `settings.py:DEBUG`.
 
 ## [3.8.1] - 2024-05-07
 
@@ -82,8 +124,8 @@ Using the following categories, list your changes in this order:
 -   New Django `User` related features!
     -   `reactpy_django.hooks.use_user` can be used to access the current user.
     -   `reactpy_django.hooks.use_user_data` provides a simplified interface for storing user key-value data.
-    -   `reactpy_django.decorators.user_passes_test` is inspired by the [equivalent Django decorator](http://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test), but ours works with ReactPy components.
-    -   `settings.py:REACTPY_AUTO_RELOGIN` will cause component WebSocket connections to automatically [re-login](https://channels.readthedocs.io/en/latest/topics/authentication.html#how-to-log-a-user-in-out) users that are already authenticated. This is useful to continuously update `last_login` timestamps and refresh the [Django login session](https://docs.djangoproject.com/en/dev/topics/http/sessions/).
+    -   `reactpy_django.decorators.user_passes_test` is inspired by the [equivalent Django decorator](http://docs.djangoproject.com/en/stable/topics/auth/default/#django.contrib.auth.decorators.user_passes_test), but ours works with ReactPy components.
+    -   `settings.py:REACTPY_AUTO_RELOGIN` will cause component WebSocket connections to automatically [re-login](https://channels.readthedocs.io/en/latest/topics/authentication.html#how-to-log-a-user-in-out) users that are already authenticated. This is useful to continuously update `last_login` timestamps and refresh the [Django login session](https://docs.djangoproject.com/en/stable/topics/http/sessions/).
 
 ### Changed
 
@@ -473,7 +515,8 @@ Using the following categories, list your changes in this order:
 
 -   Support for IDOM within the Django
 
-[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/3.8.1...HEAD
+[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/4.0.0...HEAD
+[4.0.0]: https://github.com/reactive-python/reactpy-django/compare/3.8.1...4.0.0
 [3.8.1]: https://github.com/reactive-python/reactpy-django/compare/3.8.0...3.8.1
 [3.8.0]: https://github.com/reactive-python/reactpy-django/compare/3.7.0...3.8.0
 [3.7.0]: https://github.com/reactive-python/reactpy-django/compare/3.6.0...3.7.0

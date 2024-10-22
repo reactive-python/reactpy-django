@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Any, Callable, Sequence, Union, cast, overload
+from typing import Any, Callable, Sequence, Union, cast
 from urllib.parse import urlencode
-from warnings import warn
+from uuid import uuid4
 
 from django.contrib.staticfiles.finders import find
 from django.core.cache import caches
@@ -12,48 +12,28 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.views import View
 from reactpy import component, hooks, html, utils
-from reactpy.types import Key, VdomDict
+from reactpy.types import ComponentType, Key, VdomDict
 
 from reactpy_django.exceptions import ViewNotRegisteredError
-from reactpy_django.utils import generate_obj_name, import_module, render_view
+from reactpy_django.html import pyscript
+from reactpy_django.utils import (
+    generate_obj_name,
+    import_module,
+    render_pyscript_template,
+    render_view,
+    vdom_or_component_to_string,
+)
 
 
-# Type hints for:
-#   1. example = view_to_component(my_view, ...)
-#   2. @view_to_component
-@overload
 def view_to_component(
     view: Callable | View | str,
-    compatibility: bool = False,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
 ) -> Any:
-    ...
-
-
-# Type hints for:
-#   1. @view_to_component(...)
-@overload
-def view_to_component(
-    view: None = ...,
-    compatibility: bool = False,
-    transforms: Sequence[Callable[[VdomDict], Any]] = (),
-    strict_parsing: bool = True,
-) -> Callable[[Callable], Any]:
-    ...
-
-
-def view_to_component(
-    view: Callable | View | str | None = None,
-    compatibility: bool = False,
-    transforms: Sequence[Callable[[VdomDict], Any]] = (),
-    strict_parsing: bool = True,
-) -> Any | Callable[[Callable], Any]:
     """Converts a Django view to a ReactPy component.
 
     Keyword Args:
         view: The view to convert, or the view's dotted path as a string.
-        compatibility: **DEPRECATED.** Use `view_to_iframe` instead.
         transforms: A list of functions that transforms the newly generated VDOM. \
             The functions will be called on each VDOM node.
         strict_parsing: If True, an exception will be generated if the HTML does not \
@@ -63,37 +43,23 @@ def view_to_component(
         A function that takes `request, *args, key, **kwargs` and returns a ReactPy component.
     """
 
-    def decorator(view: Callable | View | str):
-        if not view:
-            raise ValueError("A view must be provided to `view_to_component`")
-
-        def constructor(
-            request: HttpRequest | None = None,
-            *args,
-            key: Key | None = None,
-            **kwargs,
-        ):
-            return _view_to_component(
-                view=view,
-                compatibility=compatibility,
-                transforms=transforms,
-                strict_parsing=strict_parsing,
-                request=request,
-                args=args,
-                kwargs=kwargs,
-                key=key,
-            )
-
-        return constructor
-
-    if not view:
-        warn(
-            "Using `view_to_component` as a decorator is deprecated. "
-            "This functionality will be removed in a future version.",
-            DeprecationWarning,
+    def constructor(
+        request: HttpRequest | None = None,
+        *args,
+        key: Key | None = None,
+        **kwargs,
+    ):
+        return _view_to_component(
+            view=view,
+            transforms=transforms,
+            strict_parsing=strict_parsing,
+            request=request,
+            args=args,
+            kwargs=kwargs,
+            key=key,
         )
 
-    return decorator(view) if view else decorator
+    return constructor
 
 
 def view_to_iframe(
@@ -148,10 +114,32 @@ def django_js(static_path: str, key: Key | None = None):
     return _django_js(static_path=static_path, key=key)
 
 
+def pyscript_component(
+    *file_paths: str,
+    initial: str | VdomDict | ComponentType = "",
+    root: str = "root",
+):
+    """
+    Args:
+        file_paths: File path to your client-side component. If multiple paths are \
+            provided, the contents are automatically merged.
+
+    Kwargs:
+        initial: The initial HTML that is displayed prior to the PyScript component \
+            loads. This can either be a string containing raw HTML, a \
+            `#!python reactpy.html` snippet, or a non-interactive component.
+        root: The name of the root component function.
+    """
+    return _pyscript_component(
+        *file_paths,
+        initial=initial,
+        root=root,
+    )
+
+
 @component
 def _view_to_component(
     view: Callable | View | str,
-    compatibility: bool,
     transforms: Sequence[Callable[[VdomDict], Any]],
     strict_parsing: bool,
     request: HttpRequest | None,
@@ -180,10 +168,6 @@ def _view_to_component(
     )
     async def async_render():
         """Render the view in an async hook to avoid blocking the main thread."""
-        # Compatibility mode doesn't require a traditional render
-        if compatibility:
-            return
-
         # Render the view
         response = await render_view(resolved_view, _request, _args, _kwargs)
         set_converted_view(
@@ -194,17 +178,6 @@ def _view_to_component(
                 strict=strict_parsing,
             )
         )
-
-    # Render in compatibility mode, if needed
-    if compatibility:
-        # Warn the user that compatibility mode is deprecated
-        warn(
-            "view_to_component(compatibility=True) is deprecated and will be removed in a future version. "
-            "Please use `view_to_iframe` instead.",
-            DeprecationWarning,
-        )
-
-        return view_to_iframe(resolved_view)(*_args, **_kwargs)
 
     # Return the view if it's been rendered via the `async_render` hook
     return converted_view
@@ -284,3 +257,29 @@ def _cached_static_contents(static_path: str) -> str:
         )
 
     return file_contents
+
+
+@component
+def _pyscript_component(
+    *file_paths: str,
+    initial: str | VdomDict | ComponentType = "",
+    root: str = "root",
+):
+    rendered, set_rendered = hooks.use_state(False)
+    uuid = uuid4().hex.replace("-", "")
+    initial = vdom_or_component_to_string(initial, uuid=uuid)
+    executor = render_pyscript_template(file_paths, uuid, root)
+
+    if not rendered:
+        # FIXME: This is needed to properly re-render PyScript during a WebSocket
+        # disconnection / reconnection. There may be a better way to do this in the future.
+        set_rendered(True)
+        return None
+
+    return html._(
+        html.div(
+            {"id": f"pyscript-{uuid}", "className": "pyscript", "data-uuid": uuid},
+            initial,
+        ),
+        pyscript({"async": ""}, executor),
+    )

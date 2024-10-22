@@ -1,6 +1,5 @@
 from reactpy import component, html
 from reactpy_django.hooks import use_mutation
-from reactpy_django.types import MutationOptions
 
 
 def execute_thread_safe_mutation(text):
@@ -11,8 +10,8 @@ def execute_thread_safe_mutation(text):
 @component
 def my_component():
     item_mutation = use_mutation(
-        MutationOptions(thread_sensitive=False),
         execute_thread_safe_mutation,
+        thread_sensitive=False,
     )
 
     def submit_event(event):

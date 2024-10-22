@@ -8,13 +8,123 @@ We supply some pre-designed that components can be used to help simplify develop
 
 ---
 
+## PyScript Component
+
+This allows you to embedded any number of client-side PyScript components within traditional ReactPy components.
+
+{% include-markdown "../reference/template-tag.md" start="<!--pyscript-def-start-->" end="<!--pyscript-def-end-->" %}
+
+{% include-markdown "../reference/template-tag.md" start="<!--pyscript-raw-text-start-->" end="<!--pyscript-raw-text-end-->" %}
+
+=== "components.py"
+
+    ```python
+    {% include "../../examples/python/pyscript-ssr-parent.py" %}
+    ```
+
+=== "root.py"
+
+    ```python
+    {% include "../../examples/python/pyscript-ssr-child.py" %}
+    ```
+
+=== "my_template.html"
+
+    ```jinja
+    {% include "../../examples/html/pyscript-ssr-parent.html" %}
+    ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    | Name | Type | Description | Default |
+    | --- | --- | --- | --- |
+    | `#!python *file_paths` | `#!python str` | File path to your client-side component. If multiple paths are provided, the contents are automatically merged. | N/A |
+    | `#!python initial` | `#!python str | VdomDict | ComponentType` | The initial HTML that is displayed prior to the PyScript component loads. This can either be a string containing raw HTML, a `#!python reactpy.html` snippet, or a non-interactive component. | `#!python ""` |
+    | `#!python root` | `#!python str` | The name of the root component function. | `#!python "root"` |
+
+<!--pyscript-setup-required-start-->
+
+??? warning "You must call `pyscript_setup` in your Django template before using this tag!"
+
+    This requires using of the [`#!jinja {% pyscript_setup %}` template tag](./template-tag.md#pyscript-setup) to initialize PyScript on the client.
+
+    === "my_template.html"
+
+        ```jinja
+        {% include "../../examples/html/pyscript-setup.html" %}
+        ```
+
+<!--pyscript-setup-required-end-->
+
+{% include-markdown "../reference/template-tag.md" start="<!--pyscript-js-exec-start-->" end="<!--pyscript-js-exec-end-->" %}
+
+{% include-markdown "../reference/template-tag.md" start="<!--pyscript-multifile-start-->" end="<!--pyscript-multifile-end-->" trailing-newlines=false preserve-includer-indent=false %}
+
+    === "components.py"
+
+        ```python
+        {% include "../../examples/python/pyscript-component-multiple-files-root.py" %}
+        ```
+
+    === "root.py"
+
+        ```python
+        {% include "../../examples/python/pyscript-multiple-files-root.py" %}
+        ```
+
+    === "child.py"
+
+        ```python
+        {% include "../../examples/python/pyscript-multiple-files-child.py" %}
+        ```
+
+??? question "How do I display something while the component is loading?"
+
+    You can configure the `#!python initial` keyword to display HTML while your PyScript component is loading.
+
+    The value for `#!python initial` is most commonly be a `#!python reactpy.html` snippet or a non-interactive `#!python @component`.
+
+    === "components.py"
+
+        ```python
+        {% include "../../examples/python/pyscript-component-initial-object.py" %}
+        ```
+
+    However, you can also use a string containing raw HTML.
+
+    === "components.py"
+
+        ```python
+        {% include "../../examples/python/pyscript-component-initial-string.py" %}
+        ```
+
+??? question "Can I use a different name for my root component?"
+
+    Yes, you can use the `#!python root` keyword to specify a different name for your root function.
+
+    === "components.py"
+
+        ```python
+        {% include "../../examples/python/pyscript-component-root.py" %}
+        ```
+
+    === "main.py"
+
+        ```python
+        {% include "../../examples/python/pyscript-root.py" %}
+        ```
+
+---
+
 ## View To Component
 
 Automatically convert a Django view into a component.
 
 At this time, this works best with static views with no interactivity.
 
-Compatible with sync or async [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/).
+Compatible with sync or async [Function Based Views](https://docs.djangoproject.com/en/stable/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/stable/topics/class-based-views/).
 
 === "components.py"
 
@@ -144,7 +254,7 @@ Automatically convert a Django view into an [`iframe` element](https://www.techt
 
 The contents of this `#!python iframe` is handled entirely by traditional Django view rendering. While this solution is compatible with more views than `#!python view_to_component`, it comes with different limitations.
 
-Compatible with sync or async [Function Based Views](https://docs.djangoproject.com/en/dev/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/dev/topics/class-based-views/).
+Compatible with sync or async [Function Based Views](https://docs.djangoproject.com/en/stable/topics/http/views/) and [Class Based Views](https://docs.djangoproject.com/en/stable/topics/class-based-views/).
 
 === "components.py"
 
@@ -273,7 +383,7 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
 
 ## Django CSS
 
-Allows you to defer loading a CSS stylesheet until a component begins rendering. This stylesheet must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).
+Allows you to defer loading a CSS stylesheet until a component begins rendering. This stylesheet must be stored within [Django's static files](https://docs.djangoproject.com/en/stable/howto/static-files/).
 
 === "components.py"
 
@@ -326,11 +436,11 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 
 ## Django JS
 
-Allows you to defer loading JavaScript until a component begins rendering. This JavaScript must be stored within [Django's static files](https://docs.djangoproject.com/en/dev/howto/static-files/).
+Allows you to defer loading JavaScript until a component begins rendering. This JavaScript must be stored within [Django's static files](https://docs.djangoproject.com/en/stable/howto/static-files/).
 
 <!--
-TODO: This is no longer true since we don't insert elements on the page via JSON Patch anymore.
-However, we may go back to diffing at some point in the future.
+TODO: The following is no longer true since we don't insert elements on the page via JSON Patch anymore.
+However, we may go back to diffing at some point in the future so this is kept here for now.
 
 !!! warning "Pitfall"
 

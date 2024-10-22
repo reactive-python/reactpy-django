@@ -1,7 +1,6 @@
 from example.models import TodoItem
 from reactpy import component
 from reactpy_django.hooks import use_query
-from reactpy_django.types import QueryOptions
 
 
 def get_model_with_relationships():
@@ -17,10 +16,8 @@ def get_model_with_relationships():
 @component
 def my_component():
     query = use_query(
-        QueryOptions(
-            postprocessor_kwargs={"many_to_many": False, "many_to_one": False}
-        ),
         get_model_with_relationships,
+        postprocessor_kwargs={"many_to_many": False, "many_to_one": False},
     )
 
     if query.loading or query.error or not query.data:

@@ -1,5 +1,6 @@
 from __future__ import annotations, print_function
 
+import shutil
 import sys
 import traceback
 from distutils import log
@@ -16,7 +17,9 @@ from setuptools.command.sdist import sdist
 name = "reactpy_django"
 root_dir = Path(__file__).parent
 src_dir = root_dir / "src"
+js_dir = src_dir / "js"
 package_dir = src_dir / name
+static_dir = package_dir / "static" / name
 
 
 # -----------------------------------------------------------------------------
@@ -97,21 +100,36 @@ package["long_description_content_type"] = "text/markdown"
 def build_javascript_first(build_cls: type):
     class Command(build_cls):
         def run(self):
-            js_dir = str(src_dir / "js")
 
             log.info("Installing Javascript...")
-            result = npm.call(["install"], cwd=js_dir)
+            result = npm.call(["install"], cwd=str(js_dir))
             if result != 0:
                 log.error(traceback.format_exc())
                 log.error("Failed to install Javascript")
                 raise RuntimeError("Failed to install Javascript")
 
             log.info("Building Javascript...")
-            result = npm.call(["run", "build"], cwd=js_dir)
+            result = npm.call(["run", "build"], cwd=str(js_dir))
             if result != 0:
                 log.error(traceback.format_exc())
                 log.error("Failed to build Javascript")
                 raise RuntimeError("Failed to build Javascript")
+
+            log.info("Copying @pyscript/core distribution")
+            pyscript_dist = js_dir / "node_modules" / "@pyscript" / "core" / "dist"
+            pyscript_static_dir = static_dir / "pyscript"
+            if not pyscript_static_dir.exists():
+                pyscript_static_dir.mkdir()
+            for file in pyscript_dist.iterdir():
+                shutil.copy(file, pyscript_static_dir / file.name)
+
+            log.info("Copying Morphdom distribution")
+            morphdom_dist = js_dir / "node_modules" / "morphdom" / "dist"
+            morphdom_static_dir = static_dir / "morphdom"
+            if not morphdom_static_dir.exists():
+                morphdom_static_dir.mkdir()
+            for file in morphdom_dist.iterdir():
+                shutil.copy(file, morphdom_static_dir / file.name)
 
             log.info("Successfully built Javascript")
             super().run()

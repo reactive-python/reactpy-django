@@ -1,6 +1,9 @@
 from reactpy import component, html
 
 
+def video(*_, **__): ...
+
+
 @component
 def video_list(videos, empty_heading):
     count = len(videos)
@@ -11,5 +14,5 @@ def video_list(videos, empty_heading):
 
     return html.section(
         html.h2(heading),
-        [video(video) for video in videos],
+        [video(x, key=x.id) for x in videos],
     )

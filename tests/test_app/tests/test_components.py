@@ -12,6 +12,7 @@ from django.core.management import call_command
 from django.db import connections
 from django.test.utils import modify_settings
 from playwright.sync_api import TimeoutError, sync_playwright
+
 from reactpy_django.models import ComponentSession
 from reactpy_django.utils import strtobool
 
@@ -21,6 +22,7 @@ CLICK_DELAY = 250 if strtobool(GITHUB_ACTIONS) else 25  # Delay in miliseconds.
 
 class ComponentTests(ChannelsLiveServerTestCase):
     from django.db import DEFAULT_DB_ALIAS
+
     from reactpy_django import config
 
     databases = {"default"}
@@ -65,6 +67,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
         headless = strtobool(os.environ.get("PLAYWRIGHT_HEADLESS", GITHUB_ACTIONS))
         cls.browser = cls.playwright.chromium.launch(headless=bool(headless))
         cls.page = cls.browser.new_page()
+        cls.page.set_default_timeout(5000)
 
     @classmethod
     def tearDownClass(cls):
@@ -74,14 +77,14 @@ class ComponentTests(ChannelsLiveServerTestCase):
         cls.playwright.stop()
 
         # Close the other server processes
+        cls._server_process.terminate()
+        cls._server_process.join()
         cls._server_process2.terminate()
         cls._server_process2.join()
         cls._server_process3.terminate()
         cls._server_process3.join()
 
         # Repurposed from ChannelsLiveServerTestCase._post_teardown
-        cls._server_process.terminate()
-        cls._server_process.join()
         cls._live_server_modified_settings.disable()
         for db_name in {"default", config.REACTPY_DATABASE}:
             call_command(
@@ -94,13 +97,11 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
     def _pre_setup(self):
         """Handled manually in `setUpClass` to speed things up."""
-        pass
 
     def _post_teardown(self):
         """Handled manually in `tearDownClass` to prevent TransactionTestCase from doing
         database flushing. This is needed to prevent a `SynchronousOnlyOperation` from
         occuring due to a bug within `ChannelsLiveServerTestCase`."""
-        pass
 
     def setUp(self):
         if self.page.url == "about:blank":
@@ -121,7 +122,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
         self.page.locator("#object_in_templatetag[data-success=true]").wait_for()
 
     def test_component_from_web_module(self):
-        self.page.wait_for_selector("#simple-button")
+        self.page.wait_for_selector("#button-from-js-module")
 
     def test_use_connection(self):
         self.page.locator("#use-connection[data-success=true]").wait_for()
@@ -163,24 +164,6 @@ class ComponentTests(ChannelsLiveServerTestCase):
             timeout=1,
         )
         self.page.wait_for_selector("#authorized-user")
-
-    def test_unauthorized_user_test(self):
-        self.assertRaises(
-            TimeoutError,
-            self.page.wait_for_selector,
-            "#unauthorized-user-test",
-            timeout=1,
-        )
-        self.page.wait_for_selector("#unauthorized-user-test-fallback")
-
-    def test_authorized_user_test(self):
-        self.assertRaises(
-            TimeoutError,
-            self.page.wait_for_selector,
-            "#authorized-user-test-fallback",
-            timeout=1,
-        )
-        self.page.wait_for_selector("#authorized-user-test")
 
     def test_relational_query(self):
         self.page.locator("#relational-query[data-success=true]").wait_for()
@@ -260,52 +243,34 @@ class ComponentTests(ChannelsLiveServerTestCase):
     def test_view_to_component_kwargs(self):
         self._click_btn_and_check_success("view_to_component_kwargs")
 
-    def test_view_to_component_sync_func_compatibility(self):
-        self.page.frame_locator(
-            "#view_to_component_sync_func_compatibility > iframe"
-        ).locator(
-            "#view_to_component_sync_func_compatibility[data-success=true]"
+    def test_view_to_iframe_sync_func(self):
+        self.page.frame_locator("#view_to_iframe_sync_func > iframe").locator(
+            "#view_to_iframe_sync_func[data-success=true]"
         ).wait_for()
 
-    def test_view_to_component_async_func_compatibility(self):
-        self.page.frame_locator(
-            "#view_to_component_async_func_compatibility > iframe"
-        ).locator(
-            "#view_to_component_async_func_compatibility[data-success=true]"
+    def test_view_to_iframe_async_func(self):
+        self.page.frame_locator("#view_to_iframe_async_func > iframe").locator(
+            "#view_to_iframe_async_func[data-success=true]"
         ).wait_for()
 
-    def test_view_to_component_sync_class_compatibility(self):
-        self.page.frame_locator(
-            "#view_to_component_sync_class_compatibility > iframe"
-        ).locator(
-            "#ViewToComponentSyncClassCompatibility[data-success=true]"
+    def test_view_to_iframe_sync_class(self):
+        self.page.frame_locator("#view_to_iframe_sync_class > iframe").locator(
+            "#ViewToIframeSyncClass[data-success=true]"
         ).wait_for()
 
-    def test_view_to_component_async_class_compatibility(self):
-        self.page.frame_locator(
-            "#view_to_component_async_class_compatibility > iframe"
-        ).locator(
-            "#ViewToComponentAsyncClassCompatibility[data-success=true]"
+    def test_view_to_iframe_async_class(self):
+        self.page.frame_locator("#view_to_iframe_async_class > iframe").locator(
+            "#ViewToIframeAsyncClass[data-success=true]"
         ).wait_for()
 
-    def test_view_to_component_template_view_class_compatibility(self):
-        self.page.frame_locator(
-            "#view_to_component_template_view_class_compatibility > iframe"
-        ).locator(
-            "#ViewToComponentTemplateViewClassCompatibility[data-success=true]"
+    def test_view_to_iframe_template_view_class(self):
+        self.page.frame_locator("#view_to_iframe_template_view_class > iframe").locator(
+            "#ViewToIframeTemplateViewClass[data-success=true]"
         ).wait_for()
 
     def test_view_to_iframe_args(self):
         self.page.frame_locator("#view_to_iframe_args > iframe").locator(
             "#view_to_iframe_args[data-success=Success]"
-        ).wait_for()
-
-    def test_view_to_component_decorator(self):
-        self.page.locator("#view_to_component_decorator[data-success=true]").wait_for()
-
-    def test_view_to_component_decorator_args(self):
-        self.page.locator(
-            "#view_to_component_decorator_args[data-success=true]"
         ).wait_for()
 
     def test_component_session_exists(self):
@@ -322,7 +287,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
     def test_component_session_missing(self):
         """No session should exist for components that don't have args/kwargs."""
-        component = self.page.locator("#simple-button")
+        component = self.page.locator("#button-from-js-module")
         component.wait_for()
         parent = component.locator("..")
         session_id = parent.get_attribute("id")
@@ -577,26 +542,44 @@ class ComponentTests(ChannelsLiveServerTestCase):
             new_page.goto(f"{self.live_server_url}/router/")
             path = new_page.wait_for_selector("#router-path")
             self.assertIn("/router/", path.get_attribute("data-path"))
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("/router/", string.text_content())
 
-            new_page.goto(f"{self.live_server_url}/router/any/123/")
+            new_page.goto(f"{self.live_server_url}/router/subroute/")
             path = new_page.wait_for_selector("#router-path")
-            self.assertIn("/router/any/123/", path.get_attribute("data-path"))
+            self.assertIn("/router/subroute/", path.get_attribute("data-path"))
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("subroute/", string.text_content())
+
+            new_page.goto(f"{self.live_server_url}/router/unspecified/123/")
+            path = new_page.wait_for_selector("#router-path")
+            self.assertIn("/router/unspecified/123/", path.get_attribute("data-path"))
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("/router/unspecified/<value>/", string.text_content())
 
             new_page.goto(f"{self.live_server_url}/router/integer/123/")
             path = new_page.wait_for_selector("#router-path")
             self.assertIn("/router/integer/123/", path.get_attribute("data-path"))
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("/router/integer/<int:value>/", string.text_content())
 
             new_page.goto(f"{self.live_server_url}/router/path/abc/123/")
             path = new_page.wait_for_selector("#router-path")
             self.assertIn("/router/path/abc/123/", path.get_attribute("data-path"))
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("/router/path/<path:value>/", string.text_content())
 
             new_page.goto(f"{self.live_server_url}/router/slug/abc-123/")
             path = new_page.wait_for_selector("#router-path")
             self.assertIn("/router/slug/abc-123/", path.get_attribute("data-path"))
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("/router/slug/<slug:value>/", string.text_content())
 
             new_page.goto(f"{self.live_server_url}/router/string/abc/")
             path = new_page.wait_for_selector("#router-path")
             self.assertIn("/router/string/abc/", path.get_attribute("data-path"))
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("/router/string/<str:value>/", string.text_content())
 
             new_page.goto(
                 f"{self.live_server_url}/router/uuid/123e4567-e89b-12d3-a456-426614174000/"
@@ -606,29 +589,27 @@ class ComponentTests(ChannelsLiveServerTestCase):
                 "/router/uuid/123e4567-e89b-12d3-a456-426614174000/",
                 path.get_attribute("data-path"),
             )
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("/router/uuid/<uuid:value>/", string.text_content())
 
-            new_page.goto(f"{self.live_server_url}/router/abc/")
+            new_page.goto(
+                f"{self.live_server_url}/router/any/adslkjgklasdjhfah/6789543256/"
+            )
             path = new_page.wait_for_selector("#router-path")
-            self.assertIn("/router/abc/", path.get_attribute("data-path"))
+            self.assertIn(
+                "/router/any/adslkjgklasdjhfah/6789543256/",
+                path.get_attribute("data-path"),
+            )
+            string = new_page.query_selector("#router-string")
+            self.assertEqual("/router/any/<any:name>", string.text_content())
 
             new_page.goto(f"{self.live_server_url}/router/two/123/abc/")
             path = new_page.wait_for_selector("#router-path")
             self.assertIn("/router/two/123/abc/", path.get_attribute("data-path"))
-
-            new_page.goto(f"{self.live_server_url}/router/star/one/")
-            path = new_page.wait_for_selector("#router-path")
-            self.assertIn("/router/star/one/", path.get_attribute("data-path"))
-
-            new_page.goto(
-                f"{self.live_server_url}/router/star/adslkjgklasdjhfah/6789543256/"
-            )
-            path = new_page.wait_for_selector("#router-path")
-            self.assertIn(
-                "/router/star/adslkjgklasdjhfah/6789543256/",
-                path.get_attribute("data-path"),
-            )
             string = new_page.query_selector("#router-string")
-            self.assertEqual("Path 12", string.text_content())
+            self.assertEqual(
+                "/router/two/<int:value>/<str:value2>/", string.text_content()
+            )
 
         finally:
             new_page.close()
@@ -676,5 +657,49 @@ class ComponentTests(ChannelsLiveServerTestCase):
             self.assertIsNotNone(receiver_2)
             self.assertIsNotNone(receiver_3)
 
+        finally:
+            new_page.close()
+
+    def test_pyscript_components(self):
+        new_page = self.browser.new_page()
+        try:
+            new_page.goto(f"{self.live_server_url}/pyscript/")
+            new_page.wait_for_selector("#hello-world-loading")
+            new_page.wait_for_selector("#hello-world")
+            new_page.wait_for_selector("#custom-root")
+            new_page.wait_for_selector("#multifile-parent")
+            new_page.wait_for_selector("#multifile-child")
+
+            new_page.wait_for_selector("#counter")
+            new_page.wait_for_selector("#counter pre[data-value='0']")
+            new_page.wait_for_selector("#counter .plus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#counter pre[data-value='1']")
+            new_page.wait_for_selector("#counter .plus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#counter pre[data-value='2']")
+            new_page.wait_for_selector("#counter .minus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#counter pre[data-value='1']")
+
+            new_page.wait_for_selector("#parent")
+            new_page.wait_for_selector("#child")
+            new_page.wait_for_selector("#child pre[data-value='0']")
+            new_page.wait_for_selector("#child .plus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#child pre[data-value='1']")
+            new_page.wait_for_selector("#child .plus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#child pre[data-value='2']")
+            new_page.wait_for_selector("#child .minus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#child pre[data-value='1']")
+
+            new_page.wait_for_selector("#parent-toggle")
+            new_page.wait_for_selector("#parent-toggle button").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#parent-toggle")
+            new_page.wait_for_selector("#parent-toggle pre[data-value='0']")
+            new_page.wait_for_selector("#parent-toggle .plus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#parent-toggle pre[data-value='1']")
+            new_page.wait_for_selector("#parent-toggle .plus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#parent-toggle pre[data-value='2']")
+            new_page.wait_for_selector("#parent-toggle .minus").click(delay=CLICK_DELAY)
+            new_page.wait_for_selector("#parent-toggle pre[data-value='1']")
+
+            new_page.wait_for_selector("#moment[data-success=true]")
         finally:
             new_page.close()
