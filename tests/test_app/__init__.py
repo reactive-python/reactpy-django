@@ -21,32 +21,39 @@ assert (
     == 0
 )
 
-# Make sure the current PyScript distribution is always available
-pyscript_dist = js_dir / "node_modules" / "@pyscript" / "core" / "dist"
-pyscript_static_dir = (
-    Path(__file__).parent.parent.parent
-    / "src"
-    / "reactpy_django"
-    / "static"
-    / "reactpy_django"
-    / "pyscript"
-)
-if not pyscript_static_dir.exists():
-    pyscript_static_dir.mkdir()
-for file in pyscript_dist.iterdir():
-    shutil.copy(file, pyscript_static_dir / file.name)
 
-# Make sure the current Morphdom distrubiton is always available
-morphdom_dist = js_dir / "node_modules" / "morphdom" / "dist"
-morphdom_static_dir = (
+# Make sure the test environment is always using the latest JS
+def copy_js_files(source_dir: Path, destination: Path) -> None:
+    if destination.exists():
+        shutil.rmtree(destination)
+    destination.mkdir()
+
+    for file in source_dir.iterdir():
+        if file.is_file():
+            shutil.copy(file, destination / file.name)
+        else:
+            copy_js_files(file, destination / file.name)
+
+
+# Copy PyScript
+copy_js_files(
+    js_dir / "node_modules" / "@pyscript" / "core" / "dist",
     Path(__file__).parent.parent.parent
     / "src"
     / "reactpy_django"
     / "static"
     / "reactpy_django"
-    / "morphdom"
+    / "pyscript",
 )
-if not morphdom_static_dir.exists():
-    morphdom_static_dir.mkdir()
-for file in morphdom_dist.iterdir():
-    shutil.copy(file, morphdom_static_dir / file.name)
+
+
+# Copy MorphDOM
+copy_js_files(
+    js_dir / "node_modules" / "morphdom" / "dist",
+    Path(__file__).parent.parent.parent
+    / "src"
+    / "reactpy_django"
+    / "static"
+    / "reactpy_django"
+    / "morphdom",
+)
