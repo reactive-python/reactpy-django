@@ -36,6 +36,10 @@ Don't forget to remove deprecated code on each major release!
 
 ## [Unreleased]
 
+-   Nothing (yet)!
+
+## [5.0.0] - 2024-10-22
+
 ### Changed
 
 -   Now using ReactPy-Router v1 for URL routing, which comes with a slightly different API than before.
@@ -515,7 +519,8 @@ Don't forget to remove deprecated code on each major release!
 
 -   Support for IDOM within the Django
 
-[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/4.0.0...HEAD
+[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/5.0.0...HEAD
+[5.0.0]: https://github.com/reactive-python/reactpy-django/compare/4.0.0...5.0.0
 [4.0.0]: https://github.com/reactive-python/reactpy-django/compare/3.8.1...4.0.0
 [3.8.1]: https://github.com/reactive-python/reactpy-django/compare/3.8.0...3.8.1
 [3.8.0]: https://github.com/reactive-python/reactpy-django/compare/3.7.0...3.8.0
