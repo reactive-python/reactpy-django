@@ -215,7 +215,6 @@ def _view_to_iframe(
         {
             "src": reverse("reactpy:view_to_iframe", args=[dotted_path]) + query_string,
             "style": {"border": "none"},
-            "onload": 'javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));',
             "loading": "lazy",
         }
         | extra_props

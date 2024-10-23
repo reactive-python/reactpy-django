@@ -18,6 +18,9 @@ jobs:
                 python-version: ["3.9", "3.10", "3.11", "3.12"]
         steps:
             - uses: actions/checkout@v4
+            - uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: latest
             - name: Use Python ${{ matrix.python-version }}
               uses: actions/setup-python@v5
               with:

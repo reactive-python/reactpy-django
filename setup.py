@@ -1,15 +1,17 @@
 from __future__ import annotations, print_function
 
 import shutil
+import subprocess
 import sys
 import traceback
-from distutils import log
+from logging import getLogger
 from pathlib import Path
 
-from nodejs import npm
 from setuptools import find_namespace_packages, setup
 from setuptools.command.develop import develop
 from setuptools.command.sdist import sdist
+
+log = getLogger(__name__)
 
 # -----------------------------------------------------------------------------
 # Basic Constants
@@ -97,19 +99,44 @@ package["long_description_content_type"] = "text/markdown"
 # ----------------------------------------------------------------------------
 # Build Javascript
 # ----------------------------------------------------------------------------
+def copy_js_files(source_dir: Path, destination: Path) -> None:
+    if destination.exists():
+        shutil.rmtree(destination)
+    destination.mkdir()
+
+    for file in source_dir.iterdir():
+        if file.is_file():
+            shutil.copy(file, destination / file.name)
+        else:
+            copy_js_files(file, destination / file.name)
+
+
 def build_javascript_first(build_cls: type):
     class Command(build_cls):
         def run(self):
 
             log.info("Installing Javascript...")
-            result = npm.call(["install"], cwd=str(js_dir))
+            result = subprocess.run(
+                ["bun", "install"], cwd=str(js_dir), check=True
+            ).returncode
             if result != 0:
                 log.error(traceback.format_exc())
                 log.error("Failed to install Javascript")
                 raise RuntimeError("Failed to install Javascript")
 
             log.info("Building Javascript...")
-            result = npm.call(["run", "build"], cwd=str(js_dir))
+            result = subprocess.run(
+                [
+                    "bun",
+                    "build",
+                    "./src/index.tsx",
+                    "--outfile",
+                    str(static_dir / "client.js"),
+                    "--minify",
+                ],
+                cwd=str(js_dir),
+                check=True,
+            ).returncode
             if result != 0:
                 log.error(traceback.format_exc())
                 log.error("Failed to build Javascript")
@@ -118,18 +145,12 @@ def build_javascript_first(build_cls: type):
             log.info("Copying @pyscript/core distribution")
             pyscript_dist = js_dir / "node_modules" / "@pyscript" / "core" / "dist"
             pyscript_static_dir = static_dir / "pyscript"
-            if not pyscript_static_dir.exists():
-                pyscript_static_dir.mkdir()
-            for file in pyscript_dist.iterdir():
-                shutil.copy(file, pyscript_static_dir / file.name)
+            copy_js_files(pyscript_dist, pyscript_static_dir)
 
             log.info("Copying Morphdom distribution")
             morphdom_dist = js_dir / "node_modules" / "morphdom" / "dist"
             morphdom_static_dir = static_dir / "morphdom"
-            if not morphdom_static_dir.exists():
-                morphdom_static_dir.mkdir()
-            for file in morphdom_dist.iterdir():
-                shutil.copy(file, morphdom_static_dir / file.name)
+            copy_js_files(morphdom_dist, morphdom_static_dir)
 
             log.info("Successfully built Javascript")
             super().run()
