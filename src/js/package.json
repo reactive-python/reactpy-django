@@ -12,7 +12,7 @@
     "prettier": "^3.3.3"
   },
   "dependencies": {
-    "@pyscript/core": "^0.5",
+    "@pyscript/core": "^0.6",
     "@reactpy/client": "^0.3.1",
     "morphdom": "^2.7.4"
   }
