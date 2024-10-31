@@ -11,8 +11,6 @@ from setuptools import find_namespace_packages, setup
 from setuptools.command.develop import develop
 from setuptools.command.sdist import sdist
 
-log = getLogger(__name__)
-
 # -----------------------------------------------------------------------------
 # Basic Constants
 # -----------------------------------------------------------------------------
@@ -22,6 +20,7 @@ src_dir = root_dir / "src"
 js_dir = src_dir / "js"
 package_dir = src_dir / name
 static_dir = package_dir / "static" / name
+log = getLogger(__name__)
 
 
 # -----------------------------------------------------------------------------
@@ -60,7 +59,10 @@ package = {
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         "Topic :: Multimedia :: Graphics",
+        "Topic :: Software Development :: Widget Sets",
+        "Topic :: Software Development :: User Interfaces",
         "Environment :: Web Environment",
+        "Typing :: Typed",
     ],
 }
 
