@@ -87,7 +87,7 @@ This is useful to continuously update `#!python last_login` timestamps and refre
 
 Multiprocessing-safe database used by ReactPy for database-backed hooks and features.
 
-If configuring this value, it is mandatory to enable our database router like such:
+If configuring this value, it is mandatory to configure Django to use the ReactPy database router:
 
 === "settings.py"
 
