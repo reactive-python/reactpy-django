@@ -1,4 +1,4 @@
-name: Publish Release Docs
+name: Publish Latest Docs
 
 on:
     release:

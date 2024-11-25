@@ -50,6 +50,6 @@ URL router that enables the ability to conditionally render other components bas
     | --- | --- |
     | `#!python VdomDict | None` | The matched component/path after it has been fully rendered. |
 
-??? question "How is this different from `#!python reactpy_router.simple.router`?"
+??? question "How is this different from `#!python reactpy_router.browser_router`?"
 
-    This component utilizes `reactpy-router` under the hood, but provides a more Django-like URL routing syntax.
+    The `django_router` component utilizes the same internals as `browser_router`, but provides a more Django-like URL routing syntax.

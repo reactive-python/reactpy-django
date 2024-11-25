@@ -160,7 +160,7 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
 
     - Requires manual intervention to change HTTP methods to anything other than `GET`.
     - ReactPy events cannot conveniently be attached to converted view HTML.
-    - Has no option to automatically intercept local anchor link (such as `#!html <a href='example/'></a>`) click events.
+    - Has no option to automatically intercept click events from hyperlinks (such as `#!html <a href='example/'></a>`).
 
 ??? question "How do I use this for Class Based Views?"
 
