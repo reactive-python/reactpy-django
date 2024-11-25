@@ -107,7 +107,7 @@ class ReactPyLayoutHandler:
             if value.startswith("user_workspace_")
         }
 
-        # Delete the workspace if it doesn't exist at this moment
+        # Delete any workspaces that are not being used
         for uuid in python_uuids - dom_uuids:
             task_name = f"task_{uuid}"
             if task_name in globals():

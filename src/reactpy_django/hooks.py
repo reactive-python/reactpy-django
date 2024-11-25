@@ -150,7 +150,7 @@ def use_query(
         try:
             # Run the query
             if asyncio.iscoroutinefunction(query):
-                new_data = await query(**kwargs)
+                new_data = await query(**kwargs)  # type: ignore[call-arg]
             else:
                 new_data = await database_sync_to_async(
                     query, thread_sensitive=thread_sensitive
@@ -219,7 +219,7 @@ def use_mutation(
 ) -> Mutation[FuncParams]:
     """This hook is used to modify data in the background, typically to create/update/delete \
     data from the Django ORM.
-        
+
     Mutation functions can `return False` to prevent executing your `refetch` function. All \
     other returns are ignored. Mutation functions can be sync or async.
 
@@ -318,7 +318,7 @@ def use_user_data(
     save_default_data: bool = False,
 ) -> UserData:
     """Get or set user data stored within the REACTPY_DATABASE.
-    
+
     Kwargs:
         default_data: A dictionary containing `{key: default_value}` pairs. \
             For computationally intensive defaults, your `default_value` \
