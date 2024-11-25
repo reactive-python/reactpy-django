@@ -19,6 +19,10 @@ Don't forget to remove deprecated code on each major release!
 
 ## [Unreleased]
 
+-   Nothing (yet)!
+
+## [5.1.0] - 2024-11-24
+
 ### Added
 
 -   `settings.py:REACTPY_ASYNC_RENDERING` to enable asynchronous rendering of components.
@@ -508,7 +512,8 @@ Don't forget to remove deprecated code on each major release!
 
 -   Support for IDOM within the Django
 
-[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/5.0.0...HEAD
+[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/5.1.0...HEAD
+[5.1.0]: https://github.com/reactive-python/reactpy-django/compare/5.0.0...5.1.0
 [5.0.0]: https://github.com/reactive-python/reactpy-django/compare/4.0.0...5.0.0
 [4.0.0]: https://github.com/reactive-python/reactpy-django/compare/3.8.1...4.0.0
 [3.8.1]: https://github.com/reactive-python/reactpy-django/compare/3.8.0...3.8.1

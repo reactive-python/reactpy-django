@@ -13,7 +13,7 @@ from reactpy_django import (
 )
 from reactpy_django.websocket.paths import REACTPY_WEBSOCKET_ROUTE
 
-__version__ = "5.0.0"
+__version__ = "5.1.0"
 __all__ = [
     "REACTPY_WEBSOCKET_ROUTE",
     "html",
