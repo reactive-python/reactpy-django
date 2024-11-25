@@ -36,7 +36,9 @@ Don't forget to remove deprecated code on each major release!
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Added
+
+-   `settings.py:REACTPY_ASYNC_RENDERING` to enable asynchronous rendering of components.
 
 ## [5.0.0] - 2024-10-22
 
