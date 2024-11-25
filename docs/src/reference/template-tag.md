@@ -391,3 +391,17 @@ You can optionally use this tag to configure the current PyScript environment. F
         ```python
         {% include "../../examples/python/pyscript-setup-config-object.py" %}
         ```
+
+??? question "Can I use a local interpreter for PyScript?"
+
+    Yes, you can set up a local interpreter by following PyScript's [standard documentation](https://docs.pyscript.net/latest/user-guide/offline/#local-pyodide-packages).
+
+    To summarize,
+
+    1. Download the latest Pyodide bundle from the [Pyodide GitHub releases page](https://github.com/pyodide/pyodide/releases) (for example `pyodide-0.26.3.tar.bz2`).
+    2. Extract the contents of the bundle to your project's static files.
+    3. Configure your `#!jinja {% pyscript_setup %}` template tag to use `pyodide` as an interpreter.
+
+        ```jinja linenums="0"
+        {% include "../../examples/html/pyscript-setup-local-interpreter.html" %}
+        ```

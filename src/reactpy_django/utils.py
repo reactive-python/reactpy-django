@@ -263,7 +263,7 @@ def generate_obj_name(obj: Any) -> str:
     """Makes a best effort to create a name for an object.
     Useful for JSON serialization of Python objects."""
 
-    # First attempt: Dunder methods
+    # First attempt: Create a dotted path by inspecting dunder methods
     if hasattr(obj, "__module__"):
         if hasattr(obj, "__name__"):
             return f"{obj.__module__}.{obj.__name__}"

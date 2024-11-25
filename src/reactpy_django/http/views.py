@@ -37,6 +37,8 @@ async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
         await caches[REACTPY_CACHE].aset(
             cache_key, file_contents, timeout=604800, version=int(last_modified_time)
         )
+
+    # TODO: Convert this to a StreamingHttpResponse
     return HttpResponse(file_contents, content_type="text/javascript")
 
 

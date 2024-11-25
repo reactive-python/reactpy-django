@@ -10,24 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 <!--
 Using the following categories, list your changes in this order:
-
-### Added
--   for new features.
-
-### Changed
--   for changes in existing functionality.
-
-### Deprecated
--   for soon-to-be removed features.
-
-### Removed
--   for removed features.
-
-### Fixed
--   for bug fixes.
-
-### Security
--   for vulnerability fixes.
+[Added, Changed, Deprecated, Removed, Fixed, Security]
 
 Don't forget to remove deprecated code on each major release!
 -->
@@ -35,6 +18,16 @@ Don't forget to remove deprecated code on each major release!
 <!--changelog-start-->
 
 ## [Unreleased]
+
+### Added
+
+-   `settings.py:REACTPY_ASYNC_RENDERING` to enable asynchronous rendering of components.
+
+### Changed
+
+-   Bumped the minimum ReactPy version to `1.1.0`.
+
+## [5.0.0] - 2024-10-22
 
 ### Changed
 
@@ -515,7 +508,8 @@ Don't forget to remove deprecated code on each major release!
 
 -   Support for IDOM within the Django
 
-[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/4.0.0...HEAD
+[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/5.0.0...HEAD
+[5.0.0]: https://github.com/reactive-python/reactpy-django/compare/4.0.0...5.0.0
 [4.0.0]: https://github.com/reactive-python/reactpy-django/compare/3.8.1...4.0.0
 [3.8.1]: https://github.com/reactive-python/reactpy-django/compare/3.8.0...3.8.1
 [3.8.0]: https://github.com/reactive-python/reactpy-django/compare/3.7.0...3.8.0

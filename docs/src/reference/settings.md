@@ -87,7 +87,7 @@ This is useful to continuously update `#!python last_login` timestamps and refre
 
 Multiprocessing-safe database used by ReactPy for database-backed hooks and features.
 
-If configuring this value, it is mandatory to enable our database router like such:
+If configuring this value, it is mandatory to configure Django to use the ReactPy database router:
 
 === "settings.py"
 
@@ -120,6 +120,18 @@ Configures whether ReactPy components are rendered in a dedicated thread.
 This allows the web server to process other traffic during ReactPy rendering. Vastly improves throughput with web servers such as [`hypercorn`](https://pgjones.gitlab.io/hypercorn/) and [`uvicorn`](https://www.uvicorn.org/).
 
 This setting is incompatible with [`daphne`](https://github.com/django/daphne).
+
+---
+
+### `#!python REACTPY_ASYNC_RENDERING`
+
+**Default:** `#!python False`
+
+**Example Value(s):** `#!python True`
+
+Configures whether to use an async ReactPy rendering queue. When enabled, large renders will no longer block smaller renders from taking place. Additionally, prevents the rendering queue from being blocked on waiting for async effects to startup/shutdown (which is typically a relatively slow operation).
+
+This setting is currently experimental, and currently no effort is made to de-duplicate renders. For example, if parent and child components are scheduled to render at the same time, both renders will take place even though a single render of the parent component would have been sufficient.
 
 ---
 

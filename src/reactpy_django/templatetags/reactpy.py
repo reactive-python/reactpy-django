@@ -226,11 +226,11 @@ def pyscript_setup(
         extra_py: Dependencies that need to be loaded on the page for \
             your PyScript components. Each dependency must be contained \
             within it's own string and written in Python requirements file syntax.
-    
+
     Kwargs:
         extra_js: A JSON string or Python dictionary containing a vanilla \
             JavaScript module URL and the `name: str` to access it within \
-            `pyscript.js_modules.*`. 
+            `pyscript.js_modules.*`.
         config: A JSON string or Python dictionary containing PyScript \
             configuration values.
     """
