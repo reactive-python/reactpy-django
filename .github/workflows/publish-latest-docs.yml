@@ -17,12 +17,12 @@ jobs:
             - uses: actions/setup-python@v5
               with:
                   python-version: 3.x
-            - run: pip install -r requirements/build-docs.txt
+            - name: Install dependencies
+              run: pip install --upgrade pip hatch uv
             - name: Publish ${{ github.event.release.name }} Docs
               run: |
                   git config user.name github-actions
                   git config user.email github-actions@github.com
-                  cd docs
-                  mike deploy --push --update-aliases ${{ github.event.release.name }} latest
+                  hatch run docs:deploy_latest ${{ github.ref_name }}
         concurrency:
             group: publish-docs

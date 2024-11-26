@@ -1,21 +1,150 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
-build-backend = "setuptools.build_meta"
+build-backend = "hatchling.build"
+requires = ["hatchling", "hatch-build-scripts"]
 
-[tool.mypy]
-exclude = ['migrations/.*']
-ignore_missing_imports = true
-warn_unused_configs = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-check_untyped_defs = true
+[project]
+name = "reactpy_django"
+description = "It's React, but in Python. Now with Django integration."
+readme = "README.md"
+keywords = [
+  "React",
+  "ReactJS",
+  "ReactPy",
+  "components",
+  "asgi",
+  "django",
+  "http",
+  "server",
+  "reactive",
+  "interactive",
+]
+license = "MIT"
+authors = [{ name = "Mark Bakhit", email = "archiethemonger@gmail.com" }]
+requires-python = ">=3.9"
+classifiers = [
+  "Framework :: Django",
+  "Framework :: Django :: 4.0",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Operating System :: OS Independent",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Topic :: Multimedia :: Graphics",
+  "Topic :: Software Development :: Widget Sets",
+  "Topic :: Software Development :: User Interfaces",
+  "Environment :: Web Environment",
+  "Typing :: Typed",
+]
+dependencies = [
+  "channels>=4.0.0",
+  "django>=4.2.0",
+  "reactpy>=1.0.0, <2.0.0",
+  "reactpy-router>=1.0.0, <2.0.0",
+  "dill>=0.3.5",
+  "orjson >=3.6.0",
+  "nest_asyncio>=1.5.0",
+  "typing_extensions",
+]
+dynamic = ["version"]
+urls.Changelog = "https://reactive-python.github.io/reactpy-django/latest/about/changelog/"
+urls.Documentation = "https://reactive-python.github.io/reactpy-django/"
+urls.Source = "https://github.com/reactive-python/reactpy-django"
 
-[tool.ruff.lint.isort]
-known-first-party = ["src", "tests"]
+[tool.hatch.version]
+path = "src/reactpy_django/__init__.py"
 
-[tool.ruff.lint]
-ignore = ["E501"]
+[tool.hatch.build.targets.sdist]
+include = ["/src"]
+artifacts = ["/src/reactpy_django/static/client.js"]
+
+[tool.hatch.build.targets.wheel]
+artifacts = ["/src/reactpy_django/static/client.js"]
+
+[tool.hatch.metadata]
+license-files = { paths = ["LICENSE.md"] }
+
+[tool.hatch.envs.default]
+installer = "uv"
+
+[[tool.hatch.build.hooks.build-scripts.scripts]]
+commands = [
+  "bun install --cwd src/js",
+  "bun build src/js/src/index.tsx --outfile src/reactpy_django/static/client.js --minify",
+  'cd scripts && python copy_dir.py "src/js/node_modules/@pyscript/core/dist" "src/reactpy_django/static/pyscript"',
+  'cd scripts && python copy_dir.py "src/js/node_modules/morphdom/dist" "src/reactpy_django/static/morphdom"',
+]
+artifacts = []
+
+# >>> Hatch Test Suite <<<
+
+[tool.hatch.envs.hatch-test]
+extra-dependencies = [
+  "playwright",
+  "twisted",
+  "channels[daphne]>=4.0.0",
+  "tblib",
+  "whitenoise",              # TODO: Switch to ServeStatic
+]
+matrix-name-format = "{variable}-{value}"
+
+[[tool.hatch.envs.hatch-test.matrix]]
+python = ["3.9", "3.10", "3.11", "3.12"]
+
+# >>> Hatch Documentation Scripts <<<
+
+[tool.hatch.envs.docs]
+template = "docs"
+detached = true
+dependencies = [
+  "mkdocs",
+  "mkdocs-git-revision-date-localized-plugin",
+  "mkdocs-material==9.4.0",
+  "mkdocs-include-markdown-plugin",
+  "mkdocs-spellcheck[all]",
+  "mkdocs-git-authors-plugin",
+  "mkdocs-minify-plugin",
+  "mike",
+  "mypy",                                      # TODO: Replace with ruff perhaps?
+  "django-stubs[compatible-mypy]",
+  "linkcheckmd",
+  "reactpy_django @ {root:uri}",
+]
+
+[tool.hatch.envs.docs.scripts]
+serve = ["cd docs && mkdocs serve"]
+build = ["cd docs && mkdocs build --strict"]
+linkcheck = [
+  "linkcheckMarkdown docs/ -v -r",
+  "linkcheckMarkdown README.md -v -r",
+  "linkcheckMarkdown CHANGELOG.md -v -r",
+]
+deploy_latest = ["cd docs && mike deploy --push --update-aliases {args} latest"]
+deploy_develop = ["cd docs && mike deploy --push develop"]
+
+# >>> Generic Tools <<<
 
 [tool.ruff]
 extend-exclude = ["*/migrations/*", ".venv/*", ".eggs/*", ".nox/*", "build/*"]
 line-length = 120
+format.preview = true
+lint.extend-ignore = [
+  "ARG001",  # Unused function argument
+  "ARG002",  # Unused method argument
+  "ARG004",  # Unused static method argument
+  "FBT001",  # Boolean-typed positional argument in function definition
+  "FBT002",  # Boolean default positional argument in function definition
+  "PLR2004", # Magic value used in comparison
+  "SIM115",  # Use context handler for opening files
+  "SLF001",  # Private member accessed
+  "E501",    # Line too long
+]
+lint.preview = true
+lint.isort.known-first-party = ["src", "tests"]
+
+[tool.pytest.ini_options]
+addopts = """\
+    --strict-config
+    --strict-markers
+    """

@@ -1,3 +1,0 @@
-mypy
-django-stubs[compatible-mypy]
-channels-redis

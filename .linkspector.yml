@@ -1,7 +1,0 @@
-dirs:
-    - ./docs
-files:
-    - README.md
-    - CHANGELOG.md
-useGitIgnore: true
-modifiedFilesOnly: false

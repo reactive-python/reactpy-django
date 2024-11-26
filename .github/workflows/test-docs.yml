@@ -23,20 +23,11 @@ jobs:
             - uses: actions/setup-python@v5
               with:
                   python-version: 3.x
-            # - name: Check docs links
-            #   uses: umbrelladocs/action-linkspector@v1
-            #   with:
-            #       github_token: ${{ secrets.github_token }}
-            #       reporter: github-pr-review
-            #       fail_on_error: false
+            - name: Install Python Dependencies
+              run: pip install --upgrade pip hatch uv
+            - name: Check documentation links
+              run: hatch run docs:linkcheck
             - name: Check docs build
-              run: |
-                  pip install -r requirements/build-docs.txt
-                  cd docs
-                  mkdocs build --strict
+              run: hatch run docs:build
             - name: Check docs examples
-              run: |
-                  pip install -r requirements/check-types.txt
-                  pip install -r requirements/check-style.txt
-                  mypy --show-error-codes docs/examples/python/
-                  ruff check docs/examples/python/
+              run: hatch run docs:check-examples
