@@ -142,8 +142,7 @@ runserver = [
 # >>> Hatch Documentation Scripts <<<
 [tool.hatch.envs.docs]
 template = "docs"
-detached = true
-dependencies = [
+extra-dependencies = [
   "mkdocs",
   "mkdocs-git-revision-date-localized-plugin",
   "mkdocs-material==9.4.0",
@@ -155,7 +154,6 @@ dependencies = [
   "ruff",
   "django-stubs",
   "linkcheckmd",
-  "reactpy_django @ {root:uri}",
 ]
 
 [tool.hatch.envs.docs.scripts]
