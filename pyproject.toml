@@ -162,7 +162,7 @@ dependencies = [
 serve = ["cd docs && mkdocs serve"]
 build = ["cd docs && mkdocs build --strict"]
 linkcheck = [
-  "linkcheckMarkdown docs/ -v -r",
+  "linkcheckMarkdown docs/ -v -r --method head",
   "linkcheckMarkdown README.md -v -r",
   "linkcheckMarkdown CHANGELOG.md -v -r",
 ]

@@ -117,7 +117,7 @@ We recommend using [`redis`](https://docs.djangoproject.com/en/stable/topics/cac
 
 Configures whether ReactPy components are rendered in a dedicated thread.
 
-This allows the web server to process other traffic during ReactPy rendering. Vastly improves throughput with web servers such as [`hypercorn`](https://pgjones.gitlab.io/hypercorn/) and [`uvicorn`](https://www.uvicorn.org/).
+This allows the web server to process other traffic during ReactPy rendering. Vastly improves throughput with web servers such as [`hypercorn`](https://github.com/pgjones/hypercorn) and [`uvicorn`](https://www.uvicorn.org/).
 
 This setting is incompatible with [`daphne`](https://github.com/django/daphne).
 
