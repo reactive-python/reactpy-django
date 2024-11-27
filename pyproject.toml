@@ -111,8 +111,8 @@ dependencies = [
   "mkdocs-git-authors-plugin",
   "mkdocs-minify-plugin",
   "mike",
-  "mypy",                                      # TODO: Replace with ruff perhaps?
-  "django-stubs[compatible-mypy]",
+  "ruff",
+  "django-stubs",
   "linkcheckmd",
   "reactpy_django @ {root:uri}",
 ]
@@ -127,6 +127,7 @@ linkcheck = [
 ]
 deploy_latest = ["cd docs && mike deploy --push --update-aliases {args} latest"]
 deploy_develop = ["cd docs && mike deploy --push develop"]
+check_examples = ["ruff check docs/examples/python"]
 
 # >>> Generic Tools <<<
 
