@@ -23,6 +23,7 @@ REACTPY_FAILED_COMPONENTS: set[str] = set()
 REACTPY_REGISTERED_IFRAME_VIEWS: dict[str, Callable | View] = {}
 
 # Configurable through Django settings.py
+DJANGO_DEBUG = settings.DEBUG  # Snapshot of Django's DEBUG setting
 _REACTPY_DEBUG_MODE.set_current(settings.DEBUG)
 _REACTPY_ASYNC_RENDERING.set_current(
     getattr(settings, "REACTPY_ASYNC_RENDERING", _REACTPY_ASYNC_RENDERING.current)

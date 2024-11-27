@@ -49,9 +49,8 @@ def clean_sessions(verbosity: int = 1):
     """Deletes expired component sessions from the database.
     As a performance optimization, this is only run once every REACTPY_SESSION_MAX_AGE seconds.
     """
-    from django.conf import settings as django_settings
 
-    from reactpy_django.config import REACTPY_SESSION_MAX_AGE
+    from reactpy_django.config import DJANGO_DEBUG, REACTPY_SESSION_MAX_AGE
     from reactpy_django.models import ComponentSession
 
     if verbosity >= 2:
@@ -68,7 +67,7 @@ def clean_sessions(verbosity: int = 1):
 
     session_objects.delete()
 
-    if django_settings.DEBUG or verbosity >= 2:
+    if DJANGO_DEBUG or verbosity >= 2:
         inspect_clean_duration(start_time, "component sessions", verbosity)
 
 
@@ -80,8 +79,7 @@ def clean_user_data(verbosity: int = 1):
     However, we can't use Django to enforce this relationship since ReactPy can be configured to
     use any database.
     """
-    from django.conf import settings as django_settings
-
+    from reactpy_django.config import DJANGO_DEBUG
     from reactpy_django.models import UserDataModel
 
     if verbosity >= 2:
@@ -105,7 +103,7 @@ def clean_user_data(verbosity: int = 1):
 
     user_data_objects.delete()
 
-    if django_settings.DEBUG or verbosity >= 2:
+    if DJANGO_DEBUG or verbosity >= 2:
         inspect_clean_duration(start_time, "user data", verbosity)
 
 
