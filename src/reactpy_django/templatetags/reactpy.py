@@ -241,7 +241,7 @@ def pyscript_setup(
     return {
         "pyscript_config": extend_pyscript_config(extra_py, extra_js, config),
         "pyscript_layout_handler": PYSCRIPT_LAYOUT_HANDLER,
-        "debug": django_settings.DEBUG,
+        "django_debug": django_settings.DEBUG,
     }
 
 
@@ -250,7 +250,7 @@ def failure_context(dotted_path: str, error: Exception):
 
     return {
         "reactpy_failure": True,
-        "debug": django_settings.DEBUG,
+        "django_debug": django_settings.DEBUG,
         "reactpy_dotted_path": dotted_path,
         "reactpy_error": type(error).__name__,
     }

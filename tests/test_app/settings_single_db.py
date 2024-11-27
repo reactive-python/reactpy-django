@@ -115,9 +115,7 @@ STATICFILES_FINDERS = [
 ]
 
 # Logging
-LOG_LEVEL = "WARNING"
-if DEBUG and ("test" not in sys.argv):
-    LOG_LEVEL = "DEBUG"
+LOG_LEVEL = "DEBUG"
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

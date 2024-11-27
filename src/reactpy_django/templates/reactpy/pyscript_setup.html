@@ -1,7 +1,7 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'reactpy_django/pyscript/core.css' %}" />
 <link rel="stylesheet" href="{% static 'reactpy_django/pyscript-custom.css' %}" />
-{% if not debug %}
+{% if not django_debug %}
 <link rel="stylesheet" href="{% static 'reactpy_django/pyscript-hide-debug.css' %}" />
 {% endif %}
 <script type="module" async crossorigin="anonymous" src="{% static 'reactpy_django/pyscript/core.js' %}"></script>
