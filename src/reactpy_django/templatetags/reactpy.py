@@ -74,6 +74,8 @@ def component(
         </body>
         </html>
     """
+    from django.conf import settings as django_settings
+
     request: HttpRequest | None = context.get("request")
     perceived_host = (request.get_host() if request else "").strip("/")
     host = (
@@ -93,7 +95,7 @@ def component(
     _offline_html = ""
 
     # Validate the host
-    if host and reactpy_config.REACTPY_DEBUG_MODE:
+    if host and django_settings.DEBUG:
         try:
             validate_host(host)
         except InvalidHostError as e:
@@ -108,7 +110,7 @@ def component(
             return failure_context(dotted_path, ComponentDoesNotExistError(msg))
 
     # Validate the component args & kwargs
-    if is_local and reactpy_config.REACTPY_DEBUG_MODE:
+    if is_local and django_settings.DEBUG:
         try:
             validate_component_args(user_component, *args, **kwargs)
         except ComponentParamError as e:
@@ -234,17 +236,21 @@ def pyscript_setup(
         config: A JSON string or Python dictionary containing PyScript \
             configuration values.
     """
+    from django.conf import settings as django_settings
+
     return {
         "pyscript_config": extend_pyscript_config(extra_py, extra_js, config),
         "pyscript_layout_handler": PYSCRIPT_LAYOUT_HANDLER,
-        "reactpy_debug_mode": reactpy_config.REACTPY_DEBUG_MODE,
+        "debug": django_settings.DEBUG,
     }
 
 
 def failure_context(dotted_path: str, error: Exception):
+    from django.conf import settings as django_settings
+
     return {
         "reactpy_failure": True,
-        "reactpy_debug_mode": reactpy_config.REACTPY_DEBUG_MODE,
+        "debug": django_settings.DEBUG,
         "reactpy_dotted_path": dotted_path,
         "reactpy_error": type(error).__name__,
     }

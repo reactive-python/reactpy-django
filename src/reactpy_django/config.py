@@ -18,13 +18,12 @@ from reactpy_django.types import (
 from reactpy_django.utils import import_dotted_path
 
 # Non-configurable values
-REACTPY_DEBUG_MODE = _REACTPY_DEBUG_MODE.current
 REACTPY_REGISTERED_COMPONENTS: dict[str, ComponentConstructor] = {}
 REACTPY_FAILED_COMPONENTS: set[str] = set()
 REACTPY_REGISTERED_IFRAME_VIEWS: dict[str, Callable | View] = {}
 
 # Configurable through Django settings.py
-_REACTPY_DEBUG_MODE.set_current(getattr(settings, "DEBUG"))
+_REACTPY_DEBUG_MODE.set_current(settings.DEBUG)
 _REACTPY_ASYNC_RENDERING.set_current(
     getattr(settings, "REACTPY_ASYNC_RENDERING", _REACTPY_ASYNC_RENDERING.current)
 )
