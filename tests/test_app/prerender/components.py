@@ -1,14 +1,19 @@
 from time import sleep
 
-import reactpy_django
 from reactpy import component, html
+
+import reactpy_django
+
+SLEEP_TIME = 0.25
 
 
 @component
 def prerender_string():
     scope = reactpy_django.hooks.use_scope()
 
-    sleep(0.5)
+    if scope.get("type") != "http":
+        sleep(SLEEP_TIME)
+
     return (
         "prerender_string: Fully Rendered"
         if scope.get("type") == "websocket"

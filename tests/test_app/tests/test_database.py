@@ -4,6 +4,7 @@ from uuid import uuid4
 
 import dill as pickle
 from django.test import TransactionTestCase
+
 from reactpy_django import clean
 from reactpy_django.models import ComponentSession, UserDataModel
 from reactpy_django.types import ComponentParams

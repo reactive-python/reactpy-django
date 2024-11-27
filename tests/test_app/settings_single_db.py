@@ -12,9 +12,9 @@ SRC_DIR = BASE_DIR.parent / "src"
 SECRET_KEY = "django-insecure-n!bd1#+7ufw5#9ipayu9k(lyu@za$c2ajbro7es(v8_7w1$=&c"
 
 # Run in production mode when using a real web server
-DEBUG = all(
-    not sys.argv[0].endswith(webserver_name)
-    for webserver_name in {"hypercorn", "uvicorn", "daphne"}
+DEBUG = not any(
+    sys.argv[0].endswith(webserver_name)
+    for webserver_name in ["hypercorn", "uvicorn", "daphne"]
 )
 ALLOWED_HOSTS = ["*"]
 
@@ -66,13 +66,9 @@ DB_NAME = "single_db"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        # Changing NAME is needed due to a bug related to `manage.py test`
-        "NAME": os.path.join(
-            BASE_DIR,
-            f"test_{DB_NAME}.sqlite3" if "test" in sys.argv else f"{DB_NAME}.sqlite3",
-        ),
+        "NAME": os.path.join(BASE_DIR, f"{DB_NAME}.sqlite3"),
         "TEST": {
-            "NAME": os.path.join(BASE_DIR, f"test_{DB_NAME}.sqlite3"),
+            "NAME": os.path.join(BASE_DIR, f"{DB_NAME}.sqlite3"),
             "OPTIONS": {"timeout": 20},
             "DEPENDENCIES": [],
         },
@@ -140,4 +136,6 @@ LOGGING = {
 CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 # ReactPy-Django Settings
-REACTPY_BACKHAUL_THREAD = "test" not in sys.argv and "runserver" not in sys.argv
+REACTPY_BACKHAUL_THREAD = any(
+    sys.argv[0].endswith(webserver_name) for webserver_name in ["hypercorn", "uvicorn"]
+)

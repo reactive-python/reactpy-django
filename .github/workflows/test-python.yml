@@ -28,4 +28,4 @@ jobs:
             - name: Install Python Dependencies
               run: pip install --upgrade pip hatch uv
             - name: Run Tests
-              run: hatch run test:python --python ${{ matrix.python-version }}
+              run: hatch test --python ${{ matrix.python-version }}

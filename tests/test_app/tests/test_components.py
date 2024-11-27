@@ -21,7 +21,6 @@ CLICK_DELAY = 250 if strtobool(GITHUB_ACTIONS) else 25  # Delay in miliseconds.
 
 
 class ComponentTests(ChannelsLiveServerTestCase):
-    from django.db import DEFAULT_DB_ALIAS
 
     from reactpy_django import config
 
@@ -71,6 +70,8 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
+        from django.db import DEFAULT_DB_ALIAS
+
         from reactpy_django import config
 
         # Close the Playwright browser
@@ -86,7 +87,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
 
         # Repurposed from ChannelsLiveServerTestCase._post_teardown
         cls._live_server_modified_settings.disable()
-        for db_name in {"default", config.REACTPY_DATABASE}:
+        for db_name in [DEFAULT_DB_ALIAS, config.REACTPY_DATABASE]:
             call_command(
                 "flush",
                 verbosity=0,
@@ -369,13 +370,12 @@ class ComponentTests(ChannelsLiveServerTestCase):
             use_user_http = new_page.locator("#use-user-http[data-success=True]")
             use_user_ws = new_page.locator("#use-user-ws[data-success=true]")
 
+            # Check if the prerender occurred properly
             string.wait_for()
             vdom.wait_for()
             component.wait_for()
             use_root_id_http.wait_for()
             use_user_http.wait_for()
-
-            # Check if the prerender occurred
             self.assertEqual(
                 string.all_inner_texts(), ["prerender_string: Prerendered"]
             )
@@ -387,7 +387,7 @@ class ComponentTests(ChannelsLiveServerTestCase):
             self.assertEqual(len(root_id_value), 36)
 
             # Check if the full render occurred
-            sleep(1)
+            sleep(2)
             self.assertEqual(
                 string.all_inner_texts(), ["prerender_string: Fully Rendered"]
             )

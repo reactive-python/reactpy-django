@@ -78,28 +78,68 @@ commands = [
 artifacts = []
 
 # >>> Hatch Test Suite <<<
-[tool.hatch.envs.test]
-detached = true
+[tool.hatch.envs.hatch-test]
 extra-dependencies = [
+  "pytest-sugar",
+  "pytest-django",
   "playwright",
-  "twisted",
   "channels[daphne]>=4.0.0",
+  "twisted",
   "tblib",
-  "whitenoise",              # TODO: Switch to ServeStatic
+  "servestatic",
+]
+matrix-name-format = "{variable}-{value}"
+
+# Django 4.2
+[[tool.hatch.envs.hatch-test.matrix]]
+python = ["3.9", "3.10", "3.11", "3.12"]
+django = ["4.2"]
+
+# Django 5.0
+[[tool.hatch.envs.hatch-test.matrix]]
+python = ["3.10", "3.11", "3.12"]
+django = ["5.0"]
+
+# Django 5.1
+[[tool.hatch.envs.hatch-test.matrix]]
+python = ["3.10", "3.11", "3.12", "3.13"]
+django = ["5.1"]
+
+[tool.hatch.envs.hatch-test.overrides]
+matrix.django.dependencies = [
+  { if = [
+    "4.2",
+  ], value = "django~=4.2" },
+  { if = [
+    "5.0",
+  ], value = "django~=5.0" },
+  { if = [
+    "5.1",
+  ], value = "django~=5.1" },
 ]
 
-[tool.hatch.envs.test.scripts]
-python = [
-  "pip install -e . -U",
-  "playwright install chromium",
-  "cd tests && python manage.py test --noinput --settings='test_app.settings_single_db'",
-  "cd tests && python manage.py test --noinput --settings='test_app.settings_multi_db'",
+[tool.pytest.ini_options]
+addopts = """\
+    --strict-config
+    --strict-markers
+    --reuse-db
+    """
+django_find_project = false
+DJANGO_SETTINGS_MODULE = "test_app.settings_single_db"
+pythonpath = [".", "tests/"]
+
+
+# >>> Hatch Django Scripts <<<
+[tool.hatch.envs.django]
+extra-dependencies = ["channels[daphne]>=4.0.0", "twisted", "servestatic"]
+
+[tool.hatch.envs.django.scripts]
+runserver = [
+  "cd tests && python manage.py migrate --noinput && python manage.py runserver",
 ]
-runserver = ["cd tests && python manage.py runserver"]
 
 
 # >>> Hatch Documentation Scripts <<<
-
 [tool.hatch.envs.docs]
 template = "docs"
 detached = true
@@ -138,7 +178,6 @@ detached = true
 check = ["cd src/js && bun install && bun run check"]
 
 # >>> Generic Tools <<<
-
 [tool.ruff]
 extend-exclude = ["*/migrations/*", ".venv/*", ".eggs/*", ".nox/*", "build/*"]
 line-length = 120
@@ -156,9 +195,3 @@ lint.extend-ignore = [
 ]
 lint.preview = true
 lint.isort.known-first-party = ["src", "tests"]
-
-[tool.pytest.ini_options]
-addopts = """\
-    --strict-config
-    --strict-markers
-    """
