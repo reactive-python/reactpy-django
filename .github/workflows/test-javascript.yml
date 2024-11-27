@@ -9,12 +9,10 @@ on:
             - main
 
 jobs:
-    docs:
+    source:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
             - uses: oven-sh/setup-bun@v2
               with:
                   bun-version: latest
@@ -23,9 +21,5 @@ jobs:
                   python-version: 3.x
             - name: Install Python Dependencies
               run: pip install --upgrade pip hatch uv
-            - name: Check documentation links
-              run: hatch run docs:linkcheck
-            - name: Check docs build
-              run: hatch run docs:build
-            - name: Check docs examples
-              run: hatch run docs:check_examples
+            - name: Run Tests
+              run: hatch run javascript:check

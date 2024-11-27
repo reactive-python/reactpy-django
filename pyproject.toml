@@ -129,6 +129,13 @@ deploy_latest = ["cd docs && mike deploy --push --update-aliases {args} latest"]
 deploy_develop = ["cd docs && mike deploy --push develop"]
 check_examples = ["ruff check docs/examples/python"]
 
+# >>> Hatch JS Scripts <<<
+[tool.hatch.envs.javascript]
+detached = true
+
+[tool.hatch.envs.javascript.scripts]
+check = ["cd src/js && bun install && bun run check"]
+
 # >>> Generic Tools <<<
 
 [tool.ruff]
