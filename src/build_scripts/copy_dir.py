@@ -20,8 +20,9 @@ if __name__ == "__main__":
         print("Usage: python copy_dir.py <source_dir> <destination>")
         sys.exit(1)
 
-    src = Path(sys.argv[1])
-    dest = Path(sys.argv[2])
+    root_dir = Path(__file__).parent.parent.parent
+    src = Path(root_dir / sys.argv[1])
+    dest = Path(root_dir / sys.argv[2])
 
     if not src.exists():
         print(f"Source directory {src} does not exist")

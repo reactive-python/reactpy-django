@@ -57,10 +57,10 @@ path = "src/reactpy_django/__init__.py"
 
 [tool.hatch.build.targets.sdist]
 include = ["/src"]
-artifacts = ["/src/reactpy_django/static/client.js"]
+artifacts = ["/src/reactpy_django/static/"]
 
 [tool.hatch.build.targets.wheel]
-artifacts = ["/src/reactpy_django/static/client.js"]
+artifacts = ["/src/reactpy_django/static/"]
 
 [tool.hatch.metadata]
 license-files = { paths = ["LICENSE.md"] }
@@ -71,15 +71,15 @@ installer = "uv"
 [[tool.hatch.build.hooks.build-scripts.scripts]]
 commands = [
   "bun install --cwd src/js",
-  "bun build src/js/src/index.tsx --outfile src/reactpy_django/static/client.js --minify",
-  'cd scripts && python copy_dir.py "src/js/node_modules/@pyscript/core/dist" "src/reactpy_django/static/pyscript"',
-  'cd scripts && python copy_dir.py "src/js/node_modules/morphdom/dist" "src/reactpy_django/static/morphdom"',
+  "bun build src/js/src/index.tsx --outfile src/reactpy_django/static/reactpy_django/client.js --minify",
+  'cd src/build_scripts && python copy_dir.py "src/js/node_modules/@pyscript/core/dist" "src/reactpy_django/static/reactpy_django/pyscript"',
+  'cd src/build_scripts && python copy_dir.py "src/js/node_modules/morphdom/dist" "src/reactpy_django/static/reactpy_django/morphdom"',
 ]
 artifacts = []
 
 # >>> Hatch Test Suite <<<
-
-[tool.hatch.envs.hatch-test]
+[tool.hatch.envs.test]
+detached = true
 extra-dependencies = [
   "playwright",
   "twisted",
@@ -87,10 +87,15 @@ extra-dependencies = [
   "tblib",
   "whitenoise",              # TODO: Switch to ServeStatic
 ]
-matrix-name-format = "{variable}-{value}"
 
-[[tool.hatch.envs.hatch-test.matrix]]
-python = ["3.9", "3.10", "3.11", "3.12"]
+[tool.hatch.envs.test.scripts]
+python = [
+  "pip install -e . -U",
+  "playwright install chromium",
+  "cd tests && python manage.py test --noinput --settings='test_app.settings_single_db'",
+  "cd tests && python manage.py test --noinput --settings='test_app.settings_multi_db'",
+]
+
 
 # >>> Hatch Documentation Scripts <<<
 
