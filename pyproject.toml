@@ -95,6 +95,7 @@ python = [
   "cd tests && python manage.py test --noinput --settings='test_app.settings_single_db'",
   "cd tests && python manage.py test --noinput --settings='test_app.settings_multi_db'",
 ]
+runserver = ["cd tests && python manage.py runserver"]
 
 
 # >>> Hatch Documentation Scripts <<<
