@@ -32,7 +32,7 @@ INSTALLED_APPS = [
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "servestatic.middleware.ServeStaticMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -85,9 +85,11 @@ if "test" in sys.argv:
         # Changing NAME is needed due to a bug related to `manage.py test`
         "NAME": os.path.join(
             BASE_DIR,
-            f"test_{DB_NAME}_2.sqlite3"
-            if "test" in sys.argv
-            else f"{DB_NAME}_2.sqlite3",
+            (
+                f"test_{DB_NAME}_2.sqlite3"
+                if "test" in sys.argv
+                else f"{DB_NAME}_2.sqlite3"
+            ),
         ),
         "TEST": {
             "NAME": os.path.join(BASE_DIR, f"test_{DB_NAME}_2.sqlite3"),
