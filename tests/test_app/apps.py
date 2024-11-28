@@ -1,4 +1,3 @@
-import contextlib
 import sys
 
 from django.apps import AppConfig
@@ -11,8 +10,6 @@ class TestAppConfig(AppConfig):
     name = "test_app"
 
     def ready(self):
-        from django.contrib.auth.models import User
-
         register_iframe("test_app.views.view_to_iframe_sync_func")
         register_iframe(views.view_to_iframe_async_func)
         register_iframe(views.ViewToIframeSyncClass)
@@ -22,8 +19,3 @@ class TestAppConfig(AppConfig):
 
         if "test" in sys.argv:
             return
-
-        with contextlib.suppress(Exception):
-            User.objects.create_superuser(
-                username="admin", email="admin@example.com", password="password"
-            )
