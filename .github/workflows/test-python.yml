@@ -28,6 +28,6 @@ jobs:
             - name: Install Python Dependencies
               run: pip install --upgrade pip hatch uv
             - name: Run Single DB Tests
-              run: hatch test --python ${{ matrix.python-version }} --ds=test_app.settings_single_db
+              run: hatch test --python ${{ matrix.python-version }} --ds=test_app.settings_single_db -v
             - name: Run Multi-DB Tests
-              run: hatch test --python ${{ matrix.python-version }} --ds=test_app.settings_multi_db
+              run: hatch test --python ${{ matrix.python-version }} --ds=test_app.settings_multi_db -v
