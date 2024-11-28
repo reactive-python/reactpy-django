@@ -514,14 +514,14 @@ class PyscriptTests(PlaywrightTestCase):
         self.page.wait_for_selector("#hello-world-loading")
         self.page.wait_for_selector("#hello-world")
 
-    def test_custom_root(self):
+    def test_1_custom_root(self):
         self.page.wait_for_selector("#custom-root")
 
-    def test_multifile(self):
+    def test_1_multifile(self):
         self.page.wait_for_selector("#multifile-parent")
         self.page.wait_for_selector("#multifile-child")
 
-    def test_counter(self):
+    def test_1_counter(self):
         self.page.wait_for_selector("#counter")
         self.page.wait_for_selector("#counter pre[data-value='0']")
         self.page.wait_for_selector("#counter .plus").click(delay=CLICK_DELAY)
@@ -531,7 +531,7 @@ class PyscriptTests(PlaywrightTestCase):
         self.page.wait_for_selector("#counter .minus").click(delay=CLICK_DELAY)
         self.page.wait_for_selector("#counter pre[data-value='1']")
 
-    def test_server_side_parent(self):
+    def test_1_server_side_parent(self):
         self.page.wait_for_selector("#parent")
         self.page.wait_for_selector("#child")
         self.page.wait_for_selector("#child pre[data-value='0']")
@@ -542,7 +542,7 @@ class PyscriptTests(PlaywrightTestCase):
         self.page.wait_for_selector("#child .minus").click(delay=CLICK_DELAY)
         self.page.wait_for_selector("#child pre[data-value='1']")
 
-    def test_server_side_parent_with_toggle(self):
+    def test_1_server_side_parent_with_toggle(self):
         self.page.wait_for_selector("#parent-toggle")
         self.page.wait_for_selector("#parent-toggle button").click(delay=CLICK_DELAY)
         self.page.wait_for_selector("#parent-toggle")
@@ -554,7 +554,7 @@ class PyscriptTests(PlaywrightTestCase):
         self.page.wait_for_selector("#parent-toggle .minus").click(delay=CLICK_DELAY)
         self.page.wait_for_selector("#parent-toggle pre[data-value='1']")
 
-    def test_javascript_module_execution_within_pyscript(self):
+    def test_1_javascript_module_execution_within_pyscript(self):
         self.page.wait_for_selector("#moment[data-success=true]")
 
 
