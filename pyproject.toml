@@ -44,8 +44,8 @@ classifiers = [
 dependencies = [
   "channels>=4.0.0",
   "django>=4.2.0",
-  "reactpy>=1.0.0, <2.0.0",
-  "reactpy-router>=1.0.0, <2.0.0",
+  "reactpy>=1.1.0, <2.0.0",
+  "reactpy-router>=1.0.3, <2.0.0",
   "dill>=0.3.5",
   "orjson>=3.6.0",
   "nest_asyncio>=1.5.0",
@@ -209,6 +209,7 @@ lint.extend-ignore = [
   "SIM115",  # Use context handler for opening files
   "SLF001",  # Private member accessed
   "E501",    # Line too long
+  "PLC0415", # `import` should be at the top-level of a file
 ]
 lint.preview = true
 lint.isort.known-first-party = ["src", "tests"]
