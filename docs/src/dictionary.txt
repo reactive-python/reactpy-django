@@ -43,3 +43,8 @@ unstyled
 WebSocket
 WebSockets
 whitespace
+pytest
+linter
+linters
+linting
+formatters
