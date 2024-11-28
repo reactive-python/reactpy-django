@@ -23,8 +23,9 @@ jobs:
                   python-version: 3.x
             - name: Install Python Dependencies
               run: pip install --upgrade pip hatch uv
-            - name: Check documentation links
-              run: hatch run docs:linkcheck
+            # DISABLED DUE TO DJANGO DOCS CONSTANTLY THROWING 429 ERRORS
+            # - name: Check documentation links
+            #   run: hatch run docs:linkcheck
             - name: Check docs build
               run: hatch run docs:build
             - name: Check docs examples
