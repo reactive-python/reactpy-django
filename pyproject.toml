@@ -189,7 +189,7 @@ detached = true
 
 [tool.hatch.envs.javascript.scripts]
 check = ["cd src/js && bun install", "cd src/js && bun run check"]
-fix = ["cd src/js && bun install", "cd src/js && bun run check --write"]
+fix = ["cd src/js && bun install", "cd src/js && bun run format"]
 
 #########################
 # >>> Generic Tools <<< #
