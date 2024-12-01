@@ -509,7 +509,6 @@ class PyscriptTests(PlaywrightTestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.page.goto(f"http://{cls.host}:{cls._port}/pyscript/")
-        cls.page.set_default_timeout(10000)
 
     def test_0_hello_world(self):
         self.page.wait_for_selector("#hello-world-loading")

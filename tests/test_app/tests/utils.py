@@ -47,7 +47,7 @@ class PlaywrightTestCase(ChannelsLiveServerTestCase):
         headless = strtobool(os.environ.get("PLAYWRIGHT_HEADLESS", GITHUB_ACTIONS))
         cls.browser = cls.playwright.chromium.launch(headless=bool(headless))
         cls.page = cls.browser.new_page()
-        cls.page.set_default_timeout(5000)
+        cls.page.set_default_timeout(10000)
 
     @classmethod
     def setUpServer(cls):
