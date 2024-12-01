@@ -2,66 +2,62 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://reactive-python.github.io/reactpy-django/develop/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-12-01</lastmod>
     </url>
     <url>
          <loc>https://reactive-python.github.io/reactpy-django/develop/about/changelog/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-12-01</lastmod>
     </url>
     <url>
-         <loc>https://reactive-python.github.io/reactpy-django/develop/about/code/</loc>
-         <lastmod>2024-11-25</lastmod>
-    </url>
-    <url>
-         <loc>https://reactive-python.github.io/reactpy-django/develop/about/docs/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <loc>https://reactive-python.github.io/reactpy-django/develop/about/contributing/</loc>
+         <lastmod>2024-12-01</lastmod>
     </url>
     <url>
          <loc>https://reactive-python.github.io/reactpy-django/develop/about/license/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-12-01</lastmod>
     </url>
     <url>
          <loc>https://reactive-python.github.io/reactpy-django/develop/learn/add-reactpy-to-a-django-project/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-12-01</lastmod>
     </url>
     <url>
          <loc>https://reactive-python.github.io/reactpy-django/develop/learn/your-first-component/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-12-01</lastmod>
     </url>
     <url>
          <loc>https://reactive-python.github.io/reactpy-django/develop/reference/components/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-12-01</lastmod>
     </url>
     <url>
          <loc>https://reactive-python.github.io/reactpy-django/develop/reference/decorators/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-12-01</lastmod>
     </url>
     <url>
          <loc>https://reactive-python.github.io/reactpy-django/develop/reference/hooks/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-12-01</lastmod>
     </url>
     <url>
          <loc>https://reactive-python.github.io/reactpy-django/develop/reference/html/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-12-01</lastmod>
     </url>
     <url>
          <loc>https://reactive-python.github.io/reactpy-django/develop/reference/management-commands/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-12-01</lastmod>
     </url>
     <url>
          <loc>https://reactive-python.github.io/reactpy-django/develop/reference/router/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-12-01</lastmod>
     </url>
     <url>
          <loc>https://reactive-python.github.io/reactpy-django/develop/reference/settings/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-12-01</lastmod>
     </url>
     <url>
          <loc>https://reactive-python.github.io/reactpy-django/develop/reference/template-tag/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-12-01</lastmod>
     </url>
     <url>
          <loc>https://reactive-python.github.io/reactpy-django/develop/reference/utils/</loc>
-         <lastmod>2024-11-25</lastmod>
+         <lastmod>2024-12-01</lastmod>
     </url>
 </urlset>
