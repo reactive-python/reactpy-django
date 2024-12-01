@@ -68,7 +68,8 @@ class PlaywrightTestCase(ChannelsLiveServerTestCase):
 
         # Repurposed from ChannelsLiveServerTestCase._post_teardown
         cls._live_server_modified_settings.disable()
-        for db_name in ["default", config.REACTPY_DATABASE]:
+        # Using set to prevent duplicates
+        for db_name in {"default", config.REACTPY_DATABASE}:
             call_command(
                 "flush",
                 verbosity=0,
