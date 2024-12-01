@@ -89,6 +89,4 @@ class PlaywrightTestCase(ChannelsLiveServerTestCase):
     def _post_teardown(self):
         """Handled manually in `tearDownClass` to prevent TransactionTestCase from doing
         database flushing. This is needed to prevent a `SynchronousOnlyOperation` from
-        occuring due to a bug within `ChannelsLiveServerTestCase`."""
-
-    def setUp(self): ...
+        occurring due to a bug within `ChannelsLiveServerTestCase`."""
