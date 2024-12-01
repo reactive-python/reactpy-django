@@ -12,9 +12,9 @@ SRC_DIR = BASE_DIR.parent / "src"
 SECRET_KEY = "django-insecure-n!bd1#+7ufw5#9ipayu9k(lyu@za$c2ajbro7es(v8_7w1$=&c"
 
 # Run in production mode when using a real web server
-DEBUG = all(
-    not sys.argv[0].endswith(webserver_name)
-    for webserver_name in {"hypercorn", "uvicorn", "daphne"}
+DEBUG = not any(
+    sys.argv[0].endswith(webserver_name)
+    for webserver_name in ["hypercorn", "uvicorn", "daphne"]
 )
 ALLOWED_HOSTS = ["*"]
 
@@ -32,7 +32,8 @@ INSTALLED_APPS = [
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "servestatic.middleware.ServeStaticMiddleware",
+    "test_app.middleware.AutoCreateAdminMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -66,13 +67,9 @@ DB_NAME = "single_db"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        # Changing NAME is needed due to a bug related to `manage.py test`
-        "NAME": os.path.join(
-            BASE_DIR,
-            f"test_{DB_NAME}.sqlite3" if "test" in sys.argv else f"{DB_NAME}.sqlite3",
-        ),
+        "NAME": os.path.join(BASE_DIR, f"{DB_NAME}.sqlite3"),
         "TEST": {
-            "NAME": os.path.join(BASE_DIR, f"test_{DB_NAME}.sqlite3"),
+            "NAME": os.path.join(BASE_DIR, f"{DB_NAME}.sqlite3"),
             "OPTIONS": {"timeout": 20},
             "DEPENDENCIES": [],
         },
@@ -102,7 +99,6 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
-USE_L10N = True
 USE_TZ = True
 
 # Default primary key field type
@@ -120,9 +116,7 @@ STATICFILES_FINDERS = [
 ]
 
 # Logging
-LOG_LEVEL = "WARNING"
-if DEBUG and ("test" not in sys.argv):
-    LOG_LEVEL = "DEBUG"
+LOG_LEVEL = "DEBUG"
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -140,4 +134,6 @@ LOGGING = {
 CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 # ReactPy-Django Settings
-REACTPY_BACKHAUL_THREAD = "test" not in sys.argv and "runserver" not in sys.argv
+REACTPY_BACKHAUL_THREAD = any(
+    sys.argv[0].endswith(webserver_name) for webserver_name in ["hypercorn", "uvicorn"]
+)

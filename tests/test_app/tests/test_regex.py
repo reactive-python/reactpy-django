@@ -1,6 +1,7 @@
 import re
 
 from django.test import TestCase
+
 from reactpy_django.utils import COMMENT_REGEX, COMPONENT_REGEX
 
 
@@ -21,10 +22,10 @@ class RegexTests(TestCase):
         )
         self.assertRegex(
             r"""{%
-            component   
-            "my.component"  
-            class="my_thing"  
-            attr="attribute"  
+            component
+            "my.component"
+            class="my_thing"
+            attr="attribute"
 
         %}""",  # noqa: W291
             COMPONENT_REGEX,
@@ -84,10 +85,10 @@ class RegexTests(TestCase):
             COMMENT_REGEX,
         )
         self.assertRegex(
-            r"""<!-- 
+            r"""<!--
         a comment
         another comments
-        drink some cement 
+        drink some cement
         -->""",  # noqa: W291
             COMMENT_REGEX,
         )
@@ -138,8 +139,8 @@ class RegexTests(TestCase):
             COMMENT_REGEX.sub(
                 "",
                 r"""<!--
-            {% component "my.component" %} 
-            {% component "my.component" %} 
+            {% component "my.component" %}
+            {% component "my.component" %}
             -->""",  # noqa: W291
             ),
             "",

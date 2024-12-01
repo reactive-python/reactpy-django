@@ -11,7 +11,7 @@ on:
         - cron: "0 0 * * *"
 
 jobs:
-    source:
+    python:
         runs-on: ubuntu-latest
         strategy:
             matrix:
@@ -26,6 +26,8 @@ jobs:
               with:
                   python-version: ${{ matrix.python-version }}
             - name: Install Python Dependencies
-              run: pip install -r requirements/test-run.txt
-            - name: Run Tests
-              run: nox -t test
+              run: pip install --upgrade pip hatch uv
+            - name: Run Single DB Tests
+              run: hatch test --python ${{ matrix.python-version }} --ds=test_app.settings_single_db -v
+            - name: Run Multi-DB Tests
+              run: hatch test --python ${{ matrix.python-version }} --ds=test_app.settings_multi_db -v

@@ -19,7 +19,13 @@ Don't forget to remove deprecated code on each major release!
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Fixed
+
+-   Fixed regression in v5.1.0 where components would sometimes not output debug messages when `settings.py:DEBUG` is enabled.
+
+### Changed
+
+-   Set upper limit on ReactPy version to `<2.0.0`.
 
 ## [5.1.0] - 2024-11-24
 

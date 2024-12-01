@@ -16,9 +16,7 @@ nav:
           - Management Commands: reference/management-commands.md
     - About:
           - Changelog: about/changelog.md
-          - Contributor Guide:
-                - Code: about/code.md
-                - Docs: about/docs.md
+          - Contributor Guide: about/contributing.md
           - Community:
                 - GitHub Discussions: https://github.com/reactive-python/reactpy-django/discussions
                 - Discord: https://discord.gg/uNb5P4hA9X
