@@ -27,5 +27,4 @@ jobs:
               env:
                   HATCH_INDEX_USER: ${{ secrets.PYPI_USERNAME }}
                   HATCH_INDEX_AUTH: ${{ secrets.PYPI_PASSWORD }}
-                  HATCH_INDEX_REPO: reactpy-django
               run: hatch publish --yes
