@@ -19,10 +19,11 @@ jobs:
                   python-version: 3.x
             - name: Install dependencies
               run: pip install --upgrade pip hatch uv
-            - name: Publish Develop Docs
+            - name: Configure Git
               run: |
                   git config user.name github-actions
                   git config user.email github-actions@github.com
-                  hatch run docs:deploy_develop
+            - name: Publish Develop Docs
+              run: hatch run docs:deploy_develop
         concurrency:
             group: publish-docs

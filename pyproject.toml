@@ -195,7 +195,7 @@ fix = ["cd src/js && bun install", "cd src/js && bun run format"]
 #########################
 
 [tool.ruff]
-extend-exclude = ["*/migrations/*", ".venv/*", ".eggs/*", ".nox/*", "build/*"]
+extend-exclude = ["*/migrations/*", ".venv/*", ".eggs/*", "build/*"]
 line-length = 120
 format.preview = true
 lint.extend-ignore = [
