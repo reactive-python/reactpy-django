@@ -21,10 +21,11 @@ jobs:
                   python-version: "3.x"
             - name: Install dependencies
               run: pip install --upgrade pip hatch uv
-            - name: Build and publish
+            - name: Build Package
+              run: hatch build --clean
+            - name: Publish to PyPI
               env:
-                  TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-                  TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-              run: |
-                  hatch build --clean
-                  twine upload dist/*
+                  HATCH_INDEX_USER: ${{ secrets.PYPI_USERNAME }}
+                  HATCH_INDEX_AUTH: ${{ secrets.PYPI_PASSWORD }}
+                  HATCH_INDEX_REPO: reactpy-django
+              run: hatch publish --yes
