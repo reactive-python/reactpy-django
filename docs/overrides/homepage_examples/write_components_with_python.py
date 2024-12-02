@@ -1,3 +1,4 @@
+# ruff: noqa: INP001
 from reactpy import component, html
 
 

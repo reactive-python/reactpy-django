@@ -1,4 +1,3 @@
-# ruff: noqa: RUF029
 from django.utils import timezone
 from reactpy import component, hooks, html
 

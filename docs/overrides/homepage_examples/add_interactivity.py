@@ -1,3 +1,4 @@
+# ruff: noqa: INP001
 # pylint: disable=assignment-from-no-return, unnecessary-lambda
 from reactpy import component, html, use_state
 

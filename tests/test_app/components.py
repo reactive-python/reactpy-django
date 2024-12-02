@@ -1,4 +1,3 @@
-# ruff: noqa: RUF029
 import asyncio
 import inspect
 from pathlib import Path

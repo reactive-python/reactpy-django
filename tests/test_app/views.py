@@ -1,4 +1,3 @@
-# ruff: noqa: RUF029
 import inspect
 from itertools import cycle
 
