@@ -2,7 +2,7 @@ from time import sleep
 from typing import Any
 from uuid import uuid4
 
-import dill as pickle
+import dill
 from django.test import TransactionTestCase
 
 from reactpy_django import clean
@@ -37,7 +37,8 @@ class RoutedDatabaseTests(TransactionTestCase):
             # Check if a component params are in the database
             self.assertEqual(ComponentSession.objects.count(), 1)
             self.assertEqual(
-                pickle.loads(ComponentSession.objects.first().params), params_1  # type: ignore
+                dill.loads(ComponentSession.objects.first().params),
+                params_1,  # type: ignore
             )
 
             # Force `params_1` to expire
@@ -54,7 +55,8 @@ class RoutedDatabaseTests(TransactionTestCase):
             # Make sure `params_1` has expired, but `params_2` is still there
             self.assertEqual(ComponentSession.objects.count(), 1)
             self.assertEqual(
-                pickle.loads(ComponentSession.objects.first().params), params_2  # type: ignore
+                dill.loads(ComponentSession.objects.first().params),
+                params_2,  # type: ignore
             )
         finally:
             config.REACTPY_CLEAN_INTERVAL = initial_clean_interval
@@ -64,7 +66,7 @@ class RoutedDatabaseTests(TransactionTestCase):
     def _save_params_to_db(self, value: Any) -> ComponentParams:
         db = list(self.databases)[0]
         param_data = ComponentParams((value,), {"test_value": value})
-        model = ComponentSession(str(uuid4()), params=pickle.dumps(param_data))
+        model = ComponentSession(str(uuid4()), params=dill.dumps(param_data))
         model.clean_fields()
         model.clean()
         model.save(using=db)

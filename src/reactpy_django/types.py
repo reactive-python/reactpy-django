@@ -6,10 +6,8 @@ from typing import (
     Any,
     Callable,
     Generic,
-    MutableMapping,
     NamedTuple,
     Protocol,
-    Sequence,
     TypeVar,
     Union,
 )
@@ -19,6 +17,8 @@ from reactpy.types import Connection
 from typing_extensions import ParamSpec
 
 if TYPE_CHECKING:
+    from collections.abc import MutableMapping, Sequence
+
     from reactpy_django.websocket.consumer import ReactpyAsyncWebsocketConsumer
 
 

@@ -12,9 +12,7 @@ _logger = logging.getLogger(__name__)
 if TYPE_CHECKING:
     from reactpy_django.models import Config
 
-CLEAN_NEEDED_BY: datetime = datetime(
-    year=1, month=1, day=1, tzinfo=timezone.now().tzinfo
-)
+CLEAN_NEEDED_BY: datetime = datetime(year=1, month=1, day=1, tzinfo=timezone.now().tzinfo)
 
 
 def clean(
@@ -36,8 +34,8 @@ def clean(
         user_data = REACTPY_CLEAN_USER_DATA
 
         if args:
-            sessions = any(value in args for value in {"sessions", "all"})
-            user_data = any(value in args for value in {"user_data", "all"})
+            sessions = any(value in args for value in ("sessions", "all"))
+            user_data = any(value in args for value in ("user_data", "all"))
 
         if sessions:
             clean_sessions(verbosity)
@@ -54,16 +52,14 @@ def clean_sessions(verbosity: int = 1):
     from reactpy_django.models import ComponentSession
 
     if verbosity >= 2:
-        print("Cleaning ReactPy component sessions...")
+        _logger.info("Cleaning ReactPy component sessions...")
 
     start_time = timezone.now()
     expiration_date = timezone.now() - timedelta(seconds=REACTPY_SESSION_MAX_AGE)
-    session_objects = ComponentSession.objects.filter(
-        last_accessed__lte=expiration_date
-    )
+    session_objects = ComponentSession.objects.filter(last_accessed__lte=expiration_date)
 
     if verbosity >= 2:
-        print(f"Deleting {session_objects.count()} expired component sessions...")
+        _logger.info("Deleting %d expired component sessions...", session_objects.count())
 
     session_objects.delete()
 
@@ -83,7 +79,7 @@ def clean_user_data(verbosity: int = 1):
     from reactpy_django.models import UserDataModel
 
     if verbosity >= 2:
-        print("Cleaning ReactPy user data...")
+        _logger.info("Cleaning ReactPy user data...")
 
     start_time = timezone.now()
     user_model = get_user_model()
@@ -97,9 +93,7 @@ def clean_user_data(verbosity: int = 1):
     user_data_objects = UserDataModel.objects.exclude(user_pk__in=all_user_pks)
 
     if verbosity >= 2:
-        print(
-            f"Deleting {user_data_objects.count()} user data objects not associated with an existing user..."
-        )
+        _logger.info("Deleting %d user data objects not associated with an existing user...", user_data_objects.count())
 
     user_data_objects.delete()
 
@@ -129,9 +123,7 @@ def inspect_clean_duration(start_time: datetime, task_name: str, verbosity: int)
     clean_duration = timezone.now() - start_time
 
     if verbosity >= 3:
-        print(
-            f"Cleaned ReactPy {task_name} in {clean_duration.total_seconds()} seconds."
-        )
+        _logger.info("Cleaned ReactPy %s in %s seconds.", task_name, clean_duration.total_seconds())
 
     if clean_duration.total_seconds() > 1:
         _logger.warning(

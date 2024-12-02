@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from reactpy_django.http import views
 
 app_name = "reactpy"
 

@@ -2,13 +2,11 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
     Any,
-    Awaitable,
     Callable,
-    DefaultDict,
-    Sequence,
     Union,
     cast,
 )
@@ -22,7 +20,6 @@ from reactpy import use_callback, use_effect, use_memo, use_ref, use_state
 from reactpy import use_connection as _use_connection
 from reactpy import use_location as _use_location
 from reactpy import use_scope as _use_scope
-from reactpy.backend.types import Location
 
 from reactpy_django.exceptions import UserNotFoundError
 from reactpy_django.types import (
@@ -40,14 +37,15 @@ from reactpy_django.types import (
 from reactpy_django.utils import django_query_postprocessor, generate_obj_name, get_pk
 
 if TYPE_CHECKING:
+    from collections.abc import Awaitable, Sequence
+
     from channels_redis.core import RedisChannelLayer
     from django.contrib.auth.models import AbstractUser
+    from reactpy.backend.types import Location
 
 
 _logger = logging.getLogger(__name__)
-_REFETCH_CALLBACKS: DefaultDict[Callable[..., Any], set[Callable[[], None]]] = (
-    DefaultDict(set)
-)
+_REFETCH_CALLBACKS: defaultdict[Callable[..., Any], set[Callable[[], None]]] = defaultdict(set)
 
 
 def use_location() -> Location:
@@ -62,21 +60,11 @@ def use_origin() -> str | None:
     try:
         if scope["type"] == "websocket":
             return next(
-                (
-                    header[1].decode("utf-8")
-                    for header in scope["headers"]
-                    if header[0] == b"origin"
-                ),
+                (header[1].decode("utf-8") for header in scope["headers"] if header[0] == b"origin"),
                 None,
             )
         if scope["type"] == "http":
-            host = next(
-                (
-                    header[1].decode("utf-8")
-                    for header in scope["headers"]
-                    if header[0] == b"host"
-                )
-            )
+            host = next(header[1].decode("utf-8") for header in scope["headers"] if header[0] == b"host")
             return f"{scope['scheme']}://{host}" if host else None
     except Exception:
         _logger.info("Failed to get origin")
@@ -90,7 +78,8 @@ def use_scope() -> dict[str, Any]:
     if isinstance(scope, dict):
         return scope
 
-    raise TypeError(f"Expected scope to be a dict, got {type(scope)}")
+    msg = f"Expected scope to be a dict, got {type(scope)}"
+    raise TypeError(msg)
 
 
 def use_connection() -> ConnectionType:
@@ -103,9 +92,7 @@ def use_query(
     kwargs: dict[str, Any] | None = None,
     *,
     thread_sensitive: bool = True,
-    postprocessor: (
-        AsyncPostprocessor | SyncPostprocessor | None
-    ) = django_query_postprocessor,
+    postprocessor: (AsyncPostprocessor | SyncPostprocessor | None) = django_query_postprocessor,
     postprocessor_kwargs: dict[str, Any] | None = None,
 ) -> Query[Inferred]:
     """This hook is used to execute functions in the background and return the result, \
@@ -143,7 +130,8 @@ def use_query(
     postprocessor_kwargs = postprocessor_kwargs or {}
 
     if query_ref.current is not query:
-        raise ValueError(f"Query function changed from {query_ref.current} to {query}.")
+        msg = f"Query function changed from {query_ref.current} to {query}."
+        raise ValueError(msg)
 
     async def execute_query() -> None:
         """The main running function for `use_query`"""
@@ -152,18 +140,16 @@ def use_query(
             if asyncio.iscoroutinefunction(query):
                 new_data = await query(**kwargs)  # type: ignore[call-arg]
             else:
-                new_data = await database_sync_to_async(
-                    query, thread_sensitive=thread_sensitive
-                )(**kwargs)
+                new_data = await database_sync_to_async(query, thread_sensitive=thread_sensitive)(**kwargs)
 
             # Run the postprocessor
             if postprocessor:
                 if asyncio.iscoroutinefunction(postprocessor):
                     new_data = await postprocessor(new_data, **postprocessor_kwargs)
                 else:
-                    new_data = await database_sync_to_async(
-                        postprocessor, thread_sensitive=thread_sensitive
-                    )(new_data, **postprocessor_kwargs)
+                    new_data = await database_sync_to_async(postprocessor, thread_sensitive=thread_sensitive)(
+                        new_data, **postprocessor_kwargs
+                    )
 
         # Log any errors and set the error state
         except Exception as e:
@@ -181,7 +167,7 @@ def use_query(
 
     @use_effect(dependencies=None)
     def schedule_query() -> None:
-        """Schedule the query to be run when needed"""
+        """Schedule the query to be run"""
         # Make sure we don't re-execute the query unless we're told to
         if not should_execute:
             return
@@ -210,9 +196,7 @@ def use_query(
 
 
 def use_mutation(
-    mutation: (
-        Callable[FuncParams, bool | None] | Callable[FuncParams, Awaitable[bool | None]]
-    ),
+    mutation: (Callable[FuncParams, bool | None] | Callable[FuncParams, Awaitable[bool | None]]),
     *,
     thread_sensitive: bool = True,
     refetch: Callable[..., Any] | Sequence[Callable[..., Any]] | None = None,
@@ -253,17 +237,15 @@ def use_mutation(
             if asyncio.iscoroutinefunction(mutation):
                 should_refetch = await mutation(*exec_args, **exec_kwargs)
             else:
-                should_refetch = await database_sync_to_async(
-                    mutation, thread_sensitive=thread_sensitive
-                )(*exec_args, **exec_kwargs)
+                should_refetch = await database_sync_to_async(mutation, thread_sensitive=thread_sensitive)(
+                    *exec_args, **exec_kwargs
+                )
 
         # Log any errors and set the error state
         except Exception as e:
             set_loading(False)
             set_error(e)
-            _logger.exception(
-                "Failed to execute mutation: %s", generate_obj_name(mutation)
-            )
+            _logger.exception("Failed to execute mutation: %s", generate_obj_name(mutation))
 
         # Mutation was successful
         else:
@@ -279,18 +261,14 @@ def use_mutation(
 
     # Schedule the mutation to be run when needed
     @use_callback
-    def schedule_mutation(
-        *exec_args: FuncParams.args, **exec_kwargs: FuncParams.kwargs
-    ) -> None:
+    def schedule_mutation(*exec_args: FuncParams.args, **exec_kwargs: FuncParams.kwargs) -> None:
         # Set the loading state.
         # It's okay to re-execute the mutation if we're told to. The user
         # can use the `loading` state to prevent this.
         set_loading(True)
 
         # Execute the mutation in the background
-        asyncio.ensure_future(
-            execute_mutation(exec_args=exec_args, exec_kwargs=exec_kwargs)
-        )
+        asyncio.ensure_future(execute_mutation(exec_args=exec_args, exec_kwargs=exec_kwargs))
 
     # Used when the user has told us to reset this mutation
     @use_callback
@@ -307,14 +285,13 @@ def use_user() -> AbstractUser:
     connection = use_connection()
     user = connection.scope.get("user") or getattr(connection.carrier, "user", None)
     if user is None:
-        raise UserNotFoundError("No user is available in the current environment.")
+        msg = "No user is available in the current environment."
+        raise UserNotFoundError(msg)
     return user
 
 
 def use_user_data(
-    default_data: (
-        None | dict[str, Callable[[], Any] | Callable[[], Awaitable[Any]] | Any]
-    ) = None,
+    default_data: (None | dict[str, Callable[[], Any] | Callable[[], Awaitable[Any]] | Any]) = None,
     save_default_data: bool = False,
 ) -> UserData:
     """Get or set user data stored within the REACTPY_DATABASE.
@@ -332,9 +309,11 @@ def use_user_data(
 
     async def _set_user_data(data: dict):
         if not isinstance(data, dict):
-            raise TypeError(f"Expected dict while setting user data, got {type(data)}")
+            msg = f"Expected dict while setting user data, got {type(data)}"
+            raise TypeError(msg)
         if user.is_anonymous:
-            raise ValueError("AnonymousUser cannot have user data.")
+            msg = "AnonymousUser cannot have user data."
+            raise ValueError(msg)
 
         pk = get_pk(user)
         model, _ = await UserDataModel.objects.aget_or_create(user_pk=pk)
@@ -386,13 +365,15 @@ def use_channel_layer(
     channel_name = use_memo(lambda: str(name or uuid4()))
 
     if not name and not group_name:
-        raise ValueError("You must define a `name` or `group_name` for the channel.")
+        msg = "You must define a `name` or `group_name` for the channel."
+        raise ValueError(msg)
 
     if not channel_layer:
-        raise ValueError(
+        msg = (
             f"Channel layer '{layer}' is not available. Are you sure you"
             " configured settings.py:CHANNEL_LAYERS properly?"
         )
+        raise ValueError(msg)
 
     # Add/remove a group's channel during component mount/dismount respectively.
     @use_effect(dependencies=[])
@@ -401,9 +382,8 @@ def use_channel_layer(
             await channel_layer.group_add(group_name, channel_name)
 
         if group_name and group_discard:
-            return lambda: asyncio.run(
-                channel_layer.group_discard(group_name, channel_name)
-            )
+            return lambda: asyncio.run(channel_layer.group_discard(group_name, channel_name))
+        return None
 
     # Listen for messages on the channel using the provided `receiver` function.
     @use_effect
@@ -433,9 +413,7 @@ def use_root_id() -> str:
     return scope["reactpy"]["id"]
 
 
-async def _get_user_data(
-    user: AbstractUser, default_data: None | dict, save_default_data: bool
-) -> dict | None:
+async def _get_user_data(user: AbstractUser, default_data: None | dict, save_default_data: bool) -> dict | None:
     """The mutation function for `use_user_data`"""
     from reactpy_django.models import UserDataModel
 
@@ -447,7 +425,8 @@ async def _get_user_data(
     data = orjson.loads(model.data) if model.data else {}
 
     if not isinstance(data, dict):
-        raise TypeError(f"Expected dict while loading user data, got {type(data)}")
+        msg = f"Expected dict while loading user data, got {type(data)}"
+        raise TypeError(msg)
 
     # Set default values, if needed
     if default_data:

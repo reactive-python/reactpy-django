@@ -16,13 +16,13 @@ from reactpy_django.websocket.paths import REACTPY_WEBSOCKET_ROUTE
 __version__ = "5.1.0"
 __all__ = [
     "REACTPY_WEBSOCKET_ROUTE",
-    "html",
-    "hooks",
     "components",
     "decorators",
+    "hooks",
+    "html",
+    "router",
     "types",
     "utils",
-    "router",
 ]
 
 # Fixes bugs with REACTPY_BACKHAUL_THREAD + built-in asyncio event loops.

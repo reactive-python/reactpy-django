@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from logging import getLogger
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from django import template
-from django.http import HttpRequest
 from django.urls import NoReverseMatch, reverse
-from reactpy.core.types import ComponentConstructor, ComponentType, VdomDict
 
 from reactpy_django import config as reactpy_config
 from reactpy_django.exceptions import (
@@ -14,7 +13,7 @@ from reactpy_django.exceptions import (
     ComponentDoesNotExistError,
     ComponentParamError,
     InvalidHostError,
-    OfflineComponentMissing,
+    OfflineComponentMissingError,
 )
 from reactpy_django.utils import (
     PYSCRIPT_LAYOUT_HANDLER,
@@ -27,6 +26,10 @@ from reactpy_django.utils import (
     validate_host,
     vdom_or_component_to_string,
 )
+
+if TYPE_CHECKING:
+    from django.http import HttpRequest
+    from reactpy.core.types import ComponentConstructor, ComponentType, VdomDict
 
 try:
     RESOLVED_WEB_MODULES_PATH = reverse("reactpy:web_modules", args=["/"]).strip("/")
@@ -78,14 +81,9 @@ def component(
 
     request: HttpRequest | None = context.get("request")
     perceived_host = (request.get_host() if request else "").strip("/")
-    host = (
-        host
-        or (
-            next(reactpy_config.REACTPY_DEFAULT_HOSTS)
-            if reactpy_config.REACTPY_DEFAULT_HOSTS
-            else ""
-        )
-    ).strip("/")
+    host = (host or (next(reactpy_config.REACTPY_DEFAULT_HOSTS) if reactpy_config.REACTPY_DEFAULT_HOSTS else "")).strip(
+        "/"
+    )
     is_local = not host or host.startswith(perceived_host)
     uuid = str(uuid4())
     class_ = kwargs.pop("class", "")
@@ -114,7 +112,10 @@ def component(
         try:
             validate_component_args(user_component, *args, **kwargs)
         except ComponentParamError as e:
-            _logger.error(str(e))
+            _logger.exception(
+                "The parameters you provided for component '%s' was incorrect.",
+                dotted_path,
+            )
             return failure_context(dotted_path, e)
 
     # Store args & kwargs in the database (fetched by our websocket later)
@@ -123,7 +124,7 @@ def component(
             save_component_params(args, kwargs, uuid)
         except Exception as e:
             _logger.exception(
-                "An unknown error has occurred while saving component params for '%s'.",
+                "An unknown error has occurred while saving component parameters for '%s'.",
                 dotted_path,
             )
             return failure_context(dotted_path, e)
@@ -145,9 +146,7 @@ def component(
             )
             _logger.error(msg)
             return failure_context(dotted_path, ComponentCarrierError(msg))
-        _prerender_html = prerender_component(
-            user_component, args, kwargs, uuid, request
-        )
+        _prerender_html = prerender_component(user_component, args, kwargs, uuid, request)
 
     # Fetch the offline component's HTML, if requested
     if offline:
@@ -155,7 +154,7 @@ def component(
         if not offline_component:
             msg = f"Cannot render offline component '{offline}'. It is not registered as a component."
             _logger.error(msg)
-            return failure_context(dotted_path, OfflineComponentMissing(msg))
+            return failure_context(dotted_path, OfflineComponentMissingError(msg))
         if not request:
             msg = (
                 "Cannot render an offline component without a HTTP request. Are you missing the "
@@ -201,9 +200,8 @@ def pyscript_component(
         root: The name of the root component function.
     """
     if not file_paths:
-        raise ValueError(
-            "At least one file path must be provided to the 'pyscript_component' tag."
-        )
+        msg = "At least one file path must be provided to the 'pyscript_component' tag."
+        raise ValueError(msg)
 
     uuid = uuid4().hex
     request: HttpRequest | None = context.get("request")

@@ -1,5 +1,13 @@
-# mypy: disable-error-code=attr-defined
 import asyncio
+from logging import getLogger
+
+import js
+from jsonpointer import set_pointer
+from pyodide.ffi.wrappers import add_event_listener
+from pyscript.js_modules import morphdom
+from reactpy.core.layout import Layout
+
+_logger = getLogger(__name__)
 
 
 class ReactPyLayoutHandler:
@@ -16,7 +24,6 @@ class ReactPyLayoutHandler:
     @staticmethod
     def update_model(update, root_model):
         """Apply an update ReactPy's internal DOM model."""
-        from jsonpointer import set_pointer
 
         if update["path"]:
             set_pointer(root_model, update["path"], update["model"])
@@ -25,9 +32,6 @@ class ReactPyLayoutHandler:
 
     def render_html(self, layout, model):
         """Submit ReactPy's internal DOM model into the HTML DOM."""
-        from pyscript.js_modules import morphdom
-
-        import js
 
         # Create a new container to render the layout into
         container = js.document.getElementById(f"pyscript-{self.uuid}")
@@ -42,8 +46,6 @@ class ReactPyLayoutHandler:
 
     def build_element_tree(self, layout, parent, model):
         """Recursively build an element tree, starting from the root component."""
-        import js
-
         if isinstance(model, str):
             parent.appendChild(js.document.createTextNode(model))
         elif isinstance(model, dict):
@@ -63,30 +65,23 @@ class ReactPyLayoutHandler:
                     element.className = value
                 else:
                     element.setAttribute(key, value)
-            for event_name, event_handler_model in model.get(
-                "eventHandlers", {}
-            ).items():
-                self.create_event_handler(
-                    layout, element, event_name, event_handler_model
-                )
+            for event_name, event_handler_model in model.get("eventHandlers", {}).items():
+                self.create_event_handler(layout, element, event_name, event_handler_model)
             for child in children:
                 self.build_element_tree(layout, element, child)
             parent.appendChild(element)
         else:
-            raise ValueError(f"Unknown model type: {type(model)}")
+            msg = f"Unknown model type: {type(model)}"
+            raise TypeError(msg)
 
     @staticmethod
     def create_event_handler(layout, element, event_name, event_handler_model):
         """Create an event handler for an element. This function is used as an
         adapter between ReactPy and browser events."""
-        from pyodide.ffi.wrappers import add_event_listener
-
         target = event_handler_model["target"]
 
         def event_handler(*args):
-            asyncio.create_task(
-                layout.deliver({"type": "layout-event", "target": target, "data": args})
-            )
+            asyncio.create_task(layout.deliver({"type": "layout-event", "target": target, "data": args}))
 
         event_name = event_name.lstrip("on_").lower().replace("_", "")
         add_event_listener(element, event_name, event_handler)
@@ -97,15 +92,9 @@ class ReactPyLayoutHandler:
         it is no longer in use (removed from the page). To do this, we compare what
         UUIDs exist on the DOM, versus what UUIDs exist within the PyScript global
         interpreter."""
-        import js
-
         dom_workspaces = js.document.querySelectorAll(".pyscript")
         dom_uuids = {element.dataset.uuid for element in dom_workspaces}
-        python_uuids = {
-            value.split("_")[-1]
-            for value in globals()
-            if value.startswith("user_workspace_")
-        }
+        python_uuids = {value.split("_")[-1] for value in globals() if value.startswith("user_workspace_")}
 
         # Delete any workspaces that are not being used
         for uuid in python_uuids - dom_uuids:
@@ -115,20 +104,16 @@ class ReactPyLayoutHandler:
                 task.cancel()
                 del globals()[task_name]
             else:
-                print(f"Warning: Could not auto delete PyScript task {task_name}")
+                _logger.error("Could not auto delete PyScript task %s", task_name)
 
             workspace_name = f"user_workspace_{uuid}"
             if workspace_name in globals():
                 del globals()[workspace_name]
             else:
-                print(
-                    f"Warning: Could not auto delete PyScript workspace {workspace_name}"
-                )
+                _logger.error("Could not auto delete PyScript workspace %s", workspace_name)
 
     async def run(self, workspace_function):
         """Run the layout handler. This function is main executor for all user generated code."""
-        from reactpy.core.layout import Layout
-
         self.delete_old_workspaces()
         root_model: dict = {}
 

@@ -17,19 +17,16 @@ def reactpy_warnings(app_configs, **kwargs):
     from reactpy_django.config import REACTPY_FAILED_COMPONENTS
 
     warnings = []
-    INSTALLED_APPS: list[str] = getattr(settings, "INSTALLED_APPS", [])
+    installed_apps: list[str] = getattr(settings, "INSTALLED_APPS", [])
 
     # Check if REACTPY_DATABASE is not an in-memory database.
     if (
-        getattr(settings, "DATABASES", {})
-        .get(getattr(settings, "REACTPY_DATABASE", "default"), {})
-        .get("NAME", None)
+        getattr(settings, "DATABASES", {}).get(getattr(settings, "REACTPY_DATABASE", "default"), {}).get("NAME", None)
         == ":memory:"
     ):
         warnings.append(
             Warning(
-                "Using ReactPy with an in-memory database can cause unexpected "
-                "behaviors.",
+                "Using ReactPy with an in-memory database can cause unexpected behaviors.",
                 hint="Configure settings.py:DATABASES[REACTPY_DATABASE], to use a "
                 "multiprocessing and thread safe database.",
                 id="reactpy_django.W001",
@@ -52,14 +49,12 @@ def reactpy_warnings(app_configs, **kwargs):
         )
 
     # Warn if REACTPY_BACKHAUL_THREAD is set to True with Daphne
-    if (
-        sys.argv[0].endswith("daphne")
-        or ("runserver" in sys.argv and "daphne" in INSTALLED_APPS)
-    ) and getattr(settings, "REACTPY_BACKHAUL_THREAD", False):
+    if (sys.argv[0].endswith("daphne") or ("runserver" in sys.argv and "daphne" in installed_apps)) and getattr(
+        settings, "REACTPY_BACKHAUL_THREAD", False
+    ):
         warnings.append(
             Warning(
-                "Unstable configuration detected. REACTPY_BACKHAUL_THREAD is enabled "
-                "and you running with Daphne.",
+                "Unstable configuration detected. REACTPY_BACKHAUL_THREAD is enabled and you running with Daphne.",
                 hint="Set settings.py:REACTPY_BACKHAUL_THREAD to False or use a different web server.",
                 id="reactpy_django.W003",
             )
@@ -79,10 +74,8 @@ def reactpy_warnings(app_configs, **kwargs):
     if REACTPY_FAILED_COMPONENTS:
         warnings.append(
             Warning(
-                "ReactPy failed to register the following components:\n\t+ "
-                + "\n\t+ ".join(REACTPY_FAILED_COMPONENTS),
-                hint="Check if these paths are valid, or if an exception is being "
-                "raised during import.",
+                "ReactPy failed to register the following components:\n\t+ " + "\n\t+ ".join(REACTPY_FAILED_COMPONENTS),
+                hint="Check if these paths are valid, or if an exception is being raised during import.",
                 id="reactpy_django.W005",
             )
         )
@@ -106,10 +99,8 @@ def reactpy_warnings(app_configs, **kwargs):
 
     # Check if REACTPY_URL_PREFIX is being used properly in our HTTP URLs
     with contextlib.suppress(NoReverseMatch):
-        full_path = reverse("reactpy:web_modules", kwargs={"file": "example"}).strip(
-            "/"
-        )
-        reactpy_http_prefix = f'{full_path[: full_path.find("web_module/")].strip("/")}'
+        full_path = reverse("reactpy:web_modules", kwargs={"file": "example"}).strip("/")
+        reactpy_http_prefix = f"{full_path[: full_path.find('web_module/')].strip('/')}"
         if reactpy_http_prefix != config.REACTPY_URL_PREFIX:
             warnings.append(
                 Warning(
@@ -138,9 +129,7 @@ def reactpy_warnings(app_configs, **kwargs):
         )
 
     # Check if `daphne` is not in installed apps when using `runserver`
-    if "runserver" in sys.argv and "daphne" not in getattr(
-        settings, "INSTALLED_APPS", []
-    ):
+    if "runserver" in sys.argv and "daphne" not in getattr(settings, "INSTALLED_APPS", []):
         warnings.append(
             Warning(
                 "You have not configured the `runserver` command to use ASGI. "
@@ -153,10 +142,7 @@ def reactpy_warnings(app_configs, **kwargs):
     # DELETED W013: Check if deprecated value REACTPY_RECONNECT_MAX exists
 
     # Check if REACTPY_RECONNECT_INTERVAL is set to a large value
-    if (
-        isinstance(config.REACTPY_RECONNECT_INTERVAL, int)
-        and config.REACTPY_RECONNECT_INTERVAL > 30000
-    ):
+    if isinstance(config.REACTPY_RECONNECT_INTERVAL, int) and config.REACTPY_RECONNECT_INTERVAL > 30000:
         warnings.append(
             Warning(
                 "REACTPY_RECONNECT_INTERVAL is set to >30 seconds. Are you sure this is intentional? "
@@ -167,10 +153,7 @@ def reactpy_warnings(app_configs, **kwargs):
         )
 
     # Check if REACTPY_RECONNECT_MAX_RETRIES is set to a large value
-    if (
-        isinstance(config.REACTPY_RECONNECT_MAX_RETRIES, int)
-        and config.REACTPY_RECONNECT_MAX_RETRIES > 5000
-    ):
+    if isinstance(config.REACTPY_RECONNECT_MAX_RETRIES, int) and config.REACTPY_RECONNECT_MAX_RETRIES > 5000:
         warnings.append(
             Warning(
                 "REACTPY_RECONNECT_MAX_RETRIES is set to a very large value "
@@ -204,18 +187,12 @@ def reactpy_warnings(app_configs, **kwargs):
         and config.REACTPY_RECONNECT_MAX_INTERVAL > 0
         and config.REACTPY_RECONNECT_MAX_RETRIES > 0
         and config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER > 1
-        and (
-            config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER
-            ** config.REACTPY_RECONNECT_MAX_RETRIES
-        )
+        and (config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER**config.REACTPY_RECONNECT_MAX_RETRIES)
         * config.REACTPY_RECONNECT_INTERVAL
         < config.REACTPY_RECONNECT_MAX_INTERVAL
     ):
         max_value = math.floor(
-            (
-                config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER
-                ** config.REACTPY_RECONNECT_MAX_RETRIES
-            )
+            (config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER**config.REACTPY_RECONNECT_MAX_RETRIES)
             * config.REACTPY_RECONNECT_INTERVAL
         )
         warnings.append(
@@ -229,13 +206,10 @@ def reactpy_warnings(app_configs, **kwargs):
 
     # Check if 'reactpy_django' is in the correct position in INSTALLED_APPS
     position_to_beat = 0
-    for app in INSTALLED_APPS:
+    for app in installed_apps:
         if app.startswith("django.contrib."):
-            position_to_beat = INSTALLED_APPS.index(app)
-    if (
-        "reactpy_django" in INSTALLED_APPS
-        and INSTALLED_APPS.index("reactpy_django") < position_to_beat
-    ):
+            position_to_beat = installed_apps.index(app)
+    if "reactpy_django" in installed_apps and installed_apps.index("reactpy_django") < position_to_beat:
         warnings.append(
             Warning(
                 "The position of 'reactpy_django' in INSTALLED_APPS is suspicious.",
@@ -276,17 +250,13 @@ def reactpy_errors(app_configs, **kwargs):
         )
 
     # DATABASE_ROUTERS is properly configured when REACTPY_DATABASE is defined
-    if getattr(
-        settings, "REACTPY_DATABASE", None
-    ) and "reactpy_django.database.Router" not in getattr(
+    if getattr(settings, "REACTPY_DATABASE", None) and "reactpy_django.database.Router" not in getattr(
         settings, "DATABASE_ROUTERS", []
     ):
         errors.append(
             Error(
-                "ReactPy database has been changed but the database router is "
-                "not configured.",
-                hint="Set settings.py:DATABASE_ROUTERS to "
-                "['reactpy_django.database.Router', ...]",
+                "ReactPy database has been changed but the database router is not configured.",
+                hint="Set settings.py:DATABASE_ROUTERS to ['reactpy_django.database.Router', ...]",
                 id="reactpy_django.E002",
             )
         )
@@ -336,9 +306,7 @@ def reactpy_errors(app_configs, **kwargs):
         )
 
     # Check if REACTPY_DEFAULT_QUERY_POSTPROCESSOR is a valid data type
-    if not isinstance(
-        getattr(settings, "REACTPY_DEFAULT_QUERY_POSTPROCESSOR", ""), (str, type(None))
-    ):
+    if not isinstance(getattr(settings, "REACTPY_DEFAULT_QUERY_POSTPROCESSOR", ""), (str, type(None))):
         errors.append(
             Error(
                 "Invalid type for REACTPY_DEFAULT_QUERY_POSTPROCESSOR.",
@@ -397,10 +365,7 @@ def reactpy_errors(app_configs, **kwargs):
         )
 
     # Check if REACTPY_RECONNECT_INTERVAL is a positive integer
-    if (
-        isinstance(config.REACTPY_RECONNECT_INTERVAL, int)
-        and config.REACTPY_RECONNECT_INTERVAL < 0
-    ):
+    if isinstance(config.REACTPY_RECONNECT_INTERVAL, int) and config.REACTPY_RECONNECT_INTERVAL < 0:
         errors.append(
             Error(
                 "Invalid value for REACTPY_RECONNECT_INTERVAL.",
@@ -420,10 +385,7 @@ def reactpy_errors(app_configs, **kwargs):
         )
 
     # Check if REACTPY_RECONNECT_MAX_INTERVAL is a positive integer
-    if (
-        isinstance(config.REACTPY_RECONNECT_MAX_INTERVAL, int)
-        and config.REACTPY_RECONNECT_MAX_INTERVAL < 0
-    ):
+    if isinstance(config.REACTPY_RECONNECT_MAX_INTERVAL, int) and config.REACTPY_RECONNECT_MAX_INTERVAL < 0:
         errors.append(
             Error(
                 "Invalid value for REACTPY_RECONNECT_MAX_INTERVAL.",
@@ -457,10 +419,7 @@ def reactpy_errors(app_configs, **kwargs):
         )
 
     # Check if REACTPY_RECONNECT_MAX_RETRIES is a positive integer
-    if (
-        isinstance(config.REACTPY_RECONNECT_MAX_RETRIES, int)
-        and config.REACTPY_RECONNECT_MAX_RETRIES < 0
-    ):
+    if isinstance(config.REACTPY_RECONNECT_MAX_RETRIES, int) and config.REACTPY_RECONNECT_MAX_RETRIES < 0:
         errors.append(
             Error(
                 "Invalid value for REACTPY_RECONNECT_MAX_RETRIES.",
@@ -523,10 +482,7 @@ def reactpy_errors(app_configs, **kwargs):
         )
 
     # Check if REACTPY_CLEAN_INTERVAL is a positive integer
-    if (
-        isinstance(config.REACTPY_CLEAN_INTERVAL, int)
-        and config.REACTPY_CLEAN_INTERVAL < 0
-    ):
+    if isinstance(config.REACTPY_CLEAN_INTERVAL, int) and config.REACTPY_CLEAN_INTERVAL < 0:
         errors.append(
             Error(
                 "Invalid value for REACTPY_CLEAN_INTERVAL.",
