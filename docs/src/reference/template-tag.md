@@ -59,7 +59,7 @@ Each component loaded via this template tag will receive a dedicated WebSocket c
         {% include "../../examples/python/template_tag_bad_view.py" %}
         ```
 
-    _Note: If you decide to not follow this warning, you will need to use the [`register_component`](../reference/utils.md#register-component) function to manually register your components._
+    _Note: If you decide to not follow this warning, you will need to use the [`register_component`](./utils.md#register-component) function to manually register your components._
 
 <!--context-end-->
 
@@ -107,7 +107,7 @@ Each component loaded via this template tag will receive a dedicated WebSocket c
 
 ??? question "Can I render components on a different server (distributed computing)?"
 
-    Yes! This is most commonly done through [`settings.py:REACTPY_HOSTS`](../reference/settings.md#reactpy_default_hosts). However, you can use the `#!python host` keyword to render components on a specific ASGI server.
+    Yes! This is most commonly done through [`settings.py:REACTPY_HOSTS`](./settings.md#reactpy_default_hosts). However, you can use the `#!python host` keyword to render components on a specific ASGI server.
 
     === "my_template.html"
 
@@ -127,7 +127,7 @@ Each component loaded via this template tag will receive a dedicated WebSocket c
 
 ??? question "How do I pre-render components for SEO compatibility?"
 
-    This is most commonly done through [`settings.py:REACTPY_PRERENDER`](../reference/settings.md#reactpy_prerender). However, you can use the `#!python prerender` keyword to pre-render a specific component.
+    This is most commonly done through [`settings.py:REACTPY_PRERENDER`](./settings.md#reactpy_prerender). However, you can use the `#!python prerender` keyword to pre-render a specific component.
 
     === "my_template.html"
 

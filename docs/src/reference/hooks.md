@@ -22,7 +22,7 @@ Prefabricated hooks can be used within your `components.py` to help simplify dev
 
 Execute functions in the background and return the result, typically to [read](https://www.sumologic.com/glossary/crud/) data from the Django ORM.
 
-The [default postprocessor](../reference/utils.md#django-query-postprocessor) expects your query function to `#!python return` a Django `#!python Model` or `#!python QuerySet`. This needs to be changed or disabled to execute other types of queries.
+The [default postprocessor](./utils.md#django-query-postprocessor) expects your query function to `#!python return` a Django `#!python Model` or `#!python QuerySet`. This needs [to be changed](./settings.md#reactpy_default_query_postprocessor) or disabled to execute other types of queries.
 
 Query functions can be sync or async.
 
@@ -157,7 +157,7 @@ Query functions can be sync or async.
 
     This design decision was based on [Apollo's `#!javascript useQuery` hook](https://www.apollographql.com/docs/react/data/queries/), but ultimately helps avoid Django's `#!python SynchronousOnlyOperation` exceptions.
 
-    With the `#!python Model` or `#!python QuerySet` your function returns, this hook uses the [default postprocessor](../reference/utils.md#django-query-postprocessor) to ensure that all [deferred](https://docs.djangoproject.com/en/stable/ref/models/instances/#django.db.models.Model.get_deferred_fields) or [lazy](https://docs.djangoproject.com/en/stable/topics/db/queries/#querysets-are-lazy) fields are executed.
+    With the `#!python Model` or `#!python QuerySet` your function returns, this hook uses the [default postprocessor](./utils.md#django-query-postprocessor) to ensure that all [deferred](https://docs.djangoproject.com/en/stable/ref/models/instances/#django.db.models.Model.get_deferred_fields) or [lazy](https://docs.djangoproject.com/en/stable/topics/db/queries/#querysets-are-lazy) fields are executed.
 
 ---
 

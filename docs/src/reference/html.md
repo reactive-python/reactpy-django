@@ -28,4 +28,4 @@ The `pyscript` tag functions identically to HTML tags contained within `#!python
     {% include "../../examples/html/pyscript_tag.html" %}
     ```
 
-{% include-markdown "../reference/components.md" start="<!--pyscript-setup-required-start-->" end="<!--pyscript-setup-required-end-->" %}
+{% include-markdown "./components.md" start="<!--pyscript-setup-required-start-->" end="<!--pyscript-setup-required-end-->" %}

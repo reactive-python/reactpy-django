@@ -16,7 +16,7 @@ Utility functions provide various miscellaneous functionality for advanced use c
 
 This function is used register a Django view as a ReactPy `#!python iframe`.
 
-It is mandatory to use this function alongside [`view_to_iframe`](../reference/components.md#view-to-iframe).
+It is mandatory to use this function alongside [`view_to_iframe`](./components.md#view-to-iframe).
 
 === "apps.py"
 
@@ -76,7 +76,7 @@ Typically, this function is automatically called on all components contained wit
 
     For security reasons, ReactPy requires all root components to be registered. However, all components contained within Django templates are automatically registered.
 
-    This function is commonly needed when you have configured your [`host`](../reference/template-tag.md#component) to a dedicated Django rendering application that doesn't have templates.
+    This function is commonly needed when you have configured your [`host`](./template-tag.md#component) to a dedicated Django rendering application that doesn't have templates.
 
 ---
 

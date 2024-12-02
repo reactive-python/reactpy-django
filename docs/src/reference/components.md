@@ -12,9 +12,9 @@ We supply some pre-designed that components can be used to help simplify develop
 
 This allows you to embedded any number of client-side PyScript components within traditional ReactPy components.
 
-{% include-markdown "../reference/template-tag.md" start="<!--pyscript-def-start-->" end="<!--pyscript-def-end-->" %}
+{% include-markdown "./template-tag.md" start="<!--pyscript-def-start-->" end="<!--pyscript-def-end-->" %}
 
-{% include-markdown "../reference/template-tag.md" start="<!--pyscript-raw-text-start-->" end="<!--pyscript-raw-text-end-->" %}
+{% include-markdown "./template-tag.md" start="<!--pyscript-raw-text-start-->" end="<!--pyscript-raw-text-end-->" %}
 
 === "components.py"
 
@@ -58,9 +58,9 @@ This allows you to embedded any number of client-side PyScript components within
 
 <!--pyscript-setup-required-end-->
 
-{% include-markdown "../reference/template-tag.md" start="<!--pyscript-js-exec-start-->" end="<!--pyscript-js-exec-end-->" %}
+{% include-markdown "./template-tag.md" start="<!--pyscript-js-exec-start-->" end="<!--pyscript-js-exec-end-->" %}
 
-{% include-markdown "../reference/template-tag.md" start="<!--pyscript-multifile-start-->" end="<!--pyscript-multifile-end-->" trailing-newlines=false preserve-includer-indent=false %}
+{% include-markdown "./template-tag.md" start="<!--pyscript-multifile-start-->" end="<!--pyscript-multifile-end-->" trailing-newlines=false preserve-includer-indent=false %}
 
     === "components.py"
 

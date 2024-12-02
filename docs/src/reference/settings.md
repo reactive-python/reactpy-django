@@ -145,7 +145,7 @@ The default host(s) that can render your ReactPy components.
 
 ReactPy will use these hosts in a round-robin fashion, allowing for easy distributed computing. This is typically useful for self-hosted applications.
 
-You can use the `#!python host` argument in your [template tag](../reference/template-tag.md#component) to manually override this default.
+You can use the `#!python host` argument in your [template tag](./template-tag.md#component) to manually override this default.
 
 ---
 
@@ -164,7 +164,7 @@ During pre-rendering, there are some key differences in behavior:
 3. The component will be non-interactive until a WebSocket connection is formed.
 4. The component is re-rendered once a WebSocket connection is formed.
 
-You can use the `#!python prerender` argument in your [template tag](../reference/template-tag.md#component) to manually override this default.
+You can use the `#!python prerender` argument in your [template tag](./template-tag.md#component) to manually override this default.
 
 ---
 
