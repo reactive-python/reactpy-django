@@ -1,9 +1,9 @@
 # ruff: noqa: INP001
-# pylint: disable=assignment-from-no-return, unnecessary-lambda
 from reactpy import component, html, use_state
 
 
-def filter_videos(*_, **__): ...
+def filter_videos(*_, **__):
+    return []
 
 
 def search_input(*_, **__): ...
