@@ -155,7 +155,7 @@ def _view_to_component(
     else:
         _request = HttpRequest()
         _request.method = "GET"
-    resolved_view: Callable = import_module(view) if isinstance(view, str) else view  # type: ignore[assignment]
+    resolved_view: Callable = import_module(view) if isinstance(view, str) else view
 
     # Render the view render within a hook
     @hooks.use_effect(

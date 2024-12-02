@@ -13,9 +13,7 @@ class AutoCreateAdminMiddleware:
         # One-time configuration and initialization.
         self.get_response = get_response
         with contextlib.suppress(Exception):
-            User.objects.create_superuser(
-                username="admin", email="admin@example.com", password="password"
-            )
+            User.objects.create_superuser(username="admin", email="admin@example.com", password="password")
 
         if iscoroutinefunction(self.get_response):
             markcoroutinefunction(self)

@@ -10,16 +10,14 @@ def root():
         html.div(
             {"className": "grid"},
             html.button(
-                {"className": "plus", "on_click": lambda event: set_value(value + 1)},
+                {"className": "plus", "on_click": lambda _: set_value(value + 1)},
                 "+",
             ),
             html.button(
-                {"className": "minus", "on_click": lambda event: set_value(value - 1)},
+                {"className": "minus", "on_click": lambda _: set_value(value - 1)},
                 "-",
             ),
         ),
         "Current value",
-        html.pre(
-            {"style": {"font-style": "bold"}, "data-value": str(value)}, str(value)
-        ),
+        html.pre({"style": {"font-style": "bold"}, "data-value": str(value)}, str(value)),
     )

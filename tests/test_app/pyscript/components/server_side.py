@@ -1,4 +1,5 @@
 from reactpy import component, html, use_state
+
 from reactpy_django.components import pyscript_component
 
 
@@ -18,7 +19,7 @@ def parent_toggle():
         return html.div(
             {"id": "parent-toggle"},
             html.button(
-                {"onClick": lambda x: set_state(not state)},
+                {"onClick": lambda _: set_state(not state)},
                 "Click to show/hide",
             ),
         )
@@ -26,7 +27,7 @@ def parent_toggle():
     return html.div(
         {"id": "parent-toggle"},
         html.button(
-            {"onClick": lambda x: set_state(not state)},
+            {"onClick": lambda _: set_state(not state)},
             "Click to show/hide",
         ),
         pyscript_component("./test_app/pyscript/components/child.py"),

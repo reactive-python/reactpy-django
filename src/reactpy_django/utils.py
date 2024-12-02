@@ -76,7 +76,7 @@ async def render_view(
     """Ingests a Django view (class or function) and returns an HTTP response object."""
     # Convert class-based view to function-based view
     if getattr(view, "as_view", None):
-        view = view.as_view()  # type: ignore[union-attr]
+        view = view.as_view()
 
     # Async function view
     if iscoroutinefunction(view):
@@ -425,7 +425,7 @@ def vdom_or_component_to_string(
     """Converts a VdomDict or component to an HTML string. If a string is provided instead, it will be
     automatically returned."""
     if isinstance(vdom_or_component, dict):
-        return vdom_to_html(vdom_or_component)  # type: ignore
+        return vdom_to_html(vdom_or_component)
 
     if hasattr(vdom_or_component, "render"):
         if not request:

@@ -139,7 +139,7 @@ def use_query(
         try:
             # Run the query
             if asyncio.iscoroutinefunction(query):
-                new_data = await query(**kwargs)  # type: ignore[call-arg]
+                new_data = await query(**kwargs)
             else:
                 new_data = await database_sync_to_async(query, thread_sensitive=thread_sensitive)(**kwargs)
 

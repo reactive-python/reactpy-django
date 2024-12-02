@@ -12,10 +12,7 @@ SRC_DIR = BASE_DIR.parent / "src"
 SECRET_KEY = "django-insecure-n!bd1#+7ufw5#9ipayu9k(lyu@za$c2ajbro7es(v8_7w1$=&c"
 
 # Run in production mode when using a real web server
-DEBUG = not any(
-    sys.argv[0].endswith(webserver_name)
-    for webserver_name in ["hypercorn", "uvicorn", "daphne"]
-)
+DEBUG = not any(sys.argv[0].endswith(webserver_name) for webserver_name in ["hypercorn", "uvicorn", "daphne"])
 ALLOWED_HOSTS = ["*"]
 
 # Application definition
@@ -146,6 +143,4 @@ LOGGING = {
 CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 # ReactPy-Django Settings
-REACTPY_BACKHAUL_THREAD = any(
-    sys.argv[0].endswith(webserver_name) for webserver_name in ["hypercorn", "uvicorn"]
-)
+REACTPY_BACKHAUL_THREAD = any(sys.argv[0].endswith(webserver_name) for webserver_name in ["hypercorn", "uvicorn"])

@@ -88,7 +88,7 @@ def clean_user_data(verbosity: int = 1):
 
     # Django doesn't support using QuerySets as an argument with cross-database relations.
     if user_model.objects.db != UserDataModel.objects.db:
-        all_user_pks = list(all_user_pks)  # type: ignore
+        all_user_pks = list(all_user_pks)
 
     user_data_objects = UserDataModel.objects.exclude(user_pk__in=all_user_pks)
 
