@@ -1,6 +1,7 @@
 from reactpy import component, html
-from reactpy_django.router import django_router
 from reactpy_router import route
+
+from reactpy_django.router import django_router
 
 
 @component

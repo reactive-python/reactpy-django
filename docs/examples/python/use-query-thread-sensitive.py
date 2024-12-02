@@ -1,10 +1,10 @@
 from reactpy import component
+
 from reactpy_django.hooks import use_query
 
 
 def execute_thread_safe_operation():
     """This is an example query function that does some thread-safe operation."""
-    pass
 
 
 @component

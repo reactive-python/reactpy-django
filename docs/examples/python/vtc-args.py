@@ -1,8 +1,8 @@
 from django.http import HttpRequest
 from reactpy import component, html
-from reactpy_django.components import view_to_component
 
-from . import views
+from example import views
+from reactpy_django.components import view_to_component
 
 hello_world_component = view_to_component(views.hello_world)
 

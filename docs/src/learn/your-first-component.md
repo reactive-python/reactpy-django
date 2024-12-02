@@ -87,7 +87,7 @@ Within your **Django app**'s `views.py` file, you will need to [create a view fu
 === "views.py"
 
     ```python
-    {% include "../../examples/python/example/views.py" %}
+    {% include "../../examples/python/first_view.py" %}
     ```
 
 We will add this new view into your [`urls.py`](https://docs.djangoproject.com/en/stable/intro/tutorial01/#write-your-first-view) and define what URL it should be accessible at.

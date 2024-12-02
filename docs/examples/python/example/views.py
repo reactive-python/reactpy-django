@@ -1,5 +1,4 @@
-from django.shortcuts import render
+from python.hello_world_cbv import HelloWorld
+from python.hello_world_fbv import hello_world
 
-
-def index(request):
-    return render(request, "my_template.html")
+__all__ = ["HelloWorld", "hello_world"]

@@ -1,4 +1,5 @@
 from reactpy import component, html
+
 from reactpy_django.html import pyscript
 
 example_source_code = """

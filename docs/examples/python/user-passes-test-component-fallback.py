@@ -1,4 +1,5 @@
 from reactpy import component, html
+
 from reactpy_django.decorators import user_passes_test
 
 

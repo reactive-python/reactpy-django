@@ -1,5 +1,6 @@
-from example.models import TodoItem
 from reactpy import component, html
+
+from example.models import TodoItem
 from reactpy_django.hooks import use_mutation
 
 

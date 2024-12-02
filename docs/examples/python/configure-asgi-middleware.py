@@ -1,5 +1,6 @@
 # Broken load order, only used for linting
 from channels.routing import ProtocolTypeRouter, URLRouter
+
 from reactpy_django import REACTPY_WEBSOCKET_ROUTE
 
 django_asgi_app = ""

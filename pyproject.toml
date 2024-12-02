@@ -178,7 +178,6 @@ linkcheck = [
 ]
 deploy_latest = ["cd docs && mike deploy --push --update-aliases {args} latest"]
 deploy_develop = ["cd docs && mike deploy --push develop"]
-check_examples = ["ruff check docs/examples/python"]
 
 ############################
 # >>> Hatch JS Scripts <<< #
@@ -217,5 +216,5 @@ lint.extend-ignore = [
   "S301",    # `dill` deserialization is possibly insecure unless using trusted data
 ]
 lint.preview = true
-lint.isort.known-first-party = ["reactpy_django", "test_app"]
+lint.isort.known-first-party = ["reactpy_django", "test_app", "example"]
 lint.isort.known-third-party = ["js"]

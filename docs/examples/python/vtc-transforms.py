@@ -1,7 +1,7 @@
 from reactpy import component, html
-from reactpy_django.components import view_to_component
 
-from . import views
+from example import views
+from reactpy_django.components import view_to_component
 
 
 def example_transform(vdom):
@@ -10,9 +10,7 @@ def example_transform(vdom):
         vdom["children"][0] = "Farewell World!"
 
 
-hello_world_component = view_to_component(
-    views.hello_world, transforms=[example_transform]
-)
+hello_world_component = view_to_component(views.hello_world, transforms=[example_transform])
 
 
 @component

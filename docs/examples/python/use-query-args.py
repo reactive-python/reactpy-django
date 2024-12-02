@@ -1,4 +1,5 @@
 from reactpy import component
+
 from reactpy_django.hooks import use_query
 
 

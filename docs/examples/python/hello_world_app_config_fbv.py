@@ -1,7 +1,7 @@
 from django.apps import AppConfig
-from reactpy_django.utils import register_iframe
 
-from . import views
+from example import views
+from reactpy_django.utils import register_iframe
 
 
 class ExampleAppConfig(AppConfig):
