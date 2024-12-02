@@ -19,13 +19,13 @@ The `pyscript` tag functions identically to HTML tags contained within `#!python
 === "components.py"
 
     ```python
-    {% include "../../examples/python/pyscript-tag.py" %}
+    {% include "../../examples/python/pyscript_tag.py" %}
     ```
 
 === "my_template.html"
 
     ```jinja
-    {% include "../../examples/html/pyscript-tag.html" %}
+    {% include "../../examples/html/pyscript_tag.html" %}
     ```
 
 {% include-markdown "../reference/components.md" start="<!--pyscript-setup-required-start-->" end="<!--pyscript-setup-required-end-->" %}

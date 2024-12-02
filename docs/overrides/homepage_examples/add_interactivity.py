@@ -18,7 +18,7 @@ def searchable_video_list(videos):
 
     return html._(
         search_input(
-            {"onChange": lambda new_text: set_search_text(new_text)},
+            {"onChange": lambda event: set_search_text(event["target"]["value"])},
             value=search_text,
         ),
         video_list(

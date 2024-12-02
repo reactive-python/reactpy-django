@@ -56,7 +56,7 @@ Each component loaded via this template tag will receive a dedicated WebSocket c
     === "views.py"
 
         ```python
-        {% include "../../examples/python/template-tag-bad-view.py" %}
+        {% include "../../examples/python/template_tag_bad_view.py" %}
         ```
 
     _Note: If you decide to not follow this warning, you will need to use the [`register_component`](../reference/utils.md#register-component) function to manually register your components._
@@ -102,7 +102,7 @@ Each component loaded via this template tag will receive a dedicated WebSocket c
     === "components.py"
 
         ```python
-        {% include "../../examples/python/template-tag-args-kwargs.py" %}
+        {% include "../../examples/python/template_tag_args_kwargs.py" %}
         ```
 
 ??? question "Can I render components on a different server (distributed computing)?"
@@ -175,13 +175,13 @@ The entire file path provided is loaded directly into the browser, and must have
 === "my_template.html"
 
     ```jinja
-    {% include "../../examples/html/pyscript-component.html" %}
+    {% include "../../examples/html/pyscript_component.html" %}
     ```
 
 === "hello_world.py"
 
     ```python
-    {% include "../../examples/python/pyscript-hello-world.py" %}
+    {% include "../../examples/python/pyscript_hello_world.py" %}
     ```
 
 ??? example "See Interface"
@@ -211,7 +211,7 @@ The entire file path provided is loaded directly into the browser, and must have
     === "root.py"
 
         ```python
-        {% include "../../examples/python/pyodide-js-module.py" %}
+        {% include "../../examples/python/pyodide_js_module.py" %}
         ```
 
     **PyScript FFI**
@@ -225,13 +225,13 @@ The entire file path provided is loaded directly into the browser, and must have
     === "root.py"
 
         ```python
-        {% include "../../examples/python/pyscript-local-import.py" %}
+        {% include "../../examples/python/pyscript_local_import.py" %}
         ```
 
     === "my_template.html"
 
         ```jinja
-        {% include "../../examples/html/pyscript-local-import.html" %}
+        {% include "../../examples/html/pyscript_local_import.html" %}
         ```
 
 <!--pyscript-js-exec-end-->
@@ -253,19 +253,19 @@ The entire file path provided is loaded directly into the browser, and must have
     === "my_template.html"
 
         ```jinja
-        {% include "../../examples/html/pyscript-multiple-files.html" %}
+        {% include "../../examples/html/pyscript_multiple_files.html" %}
         ```
 
     === "root.py"
 
         ```python
-        {% include "../../examples/python/pyscript-multiple-files-root.py" %}
+        {% include "../../examples/python/pyscript_multiple_files_root.py" %}
         ```
 
     === "child.py"
 
         ```python
-        {% include "../../examples/python/pyscript-multiple-files-child.py" %}
+        {% include "../../examples/python/pyscript_multiple_files_child.py" %}
         ```
 
 ??? question "How do I display something while the component is loading?"
@@ -277,7 +277,7 @@ The entire file path provided is loaded directly into the browser, and must have
     === "my_template.html"
 
         ```jinja
-        {% include "../../examples/html/pyscript-initial-string.html" %}
+        {% include "../../examples/html/pyscript_initial_string.html" %}
         ```
 
     However, you can also insert a `#!python reactpy.html` snippet or a non-interactive `#!python @component` via template context.
@@ -285,13 +285,13 @@ The entire file path provided is loaded directly into the browser, and must have
     === "my_template.html"
 
         ```jinja
-        {% include "../../examples/html/pyscript-initial-object.html" %}
+        {% include "../../examples/html/pyscript_initial_object.html" %}
         ```
 
     === "views.py"
 
         ```python
-        {% include "../../examples/python/pyscript-initial-object.py" %}
+        {% include "../../examples/python/pyscript_initial_object.py" %}
         ```
 
 ??? question "Can I use a different name for my root component?"
@@ -301,13 +301,13 @@ The entire file path provided is loaded directly into the browser, and must have
     === "my_template.html"
 
         ```jinja
-        {% include "../../examples/html/pyscript-root.html" %}
+        {% include "../../examples/html/pyscript_root.html" %}
         ```
 
     === "main.py"
 
         ```python
-        {% include "../../examples/python/pyscript-root.py" %}
+        {% include "../../examples/python/pyscript_root.py" %}
         ```
 
 ## PyScript Setup
@@ -319,7 +319,7 @@ You can optionally use this tag to configure the current PyScript environment. F
 === "my_template.html"
 
     ```jinja
-    {% include "../../examples/html/pyscript-setup.html" %}
+    {% include "../../examples/html/pyscript_setup.html" %}
     ```
 
 ??? example "See Interface"
@@ -341,7 +341,7 @@ You can optionally use this tag to configure the current PyScript environment. F
     === "my_template.html"
 
         ```jinja
-        {% include "../../examples/html/pyscript-setup-dependencies.html" %}
+        {% include "../../examples/html/pyscript_setup_dependencies.html" %}
         ```
 
 ??? question "How do I install additional Javascript dependencies?"
@@ -351,13 +351,13 @@ You can optionally use this tag to configure the current PyScript environment. F
     === "my_template.html"
 
         ```jinja
-        {% include "../../examples/html/pyscript-setup-extra-js-object.html" %}
+        {% include "../../examples/html/pyscript_setup_extra_js_object.html" %}
         ```
 
     === "views.py"
 
         ```python
-        {% include "../../examples/python/pyscript-setup-extra-js-object.py" %}
+        {% include "../../examples/python/pyscript_setup_extra_js_object.py" %}
         ```
 
     The value for `#!python extra_js` is most commonly a Python dictionary, but JSON strings are also supported.
@@ -365,7 +365,7 @@ You can optionally use this tag to configure the current PyScript environment. F
     === "my_template.html"
 
         ```jinja
-        {% include "../../examples/html/pyscript-setup-extra-js-string.html" %}
+        {% include "../../examples/html/pyscript_setup_extra_js_string.html" %}
         ```
 
 ??? question "How do I modify the `pyscript` default configuration?"
@@ -375,7 +375,7 @@ You can optionally use this tag to configure the current PyScript environment. F
     === "my_template.html"
 
         ```jinja
-        {% include "../../examples/html/pyscript-setup-config-string.html" %}
+        {% include "../../examples/html/pyscript_setup_config_string.html" %}
         ```
 
     While this value is most commonly a JSON string, Python dictionary objects are also supported.
@@ -383,13 +383,13 @@ You can optionally use this tag to configure the current PyScript environment. F
     === "my_template.html"
 
         ```jinja
-        {% include "../../examples/html/pyscript-setup-config-object.html" %}
+        {% include "../../examples/html/pyscript_setup_config_object.html" %}
         ```
 
     === "views.py"
 
         ```python
-        {% include "../../examples/python/pyscript-setup-config-object.py" %}
+        {% include "../../examples/python/pyscript_setup_config_object.py" %}
         ```
 
 ??? question "Can I use a local interpreter for PyScript?"
@@ -403,5 +403,5 @@ You can optionally use this tag to configure the current PyScript environment. F
     3. Configure your `#!jinja {% pyscript_setup %}` template tag to use `pyodide` as an interpreter.
 
         ```jinja linenums="0"
-        {% include "../../examples/html/pyscript-setup-local-interpreter.html" %}
+        {% include "../../examples/html/pyscript_setup_local_interpreter.html" %}
         ```

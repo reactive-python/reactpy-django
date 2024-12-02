@@ -51,7 +51,7 @@ Typically, this function is automatically called on all components contained wit
 === "apps.py"
 
     ```python
-    {% include "../../examples/python/register-component.py" %}
+    {% include "../../examples/python/register_component.py" %}
     ```
 
 ??? example "See Interface"
@@ -89,7 +89,7 @@ Since ReactPy is rendered within an `#!python asyncio` loop, this postprocessor 
 === "components.py"
 
     ```python
-    {% include "../../examples/python/django-query-postprocessor.py" %}
+    {% include "../../examples/python/django_query_postprocessor.py" %}
     ```
 
 === "models.py"

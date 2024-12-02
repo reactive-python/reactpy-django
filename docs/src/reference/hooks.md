@@ -29,7 +29,7 @@ Query functions can be sync or async.
 === "components.py"
 
     ```python
-    {% include "../../examples/python/use-query.py" %}
+    {% include "../../examples/python/use_query.py" %}
     ```
 
 === "models.py"
@@ -63,7 +63,7 @@ Query functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/use-query-args.py" %}
+        {% include "../../examples/python/use_query_args.py" %}
         ```
 
 ??? question "How can I customize this hook's behavior?"
@@ -83,7 +83,7 @@ Query functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/use-query-thread-sensitive.py" %}
+        {% include "../../examples/python/use_query_thread_sensitive.py" %}
         ```
 
     ---
@@ -102,7 +102,7 @@ Query functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/use-query-postprocessor-disable.py" %}
+        {% include "../../examples/python/use_query_postprocessor_disable.py" %}
         ```
 
     If you wish to create a custom `#!python postprocessor`, you will need to create a function where the first must be the query `#!python data`. All proceeding arguments are optional `#!python postprocessor_kwargs` (see below). This `#!python postprocessor` function must return the modified `#!python data`.
@@ -110,7 +110,7 @@ Query functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/use-query-postprocessor-change.py" %}
+        {% include "../../examples/python/use_query_postprocessor_change.py" %}
         ```
 
     ---
@@ -126,7 +126,7 @@ Query functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/use-query-postprocessor-kwargs.py" %}
+        {% include "../../examples/python/use_query_postprocessor_kwargs.py" %}
         ```
 
     _Note: In Django's ORM design, the field name to access foreign keys is [postfixed with `_set`](https://docs.djangoproject.com/en/stable/topics/db/examples/many_to_one/) by default._
@@ -144,7 +144,7 @@ Query functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/use-mutation-reset.py" %}
+        {% include "../../examples/python/use_mutation_reset.py" %}
         ```
 
     === "models.py"
@@ -172,7 +172,7 @@ Mutation functions can be sync or async.
 === "components.py"
 
     ```python
-    {% include "../../examples/python/use-mutation.py" %}
+    {% include "../../examples/python/use_mutation.py" %}
     ```
 
 === "models.py"
@@ -204,7 +204,7 @@ Mutation functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/use-mutation-args-kwargs.py" %}
+        {% include "../../examples/python/use_mutation_args_kwargs.py" %}
         ```
 
 ??? question "How can I customize this hook's behavior?"
@@ -224,7 +224,7 @@ Mutation functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/use-mutation-thread-sensitive.py" %}
+        {% include "../../examples/python/use_mutation_thread_sensitive.py" %}
         ```
 
 ??? question "Can I make ORM calls without hooks?"
@@ -240,7 +240,7 @@ Mutation functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/use-mutation-reset.py" %}
+        {% include "../../examples/python/use_mutation_reset.py" %}
         ```
 
     === "models.py"
@@ -260,7 +260,7 @@ Mutation functions can be sync or async.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/use-mutation-query-refetch.py" %}
+        {% include "../../examples/python/use_mutation_query_refetch.py" %}
         ```
 
     === "models.py"
@@ -282,7 +282,7 @@ User data saved with this hook is stored within the `#!python REACTPY_DATABASE`.
 === "components.py"
 
     ```python
-    {% include "../../examples/python/use-user-data.py" %}
+    {% include "../../examples/python/use_user_data.py" %}
     ```
 
 ??? example "See Interface"
@@ -309,7 +309,7 @@ User data saved with this hook is stored within the `#!python REACTPY_DATABASE`.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/use-user-data-defaults.py" %}
+        {% include "../../examples/python/use_user_data_defaults.py" %}
         ```
 
 ---
@@ -329,7 +329,7 @@ This is often used to create chat systems, synchronize data between components, 
 === "components.py"
 
     ```python
-    {% include "../../examples/python/use-channel-layer.py" %}
+    {% include "../../examples/python/use_channel_layer.py" %}
     ```
 
 ??? example "See Interface"
@@ -391,7 +391,7 @@ This is often used to create chat systems, synchronize data between components, 
     === "components.py"
 
         ```python
-        {% include "../../examples/python/use-channel-layer-group.py" %}
+        {% include "../../examples/python/use_channel_layer_group.py" %}
         ```
 
 ??? question "How do I signal a re-render from something that isn't a component?"
@@ -405,13 +405,13 @@ This is often used to create chat systems, synchronize data between components, 
     === "signals.py"
 
         ```python
-        {% include "../../examples/python/use-channel-layer-signal-sender.py" %}
+        {% include "../../examples/python/use_channel_layer_signal_sender.py" %}
         ```
 
     === "components.py"
 
         ```python
-        {% include "../../examples/python/use-channel-layer-signal-receiver.py" %}
+        {% include "../../examples/python/use_channel_layer_signal_receiver.py" %}
         ```
 
 ---
@@ -427,7 +427,7 @@ Returns the active connection, which is either a Django [WebSocket](https://chan
 === "components.py"
 
     ```python
-    {% include "../../examples/python/use-connection.py" %}
+    {% include "../../examples/python/use_connection.py" %}
     ```
 
 ??? example "See Interface"
@@ -451,7 +451,7 @@ Shortcut that returns the WebSocket or HTTP connection's [scope](https://channel
 === "components.py"
 
     ```python
-    {% include "../../examples/python/use-scope.py" %}
+    {% include "../../examples/python/use_scope.py" %}
     ```
 
 ??? example "See Interface"
@@ -475,7 +475,7 @@ Shortcut that returns the browser's current `#!python Location`.
 === "components.py"
 
     ```python
-    {% include "../../examples/python/use-location.py" %}
+    {% include "../../examples/python/use_location.py" %}
     ```
 
 ??? example "See Interface"
@@ -501,7 +501,7 @@ You can expect this hook to provide strings such as `http://example.com`.
 === "components.py"
 
     ```python
-    {% include "../../examples/python/use-origin.py" %}
+    {% include "../../examples/python/use_origin.py" %}
     ```
 
 ??? example "See Interface"
@@ -529,7 +529,7 @@ This is useful when used in combination with [`#!python use_channel_layer`](#use
 === "components.py"
 
     ```python
-    {% include "../../examples/python/use-root-id.py" %}
+    {% include "../../examples/python/use_root_id.py" %}
     ```
 
 ??? example "See Interface"
@@ -553,7 +553,7 @@ Shortcut that returns the WebSocket or HTTP connection's `#!python User`.
 === "components.py"
 
     ```python
-    {% include "../../examples/python/use-user.py" %}
+    {% include "../../examples/python/use_user.py" %}
     ```
 
 ??? example "See Interface"
