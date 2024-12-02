@@ -95,7 +95,7 @@ We will add this new view into your [`urls.py`](https://docs.djangoproject.com/e
 === "urls.py"
 
     ```python
-    {% include "../../examples/python/example/urls.py" %}
+    {% include "../../examples/python/first_urls.py" %}
     ```
 
 ??? question "Which urls.py do I add my views to?"

@@ -95,7 +95,7 @@ Since ReactPy is rendered within an `#!python asyncio` loop, this postprocessor 
 === "models.py"
 
     ```python
-    {% include "../../examples/python/example/models.py" %}
+    {% include "../../examples/python/todo_item_model.py" %}
     ```
 
 ??? example "See Interface"

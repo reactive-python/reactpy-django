@@ -35,7 +35,7 @@ Query functions can be sync or async.
 === "models.py"
 
     ```python
-    {% include "../../examples/python/example/models.py" %}
+    {% include "../../examples/python/todo_item_model.py" %}
     ```
 
 ??? example "See Interface"
@@ -150,7 +150,7 @@ Query functions can be sync or async.
     === "models.py"
 
         ```python
-        {% include "../../examples/python/example/models.py" %}
+        {% include "../../examples/python/todo_item_model.py" %}
         ```
 
 ??? question "Why does the example query function return `#!python TodoItem.objects.all()`?"
@@ -178,7 +178,7 @@ Mutation functions can be sync or async.
 === "models.py"
 
     ```python
-    {% include "../../examples/python/example/models.py" %}
+    {% include "../../examples/python/todo_item_model.py" %}
     ```
 
 ??? example "See Interface"
@@ -246,7 +246,7 @@ Mutation functions can be sync or async.
     === "models.py"
 
         ```python
-        {% include "../../examples/python/example/models.py" %}
+        {% include "../../examples/python/todo_item_model.py" %}
         ```
 
 ??? question "Can `#!python use_mutation` trigger a refetch of `#!python use_query`?"
@@ -266,7 +266,7 @@ Mutation functions can be sync or async.
     === "models.py"
 
         ```python
-        {% include "../../examples/python/example/models.py" %}
+        {% include "../../examples/python/todo_item_model.py" %}
         ```
 
 ---
