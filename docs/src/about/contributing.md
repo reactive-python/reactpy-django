@@ -76,7 +76,7 @@ By utilizing `hatch`, the following commands are available to manage the develop
 | `hatch run docs:serve` | Start the [`mkdocs`](https://www.mkdocs.org/) server to view documentation locally |
 | `hatch run docs:build` | Build the documentation |
 | `hatch run docs:linkcheck` | Check for broken links in the documentation |
-| `hatch run docs:check_examples` | Run linter on code examples in the documentation |
+| `hatch fmt docs --check` | Run linter on code examples in the documentation |
 
 ### Environment Management
 
