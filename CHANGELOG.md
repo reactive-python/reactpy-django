@@ -27,7 +27,7 @@ Don't forget to remove deprecated code on each major release!
 
 -   Set upper limit on ReactPy version to `<2.0.0`.
 -   ReactPy web modules are now streamed in chunks.
--   ReactPy web modules are now streamed using asychronous file reading to improve performance.
+-   ReactPy web modules are now streamed using asynchronous file reading to improve performance.
 -   Performed refactoring to utilize `ruff` as this repository's linter.
 
 ## [5.1.0] - 2024-11-24
