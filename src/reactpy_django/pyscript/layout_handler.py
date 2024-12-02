@@ -20,6 +20,7 @@ class ReactPyLayoutHandler:
 
     def __init__(self, uuid):
         self.uuid = uuid
+        self.running_tasks = set()
 
     @staticmethod
     def update_model(update, root_model):
@@ -74,14 +75,17 @@ class ReactPyLayoutHandler:
             msg = f"Unknown model type: {type(model)}"
             raise TypeError(msg)
 
-    @staticmethod
-    def create_event_handler(layout, element, event_name, event_handler_model):
+    def create_event_handler(self, layout, element, event_name, event_handler_model):
         """Create an event handler for an element. This function is used as an
         adapter between ReactPy and browser events."""
         target = event_handler_model["target"]
 
         def event_handler(*args):
-            asyncio.create_task(layout.deliver({"type": "layout-event", "target": target, "data": args}))
+            task = asyncio.create_task(layout.deliver({"type": "layout-event", "target": target, "data": args}))
+
+            # Add the task to a set to prevent it from being garbage collected
+            self.running_tasks.add(task)
+            task.add_done_callback(self.running_tasks.remove)
 
         event_name = event_name.lstrip("on_").lower().replace("_", "")
         add_event_listener(element, event_name, event_handler)

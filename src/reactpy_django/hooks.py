@@ -126,6 +126,7 @@ def use_query(
     loading, set_loading = use_state(True)
     error, set_error = use_state(cast(Union[Exception, None], None))
     query_ref = use_ref(query)
+    async_task_refs = use_ref(set())
     kwargs = kwargs or {}
     postprocessor_kwargs = postprocessor_kwargs or {}
 
@@ -174,7 +175,11 @@ def use_query(
         set_should_execute(False)
 
         # Execute the query in the background
-        asyncio.create_task(execute_query())
+        task = asyncio.create_task(execute_query())
+
+        # Add the task to a set to prevent it from being garbage collected
+        async_task_refs.current.add(task)
+        task.add_done_callback(async_task_refs.current.remove)
 
     @use_callback
     def refetch() -> None:
@@ -229,6 +234,7 @@ def use_mutation(
 
     loading, set_loading = use_state(False)
     error, set_error = use_state(cast(Union[Exception, None], None))
+    async_task_refs = use_ref(set())
 
     # The main "running" function for `use_mutation`
     async def execute_mutation(exec_args, exec_kwargs) -> None:
@@ -268,7 +274,11 @@ def use_mutation(
         set_loading(True)
 
         # Execute the mutation in the background
-        asyncio.ensure_future(execute_mutation(exec_args=exec_args, exec_kwargs=exec_kwargs))
+        task = asyncio.ensure_future(execute_mutation(exec_args=exec_args, exec_kwargs=exec_kwargs))
+
+        # Add the task to a set to prevent it from being garbage collected
+        async_task_refs.current.add(task)
+        task.add_done_callback(async_task_refs.current.remove)
 
     # Used when the user has told us to reset this mutation
     @use_callback
