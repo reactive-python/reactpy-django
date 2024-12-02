@@ -17,6 +17,7 @@ ALLOWED_HOSTS = ["*"]
 
 # Application definition
 INSTALLED_APPS = [
+    "servestatic.runserver_nostatic",
     "daphne",  # Overrides `runserver` command with an ASGI server
     "django.contrib.admin",
     "django.contrib.auth",
@@ -130,3 +131,7 @@ CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}
 
 # ReactPy-Django Settings
 REACTPY_BACKHAUL_THREAD = any(sys.argv[0].endswith(webserver_name) for webserver_name in ["hypercorn", "uvicorn"])
+
+# ServeStatic Settings
+SERVESTATIC_USE_FINDERS = True
+SERVESTATIC_AUTOREFRESH = True
