@@ -1,13 +1,11 @@
 import asyncio
-from logging import getLogger
+import logging
 
 import js
 from jsonpointer import set_pointer
 from pyodide.ffi.wrappers import add_event_listener
 from pyscript.js_modules import morphdom
 from reactpy.core.layout import Layout
-
-_logger = getLogger(__name__)
 
 
 class ReactPyLayoutHandler:
@@ -108,13 +106,13 @@ class ReactPyLayoutHandler:
                 task.cancel()
                 del globals()[task_name]
             else:
-                _logger.error("Could not auto delete PyScript task %s", task_name)
+                logging.error("Could not auto delete PyScript task %s", task_name)
 
             workspace_name = f"user_workspace_{uuid}"
             if workspace_name in globals():
                 del globals()[workspace_name]
             else:
-                _logger.error("Could not auto delete PyScript workspace %s", workspace_name)
+                logging.error("Could not auto delete PyScript workspace %s", workspace_name)
 
     async def run(self, workspace_function):
         """Run the layout handler. This function is main executor for all user generated code."""
