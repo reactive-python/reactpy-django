@@ -11,7 +11,7 @@ on:
         - cron: "0 0 * * *"
 
 jobs:
-    python:
+    python-source:
         runs-on: ubuntu-latest
         strategy:
             matrix:
