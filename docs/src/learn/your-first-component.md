@@ -8,7 +8,7 @@ Components are one of the core concepts of ReactPy. They are the foundation upon
 
 !!! abstract "Note"
 
-    If you have reached this point, you should have already [installed ReactPy-Django](../learn/add-reactpy-to-a-django-project.md) through the previous steps.
+    If you have reached this point, you should have already [installed ReactPy-Django](./add-reactpy-to-a-django-project.md) through the previous steps.
 
 ---
 
@@ -87,7 +87,7 @@ Within your **Django app**'s `views.py` file, you will need to [create a view fu
 === "views.py"
 
     ```python
-    {% include "../../examples/python/example/views.py" %}
+    {% include "../../examples/python/first_view.py" %}
     ```
 
 We will add this new view into your [`urls.py`](https://docs.djangoproject.com/en/stable/intro/tutorial01/#write-your-first-view) and define what URL it should be accessible at.
@@ -95,7 +95,7 @@ We will add this new view into your [`urls.py`](https://docs.djangoproject.com/e
 === "urls.py"
 
     ```python
-    {% include "../../examples/python/example/urls.py" %}
+    {% include "../../examples/python/first_urls.py" %}
     ```
 
 ??? question "Which urls.py do I add my views to?"

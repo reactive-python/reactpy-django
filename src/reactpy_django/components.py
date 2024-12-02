@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Any, Callable, Sequence, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Union, cast
 from urllib.parse import urlencode
 from uuid import uuid4
 
@@ -10,7 +10,6 @@ from django.contrib.staticfiles.finders import find
 from django.core.cache import caches
 from django.http import HttpRequest
 from django.urls import reverse
-from django.views import View
 from reactpy import component, hooks, html, utils
 from reactpy.types import ComponentType, Key, VdomDict
 
@@ -23,6 +22,11 @@ from reactpy_django.utils import (
     render_view,
     vdom_or_component_to_string,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from django.views import View
 
 
 def view_to_component(
@@ -62,9 +66,7 @@ def view_to_component(
     return constructor
 
 
-def view_to_iframe(
-    view: Callable | View | str, extra_props: dict[str, Any] | None = None
-):
+def view_to_iframe(view: Callable | View | str, extra_props: dict[str, Any] | None = None):
     """
     Args:
         view: The view function or class to convert, or the dotted path to the view.
@@ -81,9 +83,7 @@ def view_to_iframe(
         key: Key | None = None,
         **kwargs,
     ):
-        return _view_to_iframe(
-            view=view, extra_props=extra_props, args=args, kwargs=kwargs, key=key
-        )
+        return _view_to_iframe(view=view, extra_props=extra_props, args=args, kwargs=kwargs, key=key)
 
     return constructor
 
@@ -147,9 +147,7 @@ def _view_to_component(
     kwargs: dict | None,
 ):
     """The actual component. Used to prevent pollution of acceptable kwargs keys."""
-    converted_view, set_converted_view = hooks.use_state(
-        cast(Union[VdomDict, None], None)
-    )
+    converted_view, set_converted_view = hooks.use_state(cast(Union[VdomDict, None], None))
     _args: Sequence = args or ()
     _kwargs: dict = kwargs or {}
     if request:
@@ -157,13 +155,13 @@ def _view_to_component(
     else:
         _request = HttpRequest()
         _request.method = "GET"
-    resolved_view: Callable = import_module(view) if isinstance(view, str) else view  # type: ignore[assignment]
+    resolved_view: Callable = import_module(view) if isinstance(view, str) else view
 
     # Render the view render within a hook
     @hooks.use_effect(
         dependencies=[
-            json.dumps(vars(_request), default=lambda x: generate_obj_name(x)),
-            json.dumps([_args, _kwargs], default=lambda x: generate_obj_name(x)),
+            json.dumps(vars(_request), default=generate_obj_name),
+            json.dumps([_args, _kwargs], default=generate_obj_name),
         ]
     )
     async def async_render():
@@ -199,10 +197,11 @@ def _view_to_iframe(
     registered_view = REACTPY_REGISTERED_IFRAME_VIEWS.get(dotted_path)
 
     if not registered_view:
-        raise ViewNotRegisteredError(
+        msg = (
             f"'{dotted_path}' has not been registered as an iframe! "
             "Are you sure you called `register_iframe` within a Django `AppConfig.ready` method?"
         )
+        raise ViewNotRegisteredError(msg)
 
     query = kwargs.copy()
     if args:
@@ -237,23 +236,18 @@ def _cached_static_contents(static_path: str) -> str:
     # Try to find the file within Django's static files
     abs_path = find(static_path)
     if not abs_path:
-        raise FileNotFoundError(
-            f"Could not find static file {static_path} within Django's static files."
-        )
+        msg = f"Could not find static file {static_path} within Django's static files."
+        raise FileNotFoundError(msg)
 
     # Fetch the file from cache, if available
     last_modified_time = os.stat(abs_path).st_mtime
     cache_key = f"reactpy_django:static_contents:{static_path}"
-    file_contents: str | None = caches[REACTPY_CACHE].get(
-        cache_key, version=int(last_modified_time)
-    )
+    file_contents: str | None = caches[REACTPY_CACHE].get(cache_key, version=int(last_modified_time))
     if file_contents is None:
         with open(abs_path, encoding="utf-8") as static_file:
             file_contents = static_file.read()
         caches[REACTPY_CACHE].delete(cache_key)
-        caches[REACTPY_CACHE].set(
-            cache_key, file_contents, timeout=None, version=int(last_modified_time)
-        )
+        caches[REACTPY_CACHE].set(cache_key, file_contents, timeout=None, version=int(last_modified_time))
 
     return file_contents
 

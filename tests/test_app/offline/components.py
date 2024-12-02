@@ -5,8 +5,7 @@ from reactpy import component, html
 def online():
     return html.div(
         {"id": "online"},
-        "This is the ONLINE component. "
-        "Shut down your webserver and check if the offline component appears.",
+        "This is the ONLINE component. Shut down your webserver and check if the offline component appears.",
     )
 
 

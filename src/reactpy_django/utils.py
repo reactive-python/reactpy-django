@@ -8,11 +8,12 @@ import os
 import re
 import textwrap
 from asyncio import iscoroutinefunction
+from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
 from fnmatch import fnmatch
 from importlib import import_module
 from pathlib import Path
-from typing import Any, Callable, Mapping, Sequence
+from typing import TYPE_CHECKING, Any, Callable
 from uuid import UUID, uuid4
 
 import dill
@@ -28,12 +29,10 @@ from django.http import HttpRequest, HttpResponse
 from django.template import engines
 from django.templatetags.static import static
 from django.utils.encoding import smart_str
-from django.views import View
 from reactpy import vdom_to_html
 from reactpy.backend.hooks import ConnectionContext
 from reactpy.backend.types import Connection, Location
 from reactpy.core.layout import Layout
-from reactpy.types import ComponentConstructor
 
 from reactpy_django.exceptions import (
     ComponentDoesNotExistError,
@@ -42,12 +41,16 @@ from reactpy_django.exceptions import (
     ViewDoesNotExistError,
 )
 
+if TYPE_CHECKING:
+    from collections.abc import Mapping, Sequence
+
+    from django.views import View
+    from reactpy.types import ComponentConstructor
+
 _logger = logging.getLogger(__name__)
 _TAG_PATTERN = r"(?P<tag>component)"
 _PATH_PATTERN = r"""(?P<path>"[^"'\s]+"|'[^"'\s]+')"""
-_OFFLINE_KWARG_PATTERN = (
-    rf"""(\s*offline\s*=\s*{_PATH_PATTERN.replace(r"<path>", r"<offline_path>")})"""
-)
+_OFFLINE_KWARG_PATTERN = rf"""(\s*offline\s*=\s*{_PATH_PATTERN.replace(r"<path>", r"<offline_path>")})"""
 _GENERIC_KWARG_PATTERN = r"""(\s*.*?)"""
 COMMENT_REGEX = re.compile(r"<!--[\s\S]*?-->")
 COMPONENT_REGEX = re.compile(
@@ -58,13 +61,10 @@ COMPONENT_REGEX = re.compile(
     + rf"({_OFFLINE_KWARG_PATTERN}|{_GENERIC_KWARG_PATTERN})*?"
     + r"\s*%}"
 )
-PYSCRIPT_COMPONENT_TEMPLATE = (
-    Path(__file__).parent / "pyscript" / "component_template.py"
-).read_text(encoding="utf-8")
-PYSCRIPT_LAYOUT_HANDLER = (
-    Path(__file__).parent / "pyscript" / "layout_handler.py"
-).read_text(encoding="utf-8")
+PYSCRIPT_COMPONENT_TEMPLATE = (Path(__file__).parent / "pyscript" / "component_template.py").read_text(encoding="utf-8")
+PYSCRIPT_LAYOUT_HANDLER = (Path(__file__).parent / "pyscript" / "layout_handler.py").read_text(encoding="utf-8")
 PYSCRIPT_DEFAULT_CONFIG: dict[str, Any] = {}
+FILE_ASYNC_ITERATOR_THREAD = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ReactPy-Django-FileAsyncIterator")
 
 
 async def render_view(
@@ -76,7 +76,7 @@ async def render_view(
     """Ingests a Django view (class or function) and returns an HTTP response object."""
     # Convert class-based view to function-based view
     if getattr(view, "as_view", None):
-        view = view.as_view()  # type: ignore[union-attr]
+        view = view.as_view()
 
     # Async function view
     if iscoroutinefunction(view):
@@ -105,16 +105,13 @@ def register_component(component: ComponentConstructor | str):
         REACTPY_REGISTERED_COMPONENTS,
     )
 
-    dotted_path = (
-        component if isinstance(component, str) else generate_obj_name(component)
-    )
+    dotted_path = component if isinstance(component, str) else generate_obj_name(component)
     try:
         REACTPY_REGISTERED_COMPONENTS[dotted_path] = import_dotted_path(dotted_path)
     except AttributeError as e:
         REACTPY_FAILED_COMPONENTS.add(dotted_path)
-        raise ComponentDoesNotExistError(
-            f"Error while fetching '{dotted_path}'. {(str(e).capitalize())}."
-        ) from e
+        msg = f"Error while fetching '{dotted_path}'. {(str(e).capitalize())}."
+        raise ComponentDoesNotExistError(msg) from e
 
 
 def register_iframe(view: Callable | View | str):
@@ -131,9 +128,8 @@ def register_iframe(view: Callable | View | str):
     try:
         REACTPY_REGISTERED_IFRAME_VIEWS[dotted_path] = import_dotted_path(dotted_path)
     except AttributeError as e:
-        raise ViewDoesNotExistError(
-            f"Error while fetching '{dotted_path}'. {(str(e).capitalize())}."
-        ) from e
+        msg = f"Error while fetching '{dotted_path}'. {(str(e).capitalize())}."
+        raise ViewDoesNotExistError(msg) from e
 
 
 def import_dotted_path(dotted_path: str) -> Callable:
@@ -143,9 +139,8 @@ def import_dotted_path(dotted_path: str) -> Callable:
     try:
         module = import_module(module_name)
     except ImportError as error:
-        raise RuntimeError(
-            f"Failed to import {module_name!r} while loading {component_name!r}"
-        ) from error
+        msg = f"Failed to import {module_name!r} while loading {component_name!r}"
+        raise RuntimeError(msg) from error
 
     return getattr(module, component_name)
 
@@ -171,9 +166,7 @@ class RootComponentFinder:
         template_source_loaders = []
         for e in engines.all():
             if hasattr(e, "engine"):
-                template_source_loaders.extend(
-                    e.engine.get_template_loaders(e.engine.loaders)
-                )
+                template_source_loaders.extend(e.engine.get_template_loaders(e.engine.loaders))
         loaders = []
         for loader in template_source_loaders:
             if hasattr(loader, "loaders"):
@@ -203,8 +196,7 @@ class RootComponentFinder:
                 templates.update(
                     os.path.join(root, name)
                     for name in files
-                    if not name.startswith(".")
-                    and any(fnmatch(name, f"*{glob}") for glob in extensions)
+                    if not name.startswith(".") and any(fnmatch(name, f"*{glob}") for glob in extensions)
                 )
 
         return templates
@@ -213,21 +205,16 @@ class RootComponentFinder:
         """Obtains a set of all ReactPy components by parsing HTML templates."""
         components: set[str] = set()
         for template in templates:
-            with contextlib.suppress(Exception):
-                with open(template, "r", encoding="utf-8") as template_file:
-                    clean_template = COMMENT_REGEX.sub("", template_file.read())
-                    regex_iterable = COMPONENT_REGEX.finditer(clean_template)
-                    new_components: list[str] = []
-                    for match in regex_iterable:
-                        new_components.append(
-                            match.group("path").replace('"', "").replace("'", "")
-                        )
-                        offline_path = match.group("offline_path")
-                        if offline_path:
-                            new_components.append(
-                                offline_path.replace('"', "").replace("'", "")
-                            )
-                    components.update(new_components)
+            with contextlib.suppress(Exception), open(template, encoding="utf-8") as template_file:
+                clean_template = COMMENT_REGEX.sub("", template_file.read())
+                regex_iterable = COMPONENT_REGEX.finditer(clean_template)
+                new_components: list[str] = []
+                for match in regex_iterable:
+                    new_components.append(match.group("path").replace('"', "").replace("'", ""))
+                    offline_path = match.group("offline_path")
+                    if offline_path:
+                        new_components.append(offline_path.replace('"', "").replace("'", ""))
+                components.update(new_components)
         if not components:
             _logger.warning(
                 "\033[93m"
@@ -312,7 +299,7 @@ def django_query_postprocessor(
             # Force the query to execute
             getattr(data, field.name, None)
 
-            if many_to_one and type(field) == ManyToOneRel:  # noqa: E721
+            if many_to_one and type(field) == ManyToOneRel:
                 prefetch_fields.append(field.related_name or f"{field.name}_set")
 
             elif many_to_many and isinstance(field, ManyToManyField):
@@ -329,13 +316,14 @@ def django_query_postprocessor(
 
     # Unrecognized type
     else:
-        raise TypeError(
+        msg = (
             f"Django query postprocessor expected a Model or QuerySet, got {data!r}.\n"
             "One of the following may have occurred:\n"
             "  - You are using a non-Django ORM.\n"
             "  - You are attempting to use `use_query` to fetch non-ORM data.\n\n"
             "If these situations apply, you may want to disable the postprocessor."
         )
+        raise TypeError(msg)
 
     return data
 
@@ -352,9 +340,8 @@ def validate_component_args(func, *args, **kwargs):
         signature.bind(*args, **kwargs)
     except TypeError as e:
         name = generate_obj_name(func)
-        raise ComponentParamError(
-            f"Invalid args for '{name}'. {str(e).capitalize()}."
-        ) from e
+        msg = f"Invalid args for '{name}'. {str(e).capitalize()}."
+        raise ComponentParamError(msg) from e
 
 
 def create_cache_key(*args):
@@ -362,7 +349,8 @@ def create_cache_key(*args):
     all *args separated by `:`."""
 
     if not args:
-        raise ValueError("At least one argument is required to create a cache key.")
+        msg = "At least one argument is required to create a cache key."
+        raise ValueError(msg)
 
     return f"reactpy_django:{':'.join(str(arg) for arg in args)}"
 
@@ -388,7 +376,7 @@ def get_pk(model):
     return getattr(model, model._meta.pk.name)
 
 
-def strtobool(val):
+def strtobool(val: str) -> bool:
     """Convert a string representation of truth to true (1) or false (0).
 
     True values are 'y', 'yes', 't', 'true', 'on', and '1'; false values
@@ -396,12 +384,12 @@ def strtobool(val):
     'val' is anything else.
     """
     val = val.lower()
-    if val in ("y", "yes", "t", "true", "on", "1"):
-        return 1
-    elif val in ("n", "no", "f", "false", "off", "0"):
-        return 0
-    else:
-        raise ValueError(f"invalid truth value {val}")
+    if val in {"y", "yes", "t", "true", "on", "1"}:
+        return True
+    if val in {"n", "no", "f", "false", "off", "0"}:
+        return False
+    msg = f"invalid truth value {val}"
+    raise ValueError(msg)
 
 
 def prerender_component(
@@ -421,9 +409,7 @@ def prerender_component(
             user_component(*args, **kwargs),
             value=Connection(
                 scope=scope,
-                location=Location(
-                    pathname=request.path, search=f"?{search}" if search else ""
-                ),
+                location=Location(pathname=request.path, search=f"?{search}" if search else ""),
                 carrier=request,
             ),
         )
@@ -439,7 +425,7 @@ def vdom_or_component_to_string(
     """Converts a VdomDict or component to an HTML string. If a string is provided instead, it will be
     automatically returned."""
     if isinstance(vdom_or_component, dict):
-        return vdom_to_html(vdom_or_component)  # type: ignore
+        return vdom_to_html(vdom_or_component)
 
     if hasattr(vdom_or_component, "render"):
         if not request:
@@ -452,10 +438,8 @@ def vdom_or_component_to_string(
     if isinstance(vdom_or_component, str):
         return vdom_or_component
 
-    raise ValueError(
-        f"Invalid type for vdom_or_component: {type(vdom_or_component)}. "
-        "Expected a VdomDict, component, or string."
-    )
+    msg = f"Invalid type for vdom_or_component: {type(vdom_or_component)}. Expected a VdomDict, component, or string."
+    raise ValueError(msg)
 
 
 def render_pyscript_template(file_paths: Sequence[str], uuid: str, root: str):
@@ -474,9 +458,7 @@ def render_pyscript_template(file_paths: Sequence[str], uuid: str, root: str):
         # Try to get user code from cache
         cache_key = create_cache_key("pyscript", file_path)
         last_modified_time = os.stat(file_path).st_mtime
-        file_contents: str = caches[REACTPY_CACHE].get(
-            cache_key, version=int(last_modified_time)
-        )
+        file_contents: str = caches[REACTPY_CACHE].get(cache_key, version=int(last_modified_time))
         if file_contents:
             all_file_contents.append(file_contents)
 
@@ -484,9 +466,7 @@ def render_pyscript_template(file_paths: Sequence[str], uuid: str, root: str):
         else:
             file_contents = Path(file_path).read_text(encoding="utf-8").strip()
             all_file_contents.append(file_contents)
-            caches[REACTPY_CACHE].set(
-                cache_key, file_contents, version=int(last_modified_time)
-            )
+            caches[REACTPY_CACHE].set(cache_key, file_contents, version=int(last_modified_time))
 
     # Prepare the PyScript code block
     user_code = "\n".join(all_file_contents)  # Combine all user code
@@ -497,26 +477,18 @@ def render_pyscript_template(file_paths: Sequence[str], uuid: str, root: str):
     return executor.replace("    def root(): ...", user_code)
 
 
-def extend_pyscript_config(
-    extra_py: Sequence, extra_js: dict | str, config: dict | str
-) -> str:
+def extend_pyscript_config(extra_py: Sequence, extra_js: dict | str, config: dict | str) -> str:
     """Extends ReactPy's default PyScript config with user provided values."""
     # Lazily set up the initial config in to wait for Django's static file system
     if not PYSCRIPT_DEFAULT_CONFIG:
-        PYSCRIPT_DEFAULT_CONFIG.update(
-            {
-                "packages": [
-                    f"reactpy=={reactpy.__version__}",
-                    f"jsonpointer=={jsonpointer.__version__}",
-                    "ssl",
-                ],
-                "js_modules": {
-                    "main": {
-                        static("reactpy_django/morphdom/morphdom-esm.js"): "morphdom"
-                    }
-                },
-            }
-        )
+        PYSCRIPT_DEFAULT_CONFIG.update({
+            "packages": [
+                f"reactpy=={reactpy.__version__}",
+                f"jsonpointer=={jsonpointer.__version__}",
+                "ssl",
+            ],
+            "js_modules": {"main": {static("reactpy_django/morphdom/morphdom-esm.js"): "morphdom"}},
+        })
 
     # Extend the Python dependency list
     pyscript_config = deepcopy(PYSCRIPT_DEFAULT_CONFIG)
@@ -553,8 +525,27 @@ def validate_host(host: str) -> None:
     """Validates the host string to ensure it does not contain a protocol."""
     if "://" in host:
         protocol = host.split("://")[0]
-        msg = (
-            f"Invalid host provided to component. Contains a protocol '{protocol}://'."
-        )
+        msg = f"Invalid host provided to component. Contains a protocol '{protocol}://'."
         _logger.error(msg)
         raise InvalidHostError(msg)
+
+
+class FileAsyncIterator:
+    """Async iterator that yields chunks of data from the provided async file."""
+
+    def __init__(self, file_path: str):
+        self.file_path = file_path
+
+    async def __aiter__(self):
+        file_opened = False
+        try:
+            file_handle = FILE_ASYNC_ITERATOR_THREAD.submit(open, self.file_path, "rb").result()
+            file_opened = True
+            while True:
+                chunk = FILE_ASYNC_ITERATOR_THREAD.submit(file_handle.read, 8192).result()
+                if not chunk:
+                    break
+                yield chunk
+        finally:
+            if file_opened:
+                file_handle.close()

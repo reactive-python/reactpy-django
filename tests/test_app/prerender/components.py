@@ -14,11 +14,7 @@ def prerender_string():
     if scope.get("type") != "http":
         sleep(SLEEP_TIME)
 
-    return (
-        "prerender_string: Fully Rendered"
-        if scope.get("type") == "websocket"
-        else "prerender_string: Prerendered"
-    )
+    return "prerender_string: Fully Rendered" if scope.get("type") == "websocket" else "prerender_string: Prerendered"
 
 
 @component
@@ -52,13 +48,9 @@ def use_user():
     success = bool(user)
 
     if scope.get("type") == "http":
-        return html.div(
-            {"id": "use-user-http", "data-success": success}, f"use_user: {user} (HTTP)"
-        )
+        return html.div({"id": "use-user-http", "data-success": success}, f"use_user: {user} (HTTP)")
 
-    return html.div(
-        {"id": "use-user-ws", "data-success": success}, f"use_user: {user} (WebSocket)"
-    )
+    return html.div({"id": "use-user-ws", "data-success": success}, f"use_user: {user} (WebSocket)")
 
 
 @component

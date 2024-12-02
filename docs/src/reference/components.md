@@ -12,26 +12,26 @@ We supply some pre-designed that components can be used to help simplify develop
 
 This allows you to embedded any number of client-side PyScript components within traditional ReactPy components.
 
-{% include-markdown "../reference/template-tag.md" start="<!--pyscript-def-start-->" end="<!--pyscript-def-end-->" %}
+{% include-markdown "./template-tag.md" start="<!--pyscript-def-start-->" end="<!--pyscript-def-end-->" %}
 
-{% include-markdown "../reference/template-tag.md" start="<!--pyscript-raw-text-start-->" end="<!--pyscript-raw-text-end-->" %}
+{% include-markdown "./template-tag.md" start="<!--pyscript-raw-text-start-->" end="<!--pyscript-raw-text-end-->" %}
 
 === "components.py"
 
     ```python
-    {% include "../../examples/python/pyscript-ssr-parent.py" %}
+    {% include "../../examples/python/pyscript_ssr_parent.py" %}
     ```
 
 === "root.py"
 
     ```python
-    {% include "../../examples/python/pyscript-ssr-child.py" %}
+    {% include "../../examples/python/pyscript_ssr_child.py" %}
     ```
 
 === "my_template.html"
 
     ```jinja
-    {% include "../../examples/html/pyscript-ssr-parent.html" %}
+    {% include "../../examples/html/pyscript_ssr_parent.html" %}
     ```
 
 ??? example "See Interface"
@@ -53,31 +53,31 @@ This allows you to embedded any number of client-side PyScript components within
     === "my_template.html"
 
         ```jinja
-        {% include "../../examples/html/pyscript-setup.html" %}
+        {% include "../../examples/html/pyscript_setup.html" %}
         ```
 
 <!--pyscript-setup-required-end-->
 
-{% include-markdown "../reference/template-tag.md" start="<!--pyscript-js-exec-start-->" end="<!--pyscript-js-exec-end-->" %}
+{% include-markdown "./template-tag.md" start="<!--pyscript-js-exec-start-->" end="<!--pyscript-js-exec-end-->" %}
 
-{% include-markdown "../reference/template-tag.md" start="<!--pyscript-multifile-start-->" end="<!--pyscript-multifile-end-->" trailing-newlines=false preserve-includer-indent=false %}
+{% include-markdown "./template-tag.md" start="<!--pyscript-multifile-start-->" end="<!--pyscript-multifile-end-->" trailing-newlines=false preserve-includer-indent=false %}
 
     === "components.py"
 
         ```python
-        {% include "../../examples/python/pyscript-component-multiple-files-root.py" %}
+        {% include "../../examples/python/pyscript_component_multiple_files_root.py" %}
         ```
 
     === "root.py"
 
         ```python
-        {% include "../../examples/python/pyscript-multiple-files-root.py" %}
+        {% include "../../examples/python/pyscript_multiple_files_root.py" %}
         ```
 
     === "child.py"
 
         ```python
-        {% include "../../examples/python/pyscript-multiple-files-child.py" %}
+        {% include "../../examples/python/pyscript_multiple_files_child.py" %}
         ```
 
 ??? question "How do I display something while the component is loading?"
@@ -89,7 +89,7 @@ This allows you to embedded any number of client-side PyScript components within
     === "components.py"
 
         ```python
-        {% include "../../examples/python/pyscript-component-initial-object.py" %}
+        {% include "../../examples/python/pyscript_component_initial_object.py" %}
         ```
 
     However, you can also use a string containing raw HTML.
@@ -97,7 +97,7 @@ This allows you to embedded any number of client-side PyScript components within
     === "components.py"
 
         ```python
-        {% include "../../examples/python/pyscript-component-initial-string.py" %}
+        {% include "../../examples/python/pyscript_component_initial_string.py" %}
         ```
 
 ??? question "Can I use a different name for my root component?"
@@ -107,13 +107,13 @@ This allows you to embedded any number of client-side PyScript components within
     === "components.py"
 
         ```python
-        {% include "../../examples/python/pyscript-component-root.py" %}
+        {% include "../../examples/python/pyscript_component_root.py" %}
         ```
 
     === "main.py"
 
         ```python
-        {% include "../../examples/python/pyscript-root.py" %}
+        {% include "../../examples/python/pyscript_root.py" %}
         ```
 
 ---
@@ -171,7 +171,7 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/vtc-cbv.py" %}
+        {% include "../../examples/python/vtc_cbv.py" %}
         ```
 
     === "views.py"
@@ -187,7 +187,7 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/vtc-args.py" %}
+        {% include "../../examples/python/vtc_args.py" %}
         ```
 
     === "views.py"
@@ -215,7 +215,7 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/vtc-strict-parsing.py" %}
+        {% include "../../examples/python/vtc_strict_parsing.py" %}
         ```
 
     === "views.py"
@@ -237,7 +237,7 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/vtc-transforms.py" %}
+        {% include "../../examples/python/vtc_transforms.py" %}
         ```
 
     === "views.py"
@@ -308,7 +308,7 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/vti-cbv.py" %}
+        {% include "../../examples/python/vti_cbv.py" %}
         ```
 
     === "views.py"
@@ -332,7 +332,7 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/vti-args.py" %}
+        {% include "../../examples/python/vti_args.py" %}
         ```
 
     === "views.py"
@@ -364,7 +364,7 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
     === "components.py"
 
         ```python
-        {% include "../../examples/python/vti-extra-props.py" %}
+        {% include "../../examples/python/vti_extra_props.py" %}
         ```
 
     === "views.py"
@@ -388,7 +388,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
 === "components.py"
 
     ```python
-    {% include "../../examples/python/django-css.py" %}
+    {% include "../../examples/python/django_css.py" %}
     ```
 
 ??? example "See Interface"
@@ -413,7 +413,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
     Here's an example on what you should avoid doing for Django static files:
 
     ```python
-    {% include "../../examples/python/django-css-local-link.py" %}
+    {% include "../../examples/python/django_css_local_link.py" %}
     ```
 
 ??? question "How do I load external CSS?"
@@ -423,7 +423,7 @@ Allows you to defer loading a CSS stylesheet until a component begins rendering.
     For external CSS, you should use `#!python html.link`.
 
     ```python
-    {% include "../../examples/python/django-css-external-link.py" %}
+    {% include "../../examples/python/django_css_external_link.py" %}
     ```
 
 ??? question "Why not load my CSS in `#!html <head>`?"
@@ -450,7 +450,7 @@ Be mindful of load order! If your JavaScript relies on the component existing on
 === "components.py"
 
     ```python
-    {% include "../../examples/python/django-js.py" %}
+    {% include "../../examples/python/django_js.py" %}
     ```
 
 ??? example "See Interface"
@@ -475,7 +475,7 @@ Be mindful of load order! If your JavaScript relies on the component existing on
     Here's an example on what you should avoid doing for Django static files:
 
     ```python
-    {% include "../../examples/python/django-js-local-script.py" %}
+    {% include "../../examples/python/django_js_local_script.py" %}
     ```
 
 ??? question "How do I load external JS?"
@@ -485,7 +485,7 @@ Be mindful of load order! If your JavaScript relies on the component existing on
     For external JavaScript, you should use `#!python html.script`.
 
     ```python
-    {% include "../../examples/python/django-js-remote-script.py" %}
+    {% include "../../examples/python/django_js_remote_script.py" %}
     ```
 
 ??? question "Why not load my JS in `#!html <head>`?"

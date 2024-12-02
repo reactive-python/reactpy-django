@@ -17,7 +17,7 @@ This only works with ReactPy components, and is inspired by Django's [`user_pass
 === "components.py"
 
     ```python
-    {% include "../../examples/python/user-passes-test.py" %}
+    {% include "../../examples/python/user_passes_test.py" %}
     ```
 
 ??? example "See Interface"
@@ -42,7 +42,7 @@ This only works with ReactPy components, and is inspired by Django's [`user_pass
     === "components.py"
 
         ```python
-        {% include "../../examples/python/user-passes-test-component-fallback.py" %}
+        {% include "../../examples/python/user_passes_test_component_fallback.py" %}
         ```
 
 ??? question "How do I render a simple `#!python reactpy.html` snippet if the test fails?"
@@ -52,5 +52,5 @@ This only works with ReactPy components, and is inspired by Django's [`user_pass
     === "components.py"
 
         ```python
-        {% include "../../examples/python/user-passes-test-vdom-fallback.py" %}
+        {% include "../../examples/python/user_passes_test_vdom_fallback.py" %}
         ```

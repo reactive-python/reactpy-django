@@ -1,3 +1,5 @@
+# ruff: noqa: INP001
+import logging
 import shutil
 import sys
 from pathlib import Path
@@ -17,7 +19,7 @@ def copy_files(source: Path, destination: Path) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: python copy_dir.py <source_dir> <destination>")
+        logging.error("Script used incorrectly!\nUsage: python copy_dir.py <source_dir> <destination>")
         sys.exit(1)
 
     root_dir = Path(__file__).parent.parent.parent
@@ -25,7 +27,7 @@ if __name__ == "__main__":
     dest = Path(root_dir / sys.argv[2])
 
     if not src.exists():
-        print(f"Source directory {src} does not exist")
+        logging.error("Source directory %s does not exist", src)
         sys.exit(1)
 
     copy_files(src, dest)

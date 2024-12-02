@@ -1,6 +1,7 @@
+# ruff: noqa: RUF012
 from django.contrib import admin
-from reactpy_django.models import ComponentSession, Config, UserDataModel
 
+from reactpy_django.models import ComponentSession, Config, UserDataModel
 from test_app.models import (
     AsyncForiegnChild,
     AsyncRelationalChild,

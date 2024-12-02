@@ -1,13 +1,12 @@
-from datetime import datetime
-
+from django.utils import timezone
 from reactpy import component, hooks, html
 
 
 @component
 def renders_per_second():
-    start_time, _set_start_time = hooks.use_state(datetime.now())
+    start_time, _set_start_time = hooks.use_state(timezone.now())
     count, set_count = hooks.use_state(0)
-    seconds_elapsed = (datetime.now() - start_time).total_seconds()
+    seconds_elapsed = (timezone.now() - start_time).total_seconds()
 
     @hooks.use_effect
     def run_tests():
@@ -46,9 +45,9 @@ GIANT_STR_1MB = "@" * 1000000
 
 @component
 def mixed_time_to_load():
-    start_time, _set_start_time = hooks.use_state(datetime.now())
+    start_time, _set_start_time = hooks.use_state(timezone.now())
     count, set_count = hooks.use_state(0)
-    seconds_elapsed = (datetime.now() - start_time).total_seconds()
+    seconds_elapsed = (timezone.now() - start_time).total_seconds()
 
     @hooks.use_effect
     def run_tests():
@@ -69,8 +68,8 @@ def mixed_time_to_load():
 @component
 def event_renders_per_second():
     count, set_count = hooks.use_state(0)
-    start_time, _set_start_time = hooks.use_state(datetime.now())
-    seconds_elapsed = (datetime.now() - start_time).total_seconds()
+    start_time, _set_start_time = hooks.use_state(timezone.now())
+    seconds_elapsed = (timezone.now() - start_time).total_seconds()
     erps = count / (seconds_elapsed or 0.01)
 
     async def event_handler(event):
@@ -83,14 +82,12 @@ def event_renders_per_second():
             {"class_name": "erps", "data-erps": erps},
             f"Event Renders Per Second: {erps}",
         ),
-        html.input(
-            {
-                "type": "text",
-                "default_value": "0",
-                "data-count": str(count),
-                "on_click": event_handler,
-            }
-        ),
+        html.input({
+            "type": "text",
+            "default_value": "0",
+            "data-count": str(count),
+            "on_click": event_handler,
+        }),
     )
 
 

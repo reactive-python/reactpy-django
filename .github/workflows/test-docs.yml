@@ -29,4 +29,4 @@ jobs:
             - name: Check docs build
               run: hatch run docs:build
             - name: Check docs examples
-              run: hatch run docs:check_examples
+              run: hatch fmt docs --check

@@ -37,12 +37,10 @@ def button():
         html.div(
             "button:",
             html.button(
-                {"id": "counter-inc", "on_click": lambda event: set_count(count + 1)},
+                {"id": "counter-inc", "on_click": lambda _: set_count(count + 1)},
                 "Click me!",
             ),
-            html.p(
-                {"id": "counter-num", "data-count": count}, f"Current count is: {count}"
-            ),
+            html.p({"id": "counter-num", "data-count": count}, f"Current count is: {count}"),
         )
     )
 
@@ -61,12 +59,8 @@ def parameterized_component(x, y):
 @component
 def object_in_templatetag(my_object: TestObject):
     success = bool(my_object and my_object.value)
-    co_name = inspect.currentframe().f_code.co_name  # type: ignore
-    return html._(
-        html.div(
-            {"id": co_name, "data-success": success}, f"{co_name}: ", str(my_object)
-        )
-    )
+    co_name = inspect.currentframe().f_code.co_name
+    return html._(html.div({"id": co_name, "data-success": success}, f"{co_name}: ", str(my_object)))
 
 
 SimpleButtonModule = web.module_from_file(
@@ -80,9 +74,7 @@ SimpleButton = web.export(SimpleButtonModule, "SimpleButton")
 
 @component
 def button_from_js_module():
-    return html._(
-        "button_from_js_module:", SimpleButton({"id": "button-from-js-module"})
-    )
+    return html._("button_from_js_module:", SimpleButton({"id": "button-from-js-module"}))
 
 
 @component
@@ -95,9 +87,7 @@ def use_connection():
         and getattr(ws.carrier, "disconnect", None)
         and getattr(ws.carrier, "dotted_path", None)
     )
-    return html.div(
-        {"id": "use-connection", "data-success": success}, f"use_connection: {ws}"
-    )
+    return html.div({"id": "use-connection", "data-success": success}, f"use_connection: {ws}")
 
 
 @component
@@ -111,18 +101,14 @@ def use_scope():
 def use_location():
     location = reactpy_django.hooks.use_location()
     success = bool(location)
-    return html.div(
-        {"id": "use-location", "data-success": success}, f"use_location: {location}"
-    )
+    return html.div({"id": "use-location", "data-success": success}, f"use_location: {location}")
 
 
 @component
 def use_origin():
     origin = reactpy_django.hooks.use_origin()
     success = bool(origin)
-    return html.div(
-        {"id": "use-origin", "data-success": success}, f"use_origin: {origin}"
-    )
+    return html.div({"id": "use-origin", "data-success": success}, f"use_origin: {origin}")
 
 
 @component
@@ -158,16 +144,14 @@ def authorized_user():
 
 @reactpy_django.decorators.user_passes_test(
     lambda user: user.is_active,
-    fallback=html.div(
-        {"id": "unauthorized-user-fallback"}, "unauthorized_user: Success"
-    ),
+    fallback=html.div({"id": "unauthorized-user-fallback"}, "unauthorized_user: Success"),
 )
 @component
 def unauthorized_user():
     return html.div({"id": "unauthorized-user"}, "unauthorized_user: Fail")
 
 
-@reactpy_django.decorators.user_passes_test(lambda user: True)
+@reactpy_django.decorators.user_passes_test(lambda _: True)
 def incorrect_user_passes_test_decorator():
     return html.div("incorrect_decorator_test: Fail")
 
@@ -190,9 +174,7 @@ def get_relational_parent_query():
 def get_foriegn_child_query():
     child = ForiegnChild.objects.first()
     if not child:
-        child = ForiegnChild.objects.create(
-            parent=get_relational_parent_query(), text="Foriegn Child"
-        )
+        child = ForiegnChild.objects.create(parent=get_relational_parent_query(), text="Foriegn Child")
         child.save()
     return child
 
@@ -215,7 +197,7 @@ def relational_query():
             "id": "relational-query",
             "data-success": bool(mtm) and bool(oto) and bool(mto) and bool(fk),
         },
-        html.p(inspect.currentframe().f_code.co_name),  # type: ignore
+        html.p(inspect.currentframe().f_code.co_name),
         html.div(f"Relational Parent Many To Many: {mtm}"),
         html.div(f"Relational Parent One To One: {oto}"),
         html.div(f"Relational Parent Many to One: {mto}"),
@@ -249,9 +231,7 @@ async def async_get_foriegn_child_query():
     child = await AsyncForiegnChild.objects.afirst()
     if not child:
         parent = await async_get_or_create_relational_parent()
-        child = await AsyncForiegnChild.objects.acreate(
-            parent=parent, text="Foriegn Child"
-        )
+        child = await AsyncForiegnChild.objects.acreate(parent=parent, text="Foriegn Child")
         await child.asave()
     return child
 
@@ -259,9 +239,7 @@ async def async_get_foriegn_child_query():
 @component
 def async_relational_query():
     foriegn_child = reactpy_django.hooks.use_query(async_get_foriegn_child_query)
-    relational_parent = reactpy_django.hooks.use_query(
-        async_get_relational_parent_query
-    )
+    relational_parent = reactpy_django.hooks.use_query(async_get_relational_parent_query)
 
     if not relational_parent.data or not foriegn_child.data:
         return
@@ -276,7 +254,7 @@ def async_relational_query():
             "id": "async-relational-query",
             "data-success": bool(mtm) and bool(oto) and bool(mto) and bool(fk),
         },
-        html.p(inspect.currentframe().f_code.co_name),  # type: ignore
+        html.p(inspect.currentframe().f_code.co_name),
         html.div(f"Relational Parent Many To Many: {mtm}"),
         html.div(f"Relational Parent One To One: {oto}"),
         html.div(f"Relational Parent Many to One: {mto}"),
@@ -294,10 +272,10 @@ def add_todo_mutation(text: str):
         if existing.done:
             existing.done = False
             existing.save()
-        else:
-            return False
-    else:
-        TodoItem(text=text, done=False).save()
+            return None
+        return False
+    TodoItem(text=text, done=False).save()
+    return None
 
 
 def toggle_todo_mutation(item: TodoItem):
@@ -306,23 +284,19 @@ def toggle_todo_mutation(item: TodoItem):
 
 
 def _render_todo_items(items, toggle_item):
-    return html.ul(
-        [
-            html.li(
-                {"id": f"todo-item-{item.text}", "key": item.text},
-                item.text,
-                html.input(
-                    {
-                        "id": f"todo-item-{item.text}-checkbox",
-                        "type": "checkbox",
-                        "checked": item.done,
-                        "on_change": lambda event, i=item: toggle_item(i),
-                    }
-                ),
-            )
-            for item in items
-        ]
-    )
+    return html.ul([
+        html.li(
+            {"id": f"todo-item-{item.text}", "key": item.text},
+            item.text,
+            html.input({
+                "id": f"todo-item-{item.text}-checkbox",
+                "type": "checkbox",
+                "checked": item.done,
+                "on_change": lambda _, i=item: toggle_item(i),
+            }),
+        )
+        for item in items
+    ])
 
 
 @component
@@ -330,9 +304,7 @@ def todo_list():
     input_value, set_input_value = hooks.use_state("")
     items = reactpy_django.hooks.use_query(get_todo_query)
     toggle_item = reactpy_django.hooks.use_mutation(toggle_todo_mutation)
-    add_item = reactpy_django.hooks.use_mutation(
-        add_todo_mutation, refetch=get_todo_query
-    )
+    add_item = reactpy_django.hooks.use_mutation(add_todo_mutation, refetch=get_todo_query)
 
     def on_submit(event):
         if event["key"] == "Enter":
@@ -359,21 +331,19 @@ def todo_list():
     elif add_item.error:
         mutation_status = html.h2(f"Error when adding - {add_item.error}")
     else:
-        mutation_status = ""  # type: ignore
+        mutation_status = ""
 
     return html.div(
         {"id": "todo-list"},
-        html.p(inspect.currentframe().f_code.co_name),  # type: ignore
+        html.p(inspect.currentframe().f_code.co_name),
         html.label("Add an item:"),
-        html.input(
-            {
-                "type": "text",
-                "id": "todo-input",
-                "value": input_value,
-                "on_key_press": on_submit,
-                "on_change": on_change,
-            }
-        ),
+        html.input({
+            "type": "text",
+            "id": "todo-input",
+            "value": input_value,
+            "on_key_press": on_submit,
+            "on_change": on_change,
+        }),
         mutation_status,
         rendered_items,
     )
@@ -389,10 +359,10 @@ async def async_add_todo_mutation(text: str):
         if existing.done:
             existing.done = False
             await existing.asave()
-        else:
-            return False
-    else:
-        await AsyncTodoItem(text=text, done=False).asave()
+            return None
+        return False
+    await AsyncTodoItem(text=text, done=False).asave()
+    return None
 
 
 async def async_toggle_todo_mutation(item: AsyncTodoItem):
@@ -405,9 +375,7 @@ def async_todo_list():
     input_value, set_input_value = hooks.use_state("")
     items = reactpy_django.hooks.use_query(async_get_todo_query)
     toggle_item = reactpy_django.hooks.use_mutation(async_toggle_todo_mutation)
-    add_item = reactpy_django.hooks.use_mutation(
-        async_add_todo_mutation, refetch=async_get_todo_query
-    )
+    add_item = reactpy_django.hooks.use_mutation(async_add_todo_mutation, refetch=async_get_todo_query)
 
     async def on_submit(event):
         if event["key"] == "Enter":
@@ -434,21 +402,19 @@ def async_todo_list():
     elif add_item.error:
         mutation_status = html.h2(f"Error when adding - {add_item.error}")
     else:
-        mutation_status = ""  # type: ignore
+        mutation_status = ""
 
     return html.div(
         {"id": "async-todo-list"},
-        html.p(inspect.currentframe().f_code.co_name),  # type: ignore
+        html.p(inspect.currentframe().f_code.co_name),
         html.label("Add an item:"),
-        html.input(
-            {
-                "type": "text",
-                "id": "async-todo-input",
-                "value": input_value,
-                "on_key_press": on_submit,
-                "on_change": on_change,
-            }
-        ),
+        html.input({
+            "type": "text",
+            "id": "async-todo-input",
+            "value": input_value,
+            "on_key_press": on_submit,
+            "on_change": on_change,
+        }),
         mutation_status,
         rendered_items,
     )
@@ -456,22 +422,14 @@ def async_todo_list():
 
 view_to_component_sync_func = view_to_component(views.view_to_component_sync_func)
 view_to_component_async_func = view_to_component(views.view_to_component_async_func)
-view_to_component_sync_class = view_to_component(
-    views.ViewToComponentSyncClass.as_view()
-)
-view_to_component_async_class = view_to_component(
-    views.ViewToComponentAsyncClass.as_view()
-)
-view_to_component_template_view_class = view_to_component(
-    views.ViewToComponentTemplateViewClass.as_view()
-)
+view_to_component_sync_class = view_to_component(views.ViewToComponentSyncClass.as_view())
+view_to_component_async_class = view_to_component(views.ViewToComponentAsyncClass.as_view())
+view_to_component_template_view_class = view_to_component(views.ViewToComponentTemplateViewClass.as_view())
 _view_to_iframe_sync_func = view_to_iframe(views.view_to_iframe_sync_func)
 _view_to_iframe_async_func = view_to_iframe(views.view_to_iframe_async_func)
 _view_to_iframe_sync_class = view_to_iframe(views.ViewToIframeSyncClass.as_view())
 _view_to_iframe_async_class = view_to_iframe(views.ViewToIframeAsyncClass.as_view())
-_view_to_iframe_template_view_class = view_to_iframe(
-    views.ViewToIframeTemplateViewClass.as_view()
-)
+_view_to_iframe_template_view_class = view_to_iframe(views.ViewToIframeTemplateViewClass.as_view())
 _view_to_iframe_args = view_to_iframe(views.view_to_iframe_args)
 _view_to_iframe_not_registered = view_to_iframe("view_does_not_exist")
 view_to_component_script = view_to_component(views.view_to_component_script)
@@ -483,7 +441,7 @@ _view_to_component_kwargs = view_to_component(views.view_to_component_kwargs)
 @component
 def view_to_iframe_sync_func():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
+        {"id": inspect.currentframe().f_code.co_name},
         _view_to_iframe_sync_func(key="test"),
     )
 
@@ -491,7 +449,7 @@ def view_to_iframe_sync_func():
 @component
 def view_to_iframe_async_func():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
+        {"id": inspect.currentframe().f_code.co_name},
         _view_to_iframe_async_func(),
     )
 
@@ -499,7 +457,7 @@ def view_to_iframe_async_func():
 @component
 def view_to_iframe_sync_class():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
+        {"id": inspect.currentframe().f_code.co_name},
         _view_to_iframe_sync_class(),
     )
 
@@ -507,7 +465,7 @@ def view_to_iframe_sync_class():
 @component
 def view_to_iframe_async_class():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
+        {"id": inspect.currentframe().f_code.co_name},
         _view_to_iframe_async_class(),
     )
 
@@ -515,7 +473,7 @@ def view_to_iframe_async_class():
 @component
 def view_to_iframe_template_view_class():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
+        {"id": inspect.currentframe().f_code.co_name},
         _view_to_iframe_template_view_class(),
     )
 
@@ -523,7 +481,7 @@ def view_to_iframe_template_view_class():
 @component
 def view_to_iframe_args():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
+        {"id": inspect.currentframe().f_code.co_name},
         _view_to_iframe_args("Arg1", "Arg2", kwarg1="Kwarg1", kwarg2="Kwarg2"),
     )
 
@@ -531,7 +489,7 @@ def view_to_iframe_args():
 @component
 def view_to_iframe_not_registered():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
+        {"id": inspect.currentframe().f_code.co_name},
         _view_to_iframe_not_registered(),
     )
 
@@ -543,12 +501,12 @@ def view_to_component_request():
     def on_click(_):
         post_request = HttpRequest()
         post_request.method = "POST"
-        set_request(post_request)  # type: ignore
+        set_request(post_request)
 
     return html._(
         html.button(
             {
-                "id": f"{inspect.currentframe().f_code.co_name}_btn",  # type: ignore
+                "id": f"{inspect.currentframe().f_code.co_name}_btn",
                 "on_click": on_click,
             },
             "Click me",
@@ -567,7 +525,7 @@ def view_to_component_args():
     return html._(
         html.button(
             {
-                "id": f"{inspect.currentframe().f_code.co_name}_btn",  # type: ignore
+                "id": f"{inspect.currentframe().f_code.co_name}_btn",
                 "on_click": on_click,
             },
             "Click me",
@@ -586,7 +544,7 @@ def view_to_component_kwargs():
     return html._(
         html.button(
             {
-                "id": f"{inspect.currentframe().f_code.co_name}_btn",  # type: ignore
+                "id": f"{inspect.currentframe().f_code.co_name}_btn",
                 "on_click": on_click,
             },
             "Click me",
@@ -602,7 +560,7 @@ def custom_host(number=0):
 
     return html.div(
         {
-            "class_name": f"{inspect.currentframe().f_code.co_name}-{number}",  # type: ignore
+            "class_name": f"{inspect.currentframe().f_code.co_name}-{number}",
             "data-port": port,
         },
         f"Server Port: {port}",
@@ -611,9 +569,7 @@ def custom_host(number=0):
 
 @component
 def broken_postprocessor_query():
-    relational_parent = reactpy_django.hooks.use_query(
-        get_relational_parent_query, postprocessor=None
-    )
+    relational_parent = reactpy_django.hooks.use_query(get_relational_parent_query, postprocessor=None)
 
     if not relational_parent.data:
         return
@@ -661,10 +617,7 @@ def use_user_data():
 
     async def on_submit(event):
         if event["key"] == "Enter":
-            user_data_mutation(
-                (user_data_query.data or {})
-                | {event["target"]["value"]: event["target"]["value"]}
-            )
+            user_data_mutation((user_data_query.data or {}) | {event["target"]["value"]: event["target"]["value"]})
 
     return html.div(
         {
@@ -673,9 +626,7 @@ def use_user_data():
             "data-fetch-error": bool(user_data_query.error),
             "data-mutation-error": bool(user_data_mutation.error),
             "data-loading": user_data_query.loading or user_data_mutation.loading,
-            "data-username": (
-                "AnonymousUser" if current_user.is_anonymous else current_user.username
-            ),
+            "data-username": ("AnonymousUser" if current_user.is_anonymous else current_user.username),
         },
         html.div("use_user_data"),
         html.button({"className": "login-1", "on_click": login_user1}, "Login 1"),
@@ -684,17 +635,9 @@ def use_user_data():
         html.button({"className": "clear", "on_click": clear_data}, "Clear Data"),
         html.div(f"User: {current_user}"),
         html.div(f"Data: {user_data_query.data}"),
-        html.div(
-            f"Data State: (loading={user_data_query.loading}, error={user_data_query.error})"
-        ),
-        html.div(
-            f"Mutation State: (loading={user_data_mutation.loading}, error={user_data_mutation.error})"
-        ),
-        html.div(
-            html.input(
-                {"on_key_press": on_submit, "placeholder": "Type here to add data"}
-            )
-        ),
+        html.div(f"Data State: (loading={user_data_query.loading}, error={user_data_query.error})"),
+        html.div(f"Mutation State: (loading={user_data_mutation.loading}, error={user_data_mutation.error})"),
+        html.div(html.input({"on_key_press": on_submit, "placeholder": "Type here to add data"})),
     )
 
 
@@ -730,10 +673,7 @@ def use_user_data_with_default():
 
     async def on_submit(event):
         if event["key"] == "Enter":
-            user_data_mutation(
-                (user_data_query.data or {})
-                | {event["target"]["value"]: event["target"]["value"]}
-            )
+            user_data_mutation((user_data_query.data or {}) | {event["target"]["value"]: event["target"]["value"]})
 
     return html.div(
         {
@@ -741,24 +681,14 @@ def use_user_data_with_default():
             "data-fetch-error": bool(user_data_query.error),
             "data-mutation-error": bool(user_data_mutation.error),
             "data-loading": user_data_query.loading or user_data_mutation.loading,
-            "data-username": (
-                "AnonymousUser" if current_user.is_anonymous else current_user.username
-            ),
+            "data-username": ("AnonymousUser" if current_user.is_anonymous else current_user.username),
         },
         html.div("use_user_data_with_default"),
         html.button({"className": "login-3", "on_click": login_user3}, "Login 3"),
         html.button({"className": "clear", "on_click": clear_data}, "Clear Data"),
         html.div(f"User: {current_user}"),
         html.div(f"Data: {user_data_query.data}"),
-        html.div(
-            f"Data State: (loading={user_data_query.loading}, error={user_data_query.error})"
-        ),
-        html.div(
-            f"Mutation State: (loading={user_data_mutation.loading}, error={user_data_mutation.error})"
-        ),
-        html.div(
-            html.input(
-                {"on_key_press": on_submit, "placeholder": "Type here to add data"}
-            )
-        ),
+        html.div(f"Data State: (loading={user_data_query.loading}, error={user_data_query.error})"),
+        html.div(f"Mutation State: (loading={user_data_mutation.loading}, error={user_data_mutation.error})"),
+        html.div(html.input({"on_key_press": on_submit, "placeholder": "Type here to add data"})),
     )

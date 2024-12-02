@@ -178,7 +178,6 @@ linkcheck = [
 ]
 deploy_latest = ["cd docs && mike deploy --push --update-aliases {args} latest"]
 deploy_develop = ["cd docs && mike deploy --push develop"]
-check_examples = ["ruff check docs/examples/python"]
 
 ############################
 # >>> Hatch JS Scripts <<< #
@@ -210,6 +209,13 @@ lint.extend-ignore = [
   "SLF001",  # Private member accessed
   "E501",    # Line too long
   "PLC0415", # `import` should be at the top-level of a file
+  "BLE001",  # Do not catch blind exception: `Exception`
+  "PLW0603", # Using global statement is discouraged
+  "PLR6301", # Method could be a function, class method, or static method
+  "S403",    # `dill` module is possibly insecure
+  "S301",    # `dill` deserialization is possibly insecure unless using trusted data
+  "RUF029",  # Function is declared async but doesn't contain await expression
 ]
 lint.preview = true
-lint.isort.known-first-party = ["src", "tests"]
+lint.isort.known-first-party = ["reactpy_django", "test_app", "example"]
+lint.isort.known-third-party = ["js"]

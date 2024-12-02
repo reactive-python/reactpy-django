@@ -1,3 +1,4 @@
+# ruff: noqa: N802, RUF012
 import asyncio
 import os
 import sys
@@ -17,7 +18,6 @@ GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "False")
 
 
 class PlaywrightTestCase(ChannelsLiveServerTestCase):
-
     from reactpy_django import config
 
     databases = {"default"}
@@ -27,12 +27,9 @@ class PlaywrightTestCase(ChannelsLiveServerTestCase):
         # Repurposed from ChannelsLiveServerTestCase._pre_setup
         for connection in connections.all():
             if cls._is_in_memory_db(cls, connection):
-                raise ImproperlyConfigured(
-                    "ChannelLiveServerTestCase can not be used with in memory databases"
-                )
-        cls._live_server_modified_settings = modify_settings(
-            ALLOWED_HOSTS={"append": cls.host}
-        )
+                msg = "ChannelLiveServerTestCase can not be used with in memory databases"
+                raise ImproperlyConfigured(msg)
+        cls._live_server_modified_settings = modify_settings(ALLOWED_HOSTS={"append": cls.host})
         cls._live_server_modified_settings.enable()
         cls.get_application = partial(
             make_application,
@@ -69,7 +66,7 @@ class PlaywrightTestCase(ChannelsLiveServerTestCase):
         # Repurposed from ChannelsLiveServerTestCase._post_teardown
         cls._live_server_modified_settings.disable()
         # Using set to prevent duplicates
-        for db_name in {"default", config.REACTPY_DATABASE}:
+        for db_name in {"default", config.REACTPY_DATABASE}:  # noqa: PLC0208
             call_command(
                 "flush",
                 verbosity=0,

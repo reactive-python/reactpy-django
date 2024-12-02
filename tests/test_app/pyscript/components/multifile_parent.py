@@ -1,3 +1,4 @@
+# ruff: noqa: TCH004
 from typing import TYPE_CHECKING
 
 from reactpy import component, html

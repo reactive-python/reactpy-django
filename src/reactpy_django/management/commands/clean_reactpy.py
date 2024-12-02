@@ -1,6 +1,9 @@
+from logging import getLogger
 from typing import Literal
 
 from django.core.management.base import BaseCommand
+
+_logger = getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -22,7 +25,7 @@ class Command(BaseCommand):
         clean(*cleaning_args, immediate=True, verbosity=verbosity)
 
         if verbosity >= 1:
-            print("ReactPy data has been cleaned!")
+            _logger.info("ReactPy data has been cleaned!")
 
     def add_arguments(self, parser):
         parser.add_argument(

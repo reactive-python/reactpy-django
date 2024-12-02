@@ -1,7 +1,9 @@
+# ruff: noqa: RUF012, N802
 import os
 import socket
 from time import sleep
 
+import pytest
 from playwright.sync_api import TimeoutError
 
 from reactpy_django.models import ComponentSession
@@ -13,7 +15,6 @@ CLICK_DELAY = 250 if strtobool(GITHUB_ACTIONS) else 25  # Delay in miliseconds.
 
 
 class GenericComponentTests(PlaywrightTestCase):
-
     databases = {"default"}
 
     @classmethod
@@ -51,32 +52,24 @@ class GenericComponentTests(PlaywrightTestCase):
         self.page.locator("#use-origin[data-success=true]").wait_for()
 
     def test_static_css(self):
-        self.assertEqual(
+        assert (
             self.page.wait_for_selector("#django-css button").evaluate(
                 "e => window.getComputedStyle(e).getPropertyValue('color')"
-            ),
-            "rgb(0, 0, 255)",
+            )
+            == "rgb(0, 0, 255)"
         )
 
     def test_static_js(self):
         self.page.locator("#django-js[data-success=true]").wait_for()
 
     def test_unauthorized_user(self):
-        self.assertRaises(
-            TimeoutError,
-            self.page.wait_for_selector,
-            "#unauthorized-user",
-            timeout=1,
-        )
+        with pytest.raises(TimeoutError):
+            self.page.wait_for_selector("#unauthorized-user", timeout=1)
         self.page.wait_for_selector("#unauthorized-user-fallback")
 
     def test_authorized_user(self):
-        self.assertRaises(
-            TimeoutError,
-            self.page.wait_for_selector,
-            "#authorized-user-fallback",
-            timeout=1,
-        )
+        with pytest.raises(TimeoutError):
+            self.page.wait_for_selector("#authorized-user-fallback", timeout=1)
         self.page.wait_for_selector("#authorized-user")
 
     def test_relational_query(self):
@@ -94,15 +87,9 @@ class GenericComponentTests(PlaywrightTestCase):
             todo_input.type(f"sample-{i}", delay=CLICK_DELAY)
             todo_input.press("Enter", delay=CLICK_DELAY)
             self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}")
-            self.page.wait_for_selector(
-                f"#todo-list #todo-item-sample-{i}-checkbox"
-            ).click()
-            self.assertRaises(
-                TimeoutError,
-                self.page.wait_for_selector,
-                f"#todo-list #todo-item-sample-{i}",
-                timeout=1,
-            )
+            self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}-checkbox").click()
+            with pytest.raises(TimeoutError):
+                self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}", timeout=1)
 
     def test_async_use_query_and_mutation(self):
         todo_input = self.page.wait_for_selector("#async-todo-input")
@@ -113,15 +100,9 @@ class GenericComponentTests(PlaywrightTestCase):
             todo_input.type(f"sample-{i}", delay=CLICK_DELAY)
             todo_input.press("Enter", delay=CLICK_DELAY)
             self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}")
-            self.page.wait_for_selector(
-                f"#async-todo-list #todo-item-sample-{i}-checkbox"
-            ).click()
-            self.assertRaises(
-                TimeoutError,
-                self.page.wait_for_selector,
-                f"#async-todo-list #todo-item-sample-{i}",
-                timeout=1,
-            )
+            self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}-checkbox").click()
+            with pytest.raises(TimeoutError):
+                self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}", timeout=1)
 
     def test_view_to_component_sync_func(self):
         self.page.locator("#view_to_component_sync_func[data-success=true]").wait_for()
@@ -136,9 +117,7 @@ class GenericComponentTests(PlaywrightTestCase):
         self.page.locator("#ViewToComponentAsyncClass[data-success=true]").wait_for()
 
     def test_view_to_component_template_view_class(self):
-        self.page.locator(
-            "#ViewToComponentTemplateViewClass[data-success=true]"
-        ).wait_for()
+        self.page.locator("#ViewToComponentTemplateViewClass[data-success=true]").wait_for()
 
     def _click_btn_and_check_success(self, name):
         self.page.locator(f"#{name}:not([data-success=true])").wait_for()
@@ -197,7 +176,7 @@ class GenericComponentTests(PlaywrightTestCase):
         query = ComponentSession.objects.filter(uuid=session_id)
         query_exists = query.exists()
         os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
-        self.assertTrue(query_exists)
+        assert query_exists
 
     def test_component_session_missing(self):
         """No session should exist for components that don't have args/kwargs."""
@@ -209,7 +188,7 @@ class GenericComponentTests(PlaywrightTestCase):
         query = ComponentSession.objects.filter(uuid=session_id)
         query_exists = query.exists()
         os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
-        self.assertFalse(query_exists)
+        assert not query_exists
 
     def test_use_user_data(self):
         text_input = self.page.wait_for_selector("#use-user-data input")
@@ -222,27 +201,27 @@ class GenericComponentTests(PlaywrightTestCase):
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=AnonymousUser]"
         )
-        self.assertIn("Data: None", user_data_div.text_content())
+        assert "Data: None" in user_data_div.text_content()
 
         # Test first user's data
         login_1.click()
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_1]"
         )
-        self.assertIn(r"Data: {}", user_data_div.text_content())
+        assert "Data: {}" in user_data_div.text_content()
         text_input.type("test", delay=CLICK_DELAY)
         text_input.press("Enter", delay=CLICK_DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=true][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_1]"
         )
-        self.assertIn("Data: {'test': 'test'}", user_data_div.text_content())
+        assert "Data: {'test': 'test'}" in user_data_div.text_content()
 
         # Test second user's data
         login_2.click()
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_2]"
         )
-        self.assertIn(r"Data: {}", user_data_div.text_content())
+        assert "Data: {}" in user_data_div.text_content()
         text_input.press("Control+A", delay=CLICK_DELAY)
         text_input.press("Backspace", delay=CLICK_DELAY)
         text_input.type("test 2", delay=CLICK_DELAY)
@@ -250,21 +229,21 @@ class GenericComponentTests(PlaywrightTestCase):
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=true][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_2]"
         )
-        self.assertIn("Data: {'test 2': 'test 2'}", user_data_div.text_content())
+        assert "Data: {'test 2': 'test 2'}" in user_data_div.text_content()
 
         # Attempt to clear data
         clear.click()
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_2]"
         )
-        self.assertIn(r"Data: {}", user_data_div.text_content())
+        assert "Data: {}" in user_data_div.text_content()
 
         # Attempt to logout
         logout.click()
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=AnonymousUser]"
         )
-        self.assertIn(r"Data: None", user_data_div.text_content())
+        assert "Data: None" in user_data_div.text_content()
 
     def test_use_user_data_with_default(self):
         text_input = self.page.wait_for_selector("#use-user-data-with-default input")
@@ -275,25 +254,22 @@ class GenericComponentTests(PlaywrightTestCase):
         user_data_div = self.page.wait_for_selector(
             "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=AnonymousUser]"
         )
-        self.assertIn("Data: None", user_data_div.text_content())
+        assert "Data: None" in user_data_div.text_content()
 
         # Test first user's data
         login_3.click()
         user_data_div = self.page.wait_for_selector(
             "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_3]"
         )
-        self.assertIn(
-            "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3'}",
-            user_data_div.text_content(),
-        )
+        assert "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3'}" in user_data_div.text_content()
         text_input.type("test", delay=CLICK_DELAY)
         text_input.press("Enter", delay=CLICK_DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_3]"
         )
-        self.assertIn(
-            "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3', 'test': 'test'}",
-            user_data_div.text_content(),
+        assert (
+            "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3', 'test': 'test'}"
+            in user_data_div.text_content()
         )
 
         # Attempt to clear data
@@ -302,14 +278,10 @@ class GenericComponentTests(PlaywrightTestCase):
         user_data_div = self.page.wait_for_selector(
             "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_3]"
         )
-        self.assertIn(
-            "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3'}",
-            user_data_div.text_content(),
-        )
+        assert "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3'}" in user_data_div.text_content()
 
 
 class PrerenderTests(PlaywrightTestCase):
-
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -331,28 +303,23 @@ class PrerenderTests(PlaywrightTestCase):
         component.wait_for()
         use_root_id_http.wait_for()
         use_user_http.wait_for()
-        self.assertEqual(string.all_inner_texts(), ["prerender_string: Prerendered"])
-        self.assertEqual(vdom.all_inner_texts(), ["prerender_vdom: Prerendered"])
-        self.assertEqual(
-            component.all_inner_texts(), ["prerender_component: Prerendered"]
-        )
+        assert string.all_inner_texts() == ["prerender_string: Prerendered"]
+        assert vdom.all_inner_texts() == ["prerender_vdom: Prerendered"]
+        assert component.all_inner_texts() == ["prerender_component: Prerendered"]
         root_id_value = use_root_id_http.get_attribute("data-value")
-        self.assertEqual(len(root_id_value), 36)
+        assert len(root_id_value) == 36
 
         # Check if the full render occurred
         sleep(2)
-        self.assertEqual(string.all_inner_texts(), ["prerender_string: Fully Rendered"])
-        self.assertEqual(vdom.all_inner_texts(), ["prerender_vdom: Fully Rendered"])
-        self.assertEqual(
-            component.all_inner_texts(), ["prerender_component: Fully Rendered"]
-        )
+        assert string.all_inner_texts() == ["prerender_string: Fully Rendered"]
+        assert vdom.all_inner_texts() == ["prerender_vdom: Fully Rendered"]
+        assert component.all_inner_texts() == ["prerender_component: Fully Rendered"]
         use_root_id_ws.wait_for()
         use_user_ws.wait_for()
-        self.assertEqual(use_root_id_ws.get_attribute("data-value"), root_id_value)
+        assert use_root_id_ws.get_attribute("data-value") == root_id_value
 
 
 class ErrorTests(PlaywrightTestCase):
-
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -361,119 +328,107 @@ class ErrorTests(PlaywrightTestCase):
     def test_component_does_not_exist_error(self):
         broken_component = self.page.locator("#component_does_not_exist_error")
         broken_component.wait_for()
-        self.assertIn("ComponentDoesNotExistError:", broken_component.text_content())
+        assert "ComponentDoesNotExistError:" in broken_component.text_content()
 
     def test_component_param_error(self):
         broken_component = self.page.locator("#component_param_error")
         broken_component.wait_for()
-        self.assertIn("ComponentParamError:", broken_component.text_content())
+        assert "ComponentParamError:" in broken_component.text_content()
 
     def test_invalid_host_error(self):
         broken_component = self.page.locator("#invalid_host_error")
         broken_component.wait_for()
-        self.assertIn("InvalidHostError:", broken_component.text_content())
+        assert "InvalidHostError:" in broken_component.text_content()
 
     def test_synchronous_only_operation_error(self):
         broken_component = self.page.locator("#broken_postprocessor_query pre")
         broken_component.wait_for()
-        self.assertIn("SynchronousOnlyOperation:", broken_component.text_content())
+        assert "SynchronousOnlyOperation:" in broken_component.text_content()
 
     def test_view_not_registered_error(self):
         broken_component = self.page.locator("#view_to_iframe_not_registered pre")
         broken_component.wait_for()
-        self.assertIn("ViewNotRegisteredError:", broken_component.text_content())
+        assert "ViewNotRegisteredError:" in broken_component.text_content()
 
     def test_decorator_param_error(self):
         broken_component = self.page.locator("#incorrect_user_passes_test_decorator")
         broken_component.wait_for()
-        self.assertIn("DecoratorParamError:", broken_component.text_content())
+        assert "DecoratorParamError:" in broken_component.text_content()
 
 
 class UrlRouterTests(PlaywrightTestCase):
-
     def test_url_router(self):
         self.page.goto(f"{self.live_server_url}/router/")
         path = self.page.wait_for_selector("#router-path")
-        self.assertIn("/router/", path.get_attribute("data-path"))
+        assert "/router/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        self.assertEqual("/router/", string.text_content())
+        assert string.text_content() == "/router/"
 
     def test_url_router_subroute(self):
         self.page.goto(f"{self.live_server_url}/router/subroute/")
         path = self.page.wait_for_selector("#router-path")
-        self.assertIn("/router/subroute/", path.get_attribute("data-path"))
+        assert "/router/subroute/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        self.assertEqual("subroute/", string.text_content())
+        assert string.text_content() == "subroute/"
 
     def test_url_unspecified(self):
         self.page.goto(f"{self.live_server_url}/router/unspecified/123/")
         path = self.page.wait_for_selector("#router-path")
-        self.assertIn("/router/unspecified/123/", path.get_attribute("data-path"))
+        assert "/router/unspecified/123/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        self.assertEqual("/router/unspecified/<value>/", string.text_content())
+        assert string.text_content() == "/router/unspecified/<value>/"
 
     def test_url_router_integer(self):
         self.page.goto(f"{self.live_server_url}/router/integer/123/")
         path = self.page.wait_for_selector("#router-path")
-        self.assertIn("/router/integer/123/", path.get_attribute("data-path"))
+        assert "/router/integer/123/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        self.assertEqual("/router/integer/<int:value>/", string.text_content())
+        assert string.text_content() == "/router/integer/<int:value>/"
 
     def test_url_router_path(self):
         self.page.goto(f"{self.live_server_url}/router/path/abc/123/")
         path = self.page.wait_for_selector("#router-path")
-        self.assertIn("/router/path/abc/123/", path.get_attribute("data-path"))
+        assert "/router/path/abc/123/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        self.assertEqual("/router/path/<path:value>/", string.text_content())
+        assert string.text_content() == "/router/path/<path:value>/"
 
     def test_url_router_slug(self):
         self.page.goto(f"{self.live_server_url}/router/slug/abc-123/")
         path = self.page.wait_for_selector("#router-path")
-        self.assertIn("/router/slug/abc-123/", path.get_attribute("data-path"))
+        assert "/router/slug/abc-123/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        self.assertEqual("/router/slug/<slug:value>/", string.text_content())
+        assert string.text_content() == "/router/slug/<slug:value>/"
 
     def test_url_router_string(self):
         self.page.goto(f"{self.live_server_url}/router/string/abc/")
         path = self.page.wait_for_selector("#router-path")
-        self.assertIn("/router/string/abc/", path.get_attribute("data-path"))
+        assert "/router/string/abc/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        self.assertEqual("/router/string/<str:value>/", string.text_content())
+        assert string.text_content() == "/router/string/<str:value>/"
 
     def test_url_router_uuid(self):
-        self.page.goto(
-            f"{self.live_server_url}/router/uuid/123e4567-e89b-12d3-a456-426614174000/"
-        )
+        self.page.goto(f"{self.live_server_url}/router/uuid/123e4567-e89b-12d3-a456-426614174000/")
         path = self.page.wait_for_selector("#router-path")
-        self.assertIn(
-            "/router/uuid/123e4567-e89b-12d3-a456-426614174000/",
-            path.get_attribute("data-path"),
-        )
+        assert "/router/uuid/123e4567-e89b-12d3-a456-426614174000/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        self.assertEqual("/router/uuid/<uuid:value>/", string.text_content())
+        assert string.text_content() == "/router/uuid/<uuid:value>/"
 
     def test_url_router_any(self):
-        self.page.goto(
-            f"{self.live_server_url}/router/any/adslkjgklasdjhfah/6789543256/"
-        )
+        self.page.goto(f"{self.live_server_url}/router/any/adslkjgklasdjhfah/6789543256/")
         path = self.page.wait_for_selector("#router-path")
-        self.assertIn(
-            "/router/any/adslkjgklasdjhfah/6789543256/",
-            path.get_attribute("data-path"),
-        )
+        assert "/router/any/adslkjgklasdjhfah/6789543256/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        self.assertEqual("/router/any/<any:name>", string.text_content())
+        assert string.text_content() == "/router/any/<any:name>"
 
     def test_url_router_int_and_string(self):
         self.page.goto(f"{self.live_server_url}/router/two/123/abc/")
         path = self.page.wait_for_selector("#router-path")
-        self.assertIn("/router/two/123/abc/", path.get_attribute("data-path"))
+        assert "/router/two/123/abc/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        self.assertEqual("/router/two/<int:value>/<str:value2>/", string.text_content())
+        assert string.text_content() == "/router/two/<int:value>/<str:value2>/"
 
 
 class ChannelLayersTests(PlaywrightTestCase):
-
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -484,27 +439,20 @@ class ChannelLayersTests(PlaywrightTestCase):
         sender.type("test", delay=CLICK_DELAY)
         sender.press("Enter", delay=CLICK_DELAY)
         receiver = self.page.wait_for_selector("#receiver[data-message='test']")
-        self.assertIsNotNone(receiver)
+        assert receiver is not None
 
         sender = self.page.wait_for_selector("#group-sender")
         sender.type("1234", delay=CLICK_DELAY)
         sender.press("Enter", delay=CLICK_DELAY)
-        receiver_1 = self.page.wait_for_selector(
-            "#group-receiver-1[data-message='1234']"
-        )
-        receiver_2 = self.page.wait_for_selector(
-            "#group-receiver-2[data-message='1234']"
-        )
-        receiver_3 = self.page.wait_for_selector(
-            "#group-receiver-3[data-message='1234']"
-        )
-        self.assertIsNotNone(receiver_1)
-        self.assertIsNotNone(receiver_2)
-        self.assertIsNotNone(receiver_3)
+        receiver_1 = self.page.wait_for_selector("#group-receiver-1[data-message='1234']")
+        receiver_2 = self.page.wait_for_selector("#group-receiver-2[data-message='1234']")
+        receiver_3 = self.page.wait_for_selector("#group-receiver-3[data-message='1234']")
+        assert receiver_1 is not None
+        assert receiver_2 is not None
+        assert receiver_3 is not None
 
 
 class PyscriptTests(PlaywrightTestCase):
-
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -559,7 +507,6 @@ class PyscriptTests(PlaywrightTestCase):
 
 
 class DistributedComputingTests(PlaywrightTestCase):
-
     @classmethod
     def setUpServer(cls):
         super().setUpServer()
@@ -576,9 +523,7 @@ class DistributedComputingTests(PlaywrightTestCase):
 
     def test_host_roundrobin(self):
         """Verify if round-robin host selection is working."""
-        self.page.goto(
-            f"{self.live_server_url}/roundrobin/{self._port}/{self._port2}/8"
-        )
+        self.page.goto(f"{self.live_server_url}/roundrobin/{self._port}/{self._port2}/8")
         elem0 = self.page.locator(".custom_host-0")
         elem1 = self.page.locator(".custom_host-1")
         elem2 = self.page.locator(".custom_host-2")
@@ -601,18 +546,15 @@ class DistributedComputingTests(PlaywrightTestCase):
         }
 
         # There should only be two ports in the set
-        self.assertEqual(current_ports, correct_ports)
-        self.assertEqual(len(current_ports), 2)
+        assert current_ports == correct_ports
+        assert len(current_ports) == 2
 
     def test_custom_host(self):
         """Make sure that the component is rendered by a separate server."""
         self.page.goto(f"{self.live_server_url}/port/{self._port2}/")
         elem = self.page.locator(".custom_host-0")
         elem.wait_for()
-        self.assertIn(
-            f"Server Port: {self._port2}",
-            elem.text_content(),
-        )
+        assert f"Server Port: {self._port2}" in elem.text_content()
 
     def test_custom_host_wrong_port(self):
         """Make sure that other ports are not rendering components."""
@@ -620,7 +562,7 @@ class DistributedComputingTests(PlaywrightTestCase):
         tmp_sock.bind((self._server_process.host, 0))
         random_port = tmp_sock.getsockname()[1]
         self.page.goto(f"{self.live_server_url}/port/{random_port}/")
-        with self.assertRaises(TimeoutError):
+        with pytest.raises(TimeoutError):
             self.page.locator(".custom_host").wait_for(timeout=1000)
 
 
@@ -632,8 +574,8 @@ class OfflineTests(PlaywrightTestCase):
 
     def test_offline_components(self):
         self.page.wait_for_selector("div:not([hidden]) > #online")
-        self.assertIsNotNone(self.page.query_selector("div[hidden] > #offline"))
+        assert self.page.query_selector("div[hidden] > #offline") is not None
         self._server_process.terminate()
         self._server_process.join()
         self.page.wait_for_selector("div:not([hidden]) > #offline")
-        self.assertIsNotNone(self.page.query_selector("div[hidden] > #online"))
+        assert self.page.query_selector("div[hidden] > #online") is not None

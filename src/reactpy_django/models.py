@@ -9,15 +9,15 @@ from reactpy_django.utils import get_pk
 class ComponentSession(models.Model):
     """A model for storing component sessions."""
 
-    uuid = models.UUIDField(primary_key=True, editable=False, unique=True)  # type: ignore
-    params = models.BinaryField(editable=False)  # type: ignore
-    last_accessed = models.DateTimeField(auto_now=True)  # type: ignore
+    uuid = models.UUIDField(primary_key=True, editable=False, unique=True)
+    params = models.BinaryField(editable=False)
+    last_accessed = models.DateTimeField(auto_now=True)
 
 
 class Config(models.Model):
     """A singleton model for storing ReactPy configuration."""
 
-    cleaned_at = models.DateTimeField(auto_now_add=True)  # type: ignore
+    cleaned_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
         """Singleton save method."""
@@ -36,8 +36,8 @@ class UserDataModel(models.Model):
     # We can't store User as a ForeignKey/OneToOneField because it may not be in the same database
     # and Django does not allow cross-database relations. Also, since we can't know the type of the UserModel PK,
     # we store it as a string to normalize.
-    user_pk = models.CharField(max_length=255, unique=True)  # type: ignore
-    data = models.BinaryField(null=True, blank=True)  # type: ignore
+    user_pk = models.CharField(max_length=255, unique=True)
+    data = models.BinaryField(null=True, blank=True)
 
 
 @receiver(pre_delete, sender=get_user_model(), dispatch_uid="reactpy_delete_user_data")

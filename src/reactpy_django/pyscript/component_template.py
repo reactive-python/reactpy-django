@@ -1,3 +1,4 @@
+# ruff: noqa: TCH004, N802, N816, RUF006
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

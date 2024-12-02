@@ -1,4 +1,5 @@
 from reactpy import component, hooks, html
+
 from reactpy_django.hooks import use_channel_layer
 
 
@@ -34,7 +35,7 @@ def sender():
 
 
 @component
-def group_receiver(id: int):
+def group_receiver(id_number: int):
     state, set_state = hooks.use_state("None")
 
     async def receiver(message):
@@ -43,8 +44,8 @@ def group_receiver(id: int):
     use_channel_layer(receiver=receiver, group_name="group-messenger")
 
     return html.div(
-        {"id": f"group-receiver-{id}", "data-message": state},
-        f"Group Message Receiver #{id}: {state}",
+        {"id": f"group-receiver-{id_number}", "data-message": state},
+        f"Group Message Receiver #{id_number}: {state}",
     )
 
 

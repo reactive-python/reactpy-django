@@ -4,13 +4,13 @@ from functools import wraps
 from typing import TYPE_CHECKING, Any, Callable
 
 from reactpy import component
-from reactpy.core.types import ComponentConstructor
 
 from reactpy_django.exceptions import DecoratorParamError
 from reactpy_django.hooks import use_user
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import AbstractUser
+    from reactpy.core.types import ComponentConstructor
 
 
 def user_passes_test(
@@ -31,9 +31,7 @@ def user_passes_test(
     def decorator(user_component):
         @wraps(user_component)
         def _wrapper(*args, **kwargs):
-            return _user_passes_test(
-                user_component, fallback, test_func, *args, **kwargs
-            )
+            return _user_passes_test(user_component, fallback, test_func, *args, **kwargs)
 
         return _wrapper
 
@@ -49,10 +47,11 @@ def _user_passes_test(component_constructor, fallback, test_func, *args, **kwarg
         # Ensure that the component is a ReactPy component.
         user_component = component_constructor(*args, **kwargs)
         if not getattr(user_component, "render", None):
-            raise DecoratorParamError(
+            msg = (
                 "`user_passes_test` is not decorating a ReactPy component. "
                 "Did you forget `@user_passes_test` must be ABOVE the `@component` decorator?"
             )
+            raise DecoratorParamError(msg)
 
         # Render the component.
         return user_component

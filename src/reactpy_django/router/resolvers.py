@@ -1,9 +1,13 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from reactpy_router.resolvers import StarletteResolver
-from reactpy_router.types import ConversionInfo, Route
 
 from reactpy_django.router.converters import CONVERTERS
+
+if TYPE_CHECKING:
+    from reactpy_router.types import ConversionInfo, Route
 
 
 class DjangoResolver(StarletteResolver):

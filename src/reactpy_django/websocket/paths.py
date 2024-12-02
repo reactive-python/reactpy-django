@@ -1,8 +1,7 @@
 from django.urls import path
 
 from reactpy_django.config import REACTPY_URL_PREFIX
-
-from .consumer import ReactpyAsyncWebsocketConsumer
+from reactpy_django.websocket.consumer import ReactpyAsyncWebsocketConsumer
 
 REACTPY_WEBSOCKET_ROUTE = path(
     f"{REACTPY_URL_PREFIX}/<str:dotted_path>/<uuid:uuid>/<int:has_args>/",

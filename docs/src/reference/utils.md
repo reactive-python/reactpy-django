@@ -16,7 +16,7 @@ Utility functions provide various miscellaneous functionality for advanced use c
 
 This function is used register a Django view as a ReactPy `#!python iframe`.
 
-It is mandatory to use this function alongside [`view_to_iframe`](../reference/components.md#view-to-iframe).
+It is mandatory to use this function alongside [`view_to_iframe`](./components.md#view-to-iframe).
 
 === "apps.py"
 
@@ -51,7 +51,7 @@ Typically, this function is automatically called on all components contained wit
 === "apps.py"
 
     ```python
-    {% include "../../examples/python/register-component.py" %}
+    {% include "../../examples/python/register_component.py" %}
     ```
 
 ??? example "See Interface"
@@ -76,7 +76,7 @@ Typically, this function is automatically called on all components contained wit
 
     For security reasons, ReactPy requires all root components to be registered. However, all components contained within Django templates are automatically registered.
 
-    This function is commonly needed when you have configured your [`host`](../reference/template-tag.md#component) to a dedicated Django rendering application that doesn't have templates.
+    This function is commonly needed when you have configured your [`host`](./template-tag.md#component) to a dedicated Django rendering application that doesn't have templates.
 
 ---
 
@@ -89,13 +89,13 @@ Since ReactPy is rendered within an `#!python asyncio` loop, this postprocessor 
 === "components.py"
 
     ```python
-    {% include "../../examples/python/django-query-postprocessor.py" %}
+    {% include "../../examples/python/django_query_postprocessor.py" %}
     ```
 
 === "models.py"
 
     ```python
-    {% include "../../examples/python/example/models.py" %}
+    {% include "../../examples/python/todo_item_model.py" %}
     ```
 
 ??? example "See Interface"
