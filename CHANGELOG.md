@@ -19,6 +19,10 @@ Don't forget to remove deprecated code on each major release!
 
 ## [Unreleased]
 
+-   Nothing (yet)!
+
+## [5.1.1] - 2024-12-02
+
 ### Fixed
 
 -   Fixed regression in v5.1.0 where components would sometimes not output debug messages when `settings.py:DEBUG` is enabled.
@@ -521,7 +525,8 @@ Don't forget to remove deprecated code on each major release!
 
 -   Support for IDOM within the Django
 
-[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/5.1.0...HEAD
+[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/5.1.1...HEAD
+[5.1.1]: https://github.com/reactive-python/reactpy-django/compare/5.1.0...5.1.1
 [5.1.0]: https://github.com/reactive-python/reactpy-django/compare/5.0.0...5.1.0
 [5.0.0]: https://github.com/reactive-python/reactpy-django/compare/4.0.0...5.0.0
 [4.0.0]: https://github.com/reactive-python/reactpy-django/compare/3.8.1...4.0.0
