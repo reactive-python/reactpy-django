@@ -376,7 +376,7 @@ def get_pk(model):
     return getattr(model, model._meta.pk.name)
 
 
-def strtobool(val):
+def strtobool(val: str) -> bool:
     """Convert a string representation of truth to true (1) or false (0).
 
     True values are 'y', 'yes', 't', 'true', 'on', and '1'; false values
@@ -385,9 +385,9 @@ def strtobool(val):
     """
     val = val.lower()
     if val in {"y", "yes", "t", "true", "on", "1"}:
-        return 1
+        return True
     if val in {"n", "no", "f", "false", "off", "0"}:
-        return 0
+        return False
     msg = f"invalid truth value {val}"
     raise ValueError(msg)
 
