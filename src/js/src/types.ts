@@ -18,3 +18,8 @@ export type ReactPyDjangoClientProps = {
   prerenderElement: HTMLElement | null;
   offlineElement: HTMLElement | null;
 };
+
+export interface DjangoFormProps {
+  onSubmitCallback: (data: Object) => void;
+  formId: string;
+}

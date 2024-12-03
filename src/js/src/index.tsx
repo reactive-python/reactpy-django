@@ -2,6 +2,21 @@ import { ReactPyDjangoClient } from "./client";
 import React from "react";
 import ReactDOM from "react-dom";
 import { Layout } from "@reactpy/client/src/components";
+import { DjangoFormProps } from "./types";
+
+/**
+ * Interface used to bind a ReactPy node to React.
+ */
+export function bind(node) {
+  return {
+    create: (type, props, children) =>
+      React.createElement(type, props, ...children),
+    render: (element) => {
+      ReactDOM.render(element, node);
+    },
+    unmount: () => ReactDOM.unmountComponentAtNode(node),
+  };
+}
 
 export function mountComponent(
   mountElement: HTMLElement,
@@ -78,4 +93,35 @@ export function mountComponent(
 
   // Start rendering the component
   ReactDOM.render(<Layout client={client} />, client.mountElement);
+}
+
+export function DjangoForm({
+  onSubmitCallback,
+  formId,
+}: DjangoFormProps): null {
+  React.useEffect(() => {
+    const form = document.getElementById(formId) as HTMLFormElement;
+
+    // Submission event function
+    const onSubmitEvent = (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      console.log(Object.fromEntries(formData));
+      onSubmitCallback(Object.fromEntries(formData));
+    };
+
+    // Bind the event listener
+    if (form) {
+      form.addEventListener("submit", onSubmitEvent);
+    }
+
+    // Unbind the event listener when the component dismounts
+    return () => {
+      if (form) {
+        form.removeEventListener("submit", onSubmitEvent);
+      }
+    };
+  }, []);
+
+  return null;
 }
