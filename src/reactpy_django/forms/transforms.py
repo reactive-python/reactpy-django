@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 UNSUPPORTED_PROPS = {"children", "ref", "aria-*", "data-*"}
 
 
-def standardize_prop_names(vdom_tree: VdomDict) -> VdomDict:
+def convert_html_props_to_reactjs(vdom_tree: VdomDict) -> VdomDict:
     """Transformation that standardizes the prop names to be used in the component."""
 
     if not isinstance(vdom_tree, dict):
@@ -23,7 +23,7 @@ def standardize_prop_names(vdom_tree: VdomDict) -> VdomDict:
         vdom_tree["attributes"] = {_normalize_prop_name(k): v for k, v in vdom_tree["attributes"].items()}
 
     for child in vdom_tree.get("children", []):
-        standardize_prop_names(child)
+        convert_html_props_to_reactjs(child)
 
     return vdom_tree
 
@@ -63,7 +63,7 @@ def _find_selected_options(vdom_tree: VdomDict, mutation: Callable) -> list[Vdom
     return selected_options
 
 
-def convert_option_props(vdom_tree: VdomDict) -> VdomDict:
+def set_value_prop_on_select_element(vdom_tree: VdomDict) -> VdomDict:
     """Use the `value` prop on <select> instead of setting `selected` on <option>."""
 
     if not isinstance(vdom_tree, dict):
@@ -71,6 +71,7 @@ def convert_option_props(vdom_tree: VdomDict) -> VdomDict:
 
     # If the current tag is <select>, remove 'selected' prop from any <option> children and
     # instead set the 'value' prop on the <select> tag.
+    # TODO: Fix this, is broken
     if vdom_tree["tagName"] == "select" and "children" in vdom_tree:
         vdom_tree.setdefault("eventHandlers", {})
         vdom_tree["eventHandlers"]["onChange"] = EventHandler(to_event_handler_function(do_nothing_event))
@@ -82,7 +83,7 @@ def convert_option_props(vdom_tree: VdomDict) -> VdomDict:
             vdom_tree["attributes"]["value"] = [option["children"][0] for option in selected_options]
 
     for child in vdom_tree.get("children", []):
-        convert_option_props(child)
+        set_value_prop_on_select_element(child)
 
     return vdom_tree
 
@@ -129,7 +130,7 @@ def _add_on_change_event(event_func, vdom_tree: VdomDict) -> VdomDict:
     return vdom_tree
 
 
-def ensure_controlled_inputs(event_func: Callable | None = None) -> Callable:
+def ensure_input_elements_are_controlled(event_func: Callable | None = None) -> Callable:
     """Adds an onChange handler on form <input> elements, since ReactJS doesn't like uncontrolled inputs."""
 
     def mutation(vdom_tree: VdomDict) -> VdomDict:
