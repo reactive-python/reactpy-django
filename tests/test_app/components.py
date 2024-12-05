@@ -9,7 +9,7 @@ from django.http import HttpRequest
 from reactpy import component, hooks, html, web
 
 import reactpy_django
-from reactpy_django.components import view_to_component, view_to_iframe
+from reactpy_django.components import django_form, view_to_component, view_to_iframe
 from test_app.models import (
     AsyncForiegnChild,
     AsyncRelationalChild,
@@ -22,6 +22,7 @@ from test_app.models import (
 )
 
 from . import views
+from .forms import BasicForm
 from .types import TestObject
 
 
@@ -691,4 +692,11 @@ def use_user_data_with_default():
         html.div(f"Data State: (loading={user_data_query.loading}, error={user_data_query.error})"),
         html.div(f"Mutation State: (loading={user_data_mutation.loading}, error={user_data_mutation.error})"),
         html.div(html.input({"on_key_press": on_submit, "placeholder": "Type here to add data"})),
+    )
+
+
+@component
+def basic_form():
+    return django_form(
+        BasicForm, bottom_children=(html.input({"type": "submit"}),), auto_submit=True, auto_submit_wait=0
     )

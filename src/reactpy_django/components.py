@@ -2,19 +2,28 @@ from __future__ import annotations
 
 import json
 import os
-from typing import TYPE_CHECKING, Any, Callable, Union, cast
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Callable, Type, Union, cast
 from urllib.parse import urlencode
 from uuid import uuid4
 
 from django.contrib.staticfiles.finders import find
 from django.core.cache import caches
+from django.forms import BooleanField, ChoiceField, Form, MultipleChoiceField
 from django.http import HttpRequest
 from django.urls import reverse
 from reactpy import component, hooks, html, utils
 from reactpy.types import ComponentType, Key, VdomDict
+from reactpy.web import export, module_from_file
 
 from reactpy_django.exceptions import ViewNotRegisteredError
 from reactpy_django.html import pyscript
+from reactpy_django.transforms import (
+    convert_option_props,
+    convert_textarea_children_to_prop,
+    ensure_controlled_inputs,
+    standardize_prop_names,
+)
 from reactpy_django.utils import (
     generate_obj_name,
     import_module,
@@ -27,6 +36,11 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from django.views import View
+
+DjangoForm = export(
+    module_from_file("reactpy-django", file=Path(__file__).parent / "static" / "reactpy_django" / "client.js"),
+    ("DjangoForm"),
+)
 
 
 def view_to_component(
@@ -112,6 +126,25 @@ def django_js(static_path: str, key: Key | None = None):
     """
 
     return _django_js(static_path=static_path, key=key)
+
+
+def django_form(
+    form: Type[Form],
+    *,
+    top_children: Sequence = (),
+    bottom_children: Sequence = (),
+    auto_submit: bool = False,
+    auto_submit_wait: int = 3,
+    key: Key | None = None,
+):
+    return _django_form(
+        form=form,
+        top_children=top_children,
+        bottom_children=bottom_children,
+        auto_submit=auto_submit,
+        auto_submit_wait=auto_submit_wait,
+        key=key,
+    )
 
 
 def pyscript_component(
@@ -230,6 +263,102 @@ def _django_js(static_path: str):
     return html.script(_cached_static_contents(static_path))
 
 
+@component
+def _django_form(
+    form: Type[Form], top_children: Sequence, bottom_children: Sequence, auto_submit: bool, auto_submit_wait: int
+):
+    # TODO: Implement form restoration on page reload. Probably want to create a new setting called
+    # form_restoration_method that can be set to "URL", "CLIENT_STORAGE", "SERVER_SESSION", or None.
+    # Or maybe just recommend pre-rendering to have the browser handle it.
+    # Be clear that URL mode will limit you to one form per page.
+    # TODO: Test this with django-bootstrap forms and see how errors behave
+    # TODO: Test this with django-colorfield and django-ace
+    # TODO: Add pre-submit and post-submit hooks
+    # TODO: Add auto-save option for database-backed forms
+    uuid_ref = hooks.use_ref(uuid4().hex.replace("-", ""))
+    top_children_count = hooks.use_ref(len(top_children))
+    bottom_children_count = hooks.use_ref(len(bottom_children))
+    submitted_data, set_submitted_data = hooks.use_state({} or None)
+
+    uuid = uuid_ref.current
+
+    # Don't allow the count of top and bottom children to change
+    if len(top_children) != top_children_count.current or len(bottom_children) != bottom_children_count.current:
+        raise ValueError("Dynamically changing the number of top or bottom children is not allowed.")
+
+    # Try to initialize the form with the provided data
+    try:
+        initialized_form = form(data=submitted_data)
+    except Exception as e:
+        if not isinstance(form, type(Form)):
+            raise ValueError(
+                "The provided form must be an uninitialized Django Form. "
+                "Do NOT initialize your form by calling it (ex. `MyForm()`)."
+            ) from e
+        raise e
+
+    # Run the form validation, if data was provided
+    if submitted_data:
+        initialized_form.full_clean()
+
+    def on_submit_callback(new_data: dict[str, Any]):
+        choice_field_map = {
+            field_name: {choice_value: choice_key for choice_key, choice_value in field.choices}
+            for field_name, field in initialized_form.fields.items()
+            if isinstance(field, ChoiceField)
+        }
+        multi_choice_fields = {
+            field_name
+            for field_name, field in initialized_form.fields.items()
+            if isinstance(field, MultipleChoiceField)
+        }
+        boolean_fields = {
+            field_name for field_name, field in initialized_form.fields.items() if isinstance(field, BooleanField)
+        }
+
+        # Choice fields submit their values as text, but Django choice keys are not always equal to their values.
+        # Due to this, we need to convert the text into keys that Django would be happy with
+        for choice_field_name, choice_map in choice_field_map.items():
+            if choice_field_name in new_data:
+                submitted_value = new_data[choice_field_name]
+                if isinstance(submitted_value, list):
+                    new_data[choice_field_name] = [
+                        choice_map.get(submitted_value_item, submitted_value_item)
+                        for submitted_value_item in submitted_value
+                    ]
+                elif choice_field_name in multi_choice_fields:
+                    new_data[choice_field_name] = [choice_map.get(submitted_value, submitted_value)]
+                else:
+                    new_data[choice_field_name] = choice_map.get(submitted_value, submitted_value)
+
+        # Convert boolean field text into actual booleans
+        for boolean_field_name in boolean_fields:
+            new_data[boolean_field_name] = boolean_field_name in new_data
+
+        # TODO: ReactPy's use_state hook really should be de-duplicating this by itself. Needs upstream fix.
+        if submitted_data != new_data:
+            set_submitted_data(new_data)
+
+    async def on_change(event): ...
+
+    rendered_form = utils.html_to_vdom(
+        initialized_form.render(),
+        standardize_prop_names,
+        convert_textarea_children_to_prop,
+        convert_option_props,
+        ensure_controlled_inputs(on_change),
+        strict=False,
+    )
+
+    return html.form(
+        {"id": f"reactpy-{uuid}"},
+        DjangoForm({"onSubmitCallback": on_submit_callback, "formId": f"reactpy-{uuid}"}),
+        *top_children,
+        html.div({"key": uuid4().hex}, rendered_form),
+        *bottom_children,
+    )
+
+
 def _cached_static_contents(static_path: str) -> str:
     from reactpy_django.config import REACTPY_CACHE
 
@@ -238,6 +367,8 @@ def _cached_static_contents(static_path: str) -> str:
     if not abs_path:
         msg = f"Could not find static file {static_path} within Django's static files."
         raise FileNotFoundError(msg)
+    if isinstance(abs_path, (list, tuple)):
+        abs_path = abs_path[0]
 
     # Fetch the file from cache, if available
     last_modified_time = os.stat(abs_path).st_mtime
@@ -259,7 +390,8 @@ def _pyscript_component(
     root: str = "root",
 ):
     rendered, set_rendered = hooks.use_state(False)
-    uuid = uuid4().hex.replace("-", "")
+    uuid_ref = hooks.use_ref(uuid4().hex.replace("-", ""))
+    uuid = uuid_ref.current
     initial = vdom_or_component_to_string(initial, uuid=uuid)
     executor = render_pyscript_template(file_paths, uuid, root)
 
