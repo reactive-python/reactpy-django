@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Type, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Union, cast
 from urllib.parse import urlencode
 from uuid import uuid4
 
@@ -129,7 +129,7 @@ def django_js(static_path: str, key: Key | None = None):
 
 
 def django_form(
-    form: Type[Form],
+    form: type[Form],
     *,
     top_children: Sequence = (),
     bottom_children: Sequence = (),
@@ -265,7 +265,7 @@ def _django_js(static_path: str):
 
 @component
 def _django_form(
-    form: Type[Form], top_children: Sequence, bottom_children: Sequence, auto_submit: bool, auto_submit_wait: int
+    form: type[Form], top_children: Sequence, bottom_children: Sequence, auto_submit: bool, auto_submit_wait: int
 ):
     # TODO: Implement form restoration on page reload. Probably want to create a new setting called
     # form_restoration_method that can be set to "URL", "CLIENT_STORAGE", "SERVER_SESSION", or None.
@@ -284,18 +284,20 @@ def _django_form(
 
     # Don't allow the count of top and bottom children to change
     if len(top_children) != top_children_count.current or len(bottom_children) != bottom_children_count.current:
-        raise ValueError("Dynamically changing the number of top or bottom children is not allowed.")
+        msg = "Dynamically changing the number of top or bottom children is not allowed."
+        raise ValueError(msg)
 
     # Try to initialize the form with the provided data
     try:
         initialized_form = form(data=submitted_data)
     except Exception as e:
         if not isinstance(form, type(Form)):
-            raise ValueError(
+            msg = (
                 "The provided form must be an uninitialized Django Form. "
                 "Do NOT initialize your form by calling it (ex. `MyForm()`)."
-            ) from e
-        raise e
+            )
+            raise TypeError(msg) from e
+        raise
 
     # Run the form validation, if data was provided
     if submitted_data:

@@ -25,7 +25,7 @@ Don't forget to remove deprecated code on each major release!
 
 ### Fixed
 
--   Fixed bregression from the previous release where components would sometimes not output debug messages when `settings.py:DEBUG` is enabled.
+-   Fixed regression from the previous release where components would sometimes not output debug messages when `settings.py:DEBUG` is enabled.
 
 ### Changed
 

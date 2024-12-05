@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import TYPE_CHECKING, Callable
 
 from reactpy.core.events import EventHandler, to_event_handler_function
-from reactpy.core.types import VdomDict
+
+if TYPE_CHECKING:
+    from reactpy.core.types import VdomDict
 
 # TODO: Move all this logic to `reactpy.utils._mutate_vdom()` and remove this file.
 
@@ -112,7 +114,7 @@ def _add_on_change_event(event_func, vdom_tree: VdomDict) -> VdomDict:
         return vdom_tree
 
     vdom_tree.setdefault("eventHandlers", {})
-    if vdom_tree["tagName"] in ["input", "textarea"]:
+    if vdom_tree["tagName"] in {"input", "textarea"}:
         if "onChange" in vdom_tree["eventHandlers"]:
             pass
         elif isinstance(event_func, EventHandler):
@@ -136,7 +138,7 @@ def ensure_controlled_inputs(event_func: Callable | None = None) -> Callable:
             return vdom_tree
 
         vdom_tree.setdefault("eventHandlers", {})
-        if vdom_tree["tagName"] in ["input", "textarea"]:
+        if vdom_tree["tagName"] in {"input", "textarea"}:
             if "onChange" in vdom_tree["eventHandlers"]:
                 pass
             elif isinstance(event_func, EventHandler):
@@ -164,18 +166,18 @@ def do_nothing_event(*args, **kwargs):
 
 SPECIAL_PROPS = r"""
 children: A React node (an element, a string, a number, a portal, an empty node like null, undefined and booleans, or an array of other React nodes). Specifies the content inside the component. When you use JSX, you will usually specify the children prop implicitly by nesting tags like <div><span /></div>.
-dangerouslySetInnerHTML: An object of the form { __html: '<p>some html</p>' } with a raw HTML string inside. Overrides the innerHTML property of the DOM node and displays the passed HTML inside. This should be used with extreme caution! If the HTML inside isn’t trusted (for example, if it’s based on user data), you risk introducing an XSS vulnerability. Read more about using dangerouslySetInnerHTML.
+dangerouslySetInnerHTML: An object of the form { __html: '<p>some html</p>' } with a raw HTML string inside. Overrides the innerHTML property of the DOM node and displays the passed HTML inside. This should be used with extreme caution! If the HTML inside isn't trusted (for example, if it's based on user data), you risk introducing an XSS vulnerability. Read more about using dangerouslySetInnerHTML.
 ref: A ref object from useRef or createRef, or a ref callback function, or a string for legacy refs. Your ref will be filled with the DOM element for this node. Read more about manipulating the DOM with refs.
-suppressContentEditableWarning: A boolean. If true, suppresses the warning that React shows for elements that both have children and contentEditable={true} (which normally do not work together). Use this if you’re building a text input library that manages the contentEditable content manually.
-suppressHydrationWarning: A boolean. If you use server rendering, normally there is a warning when the server and the client render different content. In some rare cases (like timestamps), it is very hard or impossible to guarantee an exact match. If you set suppressHydrationWarning to true, React will not warn you about mismatches in the attributes and the content of that element. It only works one level deep, and is intended to be used as an escape hatch. Don’t overuse it. Read more about suppressing hydration errors.
-style: An object with CSS styles, for example { fontWeight: 'bold', margin: 20 }. Similarly to the DOM style property, the CSS property names need to be written as camelCase, for example fontWeight instead of font-weight. You can pass strings or numbers as values. If you pass a number, like width: 100, React will automatically append px (“pixels”) to the value unless it’s a unitless property. We recommend using style only for dynamic styles where you don’t know the style values ahead of time. In other cases, applying plain CSS classes with className is more efficient. Read more about applying CSS with className and styles.
-"""  # noqa: E501
+suppressContentEditableWarning: A boolean. If true, suppresses the warning that React shows for elements that both have children and contentEditable={true} (which normally do not work together). Use this if you're building a text input library that manages the contentEditable content manually.
+suppressHydrationWarning: A boolean. If you use server rendering, normally there is a warning when the server and the client render different content. In some rare cases (like timestamps), it is very hard or impossible to guarantee an exact match. If you set suppressHydrationWarning to true, React will not warn you about mismatches in the attributes and the content of that element. It only works one level deep, and is intended to be used as an escape hatch. Don't overuse it. Read more about suppressing hydration errors.
+style: An object with CSS styles, for example { fontWeight: 'bold', margin: 20 }. Similarly to the DOM style property, the CSS property names need to be written as camelCase, for example fontWeight instead of font-weight. You can pass strings or numbers as values. If you pass a number, like width: 100, React will automatically append px (“pixels”) to the value unless it's a unitless property. We recommend using style only for dynamic styles where you don't know the style values ahead of time. In other cases, applying plain CSS classes with className is more efficient. Read more about applying CSS with className and styles.
+"""
 
 STANDARD_PROPS = r"""
 accessKey: A string. Specifies a keyboard shortcut for the element. Not generally recommended.
 aria-*: ARIA attributes let you specify the accessibility tree information for this element. See ARIA attributes for a complete reference. In React, all ARIA attribute names are exactly the same as in HTML.
 autoCapitalize: A string. Specifies whether and how the user input should be capitalized.
-className: A string. Specifies the element’s CSS class name. Read more about applying CSS styles.
+className: A string. Specifies the element's CSS class name. Read more about applying CSS styles.
 contentEditable: A boolean. If true, the browser lets the user edit the rendered element directly. This is used to implement rich text input libraries like Lexical. React warns if you try to pass React children to an element with contentEditable={true} because React will not be able to update its content after user edits.
 data-*: Data attributes let you attach some string data to the element, for example data-fruit="banana". In React, they are not commonly used because you would usually read data from props or state instead.
 dir: Either 'ltr' or 'rtl'. Specifies the text direction of the element.
@@ -286,7 +288,7 @@ spellCheck: A boolean or null. If explicitly set to true or false, enables or di
 tabIndex: A number. Overrides the default Tab button behavior. Avoid using values other than -1 and 0.
 title: A string. Specifies the tooltip text for the element.
 translate: Either 'yes' or 'no'. Passing 'no' excludes the element content from being translated.
-"""  # noqa: E501
+"""
 
 FORM_PROPS = r"""
 onReset: An Event handler function. Fires when a form gets reset.
@@ -300,26 +302,26 @@ onCancel: An Event handler function. Fires when the user tries to dismiss the di
 onCancelCapture: A version of onCancel that fires in the capture phase. capture-phase-events)
 onClose: An Event handler function. Fires when a dialog has been closed.
 onCloseCapture: A version of onClose that fires in the capture phase.
-"""  # noqa: E501
+"""
 
 DETAILS_PROPS = r"""
 onToggle: An Event handler function. Fires when the user toggles the details.
 onToggleCapture: A version of onToggle that fires in the capture phase. capture-phase-events)
-"""  # noqa: E501
+"""
 
 IMG_IFRAME_OBJECT_EMBED_LINK_IMAGE_PROPS = r"""
 onLoad: An Event handler function. Fires when the resource has loaded.
 onLoadCapture: A version of onLoad that fires in the capture phase.
 onError: An Event handler function. Fires when the resource could not be loaded.
 onErrorCapture: A version of onError that fires in the capture phase.
-"""  # noqa: E501
+"""
 
 AUDIO_VIDEO_PROPS = r"""
 onAbort: An Event handler function. Fires when the resource has not fully loaded, but not due to an error.
 onAbortCapture: A version of onAbort that fires in the capture phase.
-onCanPlay: An Event handler function. Fires when there’s enough data to start playing, but not enough to play to the end without buffering.
+onCanPlay: An Event handler function. Fires when there's enough data to start playing, but not enough to play to the end without buffering.
 onCanPlayCapture: A version of onCanPlay that fires in the capture phase.
-onCanPlayThrough: An Event handler function. Fires when there’s enough data that it’s likely possible to start playing without buffering until the end.
+onCanPlayThrough: An Event handler function. Fires when there's enough data that it's likely possible to start playing without buffering until the end.
 onCanPlayThroughCapture: A version of onCanPlayThrough that fires in the capture phase.
 onDurationChange: An Event handler function. Fires when the media duration has updated.
 onDurationChangeCapture: A version of onDurationChange that fires in the capture phase.
@@ -327,7 +329,7 @@ onEmptied: An Event handler function. Fires when the media has become empty.
 onEmptiedCapture: A version of onEmptied that fires in the capture phase.
 onEncrypted: An Event handler function. Fires when the browser encounters encrypted media.
 onEncryptedCapture: A version of onEncrypted that fires in the capture phase.
-onEnded: An Event handler function. Fires when the playback stops because there’s nothing left to play.
+onEnded: An Event handler function. Fires when the playback stops because there's nothing left to play.
 onEndedCapture: A version of onEnded that fires in the capture phase.
 onError: An Event handler function. Fires when the resource could not be loaded.
 onErrorCapture: A version of onError that fires in the capture phase.
@@ -363,7 +365,7 @@ onVolumeChange: An Event handler function. Fires when the volume has changed.
 onVolumeChangeCapture: A version of onVolumeChange that fires in the capture phase.
 onWaiting: An Event handler function. Fires when the playback stopped due to temporary lack of data.
 onWaitingCapture: A version of onWaiting that fires in the capture phase.
-"""  # noqa: E501
+"""
 
 INPUT_PROPS = r"""
 checked: A boolean. For a checkbox input or a radio button, controls whether it is selected.
@@ -375,10 +377,10 @@ alt: A string. Specifies the alternative image text for a type="image" input.
 capture: A string. Specifies the media (microphone, video, or camera) captured by a type="file" input.
 autoComplete: A string. Specifies one of the possible autocomplete behaviors.
 autoFocus: A boolean. If true, React will focus the element on mount.
-dirname: A string. Specifies the form field name for the element’s directionality.
+dirname: A string. Specifies the form field name for the element's directionality.
 disabled: A boolean. If true, the input will not be interactive and will appear dimmed.
 children: <input> does not accept children.
-form: A string. Specifies the id of the <form> this input belongs to. If omitted, it’s the closest parent form.
+form: A string. Specifies the id of the <form> this input belongs to. If omitted, it's the closest parent form.
 formAction: A string. Overrides the parent <form action> for type="submit" and type="image".
 formEnctype: A string. Overrides the parent <form enctype> for type="submit" and type="image".
 formMethod: A string. Overrides the parent <form method> for type="submit" and type="image".
@@ -391,8 +393,8 @@ maxLength: A number. Specifies the maximum length of text and other inputs.
 min: A number. Specifies the minimum value of numerical and datetime inputs.
 minLength: A number. Specifies the minimum length of text and other inputs.
 multiple: A boolean. Specifies whether multiple values are allowed for <type="file" and type="email".
-name: A string. Specifies the name for this input that’s submitted with the form.
-onChange: An Event handler function. Required for controlled inputs. Fires immediately when the input’s value is changed by the user (for example, it fires on every keystroke). Behaves like the browser input event.
+name: A string. Specifies the name for this input that's submitted with the form.
+onChange: An Event handler function. Required for controlled inputs. Fires immediately when the input's value is changed by the user (for example, it fires on every keystroke). Behaves like the browser input event.
 onChangeCapture: A version of onChange that fires in the capture phase.
 onInput: An Event handler function. Fires immediately when the value is changed by the user. For historical reasons, in React it is idiomatic to use onChange instead which works similarly.
 onInputCapture: A version of onInput that fires in the capture phase.
@@ -409,7 +411,7 @@ src: A string. Specifies the image source for a type="image" input.
 step: A positive number or an 'any' string. Specifies the distance between valid values.
 type: A string. One of the input types.
 width: A string. Specifies the image width for a type="image" input.
-"""  # noqa: E501
+"""
 
 SELECT_PROPS = r"""
 value: A string (or an array of strings for multiple={true}). Controls which option is selected. Every value string match the value of some <option> nested inside the <select>.
@@ -418,9 +420,9 @@ autoComplete: A string. Specifies one of the possible autocomplete behaviors.
 autoFocus: A boolean. If true, React will focus the element on mount.
 children: <select> accepts <option>, <optgroup>, and <datalist> components as children. You can also pass your own components as long as they eventually render one of the allowed components. If you pass your own components that eventually render <option> tags, each <option> you render must have a value.
 disabled: A boolean. If true, the select box will not be interactive and will appear dimmed.
-form: A string. Specifies the id of the <form> this select box belongs to. If omitted, it’s the closest parent form.
+form: A string. Specifies the id of the <form> this select box belongs to. If omitted, it's the closest parent form.
 multiple: A boolean. If true, the browser allows multiple selection.
-name: A string. Specifies the name for this select box that’s submitted with the form.
+name: A string. Specifies the name for this select box that's submitted with the form.
 onChange: An Event handler function. Required for controlled select boxes. Fires immediately when the user picks a different option. Behaves like the browser input event.
 onChangeCapture: A version of onChange that fires in the capture phase.
 onInput: An Event handler function. Fires immediately when the value is changed by the user. For historical reasons, in React it is idiomatic to use onChange instead which works similarly.
@@ -429,7 +431,7 @@ onInvalid: An Event handler function. Fires if an input fails validation on form
 onInvalidCapture: A version of onInvalid that fires in the capture phase.
 required: A boolean. If true, the value must be provided for the form to submit.
 size: A number. For multiple={true} selects, specifies the preferred number of initially visible items.
-"""  # noqa: E501
+"""
 
 TEXTAREA_PROPS = r"""
 autoComplete: Either 'on' or 'off'. Specifies the autocomplete behavior.
@@ -437,11 +439,11 @@ autoFocus: A boolean. If true, React will focus the element on mount.
 children: <textarea> does not accept children. To set the initial value, use defaultValue.
 cols: A number. Specifies the default width in average character widths. Defaults to 20.
 disabled: A boolean. If true, the input will not be interactive and will appear dimmed.
-form: A string. Specifies the id of the <form> this input belongs to. If omitted, it’s the closest parent form.
+form: A string. Specifies the id of the <form> this input belongs to. If omitted, it's the closest parent form.
 maxLength: A number. Specifies the maximum length of text.
 minLength: A number. Specifies the minimum length of text.
-name: A string. Specifies the name for this input that’s submitted with the form.
-onChange: An Event handler function. Required for controlled text areas. Fires immediately when the input’s value is changed by the user (for example, it fires on every keystroke). Behaves like the browser input event.
+name: A string. Specifies the name for this input that's submitted with the form.
+onChange: An Event handler function. Required for controlled text areas. Fires immediately when the input's value is changed by the user (for example, it fires on every keystroke). Behaves like the browser input event.
 onChangeCapture: A version of onChange that fires in the capture phase.
 onInput: An Event handler function. Fires immediately when the value is changed by the user. For historical reasons, in React it is idiomatic to use onChange instead which works similarly.
 onInputCapture: A version of onInput that fires in the capture phase.
@@ -454,7 +456,7 @@ readOnly: A boolean. If true, the text area is not editable by the user.
 required: A boolean. If true, the value must be provided for the form to submit.
 rows: A number. Specifies the default height in average character heights. Defaults to 2.
 wrap: Either 'hard', 'soft', or 'off'. Specifies how the text should be wrapped when submitting a form.
-"""  # noqa: E501
+"""
 
 LINK_PROPS = r"""
 disabled: a boolean. Disables the stylesheet.
@@ -471,7 +473,7 @@ fetchPriority: a string. Suggests a relative priority for fetching the resource.
 hrefLang: a string. The language of the linked resource.
 integrity: a string. A cryptographic hash of the resource, to verify its authenticity.
 type: a string. The MIME type of the linked resource.
-"""  # noqa: E501
+"""
 
 META_PROPS = r"""
 name: a string. Specifies the kind of metadata to be attached to the document.
@@ -479,7 +481,7 @@ charset: a string. Specifies the character set used by the document. The only va
 httpEquiv: a string. Specifies a directive for processing the document.
 itemProp: a string. Specifies metadata about a particular item within the document rather than the document as a whole.
 content: a string. Specifies the metadata to be attached when used with the name or itemProp props or the behavior of the directive when used with the httpEquiv prop.
-"""  # noqa: E501
+"""
 
 SCRIPT_PROPS = r"""
 async: a boolean. Allows the browser to defer execution of the script until the rest of the document has been processed — the preferred behavior for performance.
@@ -490,7 +492,7 @@ noModule: a boolean. Disables the script in browsers that support ES modules —
 nonce: a string. A cryptographic nonce to allow the resource when using a strict Content Security Policy.
 referrer: a string. Says what Referer header to send when fetching the script and any resources that the script fetches in turn.
 type: a string. Says whether the script is a classic script, ES module, or import map.
-"""  # noqa: E501
+"""
 
 KNOWN_REACT_PROPS = react_props_set(
     SPECIAL_PROPS
