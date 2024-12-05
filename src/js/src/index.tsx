@@ -106,8 +106,25 @@ export function DjangoForm({
     const onSubmitEvent = (event) => {
       event.preventDefault();
       const formData = new FormData(form);
-      console.log(Object.fromEntries(formData));
-      onSubmitCallback(Object.fromEntries(formData));
+
+      // Convert the FormData object to a plain object by iterating through it
+      // If duplicate keys are present, convert the value into an array of values
+      const entries = formData.entries();
+      const formDataArray = Array.from(entries);
+      const formDataObject = formDataArray.reduce((acc, [key, value]) => {
+        if (acc[key]) {
+          if (Array.isArray(acc[key])) {
+            acc[key].push(value);
+          } else {
+            acc[key] = [acc[key], value];
+          }
+        } else {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
+
+      onSubmitCallback(formDataObject);
     };
 
     // Bind the event listener
