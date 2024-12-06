@@ -36,3 +36,4 @@ class BasicForm(forms.Form):
         label="combo", fields=[forms.CharField(), forms.EmailField()], initial="example@gmail.com"
     )
     password_field = forms.CharField(label="password", widget=forms.PasswordInput)
+
