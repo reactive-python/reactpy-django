@@ -1,11 +1,13 @@
 from typing import Any
 
-from django.forms import BooleanField, Form, MultipleChoiceField, NullBooleanField
+from django.forms import BooleanField, Form, ModelMultipleChoiceField, MultipleChoiceField, NullBooleanField
 
 
 def convert_multiple_choice_fields(data: dict[str, Any], initialized_form: Form) -> None:
     multi_choice_fields = {
-        field_name for field_name, field in initialized_form.fields.items() if isinstance(field, MultipleChoiceField)
+        field_name
+        for field_name, field in initialized_form.fields.items()
+        if isinstance(field, (MultipleChoiceField, ModelMultipleChoiceField))
     }
 
     # Convert multiple choice field text into a list of values

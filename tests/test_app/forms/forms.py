@@ -36,4 +36,10 @@ class BasicForm(forms.Form):
         label="combo", fields=[forms.CharField(), forms.EmailField()], initial="example@gmail.com"
     )
     password_field = forms.CharField(label="password", widget=forms.PasswordInput)
+    model_choice_field = forms.ModelChoiceField(
+        label="model choice field", initial="1", queryset=models.TodoItem.objects.all()
+    )
+    model_multiple_choice_field = forms.ModelMultipleChoiceField(
+        label="model multiple choice field", initial="1", queryset=models.TodoItem.objects.all()
+    )
 
