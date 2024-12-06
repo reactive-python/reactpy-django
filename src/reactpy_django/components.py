@@ -30,6 +30,8 @@ if TYPE_CHECKING:
     from django.forms import Form
     from django.views import View
 
+    from reactpy_django.types import FormEvent
+
 
 def view_to_component(
     view: Callable | View | str,
@@ -120,6 +122,9 @@ def django_form(
     form: type[Form],
     *,
     extra_props: dict[str, Any] | None = None,
+    on_success: Callable[[FormEvent], None] | None = None,
+    on_error: Callable[[FormEvent], None] | None = None,
+    on_submit: Callable[[FormEvent], None] | None = None,
     form_template: str | None = None,
     top_children: Sequence = (),
     bottom_children: Sequence = (),
@@ -128,6 +133,9 @@ def django_form(
     return _django_form(
         form=form,
         extra_props=extra_props or {},
+        on_success=on_success,
+        on_error=on_error,
+        on_submit=on_submit,
         form_template=form_template,
         top_children=top_children,
         bottom_children=bottom_children,

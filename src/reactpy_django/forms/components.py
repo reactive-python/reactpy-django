@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Callable
 from uuid import uuid4
 
 from django.forms import Form
@@ -17,6 +17,7 @@ from reactpy_django.forms.transforms import (
     set_value_prop_on_select_element,
 )
 from reactpy_django.forms.utils import convert_boolean_fields, convert_multiple_choice_fields
+from reactpy_django.types import FormEvent
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -29,14 +30,20 @@ DjangoForm = export(
 
 @component
 def _django_form(
-    form: type[Form], extra_props: dict, form_template: str | None, top_children: Sequence, bottom_children: Sequence
+    form: type[Form],
+    extra_props: dict,
+    on_success: Callable[[FormEvent], None] | None,
+    on_error: Callable[[FormEvent], None] | None,
+    on_submit: Callable[[FormEvent], None] | None,
+    form_template: str | None,
+    top_children: Sequence,
+    bottom_children: Sequence,
 ):
     # TODO: Implement form restoration on page reload. Maybe this involves creating a new setting called
     # `form_restoration_method` that can be set to "URL", "CLIENT_STORAGE", "SERVER_SESSION", or None.
     # Perhaps pre-rendering is robust enough already handle this scenario?
-    # Additionaly, "URL" mode would limit the user to one form per page.
+    # Additionally, "URL" mode would limit the user to one form per page.
     # TODO: Test this with django-colorfield, django-ace, django-crispy-forms
-    # TODO: Add pre-submit, post-submit, error, and success hooks
     # TODO: Add auto-save option for database-backed forms
     uuid_ref = hooks.use_ref(uuid4().hex.replace("-", ""))
     top_children_count = hooks.use_ref(len(top_children))
@@ -59,12 +66,17 @@ def _django_form(
                 "Do NOT initialize your form by calling it (ex. `MyForm()`)."
             )
             raise TypeError(msg) from e
-        raise e
+        raise
 
     # Run the form validation, if data was provided
     if submitted_data:
         initialized_form.full_clean()
-        print("Form errors:", initialized_form.errors.as_data())
+        success = not initialized_form.errors.as_data()
+        form_event = FormEvent(form=initialized_form, data=submitted_data or {})
+        if success and on_success:
+            on_success(form_event)
+        if not success and on_error:
+            on_error(form_event)
 
     def on_submit_callback(new_data: dict[str, Any]):
         """Callback function provided directly to the client side listener. This is responsible for transmitting
@@ -74,6 +86,8 @@ def _django_form(
 
         # TODO: The `use_state`` hook really should be de-duplicating this by itself. Needs upstream fix.
         if submitted_data != new_data:
+            if on_submit:
+                on_submit(FormEvent(form=initialized_form, data=new_data))
             set_submitted_data(new_data)
 
     return html.form(
