@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from typing import Any
 
-from django.forms import BooleanField, Form, ModelMultipleChoiceField, MultipleChoiceField, NullBooleanField
+from django.forms import BooleanField, Form, ModelForm, ModelMultipleChoiceField, MultipleChoiceField, NullBooleanField
 
 
-def convert_multiple_choice_fields(data: dict[str, Any], initialized_form: Form) -> None:
+def convert_multiple_choice_fields(data: dict[str, Any], initialized_form: Form | ModelForm) -> None:
     multi_choice_fields = {
         field_name
         for field_name, field in initialized_form.fields.items()
@@ -16,7 +18,7 @@ def convert_multiple_choice_fields(data: dict[str, Any], initialized_form: Form)
             data[choice_field_name] = [data[choice_field_name]]
 
 
-def convert_boolean_fields(data: dict[str, Any], initialized_form: Form) -> None:
+def convert_boolean_fields(data: dict[str, Any], initialized_form: Form | ModelForm) -> None:
     boolean_fields = {
         field_name
         for field_name, field in initialized_form.fields.items()

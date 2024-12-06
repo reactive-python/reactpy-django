@@ -19,7 +19,7 @@ from typing_extensions import ParamSpec
 if TYPE_CHECKING:
     from collections.abc import MutableMapping, Sequence
 
-    from django.forms import Form
+    from django.forms import Form, ModelForm
 
     from reactpy_django.websocket.consumer import ReactpyAsyncWebsocketConsumer
 
@@ -57,8 +57,9 @@ class Mutation(Generic[FuncParams]):
 class FormEvent:
     """State of a form provided to Form custom events."""
 
-    form: Form
+    form: Form | ModelForm
     data: dict[str, Any]
+    set_data: Callable[[dict[str, Any] | None], None]
 
 
 class AsyncPostprocessor(Protocol):

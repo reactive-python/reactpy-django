@@ -7,3 +7,7 @@ def form(request):
 
 def bootstrap_form(request):
     return render(request, "bootstrap_form.html", {})
+
+
+def databased_backed_form(request):
+    return render(request, "database_backed_form.html", {})

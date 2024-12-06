@@ -27,7 +27,7 @@ from reactpy_django.utils import (
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from django.forms import Form
+    from django.forms import Form, ModelForm
     from django.views import View
 
     from reactpy_django.types import FormEvent
@@ -119,13 +119,14 @@ def django_js(static_path: str, key: Key | None = None):
 
 
 def django_form(
-    form: type[Form],
+    form: type[Form | ModelForm],
     *,
     extra_props: dict[str, Any] | None = None,
     on_success: Callable[[FormEvent], None] | None = None,
     on_error: Callable[[FormEvent], None] | None = None,
     on_submit: Callable[[FormEvent], None] | None = None,
     on_change: Callable[[FormEvent], None] | None = None,
+    auto_save: bool = True,
     form_template: str | None = None,
     top_children: Sequence = (),
     bottom_children: Sequence = (),
@@ -138,6 +139,7 @@ def django_form(
         on_error=on_error,
         on_submit=on_submit,
         on_change=on_change,
+        auto_save=auto_save,
         form_template=form_template,
         top_children=top_children,
         bottom_children=bottom_children,

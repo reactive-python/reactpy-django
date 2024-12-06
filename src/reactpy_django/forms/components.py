@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Callable, Union, cast
 from uuid import uuid4
 
 from channels.db import database_sync_to_async
-from django.forms import Form
+from django.forms import Form, ModelForm
 from reactpy import component, hooks, html, utils
 from reactpy.core.events import event
 from reactpy.web import export, module_from_file
@@ -31,12 +31,13 @@ DjangoForm = export(
 
 @component
 def _django_form(
-    form: type[Form],
+    form: type[Form | ModelForm],
     extra_props: dict,
     on_success: Callable[[FormEvent], None] | None,
     on_error: Callable[[FormEvent], None] | None,
     on_submit: Callable[[FormEvent], None] | None,
     on_change: Callable[[FormEvent], None] | None,
+    auto_save: bool,
     form_template: str | None,
     top_children: Sequence,
     bottom_children: Sequence,
@@ -46,7 +47,6 @@ def _django_form(
     # Perhaps pre-rendering is robust enough already handle this scenario?
     # Additionally, "URL" mode would limit the user to one form per page.
     # TODO: Test this with django-colorfield, django-ace, django-crispy-forms
-    # TODO: Add auto-save option for database-backed forms
     uuid_ref = hooks.use_ref(uuid4().hex.replace("-", ""))
     top_children_count = hooks.use_ref(len(top_children))
     bottom_children_count = hooks.use_ref(len(bottom_children))
@@ -59,20 +59,17 @@ def _django_form(
         msg = "Dynamically changing the number of top or bottom children is not allowed."
         raise ValueError(msg)
 
-    # Try to initialize the form with the provided data
-    try:
-        initialized_form = form(data=submitted_data)
-    except Exception as e:
-        if not isinstance(form, type(Form)):
-            msg = (
-                "The provided form must be an uninitialized Django Form. "
-                "Do NOT initialize your form by calling it (ex. `MyForm()`)."
-            )
-            raise TypeError(msg) from e
-        raise
+    # Ensure the provided form is a Django Form
+    if not isinstance(form, (type(Form), type(ModelForm))):
+        msg = (
+            "The provided form must be an uninitialized Django Form. "
+            "Do NOT initialize your form by calling it (ex. `MyForm()`)."
+        )
+        raise TypeError(msg)
 
-    # Set up the form event object
-    form_event = FormEvent(form=initialized_form, data=submitted_data or {})
+    # Try to initialize the form with the provided data
+    initialized_form = form(data=submitted_data)
+    form_event = FormEvent(form=initialized_form, data=submitted_data or {}, set_data=set_submitted_data)
 
     # Validate and render the form
     @hooks.use_effect
@@ -85,6 +82,9 @@ def _django_form(
                 on_success(form_event)
             if not success and on_error:
                 on_error(form_event)
+            if success and auto_save and isinstance(initialized_form, ModelForm):
+                await database_sync_to_async(initialized_form.save)()
+                set_submitted_data(None)
 
         set_rendered_form(await database_sync_to_async(initialized_form.render)(form_template))
 
@@ -99,7 +99,7 @@ def _django_form(
         convert_boolean_fields(new_data, initialized_form)
 
         if on_submit:
-            on_submit(FormEvent(form=initialized_form, data=new_data))
+            on_submit(FormEvent(form=initialized_form, data=new_data, set_data=set_submitted_data))
 
         # TODO: The `use_state`` hook really should be de-duplicating this by itself. Needs upstream fix.
         if submitted_data != new_data:
