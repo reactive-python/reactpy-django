@@ -117,22 +117,9 @@ def django_js(static_path: str, key: Key | None = None):
 
 
 def django_form(
-    form: type[Form],
-    *,
-    top_children: Sequence = (),
-    bottom_children: Sequence = (),
-    auto_submit: bool = False,
-    auto_submit_wait: int = 3,
-    key: Key | None = None,
+    form: type[Form], *, top_children: Sequence = (), bottom_children: Sequence = (), key: Key | None = None
 ):
-    return _django_form(
-        form=form,
-        top_children=top_children,
-        bottom_children=bottom_children,
-        auto_submit=auto_submit,
-        auto_submit_wait=auto_submit_wait,
-        key=key,
-    )
+    return _django_form(form=form, top_children=top_children, bottom_children=bottom_children, key=key)
 
 
 def pyscript_component(

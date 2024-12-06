@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from pprint import pprint
 from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
@@ -28,16 +29,8 @@ DjangoForm = export(
 )
 
 
-# DjangoFormAutoSubmit = export(
-#     module_from_file("reactpy-django", file=Path(__file__).parent / "static" / "reactpy_django" / "client.js"),
-#     ("DjangoFormAutoSubmit"),
-# )
-
-
 @component
-def _django_form(
-    form: type[Form], top_children: Sequence, bottom_children: Sequence, auto_submit: bool, auto_submit_wait: int
-):
+def _django_form(form: type[Form], top_children: Sequence, bottom_children: Sequence):
     # TODO: Implement form restoration on page reload. Probably want to create a new setting called
     # form_restoration_method that can be set to "URL", "CLIENT_STORAGE", "SERVER_SESSION", or None.
     # Or maybe just recommend pre-rendering to have the browser handle it.
@@ -87,7 +80,7 @@ def _django_form(
         if submitted_data != new_data:
             set_submitted_data(new_data)
 
-    async def on_change(_event):
+    def on_change(_event):
         last_changed.set_current(timezone.now())
 
     rendered_form = utils.html_to_vdom(
