@@ -42,7 +42,6 @@ def _django_form(
     top_children: Sequence,
     bottom_children: Sequence,
 ):
-    # TODO: Test this with django-colorfield, django-ace, django-crispy-forms
     uuid_ref = hooks.use_ref(uuid4().hex.replace("-", ""))
     top_children_count = hooks.use_ref(len(top_children))
     bottom_children_count = hooks.use_ref(len(bottom_children))
@@ -50,18 +49,19 @@ def _django_form(
     rendered_form, set_rendered_form = hooks.use_state(cast(Union[str, None], None))
     uuid = uuid_ref.current
 
-    # Don't allow the count of top and bottom children to change
+    # Check the provided arguments
     if len(top_children) != top_children_count.current or len(bottom_children) != bottom_children_count.current:
         msg = "Dynamically changing the number of top or bottom children is not allowed."
         raise ValueError(msg)
-
-    # Ensure the provided form is a Django Form
     if not isinstance(form, (type(Form), type(ModelForm))):
         msg = (
             "The provided form must be an uninitialized Django Form. "
             "Do NOT initialize your form by calling it (ex. `MyForm()`)."
         )
         raise TypeError(msg)
+    if "id" in extra_props:
+        msg = "The `extra_props` argument cannot contain an `id` key."
+        raise ValueError(msg)
 
     # Try to initialize the form with the provided data
     initialized_form = form(data=submitted_data)
@@ -86,10 +86,6 @@ def _django_form(
         if new_form != rendered_form:
             set_rendered_form(new_form)
 
-    def _on_change(_event):
-        if on_change:
-            on_change(form_event)
-
     def on_submit_callback(new_data: dict[str, Any]):
         """Callback function provided directly to the client side listener. This is responsible for transmitting
         the submitted form data to the server for processing."""
@@ -99,7 +95,6 @@ def _django_form(
         if on_submit:
             on_submit(FormEvent(form=initialized_form, data=new_data, set_data=set_submitted_data))
 
-        # TODO: The `use_state`` hook really should be de-duplicating this by itself. Needs upstream fix.
         if submitted_data != new_data:
             set_submitted_data(new_data)
 
@@ -107,7 +102,11 @@ def _django_form(
         return None
 
     return html.form(
-        {"id": f"reactpy-{uuid}", "onSubmit": event(lambda _: None, prevent_default=True), "onChange": _on_change}
+        {
+            "id": f"reactpy-{uuid}",
+            "onSubmit": event(lambda _: None, prevent_default=True),
+            "onChange": on_change(form_event) if on_change else lambda _: None,
+        }
         | extra_props,
         DjangoForm({"onSubmitCallback": on_submit_callback, "formId": f"reactpy-{uuid}"}),
         *top_children,
