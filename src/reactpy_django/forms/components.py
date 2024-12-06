@@ -42,10 +42,6 @@ def _django_form(
     top_children: Sequence,
     bottom_children: Sequence,
 ):
-    # TODO: Implement form restoration on page reload. Maybe this involves creating a new setting called
-    # `form_restoration_method` that can be set to "URL", "CLIENT_STORAGE", "SERVER_SESSION", or None.
-    # Perhaps pre-rendering is robust enough already handle this scenario?
-    # Additionally, "URL" mode would limit the user to one form per page.
     # TODO: Test this with django-colorfield, django-ace, django-crispy-forms
     uuid_ref = hooks.use_ref(uuid4().hex.replace("-", ""))
     top_children_count = hooks.use_ref(len(top_children))
@@ -86,7 +82,9 @@ def _django_form(
                 await database_sync_to_async(initialized_form.save)()
                 set_submitted_data(None)
 
-        set_rendered_form(await database_sync_to_async(initialized_form.render)(form_template))
+        new_form = await database_sync_to_async(initialized_form.render)(form_template)
+        if new_form != rendered_form:
+            set_rendered_form(new_form)
 
     def _on_change(_event):
         if on_change:
