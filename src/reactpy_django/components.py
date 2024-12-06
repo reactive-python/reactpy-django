@@ -117,9 +117,22 @@ def django_js(static_path: str, key: Key | None = None):
 
 
 def django_form(
-    form: type[Form], *, top_children: Sequence = (), bottom_children: Sequence = (), key: Key | None = None
+    form: type[Form],
+    *,
+    extra_props: dict[str, Any] | None = None,
+    form_template: str | None = None,
+    top_children: Sequence = (),
+    bottom_children: Sequence = (),
+    key: Key | None = None,
 ):
-    return _django_form(form=form, top_children=top_children, bottom_children=bottom_children, key=key)
+    return _django_form(
+        form=form,
+        extra_props=extra_props or {},
+        form_template=form_template,
+        top_children=top_children,
+        bottom_children=bottom_children,
+        key=key,
+    )
 
 
 def pyscript_component(

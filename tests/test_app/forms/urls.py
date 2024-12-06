@@ -1,7 +1,8 @@
 from django.urls import path
 
-from .views import form
+from . import views
 
 urlpatterns = [
-    path("form/", form),
+    path("form/", views.form),
+    path("form/bootstrap/", views.bootstrap_form),
 ]
