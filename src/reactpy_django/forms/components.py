@@ -14,9 +14,10 @@ from reactpy_django.forms.transforms import (
     convert_html_props_to_reactjs,
     convert_textarea_children_to_prop,
     ensure_input_elements_are_controlled,
+    intercept_anchor_links,
     set_value_prop_on_select_element,
 )
-from reactpy_django.forms.utils import convert_boolean_fields, convert_choice_fields
+from reactpy_django.forms.utils import convert_boolean_fields, convert_multiple_choice_fields
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -79,7 +80,7 @@ def _django_form(
         last_changed.set_current(timezone.now())
 
     def on_submit_callback(new_data: dict[str, Any]):
-        convert_choice_fields(new_data, initialized_form)
+        convert_multiple_choice_fields(new_data, initialized_form)
         convert_boolean_fields(new_data, initialized_form)
 
         # TODO: ReactPy's use_state hook really should be de-duplicating this by itself. Needs upstream fix.
@@ -95,6 +96,7 @@ def _django_form(
         convert_textarea_children_to_prop,
         set_value_prop_on_select_element,
         ensure_input_elements_are_controlled(on_change),
+        intercept_anchor_links,
         strict=False,
     )
 
