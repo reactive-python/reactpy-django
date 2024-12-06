@@ -105,7 +105,7 @@ def _django_form(
             convert_html_props_to_reactjs,
             convert_textarea_children_to_prop,
             set_value_prop_on_select_element,
-            ensure_input_elements_are_controlled(),
+            ensure_input_elements_are_controlled,
             intercept_anchor_links,
             strict=False,
         ),

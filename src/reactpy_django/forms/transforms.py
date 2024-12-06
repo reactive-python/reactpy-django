@@ -64,32 +64,20 @@ def set_value_prop_on_select_element(vdom_tree: VdomDict) -> VdomDict:
     return vdom_tree
 
 
-def ensure_input_elements_are_controlled(event_func: Callable | None = None) -> Callable:
+def ensure_input_elements_are_controlled(vdom_tree: VdomDict) -> VdomDict:
     """Adds an onChange handler on form <input> elements, since ReactJS doesn't like uncontrolled inputs."""
-
-    def mutation(vdom_tree: VdomDict) -> VdomDict:
-        """Adds an onChange event handler to all input elements."""
-        if not isinstance(vdom_tree, dict):
-            return vdom_tree
-
-        vdom_tree.setdefault("eventHandlers", {})
-        if vdom_tree["tagName"] in {"input", "textarea"}:
-            if "onChange" in vdom_tree["eventHandlers"]:
-                pass
-            elif isinstance(event_func, EventHandler):
-                vdom_tree["eventHandlers"]["onChange"] = event_func
-            else:
-                vdom_tree["eventHandlers"]["onChange"] = EventHandler(
-                    to_event_handler_function(event_func or _do_nothing_event)
-                )
-
-        if "children" in vdom_tree:
-            for child in vdom_tree["children"]:
-                mutation(child)
-
+    if not isinstance(vdom_tree, dict):
         return vdom_tree
 
-    return mutation
+    vdom_tree.setdefault("eventHandlers", {})
+    if vdom_tree["tagName"] in {"input"} and "onChange" not in vdom_tree["eventHandlers"]:
+        vdom_tree["eventHandlers"]["onChange"] = EventHandler(to_event_handler_function(_do_nothing_event))
+
+    if "children" in vdom_tree:
+        for child in vdom_tree["children"]:
+            ensure_input_elements_are_controlled(child)
+
+    return vdom_tree
 
 
 def intercept_anchor_links(vdom_tree: VdomDict) -> VdomDict:
