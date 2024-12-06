@@ -35,6 +35,7 @@ def _django_form(
     on_success: Callable[[FormEvent], None] | None,
     on_error: Callable[[FormEvent], None] | None,
     on_submit: Callable[[FormEvent], None] | None,
+    on_change: Callable[[FormEvent], None] | None,
     form_template: str | None,
     top_children: Sequence,
     bottom_children: Sequence,
@@ -78,6 +79,10 @@ def _django_form(
         if not success and on_error:
             on_error(form_event)
 
+    def _on_change(_event):
+        if on_change:
+            on_change(FormEvent(form=initialized_form, data=submitted_data or {}))
+
     def on_submit_callback(new_data: dict[str, Any]):
         """Callback function provided directly to the client side listener. This is responsible for transmitting
         the submitted form data to the server for processing."""
@@ -91,7 +96,8 @@ def _django_form(
             set_submitted_data(new_data)
 
     return html.form(
-        {"id": f"reactpy-{uuid}", "onSubmit": event(lambda _: None, prevent_default=True)} | extra_props,
+        {"id": f"reactpy-{uuid}", "onSubmit": event(lambda _: None, prevent_default=True), "onChange": _on_change}
+        | extra_props,
         DjangoForm({"onSubmitCallback": on_submit_callback, "formId": f"reactpy-{uuid}"}),
         *top_children,
         utils.html_to_vdom(
