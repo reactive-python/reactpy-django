@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 from reactpy.core.events import EventHandler, to_event_handler_function
 
@@ -70,7 +70,7 @@ def ensure_input_elements_are_controlled(vdom_tree: VdomDict) -> VdomDict:
         return vdom_tree
 
     vdom_tree.setdefault("eventHandlers", {})
-    if vdom_tree["tagName"] in {"input"} and "onChange" not in vdom_tree["eventHandlers"]:
+    if vdom_tree["tagName"] == "input" and "onChange" not in vdom_tree["eventHandlers"]:
         vdom_tree["eventHandlers"]["onChange"] = EventHandler(to_event_handler_function(_do_nothing_event))
 
     if "children" in vdom_tree:

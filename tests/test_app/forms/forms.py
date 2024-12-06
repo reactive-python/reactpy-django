@@ -1,4 +1,7 @@
 from django import forms
+from django.forms import ModelForm
+
+from .. import models
 
 
 class BasicForm(forms.Form):
@@ -43,3 +46,14 @@ class BasicForm(forms.Form):
         label="model multiple choice field", initial="1", queryset=models.TodoItem.objects.all()
     )
 
+    # Currently unsupported fields
+    # multi_value_field = MultiValueField(label="multi value", initial="example@gmail.com")
+    # split_datetime_field = forms.SplitDateTimeField(label="split datetime")
+    # file_field = forms.FileField(label="file")
+    # image_field = forms.ImageField(label="image")
+
+
+class DatabaseBackedForm(ModelForm):
+    class Meta:
+        model = models.TodoItem
+        fields = "__all__"
