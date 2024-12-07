@@ -23,6 +23,7 @@ def convert_textarea_children_to_prop(vdom_tree: VdomDict) -> VdomDict:
     """Transformation that converts the text content of a <textarea> to the 'value' prop."""
     # If the current tag is <textarea>, move the text content to the 'value' prop.
     if vdom_tree["tagName"] == "textarea" and "children" in vdom_tree and vdom_tree["children"]:
+        vdom_tree.setdefault("attributes", {})
         text_content = vdom_tree.pop("children")
         text_content = "".join([child for child in text_content if isinstance(child, str)])
         default_value = vdom_tree["attributes"].pop("defaultValue", "")
@@ -36,6 +37,7 @@ def set_value_prop_on_select_element(vdom_tree: VdomDict) -> VdomDict:
     # If the current tag is <select>, remove 'selected' prop from any <option> children and
     # instead set the 'value' prop on the <select> tag.
     if vdom_tree["tagName"] == "select" and "children" in vdom_tree:
+        vdom_tree.setdefault("attributes", {})
         selected_options = _find_selected_options(vdom_tree)
         multiple_choice = vdom_tree["attributes"]["multiple"] = bool(vdom_tree["attributes"].get("multiple"))
         if selected_options and not multiple_choice:
