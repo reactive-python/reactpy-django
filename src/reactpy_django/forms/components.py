@@ -8,6 +8,7 @@ from channels.db import database_sync_to_async
 from django.forms import Form, ModelForm
 from reactpy import component, hooks, html, utils
 from reactpy.core.events import event
+from reactpy.core.types import VdomDict
 from reactpy.web import export, module_from_file
 
 from reactpy_django.forms.transforms import (
@@ -38,6 +39,7 @@ def _django_form(
     on_submit: Callable[[FormEvent], None] | None,
     on_change: Callable[[FormEvent], None] | None,
     auto_save: bool,
+    extra_transforms: Sequence[Callable[[VdomDict], Any]],
     form_template: str | None,
     top_children: Sequence,
     bottom_children: Sequence,
@@ -117,6 +119,7 @@ def _django_form(
             set_value_prop_on_select_element,
             ensure_input_elements_are_controlled,
             intercept_anchor_links,
+            *extra_transforms,
             strict=False,
         ),
         *bottom_children,
