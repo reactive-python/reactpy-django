@@ -14,7 +14,7 @@ def convert_multiple_choice_fields(data: dict[str, Any], initialized_form: Form 
 
     # Convert multiple choice field text into a list of values
     for choice_field_name in multi_choice_fields:
-        if choice_field_name in data and not isinstance(data[choice_field_name], list):
+        if not isinstance(data.get(choice_field_name), list):
             data[choice_field_name] = [data[choice_field_name]]
 
 
