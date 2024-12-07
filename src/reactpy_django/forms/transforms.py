@@ -73,21 +73,21 @@ def intercept_anchor_links(vdom_tree: VdomDict) -> VdomDict:
     return vdom_tree
 
 
-def _find_selected_options(vdom_tree: VdomDict | Any) -> list[str]:
+def _find_selected_options(vdom_node: Any) -> list[str]:
     """Recursively iterate through the tree to find all <option> tags with the 'selected' prop.
     Removes the 'selected' prop and returns a list of the 'value' prop of each selected <option>."""
-    if not isinstance(vdom_tree, dict):
+    if not isinstance(vdom_node, dict):
         return []
 
     selected_options = []
-    if vdom_tree["tagName"] == "option" and "attributes" in vdom_tree:
-        value = vdom_tree["attributes"].setdefault("value", vdom_tree["children"][0])
+    if vdom_node["tagName"] == "option" and "attributes" in vdom_node:
+        value = vdom_node["attributes"].setdefault("value", vdom_node["children"][0])
 
-        if "selected" in vdom_tree["attributes"]:
-            vdom_tree["attributes"].pop("selected")
+        if "selected" in vdom_node["attributes"]:
+            vdom_node["attributes"].pop("selected")
             selected_options.append(value)
 
-    for child in vdom_tree.get("children", []):
+    for child in vdom_node.get("children", []):
         selected_options.extend(_find_selected_options(child))
 
     return selected_options
