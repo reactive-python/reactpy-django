@@ -8,7 +8,6 @@ from channels.db import database_sync_to_async
 from django.forms import Form, ModelForm
 from reactpy import component, hooks, html, utils
 from reactpy.core.events import event
-from reactpy.core.types import VdomDict
 from reactpy.web import export, module_from_file
 
 from reactpy_django.forms.transforms import (
@@ -23,6 +22,8 @@ from reactpy_django.types import FormEvent
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+    from reactpy.core.types import VdomDict
 
 DjangoForm = export(
     module_from_file("reactpy-django", file=Path(__file__).parent.parent / "static" / "reactpy_django" / "client.js"),
@@ -44,6 +45,8 @@ def _django_form(
     top_children: Sequence,
     bottom_children: Sequence,
 ):
+    from reactpy_django import config
+
     uuid_ref = hooks.use_ref(uuid4().hex.replace("-", ""))
     top_children_count = hooks.use_ref(len(top_children))
     bottom_children_count = hooks.use_ref(len(bottom_children))
@@ -84,7 +87,9 @@ def _django_form(
                 await database_sync_to_async(initialized_form.save)()
                 set_submitted_data(None)
 
-        new_form = await database_sync_to_async(initialized_form.render)(form_template)
+        new_form = await database_sync_to_async(initialized_form.render)(
+            form_template or config.REACTPY_DEFAULT_FORM_TEMPLATE
+        )
         if new_form != rendered_form:
             set_rendered_form(new_form)
 
