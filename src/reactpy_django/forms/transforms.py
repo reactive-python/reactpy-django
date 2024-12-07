@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from reactpy.core.events import EventHandler, to_event_handler_function
 
@@ -12,42 +12,27 @@ if TYPE_CHECKING:
 
 def convert_html_props_to_reactjs(vdom_tree: VdomDict) -> VdomDict:
     """Transformation that standardizes the prop names to be used in the component."""
-    if not isinstance(vdom_tree, dict):
-        return vdom_tree
-
     # On each node, replace the 'attributes' key names with the standardized names.
     if "attributes" in vdom_tree:
         vdom_tree["attributes"] = {_normalize_prop_name(k): v for k, v in vdom_tree["attributes"].items()}
-
-    for child in vdom_tree.get("children", []):
-        convert_html_props_to_reactjs(child)
 
     return vdom_tree
 
 
 def convert_textarea_children_to_prop(vdom_tree: VdomDict) -> VdomDict:
     """Transformation that converts the text content of a <textarea> to the 'value' prop."""
-    if not isinstance(vdom_tree, dict):
-        return vdom_tree
-
-    # On each node, if the 'tagName' is 'textarea', move the text content to the 'value' prop.
+    # If the current tag is <textarea>, move the text content to the 'value' prop.
     if vdom_tree["tagName"] == "textarea" and "children" in vdom_tree and vdom_tree["children"]:
         text_content = vdom_tree.pop("children")
         text_content = "".join([child for child in text_content if isinstance(child, str)])
         default_value = vdom_tree["attributes"].pop("defaultValue", "")
         vdom_tree["attributes"]["defaultValue"] = text_content or default_value
 
-    for child in vdom_tree.get("children", []):
-        convert_textarea_children_to_prop(child)
-
     return vdom_tree
 
 
 def set_value_prop_on_select_element(vdom_tree: VdomDict) -> VdomDict:
     """Use the `value` prop on <select> instead of setting `selected` on <option>."""
-    if not isinstance(vdom_tree, dict):
-        return vdom_tree
-
     # If the current tag is <select>, remove 'selected' prop from any <option> children and
     # instead set the 'value' prop on the <select> tag.
     if vdom_tree["tagName"] == "select" and "children" in vdom_tree:
@@ -58,24 +43,14 @@ def set_value_prop_on_select_element(vdom_tree: VdomDict) -> VdomDict:
         if selected_options and multiple_choice:
             vdom_tree["attributes"]["defaultValue"] = selected_options
 
-    for child in vdom_tree.get("children", []):
-        set_value_prop_on_select_element(child)
-
     return vdom_tree
 
 
 def ensure_input_elements_are_controlled(vdom_tree: VdomDict) -> VdomDict:
     """Adds an onChange handler on form <input> elements, since ReactJS doesn't like uncontrolled inputs."""
-    if not isinstance(vdom_tree, dict):
-        return vdom_tree
-
     vdom_tree.setdefault("eventHandlers", {})
     if vdom_tree["tagName"] == "input" and "onChange" not in vdom_tree["eventHandlers"]:
         vdom_tree["eventHandlers"]["onChange"] = EventHandler(to_event_handler_function(_do_nothing_event))
-
-    if "children" in vdom_tree:
-        for child in vdom_tree["children"]:
-            ensure_input_elements_are_controlled(child)
 
     return vdom_tree
 
@@ -83,23 +58,18 @@ def ensure_input_elements_are_controlled(vdom_tree: VdomDict) -> VdomDict:
 def intercept_anchor_links(vdom_tree: VdomDict) -> VdomDict:
     """Intercepts anchor links and prevents the default behavior.
     This allows ReactPy-Router to handle the navigation instead of the browser."""
-    if not isinstance(vdom_tree, dict):
-        return vdom_tree
-
     if vdom_tree["tagName"] == "a":
         vdom_tree.setdefault("eventHandlers", {})
         vdom_tree["eventHandlers"]["onClick"] = EventHandler(
             to_event_handler_function(_do_nothing_event), prevent_default=True
         )
 
-    for child in vdom_tree.get("children", []):
-        intercept_anchor_links(child)
-
     return vdom_tree
 
 
-def _find_selected_options(vdom_tree: VdomDict) -> list[str]:
-    """Recursively iterate through the tree of dictionaries to find an <option> with the 'selected' prop."""
+def _find_selected_options(vdom_tree: VdomDict | Any) -> list[str]:
+    """Recursively iterate through the tree to find all <option> tags with the 'selected' prop.
+    Removes the 'selected' prop and returns a list of the 'value' prop of each selected <option>."""
     if not isinstance(vdom_tree, dict):
         return []
 
@@ -122,8 +92,8 @@ def _normalize_prop_name(prop_name: str) -> str:
     return REACT_PROP_SUBSTITUTIONS.get(prop_name, prop_name)
 
 
-def _react_props_set(string: str) -> set[str]:
-    """Extracts the props from a string of React props."""
+def _parse_react_props(string: str) -> set[str]:
+    """Extracts the props from a string of React props (copy-pasted from ReactJS docs)."""
     lines = string.strip().split("\n")
     props = set()
 
@@ -138,34 +108,12 @@ def _react_props_set(string: str) -> set[str]:
     return props
 
 
-def _add_on_change_event(event_func, vdom_tree: VdomDict) -> VdomDict:
-    """Recursively adds an onChange event handler to all elements in the tree."""
-    if not isinstance(vdom_tree, dict):
-        return vdom_tree
-
-    vdom_tree.setdefault("eventHandlers", {})
-    if vdom_tree["tagName"] in {"input", "textarea"}:
-        if "onChange" in vdom_tree["eventHandlers"]:
-            pass
-        elif isinstance(event_func, EventHandler):
-            vdom_tree["eventHandlers"]["onChange"] = event_func
-        else:
-            vdom_tree["eventHandlers"]["onChange"] = EventHandler(to_event_handler_function(event_func))
-
-    if "children" in vdom_tree:
-        for child in vdom_tree["children"]:
-            _add_on_change_event(event_func, child)
-
-    return vdom_tree
-
-
 def _do_nothing_event(*args, **kwargs):
-    pass
+    """A placeholder event function that does nothing."""
 
 
-# TODO: Create some kind of script that will generate this during build time, rather than hardcoding it.
+# TODO: Create some kind of script that will generate the react docs copy-pasta during build time, rather than hardcoding it.
 # https://react.dev/reference/react-dom/components/common#common-props
-
 SPECIAL_PROPS = r"""
 children: A React node (an element, a string, a number, a portal, an empty node like null, undefined and booleans, or an array of other React nodes). Specifies the content inside the component. When you use JSX, you will usually specify the children prop implicitly by nesting tags like <div><span /></div>.
 dangerouslySetInnerHTML: An object of the form { __html: '<p>some html</p>' } with a raw HTML string inside. Overrides the innerHTML property of the DOM node and displays the passed HTML inside. This should be used with extreme caution! If the HTML inside isn't trusted (for example, if it's based on user data), you risk introducing an XSS vulnerability. Read more about using dangerouslySetInnerHTML.
@@ -496,7 +444,7 @@ referrer: a string. Says what Referer header to send when fetching the script an
 type: a string. Says whether the script is a classic script, ES module, or import map.
 """
 
-KNOWN_REACT_PROPS = _react_props_set(
+KNOWN_REACT_PROPS = _parse_react_props(
     SPECIAL_PROPS
     + STANDARD_PROPS
     + FORM_PROPS
