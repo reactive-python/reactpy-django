@@ -34,12 +34,12 @@ DjangoForm = export(
 @component
 def _django_form(
     form: type[Form | ModelForm],
-    extra_props: dict,
     on_success: Callable[[FormEvent], None] | None,
     on_error: Callable[[FormEvent], None] | None,
     on_submit: Callable[[FormEvent], None] | None,
     on_change: Callable[[FormEvent], None] | None,
     auto_save: bool,
+    extra_props: dict,
     extra_transforms: Sequence[Callable[[VdomDict], Any]],
     form_template: str | None,
     top_children: Sequence,

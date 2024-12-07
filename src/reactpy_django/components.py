@@ -121,12 +121,12 @@ def django_js(static_path: str, key: Key | None = None):
 def django_form(
     form: type[Form | ModelForm],
     *,
-    extra_props: dict[str, Any] | None = None,
     on_success: Callable[[FormEvent], None] | None = None,
     on_error: Callable[[FormEvent], None] | None = None,
     on_submit: Callable[[FormEvent], None] | None = None,
     on_change: Callable[[FormEvent], None] | None = None,
     auto_save: bool = True,
+    extra_props: dict[str, Any] | None = None,
     extra_transforms: Sequence[Callable[[VdomDict], Any]] | None = None,
     form_template: str | None = None,
     top_children: Sequence = (),
@@ -135,12 +135,12 @@ def django_form(
 ):
     return _django_form(
         form=form,
-        extra_props=extra_props or {},
         on_success=on_success,
         on_error=on_error,
         on_submit=on_submit,
         on_change=on_change,
         auto_save=auto_save,
+        extra_props=extra_props or {},
         extra_transforms=extra_transforms or [],
         form_template=form_template,
         top_children=top_children,
