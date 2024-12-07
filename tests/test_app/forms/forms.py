@@ -44,11 +44,6 @@ class BasicForm(forms.Form):
     model_multiple_choice_field = forms.ModelMultipleChoiceField(
         label="model multiple choice field", initial="1", queryset=models.TodoItem.objects.all()
     )
-    # Currently unsupported fields
-    # multi_value_field = MultiValueField(label="multi value", initial="example@gmail.com")
-    # split_datetime_field = forms.SplitDateTimeField(label="split datetime")
-    # file_field = forms.FileField(label="file")
-    # image_field = forms.ImageField(label="image")
 
 
 class DatabaseBackedForm(forms.ModelForm):
