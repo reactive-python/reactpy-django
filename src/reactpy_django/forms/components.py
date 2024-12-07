@@ -13,9 +13,9 @@ from reactpy.web import export, module_from_file
 from reactpy_django.forms.transforms import (
     convert_html_props_to_reactjs,
     convert_textarea_children_to_prop,
-    ensure_input_elements_are_controlled,
     intercept_anchor_links,
     set_value_prop_on_select_element,
+    transform_value_prop_on_input_element,
 )
 from reactpy_django.forms.utils import convert_boolean_fields, convert_multiple_choice_fields
 from reactpy_django.types import FormEvent
@@ -122,7 +122,7 @@ def _django_form(
             convert_html_props_to_reactjs,
             convert_textarea_children_to_prop,
             set_value_prop_on_select_element,
-            ensure_input_elements_are_controlled,
+            transform_value_prop_on_input_element,
             intercept_anchor_links,
             *extra_transforms,
             strict=False,

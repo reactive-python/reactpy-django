@@ -46,11 +46,17 @@ def set_value_prop_on_select_element(vdom_tree: VdomDict) -> VdomDict:
     return vdom_tree
 
 
-def ensure_input_elements_are_controlled(vdom_tree: VdomDict) -> VdomDict:
+def transform_value_prop_on_input_element(vdom_tree: VdomDict) -> VdomDict:
     """Adds an onChange handler on form <input> elements, since ReactJS doesn't like uncontrolled inputs."""
-    vdom_tree.setdefault("eventHandlers", {})
-    if vdom_tree["tagName"] == "input" and "onChange" not in vdom_tree["eventHandlers"]:
-        vdom_tree["eventHandlers"]["onChange"] = EventHandler(to_event_handler_function(_do_nothing_event))
+    # vdom_tree.setdefault("eventHandlers", {})
+    # vdom_tree.setdefault("attributes", {})
+    # if vdom_tree["tagName"] == "input" and "onChange" not in vdom_tree["eventHandlers"]:
+    #     vdom_tree["eventHandlers"]["onChange"] = EventHandler(to_event_handler_function(_do_nothing_event))
+    #     vdom_tree["attributes"].setdefault("value", "")
+
+    vdom_tree.setdefault("attributes", {})
+    if vdom_tree["tagName"] == "input":
+        vdom_tree["attributes"].setdefault("defaultValue", vdom_tree["attributes"].pop("value", ""))
 
     return vdom_tree
 
