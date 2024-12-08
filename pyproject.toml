@@ -94,6 +94,7 @@ extra-dependencies = [
   "twisted",
   "tblib",
   "servestatic",
+  "django-bootstrap5",
 ]
 matrix-name-format = "{variable}-{value}"
 
@@ -140,7 +141,12 @@ pythonpath = [".", "tests/"]
 ################################
 
 [tool.hatch.envs.django]
-extra-dependencies = ["channels[daphne]>=4.0.0", "twisted", "servestatic"]
+extra-dependencies = [
+  "channels[daphne]>=4.0.0",
+  "twisted",
+  "servestatic",
+  "django-bootstrap5",
+]
 
 [tool.hatch.envs.django.scripts]
 runserver = [

@@ -34,6 +34,7 @@ urlpatterns = [
     path("", include("test_app.pyscript.urls")),
     path("", include("test_app.offline.urls")),
     path("", include("test_app.channel_layers.urls")),
+    path("", include("test_app.forms.urls")),
     path("reactpy/", include("reactpy_django.http.urls")),
     path("admin/", admin.site.urls),
 ]

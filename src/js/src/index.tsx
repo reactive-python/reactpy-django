@@ -2,6 +2,21 @@ import { ReactPyDjangoClient } from "./client";
 import React from "react";
 import ReactDOM from "react-dom";
 import { Layout } from "@reactpy/client/src/components";
+import { DjangoFormProps } from "./types";
+
+/**
+ * Interface used to bind a ReactPy node to React.
+ */
+export function bind(node) {
+  return {
+    create: (type, props, children) =>
+      React.createElement(type, props, ...children),
+    render: (element) => {
+      ReactDOM.render(element, node);
+    },
+    unmount: () => ReactDOM.unmountComponentAtNode(node),
+  };
+}
 
 export function mountComponent(
   mountElement: HTMLElement,
@@ -78,4 +93,52 @@ export function mountComponent(
 
   // Start rendering the component
   ReactDOM.render(<Layout client={client} />, client.mountElement);
+}
+
+export function DjangoForm({
+  onSubmitCallback,
+  formId,
+}: DjangoFormProps): null {
+  React.useEffect(() => {
+    const form = document.getElementById(formId) as HTMLFormElement;
+
+    // Submission event function
+    const onSubmitEvent = (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+
+      // Convert the FormData object to a plain object by iterating through it
+      // If duplicate keys are present, convert the value into an array of values
+      const entries = formData.entries();
+      const formDataArray = Array.from(entries);
+      const formDataObject = formDataArray.reduce((acc, [key, value]) => {
+        if (acc[key]) {
+          if (Array.isArray(acc[key])) {
+            acc[key].push(value);
+          } else {
+            acc[key] = [acc[key], value];
+          }
+        } else {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
+
+      onSubmitCallback(formDataObject);
+    };
+
+    // Bind the event listener
+    if (form) {
+      form.addEventListener("submit", onSubmitEvent);
+    }
+
+    // Unbind the event listener when the component dismounts
+    return () => {
+      if (form) {
+        form.removeEventListener("submit", onSubmitEvent);
+      }
+    };
+  }, []);
+
+  return null;
 }

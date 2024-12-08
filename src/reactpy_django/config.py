@@ -126,3 +126,8 @@ REACTPY_CLEAN_USER_DATA: bool = getattr(
     "REACTPY_CLEAN_USER_DATA",
     True,
 )
+REACTPY_DEFAULT_FORM_TEMPLATE: str | None = getattr(
+    settings,
+    "REACTPY_DEFAULT_FORM_TEMPLATE",
+    None,
+)

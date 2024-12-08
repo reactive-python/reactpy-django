@@ -19,13 +19,15 @@ Don't forget to remove deprecated code on each major release!
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Added
+
+-   Automatically convert Django forms to ReactPy forms via the new `reactpy_django.components.django_form` component!
 
 ## [5.1.1] - 2024-12-02
 
 ### Fixed
 
--   Fixed regression in v5.1.0 where components would sometimes not output debug messages when `settings.py:DEBUG` is enabled.
+-   Fixed regression from the previous release where components would sometimes not output debug messages when `settings.py:DEBUG` is enabled.
 
 ### Changed
 
