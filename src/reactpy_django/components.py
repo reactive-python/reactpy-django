@@ -1,3 +1,5 @@
+"""This file contains Django related components. Most of these components utilize wrappers to fix type hints."""
+
 from __future__ import annotations
 
 import json
@@ -136,7 +138,7 @@ def django_form(
     """Converts a Django form to a ReactPy component.
 
     Args:
-        form: The form instance to convert.
+        form: The form to convert.
 
     Keyword Args:
         on_success: A callback function that is called when the form is successfully submitted.

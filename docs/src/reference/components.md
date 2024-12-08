@@ -405,12 +405,12 @@ Compatible with both [standard Django forms](https://docs.djangoproject.com/en/s
 
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
-    | `#!python form` | `#!python type[Form | ModelForm]` | The form instance to convert. | N/A |
+    | `#!python form` | `#!python type[Form | ModelForm]` | The form to convert. | N/A |
     | `#!python on_success` | `#!python AsyncFormEvent | SyncFormEvent | None` | A callback function that is called when the form is successfully submitted. | `#!python None` |
     | `#!python on_error` | `#!python AsyncFormEvent | SyncFormEvent | None` | A callback function that is called when the form submission fails. | `#!python None` |
     | `#!python on_receive_data` | `#!python AsyncFormEvent | SyncFormEvent | None` | A callback function that is called before newly submitted form data is rendered. | `#!python None` |
     | `#!python on_change` | `#!python AsyncFormEvent | SyncFormEvent | None` | A callback function that is called when the form is changed. | `#!python None` |
-    | `#!python auto_save` | `#!python bool` | If `#!python True`, the form will automatically call `#!python save` on successful submission of a `#!python ModelForm`. This has no effect on regular `#!python Form` instances. | `#!python False` |
+    | `#!python auto_save` | `#!python bool` | If `#!python True`, the form will automatically call `#!python save` on successful submission of a `#!python ModelForm`. This has no effect on regular `#!python Form` instances. | `#!python True` |
     | `#!python extra_props` | `#!python dict[str, Any] | None` | Additional properties to add to the `#!html <form>` element. | `#!python None` |
     | `#!python extra_transforms` | `#!python Sequence[Callable[[VdomDict], Any]] | None` | A list of functions that transforms the newly generated VDOM. The functions will be repeatedly called on each VDOM node. | `#!python None` |
     | `#!python form_template` | `#!python str | None` | The template to use for the form. If `#!python None`, Django's default template is used. | `#!python None` |

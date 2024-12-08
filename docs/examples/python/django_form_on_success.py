@@ -8,13 +8,14 @@ from reactpy_django.types import FormEventData
 
 @component
 def basic_form():
-    success, set_success = hooks.use_state(False)
+    submitted, set_submitted = hooks.use_state(False)
 
-    def on_success(event: FormEventData):
-        set_success(True)
+    def on_submit(event: FormEventData):
+        """This function will be called when the form is successfully submitted."""
+        set_submitted(True)
 
-    if not success:
-        children = [html.input({"type": "submit"})]
-        return django_form(MyForm, on_success=on_success, bottom_children=children)
+    if submitted:
+        return navigate("/homepage")
 
-    return navigate("/homepage")
+    children = [html.input({"type": "submit"})]
+    return django_form(MyForm, on_success=on_submit, bottom_children=children)
