@@ -6,43 +6,37 @@ from .. import models
 class BasicForm(forms.Form):
     # Render one of every Django field type
     # https://docs.djangoproject.com/en/stable/ref/forms/fields/#field-types
-    boolean_field = forms.BooleanField(label="boolean", initial=True)
-    char_field = forms.CharField(label="chars", max_length=7, initial="Example")
-    choice_field = forms.ChoiceField(label="choice", initial="2", choices=[("1", "One"), ("2", "Two")])
-    date_field = forms.DateField(label="date", initial="2000-01-01")
-    date_time_field = forms.DateTimeField(label="date time", initial="2000-01-01 00:00:00")
-    decimal_field = forms.DecimalField(label="decimal", initial=0.0)
-    duration_field = forms.DurationField(label="duration", initial=0)
-    email_field = forms.EmailField(label="email", initial="example@gmail.com")
+    boolean_field = forms.BooleanField(label="boolean")
+    char_field = forms.CharField(label="chars", max_length=7)
+    choice_field = forms.ChoiceField(label="choice", choices=[("1", "One"), ("2", "Two")])
+    date_field = forms.DateField(label="date")
+    date_time_field = forms.DateTimeField(label="date time")
+    decimal_field = forms.DecimalField(label="decimal")
+    duration_field = forms.DurationField(label="duration")
+    email_field = forms.EmailField(label="email")
     file_path_field = forms.FilePathField("./", label="file path")
-    float_field = forms.FloatField(label="float", initial=0.0)
-    generic_ip_address_field = forms.GenericIPAddressField(label="Generic IP", initial="127.0.0.1")
-    integer_field = forms.IntegerField(label="integer", initial=0)
-    json_field = forms.JSONField(label="JSON", initial={"key": "value"})
+    float_field = forms.FloatField(label="float")
+    generic_ip_address_field = forms.GenericIPAddressField(label="Generic IP")
+    integer_field = forms.IntegerField(label="integer")
+    json_field = forms.JSONField(label="JSON")
     multiple_choice_field = forms.MultipleChoiceField(
-        label="multiple choice", initial=["1", "2"], choices=[("1", "One"), ("2", "Two"), ("3", "Three")]
+        label="multiple choice", choices=[("1", "One"), ("2", "Two"), ("3", "Three")]
     )
-    null_boolean_field = forms.NullBooleanField(label="null boolean", initial=True)
-    regex_field = forms.RegexField(label="regex", regex=r"^\d{1,2}$", initial="12")
-    slug_field = forms.SlugField(label="slug", initial="your-slug")
-    time_field = forms.TimeField(label="time", initial="00:00:00")
-    typed_choice_field = forms.TypedChoiceField(
-        label="typed choice field", initial="1", choices=[("1", "One"), ("2", "Two")]
-    )
+    null_boolean_field = forms.NullBooleanField(label="null boolean")
+    regex_field = forms.RegexField(label="regex", regex=r"^\d{1,2}$")
+    slug_field = forms.SlugField(label="slug")
+    time_field = forms.TimeField(label="time")
+    typed_choice_field = forms.TypedChoiceField(label="typed choice field", choices=[("1", "One"), ("2", "Two")])
     typed_multiple_choice_field = forms.TypedMultipleChoiceField(
-        label="typed multiple choice", initial="1", choices=[("1", "One"), ("2", "Two")]
+        label="typed multiple choice", choices=[("1", "One"), ("2", "Two")]
     )
-    url_field = forms.URLField(label="URL", initial="https://example.com")
-    uuid_field = forms.UUIDField(label="UUID", initial="550e8400-e29b-41d4-a716-446655440000")
-    combo_field = forms.ComboField(
-        label="combo", fields=[forms.CharField(), forms.EmailField()], initial="example@gmail.com"
-    )
+    url_field = forms.URLField(label="URL")
+    uuid_field = forms.UUIDField(label="UUID")
+    combo_field = forms.ComboField(label="combo", fields=[forms.CharField(), forms.EmailField()])
     password_field = forms.CharField(label="password", widget=forms.PasswordInput)
-    model_choice_field = forms.ModelChoiceField(
-        label="model choice field", initial="1", queryset=models.TodoItem.objects.all()
-    )
+    model_choice_field = forms.ModelChoiceField(label="model choice field", queryset=models.TodoItem.objects.all())
     model_multiple_choice_field = forms.ModelMultipleChoiceField(
-        label="model multiple choice field", initial="1", queryset=models.TodoItem.objects.all()
+        label="model multiple choice field", queryset=models.TodoItem.objects.all()
     )
 
 
