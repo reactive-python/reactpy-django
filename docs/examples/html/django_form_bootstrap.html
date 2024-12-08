@@ -1,0 +1,11 @@
+{% load django_bootstrap5 %}
+
+<!-- Note: CSS/JS is loaded here only for demonstration purposes.
+You should load this CSS/JS in your HTML <head> instead. -->
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+<!-- The actual form that is rendered by ReactPy -->
+{% bootstrap_form form %}
+{% bootstrap_button button_type="submit" content="OK" %}
+{% bootstrap_button button_type="reset" content="Reset" %}

@@ -34,7 +34,7 @@ The prefix used for all ReactPy WebSocket and HTTP URLs.
 
 **Example Value(s):** `#!python "example_project.postprocessor"`, `#!python None`
 
-Dotted path to the default `#!python reactpy_django.hooks.use_query` postprocessor function.
+Dotted path to the default postprocessor function used by the [`use_query`](./hooks.md#use-query) hook.
 
 Postprocessor functions can be async or sync. Here is an example of a sync postprocessor function:
 
@@ -45,6 +45,18 @@ def postprocessor(data):
 ```
 
 Set `#!python REACTPY_DEFAULT_QUERY_POSTPROCESSOR` to `#!python None` to disable the default postprocessor.
+
+---
+
+### `#!python REACTPY_DEFAULT_FORM_TEMPLATE`
+
+**Default:** `#!python None`
+
+**Example Value(s):** `#!python "my_templates/bootstrap_form.html"`
+
+File path to the default form template used by the [`django_form`](./components.md#django-form) component.
+
+This file path must be valid to Django's [template finder](https://docs.djangoproject.com/en/stable/topics/templates/#support-for-template-engines).
 
 ---
 
@@ -131,7 +143,7 @@ This setting is incompatible with [`daphne`](https://github.com/django/daphne).
 
 Configures whether to use an async ReactPy rendering queue. When enabled, large renders will no longer block smaller renders from taking place. Additionally, prevents the rendering queue from being blocked on waiting for async effects to startup/shutdown (which is typically a relatively slow operation).
 
-This setting is currently experimental, and currently no effort is made to de-duplicate renders. For example, if parent and child components are scheduled to render at the same time, both renders will take place even though a single render of the parent component would have been sufficient.
+This setting is currently in early release, and currently no effort is made to de-duplicate renders. For example, if parent and child components are scheduled to render at the same time, both renders will take place even though a single render of the parent component would have been sufficient.
 
 ---
 
