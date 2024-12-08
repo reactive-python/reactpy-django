@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     from django.forms import Form, ModelForm
     from django.views import View
 
-    from reactpy_django.types import FormEvent
+    from reactpy_django.types import AsyncFormEvent, SyncFormEvent
 
 
 def view_to_component(
@@ -121,23 +121,45 @@ def django_js(static_path: str, key: Key | None = None):
 def django_form(
     form: type[Form | ModelForm],
     *,
-    on_success: Callable[[FormEvent], None] | None = None,
-    on_error: Callable[[FormEvent], None] | None = None,
-    on_submit: Callable[[FormEvent], None] | None = None,
-    on_change: Callable[[FormEvent], None] | None = None,
+    on_success: AsyncFormEvent | SyncFormEvent | None = None,
+    on_error: AsyncFormEvent | SyncFormEvent | None = None,
+    on_receive_data: AsyncFormEvent | SyncFormEvent | None = None,
+    on_change: AsyncFormEvent | SyncFormEvent | None = None,
     auto_save: bool = True,
     extra_props: dict[str, Any] | None = None,
     extra_transforms: Sequence[Callable[[VdomDict], Any]] | None = None,
     form_template: str | None = None,
-    top_children: Sequence = (),
-    bottom_children: Sequence = (),
+    top_children: Sequence[Any] = (),
+    bottom_children: Sequence[Any] = (),
     key: Key | None = None,
 ):
+    """Converts a Django form to a ReactPy component.
+
+    Args:
+        form: The form instance to convert.
+
+    Keyword Args:
+        on_success: A callback function that is called when the form is successfully submitted.
+        on_error: A callback function that is called when the form submission fails.
+        on_receive_data: A callback function that is called before newly submitted form data is rendered.
+        on_change: A callback function that is called when the form is changed.
+        auto_save: If `True`, the form will automatically call `save` on successful submission of \
+            a `ModelForm`. This has no effect on regular `Form` instances.
+        extra_props: Additional properties to add to the `html.form` element.
+        extra_transforms: A list of functions that transforms the newly generated VDOM. \
+            The functions will be repeatedly called on each VDOM node.
+        form_template: The template to use for the form. If `None`, Django's default template is used.
+        top_children: Additional elements to add to the top of the form.
+        bottom_children: Additional elements to add to the bottom of the form.
+        key: A key to uniquely identify this component which is unique amongst a component's \
+            immediate siblings.
+    """
+
     return _django_form(
         form=form,
         on_success=on_success,
         on_error=on_error,
-        on_submit=on_submit,
+        on_receive_data=on_receive_data,
         on_change=on_change,
         auto_save=auto_save,
         extra_props=extra_props or {},

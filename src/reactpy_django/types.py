@@ -54,12 +54,20 @@ class Mutation(Generic[FuncParams]):
 
 
 @dataclass
-class FormEvent:
+class FormEventData:
     """State of a form provided to Form custom events."""
 
     form: Form | ModelForm
-    data: dict[str, Any]
-    set_data: Callable[[dict[str, Any] | None], None]
+    submitted_data: dict[str, Any]
+    set_submitted_data: Callable[[dict[str, Any] | None], None]
+
+
+class AsyncFormEvent(Protocol):
+    async def __call__(self, event: FormEventData) -> None: ...
+
+
+class SyncFormEvent(Protocol):
+    def __call__(self, event: FormEventData) -> None: ...
 
 
 class AsyncPostprocessor(Protocol):

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Union, cast
 from uuid import uuid4
@@ -18,7 +19,7 @@ from reactpy_django.forms.transforms import (
     transform_value_prop_on_input_element,
 )
 from reactpy_django.forms.utils import convert_boolean_fields, convert_multiple_choice_fields
-from reactpy_django.types import FormEvent
+from reactpy_django.types import AsyncFormEvent, FormEventData, SyncFormEvent
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -31,13 +32,14 @@ DjangoForm = export(
 )
 
 
+# TODO: Create types for AsyncFormEvent and FormEvent
 @component
 def _django_form(
     form: type[Form | ModelForm],
-    on_success: Callable[[FormEvent], None] | None,
-    on_error: Callable[[FormEvent], None] | None,
-    on_submit: Callable[[FormEvent], None] | None,
-    on_change: Callable[[FormEvent], None] | None,
+    on_success: AsyncFormEvent | SyncFormEvent | None,
+    on_error: AsyncFormEvent | SyncFormEvent | None,
+    on_receive_data: AsyncFormEvent | SyncFormEvent | None,
+    on_change: AsyncFormEvent | SyncFormEvent | None,
     auto_save: bool,
     extra_props: dict,
     extra_transforms: Sequence[Callable[[VdomDict], Any]],
@@ -64,13 +66,12 @@ def _django_form(
             "Do NOT initialize your form by calling it (ex. `MyForm()`)."
         )
         raise TypeError(msg)
-    if "id" in extra_props:
-        msg = "The `extra_props` argument cannot contain an `id` key."
-        raise ValueError(msg)
 
     # Try to initialize the form with the provided data
     initialized_form = form(data=submitted_data)
-    form_event = FormEvent(form=initialized_form, data=submitted_data or {}, set_data=set_submitted_data)
+    form_event = FormEventData(
+        form=initialized_form, submitted_data=submitted_data or {}, set_submitted_data=set_submitted_data
+    )
 
     # Validate and render the form
     @hooks.use_effect
@@ -80,9 +81,15 @@ def _django_form(
             await database_sync_to_async(initialized_form.full_clean)()
             success = not initialized_form.errors.as_data()
             if success and on_success:
-                on_success(form_event)
+                if asyncio.iscoroutinefunction(on_success):
+                    await on_success(form_event)
+                else:
+                    on_success(form_event)
             if not success and on_error:
-                on_error(form_event)
+                if asyncio.iscoroutinefunction(on_error):
+                    await on_error(form_event)
+                else:
+                    on_error(form_event)
             if success and auto_save and isinstance(initialized_form, ModelForm):
                 await database_sync_to_async(initialized_form.save)()
                 set_submitted_data(None)
@@ -93,28 +100,43 @@ def _django_form(
         if new_form != rendered_form:
             set_rendered_form(new_form)
 
-    def on_submit_callback(new_data: dict[str, Any]):
+    async def on_submit_callback(new_data: dict[str, Any]):
         """Callback function provided directly to the client side listener. This is responsible for transmitting
         the submitted form data to the server for processing."""
         convert_multiple_choice_fields(new_data, initialized_form)
         convert_boolean_fields(new_data, initialized_form)
 
-        if on_submit:
-            on_submit(FormEvent(form=initialized_form, data=new_data, set_data=set_submitted_data))
+        if on_receive_data:
+            new_form_event = FormEventData(
+                form=initialized_form, submitted_data=new_data, set_submitted_data=set_submitted_data
+            )
+            if asyncio.iscoroutinefunction(on_receive_data):
+                await on_receive_data(new_form_event)
+            else:
+                on_receive_data(new_form_event)
 
         if submitted_data != new_data:
             set_submitted_data(new_data)
+
+    async def _on_change(_event):
+        """Event that exist solely to allow the user to detect form changes."""
+        if on_change:
+            if asyncio.iscoroutinefunction(on_change):
+                await on_change(form_event)
+            else:
+                on_change(form_event)
 
     if not rendered_form:
         return None
 
     return html.form(
-        {
+        extra_props
+        | {
             "id": f"reactpy-{uuid}",
+            # Intercept the form submission to prevent the browser from navigating
             "onSubmit": event(lambda _: None, prevent_default=True),
-            "onChange": on_change(form_event) if on_change else lambda _: None,
-        }
-        | extra_props,
+            "onChange": _on_change,
+        },
         DjangoForm({"onSubmitCallback": on_submit_callback, "formId": f"reactpy-{uuid}"}),
         *top_children,
         utils.html_to_vdom(
