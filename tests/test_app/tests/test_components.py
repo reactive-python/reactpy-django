@@ -645,7 +645,9 @@ class FormTests(PlaywrightTestCase):
         self.page.locator("#id_decimal_field").type("0.123", delay=CLICK_DELAY)
         self.page.locator("#id_duration_field").type("1", delay=CLICK_DELAY)
         self.page.locator("#id_email_field").type("test@example.com", delay=CLICK_DELAY)
-        self.page.locator("#id_file_path_field").select_option("manage.py")
+        file_path_field_options = self.page.query_selector_all("#id_file_path_field option")
+        file_path_field_values: list[str] = [option.get_attribute("value") for option in file_path_field_options]
+        self.page.locator("#id_file_path_field").select_option(file_path_field_values[1])
         self.page.locator("#id_float_field").type("1.2345", delay=CLICK_DELAY)
         self.page.locator("#id_generic_ip_address_field").type("127.0.0.1", delay=CLICK_DELAY)
         self.page.locator("#id_integer_field").type("123", delay=CLICK_DELAY)
@@ -662,7 +664,6 @@ class FormTests(PlaywrightTestCase):
         self.page.locator("#id_uuid_field").type("550e8400-e29b-41d4-a716-446655440000", delay=CLICK_DELAY)
         self.page.locator("#id_combo_field").type("test@example.com", delay=CLICK_DELAY)
         self.page.locator("#id_password_field").type("password", delay=CLICK_DELAY)
-
         model_choice_field_options = self.page.query_selector_all("#id_model_multiple_choice_field option")
         model_choice_field_values: list[str] = [option.get_attribute("value") for option in model_choice_field_options]
         self.page.locator("#id_model_choice_field").select_option(model_choice_field_values[0])
@@ -741,7 +742,9 @@ class FormTests(PlaywrightTestCase):
         self.page.locator("#id_decimal_field").type("0.123", delay=CLICK_DELAY)
         self.page.locator("#id_duration_field").type("1", delay=CLICK_DELAY)
         self.page.locator("#id_email_field").type("test@example.com", delay=CLICK_DELAY)
-        self.page.locator("#id_file_path_field").select_option("manage.py")
+        file_path_field_options = self.page.query_selector_all("#id_file_path_field option")
+        file_path_field_values: list[str] = [option.get_attribute("value") for option in file_path_field_options]
+        self.page.locator("#id_file_path_field").select_option(file_path_field_values[1])
         self.page.locator("#id_float_field").type("1.2345", delay=CLICK_DELAY)
         self.page.locator("#id_generic_ip_address_field").type("127.0.0.1", delay=CLICK_DELAY)
         self.page.locator("#id_integer_field").type("123", delay=CLICK_DELAY)
