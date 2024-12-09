@@ -5,7 +5,7 @@ from asgiref.sync import iscoroutinefunction, markcoroutinefunction
 
 class AutoCreateAdminMiddleware:
     async_capable = True
-    sync_capable = True
+    sync_capable = False
 
     def __init__(self, get_response):
         from django.contrib.auth.models import User
