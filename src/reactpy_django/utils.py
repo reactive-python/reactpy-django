@@ -30,8 +30,8 @@ from django.template import engines
 from django.templatetags.static import static
 from django.utils.encoding import smart_str
 from reactpy import vdom_to_html
-from reactpy.backend.hooks import ConnectionContext
 from reactpy.backend.types import Connection, Location
+from reactpy.core.hooks import ConnectionContext
 from reactpy.core.layout import Layout
 
 from reactpy_django.exceptions import (
