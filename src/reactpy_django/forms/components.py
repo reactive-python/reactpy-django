@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Union, cast
 from uuid import uuid4
@@ -20,6 +19,7 @@ from reactpy_django.forms.transforms import (
 )
 from reactpy_django.forms.utils import convert_boolean_fields, convert_multiple_choice_fields
 from reactpy_django.types import AsyncFormEvent, FormEventData, SyncFormEvent
+from reactpy_django.utils import ensure_async
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -80,15 +80,9 @@ def _django_form(
             await database_sync_to_async(initialized_form.full_clean)()
             success = not initialized_form.errors.as_data()
             if success and on_success:
-                if asyncio.iscoroutinefunction(on_success):
-                    await on_success(form_event)
-                else:
-                    on_success(form_event)
+                await ensure_async(on_success)(form_event)
             if not success and on_error:
-                if asyncio.iscoroutinefunction(on_error):
-                    await on_error(form_event)
-                else:
-                    on_error(form_event)
+                await ensure_async(on_error)(form_event)
             if success and auto_save and isinstance(initialized_form, ModelForm):
                 await database_sync_to_async(initialized_form.save)()
                 set_submitted_data(None)
@@ -109,10 +103,7 @@ def _django_form(
             new_form_event = FormEventData(
                 form=initialized_form, submitted_data=new_data, set_submitted_data=set_submitted_data
             )
-            if asyncio.iscoroutinefunction(on_receive_data):
-                await on_receive_data(new_form_event)
-            else:
-                on_receive_data(new_form_event)
+            await ensure_async(on_receive_data)(new_form_event)
 
         if submitted_data != new_data:
             set_submitted_data(new_data)
@@ -120,10 +111,7 @@ def _django_form(
     async def _on_change(_event):
         """Event that exist solely to allow the user to detect form changes."""
         if on_change:
-            if asyncio.iscoroutinefunction(on_change):
-                await on_change(form_event)
-            else:
-                on_change(form_event)
+            await ensure_async(on_change)(form_event)
 
     if not rendered_form:
         return None

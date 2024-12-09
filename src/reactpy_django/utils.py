@@ -13,7 +13,7 @@ from copy import deepcopy
 from fnmatch import fnmatch
 from importlib import import_module
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any, Awaitable, Callable
 from uuid import UUID, uuid4
 
 import dill
@@ -549,3 +549,20 @@ class FileAsyncIterator:
         finally:
             if file_opened:
                 file_handle.close()
+
+
+def ensure_async(
+    func: Callable[FuncParams, Inferred], *, thread_sensitive: bool = True
+) -> Callable[FuncParams, Awaitable[Inferred]]:
+    """Ensure the provided function is always an async coroutine. If the provided function is
+    not async, it will be adapted."""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return (
+            func(*args, **kwargs)
+            if inspect.iscoroutinefunction(func)
+            else database_sync_to_async(func, thread_sensitive=thread_sensitive)(*args, **kwargs)
+        )
+
+    return wrapper
