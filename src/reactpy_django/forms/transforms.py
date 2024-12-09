@@ -1,3 +1,4 @@
+# TODO: Almost everything in this module should be moved to `reactpy.utils._mutate_vdom()`.
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
@@ -6,8 +7,6 @@ from reactpy.core.events import EventHandler, to_event_handler_function
 
 if TYPE_CHECKING:
     from reactpy.core.types import VdomDict
-
-# TODO: Move all this logic to `reactpy.utils._mutate_vdom()` and remove this file.
 
 
 def convert_html_props_to_reactjs(vdom_tree: VdomDict) -> VdomDict:
@@ -114,7 +113,8 @@ def _do_nothing_event(*args, **kwargs):
     """A placeholder event function that does nothing."""
 
 
-# TODO: Create some kind of script that will generate the react docs copy-pasta during build time, rather than hardcoding it.
+# TODO: After the bulk of this file to ReactPy core, we should create some kind of script that will
+# auto-generate this into a file dump. The current implementation of manually copy-pasting it isn't ideal.
 # https://react.dev/reference/react-dom/components/common#common-props
 SPECIAL_PROPS = r"""
 children: A React node (an element, a string, a number, a portal, an empty node like null, undefined and booleans, or an array of other React nodes). Specifies the content inside the component. When you use JSX, you will usually specify the children prop implicitly by nesting tags like <div><span /></div>.

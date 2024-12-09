@@ -32,7 +32,6 @@ DjangoForm = export(
 )
 
 
-# TODO: Create types for AsyncFormEvent and FormEvent
 @component
 def _django_form(
     form: type[Form | ModelForm],
