@@ -9,5 +9,5 @@ def bootstrap_form(request):
     return render(request, "bootstrap_form.html", {})
 
 
-def databased_backed_form(request):
-    return render(request, "database_backed_form.html", {})
+def model_form(request):
+    return render(request, "model_form.html", {})

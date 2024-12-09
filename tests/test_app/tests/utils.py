@@ -87,3 +87,9 @@ class PlaywrightTestCase(ChannelsLiveServerTestCase):
         """Handled manually in `tearDownClass` to prevent TransactionTestCase from doing
         database flushing. This is needed to prevent a `SynchronousOnlyOperation` from
         occurring due to a bug within `ChannelsLiveServerTestCase`."""
+
+
+def navigate_to_page(self: PlaywrightTestCase, path: str):
+    """Redirect the page's URL to the given link, if the page is not already there."""
+    if self.page.url != path:
+        self.page.goto(f"http://{self.host}:{self._port}/{path.lstrip('/')}")
