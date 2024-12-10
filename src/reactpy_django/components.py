@@ -1,3 +1,5 @@
+"""This file contains Django related components. Most of these components utilize wrappers to fix type hints."""
+
 from __future__ import annotations
 
 import json
@@ -14,6 +16,7 @@ from reactpy import component, hooks, html, utils
 from reactpy.types import ComponentType, Key, VdomDict
 
 from reactpy_django.exceptions import ViewNotRegisteredError
+from reactpy_django.forms.components import _django_form
 from reactpy_django.html import pyscript
 from reactpy_django.utils import (
     generate_obj_name,
@@ -26,7 +29,10 @@ from reactpy_django.utils import (
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+    from django.forms import Form, ModelForm
     from django.views import View
+
+    from reactpy_django.types import AsyncFormEvent, SyncFormEvent
 
 
 def view_to_component(
@@ -112,6 +118,64 @@ def django_js(static_path: str, key: Key | None = None):
     """
 
     return _django_js(static_path=static_path, key=key)
+
+
+def django_form(
+    form: type[Form | ModelForm],
+    *,
+    on_success: AsyncFormEvent | SyncFormEvent | None = None,
+    on_error: AsyncFormEvent | SyncFormEvent | None = None,
+    on_receive_data: AsyncFormEvent | SyncFormEvent | None = None,
+    on_change: AsyncFormEvent | SyncFormEvent | None = None,
+    auto_save: bool = True,
+    extra_props: dict[str, Any] | None = None,
+    extra_transforms: Sequence[Callable[[VdomDict], Any]] | None = None,
+    form_template: str | None = None,
+    thread_sensitive: bool = True,
+    top_children: Sequence[Any] = (),
+    bottom_children: Sequence[Any] = (),
+    key: Key | None = None,
+):
+    """Converts a Django form to a ReactPy component.
+
+    Args:
+        form: The form to convert.
+
+    Keyword Args:
+        on_success: A callback function that is called when the form is successfully submitted.
+        on_error: A callback function that is called when the form submission fails.
+        on_receive_data: A callback function that is called before newly submitted form data is rendered.
+        on_change: A callback function that is called when a form field is modified by the user.
+        auto_save: If `True`, the form will automatically call `save` on successful submission of \
+            a `ModelForm`. This has no effect on regular `Form` instances.
+        extra_props: Additional properties to add to the `html.form` element.
+        extra_transforms: A list of functions that transforms the newly generated VDOM. \
+            The functions will be repeatedly called on each VDOM node.
+        form_template: The template to use for the form. If `None`, Django's default template is used.
+        thread_sensitive: Whether to run event callback functions in thread sensitive mode. \
+            This mode only applies to sync functions, and is turned on by default due to Django \
+            ORM limitations.
+        top_children: Additional elements to add to the top of the form.
+        bottom_children: Additional elements to add to the bottom of the form.
+        key: A key to uniquely identify this component which is unique amongst a component's \
+            immediate siblings.
+    """
+
+    return _django_form(
+        form=form,
+        on_success=on_success,
+        on_error=on_error,
+        on_receive_data=on_receive_data,
+        on_change=on_change,
+        auto_save=auto_save,
+        extra_props=extra_props or {},
+        extra_transforms=extra_transforms or [],
+        form_template=form_template,
+        thread_sensitive=thread_sensitive,
+        top_children=top_children,
+        bottom_children=bottom_children,
+        key=key,
+    )
 
 
 def pyscript_component(
@@ -238,6 +302,8 @@ def _cached_static_contents(static_path: str) -> str:
     if not abs_path:
         msg = f"Could not find static file {static_path} within Django's static files."
         raise FileNotFoundError(msg)
+    if isinstance(abs_path, (list, tuple)):
+        abs_path = abs_path[0]
 
     # Fetch the file from cache, if available
     last_modified_time = os.stat(abs_path).st_mtime
@@ -259,7 +325,8 @@ def _pyscript_component(
     root: str = "root",
 ):
     rendered, set_rendered = hooks.use_state(False)
-    uuid = uuid4().hex.replace("-", "")
+    uuid_ref = hooks.use_ref(uuid4().hex.replace("-", ""))
+    uuid = uuid_ref.current
     initial = vdom_or_component_to_string(initial, uuid=uuid)
     executor = render_pyscript_template(file_paths, uuid, root)
 

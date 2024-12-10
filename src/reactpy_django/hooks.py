@@ -104,7 +104,7 @@ def use_query(
     Kwargs:
         kwargs: Keyword arguments to passed into the `query` function.
         thread_sensitive: Whether to run the query in thread sensitive mode. \
-            This mode only applies to sync query functions, and is turned on by default \
+            This setting only applies to sync functions, and is turned on by default \
             due to Django ORM limitations.
         postprocessor: A callable that processes the query `data` before it is returned. \
             The first argument of postprocessor function must be the query `data`. All \
@@ -219,7 +219,7 @@ def use_mutation(
 
     Kwargs:
         thread_sensitive: Whether to run the mutation in thread sensitive mode. \
-            This mode only applies to sync mutation functions, and is turned on by default \
+            This setting only applies to sync functions, and is turned on by default \
             due to Django ORM limitations.
         refetch:  A query function (the function you provide to your `use_query` \
             hook) or a sequence of query functions that need a `refetch` if the \
