@@ -14,7 +14,7 @@ from fnmatch import fnmatch
 from functools import wraps
 from importlib import import_module
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Awaitable, Callable
+from typing import TYPE_CHECKING, Any, Callable
 from uuid import UUID, uuid4
 
 import dill
@@ -43,7 +43,7 @@ from reactpy_django.exceptions import (
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, Sequence
+    from collections.abc import Awaitable, Mapping, Sequence
 
     from django.views import View
     from reactpy.types import ComponentConstructor
