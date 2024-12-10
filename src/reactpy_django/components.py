@@ -131,6 +131,7 @@ def django_form(
     extra_props: dict[str, Any] | None = None,
     extra_transforms: Sequence[Callable[[VdomDict], Any]] | None = None,
     form_template: str | None = None,
+    thread_sensitive: bool = True,
     top_children: Sequence[Any] = (),
     bottom_children: Sequence[Any] = (),
     key: Key | None = None,
@@ -144,13 +145,16 @@ def django_form(
         on_success: A callback function that is called when the form is successfully submitted.
         on_error: A callback function that is called when the form submission fails.
         on_receive_data: A callback function that is called before newly submitted form data is rendered.
-        on_change: A callback function that is called when the form is changed.
+        on_change: A callback function that is called when a form field is modified by the user.
         auto_save: If `True`, the form will automatically call `save` on successful submission of \
             a `ModelForm`. This has no effect on regular `Form` instances.
         extra_props: Additional properties to add to the `html.form` element.
         extra_transforms: A list of functions that transforms the newly generated VDOM. \
             The functions will be repeatedly called on each VDOM node.
         form_template: The template to use for the form. If `None`, Django's default template is used.
+        thread_sensitive: Whether to run event callback functions in thread sensitive mode. \
+            This mode only applies to sync functions, and is turned on by default due to Django \
+            ORM limitations.
         top_children: Additional elements to add to the top of the form.
         bottom_children: Additional elements to add to the bottom of the form.
         key: A key to uniquely identify this component which is unique amongst a component's \
@@ -167,6 +171,7 @@ def django_form(
         extra_props=extra_props or {},
         extra_transforms=extra_transforms or [],
         form_template=form_template,
+        thread_sensitive=thread_sensitive,
         top_children=top_children,
         bottom_children=bottom_children,
         key=key,

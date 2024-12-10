@@ -43,6 +43,7 @@ def _django_form(
     extra_props: dict,
     extra_transforms: Sequence[Callable[[VdomDict], Any]],
     form_template: str | None,
+    thread_sensitive: bool,
     top_children: Sequence,
     bottom_children: Sequence,
 ):
@@ -80,9 +81,9 @@ def _django_form(
             await database_sync_to_async(initialized_form.full_clean)()
             success = not initialized_form.errors.as_data()
             if success and on_success:
-                await ensure_async(on_success)(form_event)
+                await ensure_async(on_success, thread_sensitive=thread_sensitive)(form_event)
             if not success and on_error:
-                await ensure_async(on_error)(form_event)
+                await ensure_async(on_error, thread_sensitive=thread_sensitive)(form_event)
             if success and auto_save and isinstance(initialized_form, ModelForm):
                 await database_sync_to_async(initialized_form.save)()
                 set_submitted_data(None)
@@ -103,7 +104,7 @@ def _django_form(
             new_form_event = FormEventData(
                 form=initialized_form, submitted_data=new_data, set_submitted_data=set_submitted_data
             )
-            await ensure_async(on_receive_data)(new_form_event)
+            await ensure_async(on_receive_data, thread_sensitive=thread_sensitive)(new_form_event)
 
         if submitted_data != new_data:
             set_submitted_data(new_data)
@@ -111,7 +112,7 @@ def _django_form(
     async def _on_change(_event):
         """Event that exist solely to allow the user to detect form changes."""
         if on_change:
-            await ensure_async(on_change)(form_event)
+            await ensure_async(on_change, thread_sensitive=thread_sensitive)(form_event)
 
     if not rendered_form:
         return None

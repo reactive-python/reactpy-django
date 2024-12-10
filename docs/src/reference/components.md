@@ -409,11 +409,12 @@ Compatible with both [standard Django forms](https://docs.djangoproject.com/en/s
     | `#!python on_success` | `#!python AsyncFormEvent | SyncFormEvent | None` | A callback function that is called when the form is successfully submitted. | `#!python None` |
     | `#!python on_error` | `#!python AsyncFormEvent | SyncFormEvent | None` | A callback function that is called when the form submission fails. | `#!python None` |
     | `#!python on_receive_data` | `#!python AsyncFormEvent | SyncFormEvent | None` | A callback function that is called before newly submitted form data is rendered. | `#!python None` |
-    | `#!python on_change` | `#!python AsyncFormEvent | SyncFormEvent | None` | A callback function that is called when the form is changed. | `#!python None` |
+    | `#!python on_change` | `#!python AsyncFormEvent | SyncFormEvent | None` | A callback function that is called when a form field is modified by the user. | `#!python None` |
     | `#!python auto_save` | `#!python bool` | If `#!python True`, the form will automatically call `#!python save` on successful submission of a `#!python ModelForm`. This has no effect on regular `#!python Form` instances. | `#!python True` |
     | `#!python extra_props` | `#!python dict[str, Any] | None` | Additional properties to add to the `#!html <form>` element. | `#!python None` |
     | `#!python extra_transforms` | `#!python Sequence[Callable[[VdomDict], Any]] | None` | A list of functions that transforms the newly generated VDOM. The functions will be repeatedly called on each VDOM node. | `#!python None` |
     | `#!python form_template` | `#!python str | None` | The template to use for the form. If `#!python None`, Django's default template is used. | `#!python None` |
+    | `#!python thread_sensitive` | `#!python bool` | Whether to run event callback functions in thread sensitive mode. This mode only applies to sync functions, and is turned on by default due to Django ORM limitations. | `#!python True` |
     | `#!python top_children` | `#!python Sequence[Any]` | Additional elements to add to the top of the form. | `#!python tuple` |
     | `#!python bottom_children` | `#!python Sequence[Any]` | Additional elements to add to the bottom of the form. | `#!python tuple` |
     | `#!python key` | `#!python Key | None` | A key to uniquely identify this component which is unique amongst a component's immediate siblings. | `#!python None` |

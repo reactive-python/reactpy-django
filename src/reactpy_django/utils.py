@@ -11,6 +11,7 @@ from asyncio import iscoroutinefunction
 from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
 from fnmatch import fnmatch
+from functools import wraps
 from importlib import import_module
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Awaitable, Callable
@@ -46,6 +47,9 @@ if TYPE_CHECKING:
 
     from django.views import View
     from reactpy.types import ComponentConstructor
+
+    from reactpy_django.types import FuncParams, Inferred
+
 
 _logger = logging.getLogger(__name__)
 _TAG_PATTERN = r"(?P<tag>component)"
