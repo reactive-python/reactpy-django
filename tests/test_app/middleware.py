@@ -18,12 +18,5 @@ class AutoCreateAdminMiddleware:
         if iscoroutinefunction(self.get_response):
             markcoroutinefunction(self)
 
-    def __call__(self, request):
-        if iscoroutinefunction(self.get_response):
-
-            async def async_call():
-                return await self.get_response(request)
-
-            return async_call()
-
-        return self.get_response(request)
+    async def __call__(self, request):
+        return await self.get_response(request)
