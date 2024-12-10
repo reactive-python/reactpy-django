@@ -2,6 +2,7 @@
 import os
 import socket
 from time import sleep
+from uuid import uuid4
 
 import pytest
 from playwright.sync_api import TimeoutError, expect
@@ -782,6 +783,7 @@ class FormTests(PlaywrightTestCase):
     def test_model_form(self):
         navigate_to_page(self, "/form/model/")
 
+        uuid = uuid4().hex
         self.page.wait_for_selector("form")
 
         sleep(1)
@@ -792,8 +794,9 @@ class FormTests(PlaywrightTestCase):
         assert len(self.page.query_selector_all(".errorlist")) == 1
 
         # Fill out the form
-        self.page.locator("#id_text").type("test", delay=CLICK_DELAY)
+        self.page.locator("#id_text").type(uuid, delay=CLICK_DELAY)
 
+        # Submit the form
         self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
 
         # Wait for the error message to disappear (indicating that the form has been re-rendered)
@@ -803,4 +806,75 @@ class FormTests(PlaywrightTestCase):
         assert len(self.page.query_selector_all(".errorlist")) == 0
 
         # Make sure text field is empty
+        expect(self.page.locator("#id_text")).to_be_empty()
         assert self.page.locator("#id_text").get_attribute("value") == ""
+
+        # Check if `auto_save` created the TodoItem's database entry
+        try:
+            from test_app.models import TodoItem
+
+            os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+
+            assert TodoItem.objects.filter(text=uuid).exists()
+        finally:
+            os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
+
+    def test_sync_form_events(self):
+        navigate_to_page(self, "/form/sync_event/")
+        self.page.wait_for_selector("form")
+
+        # Check initial state
+        self.page.wait_for_selector("#success[data-value='false']")
+        self.page.wait_for_selector("#error[data-value='false']")
+        self.page.wait_for_selector("#receive_data[data-value='false']")
+        self.page.wait_for_selector("#change[data-value='false']")
+
+        # Submit empty the form
+        sleep(1)
+        self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+
+        # The empty form was submitted, should result in an error
+        self.page.wait_for_selector("#success[data-value='false']")
+        self.page.wait_for_selector("#error[data-value='true']")
+        self.page.wait_for_selector("#receive_data[data-value='true']")
+        self.page.wait_for_selector("#change[data-value='false']")
+
+        # Fill out the form and re-submit
+        self.page.wait_for_selector("#id_char_field").type("test", delay=CLICK_DELAY)
+        self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+
+        # Form should have been successfully submitted
+        self.page.wait_for_selector("#success[data-value='true']")
+        self.page.wait_for_selector("#error[data-value='true']")
+        self.page.wait_for_selector("#receive_data[data-value='true']")
+        self.page.wait_for_selector("#change[data-value='true']")
+
+    def test_async_form_events(self):
+        navigate_to_page(self, "/form/async_event/")
+        self.page.wait_for_selector("form")
+
+        # Check initial state
+        self.page.wait_for_selector("#success[data-value='false']")
+        self.page.wait_for_selector("#error[data-value='false']")
+        self.page.wait_for_selector("#receive_data[data-value='false']")
+        self.page.wait_for_selector("#change[data-value='false']")
+
+        # Submit empty the form
+        sleep(1)
+        self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+
+        # The empty form was submitted, should result in an error
+        self.page.wait_for_selector("#success[data-value='false']")
+        self.page.wait_for_selector("#error[data-value='true']")
+        self.page.wait_for_selector("#receive_data[data-value='true']")
+        self.page.wait_for_selector("#change[data-value='false']")
+
+        # Fill out the form and re-submit
+        self.page.wait_for_selector("#id_char_field").type("test", delay=CLICK_DELAY)
+        self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+
+        # Form should have been successfully submitted
+        self.page.wait_for_selector("#success[data-value='true']")
+        self.page.wait_for_selector("#error[data-value='true']")
+        self.page.wait_for_selector("#receive_data[data-value='true']")
+        self.page.wait_for_selector("#change[data-value='true']")

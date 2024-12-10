@@ -11,3 +11,11 @@ def bootstrap_form(request):
 
 def model_form(request):
     return render(request, "model_form.html", {})
+
+
+def sync_event_form(request):
+    return render(request, "sync_event_form.html", {})
+
+
+def async_event_form(request):
+    return render(request, "async_event_form.html", {})

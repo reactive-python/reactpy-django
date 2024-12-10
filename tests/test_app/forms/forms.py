@@ -7,7 +7,7 @@ class BasicForm(forms.Form):
     # Render one of every Django field type
     # https://docs.djangoproject.com/en/stable/ref/forms/fields/#field-types
     boolean_field = forms.BooleanField(label="boolean")
-    char_field = forms.CharField(label="chars", max_length=7)
+    char_field = forms.CharField(label="chars")
     choice_field = forms.ChoiceField(label="choice", choices=[("1", "One"), ("2", "Two")])
     date_field = forms.DateField(label="date")
     date_time_field = forms.DateTimeField(label="date time")
@@ -44,3 +44,7 @@ class DatabaseBackedForm(forms.ModelForm):
     class Meta:
         model = models.TodoItem
         fields = "__all__"
+
+
+class EventForm(forms.Form):
+    char_field = forms.CharField(label="chars")
