@@ -3,12 +3,9 @@
 from __future__ import annotations
 
 import json
-import os
 from typing import TYPE_CHECKING, Any, Callable, Union, cast
 from urllib.parse import urlencode
 
-from django.contrib.staticfiles.finders import find
-from django.core.cache import caches
 from django.http import HttpRequest
 from django.urls import reverse
 from reactpy import component, hooks, html, utils
@@ -17,11 +14,7 @@ from reactpy.types import ComponentType, Key, VdomDict
 from reactpy_django.exceptions import ViewNotRegisteredError
 from reactpy_django.forms.components import _django_form
 from reactpy_django.pyscript.components import _pyscript_component
-from reactpy_django.utils import (
-    generate_obj_name,
-    import_module,
-    render_view,
-)
+from reactpy_django.utils import cached_static_file, generate_obj_name, import_module, render_view
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -207,7 +200,6 @@ def _view_to_component(
     args: Sequence | None,
     kwargs: dict | None,
 ):
-    """The actual component. Used to prevent pollution of acceptable kwargs keys."""
     converted_view, set_converted_view = hooks.use_state(cast(Union[VdomDict, None], None))
     _args: Sequence = args or ()
     _kwargs: dict = kwargs or {}
@@ -249,7 +241,6 @@ def _view_to_iframe(
     args: Sequence,
     kwargs: dict,
 ):
-    """The actual component. Used to prevent pollution of acceptable kwargs keys."""
     from reactpy_django.config import REACTPY_REGISTERED_IFRAME_VIEWS
 
     if hasattr(view, "view_class"):
@@ -283,33 +274,9 @@ def _view_to_iframe(
 
 @component
 def _django_css(static_path: str):
-    return html.style(_cached_static_contents(static_path))
+    return html.style(cached_static_file(static_path))
 
 
 @component
 def _django_js(static_path: str):
-    return html.script(_cached_static_contents(static_path))
-
-
-def _cached_static_contents(static_path: str) -> str:
-    from reactpy_django.config import REACTPY_CACHE
-
-    # Try to find the file within Django's static files
-    abs_path = find(static_path)
-    if not abs_path:
-        msg = f"Could not find static file {static_path} within Django's static files."
-        raise FileNotFoundError(msg)
-    if isinstance(abs_path, (list, tuple)):
-        abs_path = abs_path[0]
-
-    # Fetch the file from cache, if available
-    last_modified_time = os.stat(abs_path).st_mtime
-    cache_key = f"reactpy_django:static_contents:{static_path}"
-    file_contents: str | None = caches[REACTPY_CACHE].get(cache_key, version=int(last_modified_time))
-    if file_contents is None:
-        with open(abs_path, encoding="utf-8") as static_file:
-            file_contents = static_file.read()
-        caches[REACTPY_CACHE].delete(cache_key)
-        caches[REACTPY_CACHE].set(cache_key, file_contents, timeout=None, version=int(last_modified_time))
-
-    return file_contents
+    return html.script(cached_static_file(static_path))

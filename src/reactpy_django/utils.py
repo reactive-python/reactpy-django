@@ -16,6 +16,8 @@ from uuid import UUID, uuid4
 import dill
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
+from django.contrib.staticfiles.finders import find
+from django.core.cache import caches
 from django.db.models import ManyToManyField, ManyToOneRel, prefetch_related_objects
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
@@ -488,3 +490,27 @@ def ensure_async(
         )
 
     return wrapper
+
+
+def cached_static_file(static_path: str) -> str:
+    from reactpy_django.config import REACTPY_CACHE
+
+    # Try to find the file within Django's static files
+    abs_path = find(static_path)
+    if not abs_path:
+        msg = f"Could not find static file {static_path} within Django's static files."
+        raise FileNotFoundError(msg)
+    if isinstance(abs_path, (list, tuple)):
+        abs_path = abs_path[0]
+
+    # Fetch the file from cache, if available
+    last_modified_time = os.stat(abs_path).st_mtime
+    cache_key = f"reactpy_django:static_contents:{static_path}"
+    file_contents: str | None = caches[REACTPY_CACHE].get(cache_key, version=int(last_modified_time))
+    if file_contents is None:
+        with open(abs_path, encoding="utf-8") as static_file:
+            file_contents = static_file.read()
+        caches[REACTPY_CACHE].delete(cache_key)
+        caches[REACTPY_CACHE].set(cache_key, file_contents, timeout=None, version=int(last_modified_time))
+
+    return file_contents
