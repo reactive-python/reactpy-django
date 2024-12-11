@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Union, cast
 from uuid import uuid4
 
-from channels.db import database_sync_to_async
 from django.forms import Form, ModelForm
 from reactpy import component, hooks, html, utils
 from reactpy.core.events import event
@@ -79,7 +78,7 @@ def _django_form(
     async def render_form():
         """Forms must be rendered in an async loop to allow database fields to execute."""
         if submitted_data:
-            await database_sync_to_async(initialized_form.full_clean)()
+            await ensure_async(initialized_form.full_clean, thread_sensitive=thread_sensitive)()
             success = not initialized_form.errors.as_data()
             if success and on_success:
                 await ensure_async(on_success, thread_sensitive=thread_sensitive)(form_event)

@@ -82,17 +82,12 @@ async def render_view(
     if getattr(view, "as_view", None):
         view = view.as_view()
 
-    # Async function view
-    if iscoroutinefunction(view):
-        response = await view(request, *args, **kwargs)
+    # Sync/Async function view
+    response = await ensure_async(view)(request, *args, **kwargs)
 
-    # Sync function view
-    else:
-        response = await database_sync_to_async(view)(request, *args, **kwargs)
-
-    # TemplateView
+    # TemplateView needs an extra render step
     if getattr(response, "render", None):
-        response = await database_sync_to_async(response.render)()
+        response = await ensure_async(response.render)()
 
     return response
 
@@ -565,7 +560,7 @@ def ensure_async(
     def wrapper(*args, **kwargs):
         return (
             func(*args, **kwargs)
-            if inspect.iscoroutinefunction(func)
+            if iscoroutinefunction(func)
             else database_sync_to_async(func, thread_sensitive=thread_sensitive)(*args, **kwargs)
         )
 

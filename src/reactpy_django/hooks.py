@@ -14,7 +14,6 @@ from uuid import uuid4
 
 import orjson
 from channels import DEFAULT_CHANNEL_LAYER
-from channels.db import database_sync_to_async
 from channels.layers import InMemoryChannelLayer, get_channel_layer
 from reactpy import use_callback, use_effect, use_memo, use_ref, use_state
 from reactpy import use_connection as _use_connection
@@ -34,7 +33,7 @@ from reactpy_django.types import (
     SyncPostprocessor,
     UserData,
 )
-from reactpy_django.utils import django_query_postprocessor, generate_obj_name, get_pk
+from reactpy_django.utils import django_query_postprocessor, ensure_async, generate_obj_name, get_pk
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Sequence
@@ -138,19 +137,13 @@ def use_query(
         """The main running function for `use_query`"""
         try:
             # Run the query
-            if asyncio.iscoroutinefunction(query):
-                new_data = await query(**kwargs)
-            else:
-                new_data = await database_sync_to_async(query, thread_sensitive=thread_sensitive)(**kwargs)
+            new_data = await ensure_async(query, thread_sensitive=thread_sensitive)(**kwargs)
 
             # Run the postprocessor
             if postprocessor:
-                if asyncio.iscoroutinefunction(postprocessor):
-                    new_data = await postprocessor(new_data, **postprocessor_kwargs)
-                else:
-                    new_data = await database_sync_to_async(postprocessor, thread_sensitive=thread_sensitive)(
-                        new_data, **postprocessor_kwargs
-                    )
+                new_data = await ensure_async(postprocessor, thread_sensitive=thread_sensitive)(
+                    new_data, **postprocessor_kwargs
+                )
 
         # Log any errors and set the error state
         except Exception as e:
@@ -240,12 +233,7 @@ def use_mutation(
     async def execute_mutation(exec_args, exec_kwargs) -> None:
         # Run the mutation
         try:
-            if asyncio.iscoroutinefunction(mutation):
-                should_refetch = await mutation(*exec_args, **exec_kwargs)
-            else:
-                should_refetch = await database_sync_to_async(mutation, thread_sensitive=thread_sensitive)(
-                    *exec_args, **exec_kwargs
-                )
+            should_refetch = await ensure_async(mutation, thread_sensitive=thread_sensitive)(*exec_args, **exec_kwargs)
 
         # Log any errors and set the error state
         except Exception as e:
@@ -444,10 +432,8 @@ async def _get_user_data(user: AbstractUser, default_data: None | dict, save_def
         for key, value in default_data.items():
             if key not in data:
                 new_value: Any = value
-                if asyncio.iscoroutinefunction(value):
-                    new_value = await value()
-                elif callable(value):
-                    new_value = value()
+                if callable(value):
+                    new_value = await ensure_async(value)()
                 data[key] = new_value
                 changed = True
         if changed:
