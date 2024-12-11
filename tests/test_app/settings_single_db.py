@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "reactpy_django",  # Django compatiblity layer for ReactPy
     "test_app",  # This test application
+    "django_bootstrap5",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

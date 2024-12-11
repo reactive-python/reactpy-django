@@ -1,0 +1,28 @@
+{% load static %} {% load reactpy %} {% load django_bootstrap5 %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <title>ReactPy</title>
+    <style>
+        iframe {
+            width: 100%;
+            height: 45px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>ReactPy Bootstrap Form Test Page</h1>
+    <hr>
+    {% component "test_app.forms.components.bootstrap_form" %}
+    <hr>
+</body>
+
+</html>

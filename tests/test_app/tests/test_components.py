@@ -2,14 +2,15 @@
 import os
 import socket
 from time import sleep
+from uuid import uuid4
 
 import pytest
-from playwright.sync_api import TimeoutError
+from playwright.sync_api import TimeoutError, expect
 
 from reactpy_django.models import ComponentSession
 from reactpy_django.utils import strtobool
 
-from .utils import GITHUB_ACTIONS, PlaywrightTestCase
+from .utils import GITHUB_ACTIONS, PlaywrightTestCase, navigate_to_page
 
 CLICK_DELAY = 250 if strtobool(GITHUB_ACTIONS) else 25  # Delay in miliseconds.
 
@@ -73,9 +74,11 @@ class GenericComponentTests(PlaywrightTestCase):
         self.page.wait_for_selector("#authorized-user")
 
     def test_relational_query(self):
+        self.page.locator("#relational-query").wait_for()
         self.page.locator("#relational-query[data-success=true]").wait_for()
 
     def test_async_relational_query(self):
+        self.page.locator("#async-relational-query").wait_for()
         self.page.locator("#async-relational-query[data-success=true]").wait_for()
 
     def test_use_query_and_mutation(self):
@@ -579,3 +582,295 @@ class OfflineTests(PlaywrightTestCase):
         self._server_process.join()
         self.page.wait_for_selector("div:not([hidden]) > #offline")
         assert self.page.query_selector("div[hidden] > #online") is not None
+
+
+class FormTests(PlaywrightTestCase):
+    def test_basic_form(self):
+        navigate_to_page(self, "/form/")
+
+        try:
+            from test_app.models import TodoItem
+
+            os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+
+            if TodoItem.objects.count() == 0:
+                TodoItem(done=False, text="First").save()
+                TodoItem(done=True, text="Second").save()
+                TodoItem(done=False, text="Third").save()
+        finally:
+            os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
+
+        self.page.wait_for_selector("form")
+        self.page.wait_for_selector("#id_boolean_field")
+        self.page.wait_for_selector("#id_char_field")
+        self.page.wait_for_selector("#id_choice_field")
+        self.page.wait_for_selector("#id_date_field")
+        self.page.wait_for_selector("#id_date_time_field")
+        self.page.wait_for_selector("#id_decimal_field")
+        self.page.wait_for_selector("#id_duration_field")
+        self.page.wait_for_selector("#id_email_field")
+        self.page.wait_for_selector("#id_file_path_field")
+        self.page.wait_for_selector("#id_float_field")
+        self.page.wait_for_selector("#id_generic_ip_address_field")
+        self.page.wait_for_selector("#id_integer_field")
+        self.page.wait_for_selector("#id_float_field")
+        self.page.wait_for_selector("#id_json_field")
+        self.page.wait_for_selector("#id_multiple_choice_field")
+        self.page.wait_for_selector("#id_null_boolean_field")
+        self.page.wait_for_selector("#id_regex_field")
+        self.page.wait_for_selector("#id_slug_field")
+        self.page.wait_for_selector("#id_time_field")
+        self.page.wait_for_selector("#id_typed_choice_field")
+        self.page.wait_for_selector("#id_typed_multiple_choice_field")
+        self.page.wait_for_selector("#id_url_field")
+        self.page.wait_for_selector("#id_uuid_field")
+        self.page.wait_for_selector("#id_combo_field")
+        self.page.wait_for_selector("#id_password_field")
+        self.page.wait_for_selector("#id_model_choice_field")
+        self.page.wait_for_selector("#id_model_multiple_choice_field")
+
+        sleep(1)
+        self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+        self.page.wait_for_selector(".errorlist")
+
+        # Submitting an empty form should result in 22 error elements.
+        # The number of errors may change if/when new test form elements are created.
+        assert len(self.page.query_selector_all(".errorlist")) == 22
+
+        # Fill out the form
+        self.page.wait_for_selector("#id_boolean_field").click(delay=CLICK_DELAY)
+        expect(self.page.locator("#id_boolean_field")).to_be_checked()
+
+        self.page.locator("#id_char_field").type("test", delay=CLICK_DELAY)
+        self.page.locator("#id_choice_field").select_option("2")
+        self.page.locator("#id_date_field").type("2021-01-01", delay=CLICK_DELAY)
+        self.page.locator("#id_date_time_field").type("2021-01-01 01:01:00", delay=CLICK_DELAY)
+        self.page.locator("#id_decimal_field").type("0.123", delay=CLICK_DELAY)
+        self.page.locator("#id_duration_field").type("1", delay=CLICK_DELAY)
+        self.page.locator("#id_email_field").type("test@example.com", delay=CLICK_DELAY)
+        file_path_field_options = self.page.query_selector_all("#id_file_path_field option")
+        file_path_field_values: list[str] = [option.get_attribute("value") for option in file_path_field_options]
+        self.page.locator("#id_file_path_field").select_option(file_path_field_values[1])
+        self.page.locator("#id_float_field").type("1.2345", delay=CLICK_DELAY)
+        self.page.locator("#id_generic_ip_address_field").type("127.0.0.1", delay=CLICK_DELAY)
+        self.page.locator("#id_integer_field").type("123", delay=CLICK_DELAY)
+        self.page.locator("#id_json_field").clear()
+        self.page.locator("#id_json_field").type('{"key": "value"}', delay=CLICK_DELAY)
+        self.page.locator("#id_multiple_choice_field").select_option(["2", "3"])
+        self.page.locator("#id_null_boolean_field").select_option("false")
+        self.page.locator("#id_regex_field").type("12", delay=CLICK_DELAY)
+        self.page.locator("#id_slug_field").type("my-slug-text", delay=CLICK_DELAY)
+        self.page.locator("#id_time_field").type("01:01:00", delay=CLICK_DELAY)
+        self.page.locator("#id_typed_choice_field").select_option("2")
+        self.page.locator("#id_typed_multiple_choice_field").select_option(["1", "2"])
+        self.page.locator("#id_url_field").type("http://example.com", delay=CLICK_DELAY)
+        self.page.locator("#id_uuid_field").type("550e8400-e29b-41d4-a716-446655440000", delay=CLICK_DELAY)
+        self.page.locator("#id_combo_field").type("test@example.com", delay=CLICK_DELAY)
+        self.page.locator("#id_password_field").type("password", delay=CLICK_DELAY)
+        model_choice_field_options = self.page.query_selector_all("#id_model_multiple_choice_field option")
+        model_choice_field_values: list[str] = [option.get_attribute("value") for option in model_choice_field_options]
+        self.page.locator("#id_model_choice_field").select_option(model_choice_field_values[0])
+        self.page.locator("#id_model_multiple_choice_field").select_option([
+            model_choice_field_values[1],
+            model_choice_field_values[2],
+        ])
+
+        self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+
+        # Wait for one of the error messages to disappear (indicating that the form has been re-rendered)
+        expect(self.page.locator(".errorlist").all()[0]).not_to_be_attached()
+        # Make sure no errors remain
+        assert len(self.page.query_selector_all(".errorlist")) == 0
+
+    def test_bootstrap_form(self):
+        navigate_to_page(self, "/form/bootstrap/")
+
+        try:
+            from test_app.models import TodoItem
+
+            os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+
+            if TodoItem.objects.count() == 0:
+                TodoItem(done=False, text="First").save()
+                TodoItem(done=True, text="Second").save()
+                TodoItem(done=False, text="Third").save()
+        finally:
+            os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
+
+        self.page.wait_for_selector("form")
+        self.page.wait_for_selector("#id_boolean_field")
+        self.page.wait_for_selector("#id_char_field")
+        self.page.wait_for_selector("#id_choice_field")
+        self.page.wait_for_selector("#id_date_field")
+        self.page.wait_for_selector("#id_date_time_field")
+        self.page.wait_for_selector("#id_decimal_field")
+        self.page.wait_for_selector("#id_duration_field")
+        self.page.wait_for_selector("#id_email_field")
+        self.page.wait_for_selector("#id_file_path_field")
+        self.page.wait_for_selector("#id_float_field")
+        self.page.wait_for_selector("#id_generic_ip_address_field")
+        self.page.wait_for_selector("#id_integer_field")
+        self.page.wait_for_selector("#id_float_field")
+        self.page.wait_for_selector("#id_json_field")
+        self.page.wait_for_selector("#id_multiple_choice_field")
+        self.page.wait_for_selector("#id_null_boolean_field")
+        self.page.wait_for_selector("#id_regex_field")
+        self.page.wait_for_selector("#id_slug_field")
+        self.page.wait_for_selector("#id_time_field")
+        self.page.wait_for_selector("#id_typed_choice_field")
+        self.page.wait_for_selector("#id_typed_multiple_choice_field")
+        self.page.wait_for_selector("#id_url_field")
+        self.page.wait_for_selector("#id_uuid_field")
+        self.page.wait_for_selector("#id_combo_field")
+        self.page.wait_for_selector("#id_password_field")
+        self.page.wait_for_selector("#id_model_choice_field")
+        self.page.wait_for_selector("#id_model_multiple_choice_field")
+
+        sleep(1)
+        self.page.wait_for_selector("button[type=submit]").click(delay=CLICK_DELAY)
+        self.page.wait_for_selector(".invalid-feedback")
+
+        # Submitting an empty form should result in 22 error elements.
+        # The number of errors may change if/when new test form elements are created.
+        assert len(self.page.query_selector_all(".invalid-feedback")) == 22
+
+        # Fill out the form
+        self.page.wait_for_selector("#id_boolean_field").click(delay=CLICK_DELAY)
+        expect(self.page.locator("#id_boolean_field")).to_be_checked()
+
+        self.page.locator("#id_char_field").type("test", delay=CLICK_DELAY)
+        self.page.locator("#id_choice_field").select_option("2")
+        self.page.locator("#id_date_field").type("2021-01-01", delay=CLICK_DELAY)
+        self.page.locator("#id_date_time_field").type("2021-01-01 01:01:00", delay=CLICK_DELAY)
+        self.page.locator("#id_decimal_field").type("0.123", delay=CLICK_DELAY)
+        self.page.locator("#id_duration_field").type("1", delay=CLICK_DELAY)
+        self.page.locator("#id_email_field").type("test@example.com", delay=CLICK_DELAY)
+        file_path_field_options = self.page.query_selector_all("#id_file_path_field option")
+        file_path_field_values: list[str] = [option.get_attribute("value") for option in file_path_field_options]
+        self.page.locator("#id_file_path_field").select_option(file_path_field_values[1])
+        self.page.locator("#id_float_field").type("1.2345", delay=CLICK_DELAY)
+        self.page.locator("#id_generic_ip_address_field").type("127.0.0.1", delay=CLICK_DELAY)
+        self.page.locator("#id_integer_field").type("123", delay=CLICK_DELAY)
+        self.page.locator("#id_json_field").clear()
+        self.page.locator("#id_json_field").type('{"key": "value"}', delay=CLICK_DELAY)
+        self.page.locator("#id_multiple_choice_field").select_option(["2", "3"])
+        self.page.locator("#id_null_boolean_field").select_option("false")
+        self.page.locator("#id_regex_field").type("12", delay=CLICK_DELAY)
+        self.page.locator("#id_slug_field").type("my-slug-text", delay=CLICK_DELAY)
+        self.page.locator("#id_time_field").type("01:01:00", delay=CLICK_DELAY)
+        self.page.locator("#id_typed_choice_field").select_option("2")
+        self.page.locator("#id_typed_multiple_choice_field").select_option(["1", "2"])
+        self.page.locator("#id_url_field").type("http://example.com", delay=CLICK_DELAY)
+        self.page.locator("#id_uuid_field").type("550e8400-e29b-41d4-a716-446655440000", delay=CLICK_DELAY)
+        self.page.locator("#id_combo_field").type("test@example.com", delay=CLICK_DELAY)
+        self.page.locator("#id_password_field").type("password", delay=CLICK_DELAY)
+
+        model_choice_field_options = self.page.query_selector_all("#id_model_multiple_choice_field option")
+        model_choice_field_values: list[str] = [option.get_attribute("value") for option in model_choice_field_options]
+        self.page.locator("#id_model_choice_field").select_option(model_choice_field_values[0])
+        self.page.locator("#id_model_multiple_choice_field").select_option([
+            model_choice_field_values[1],
+            model_choice_field_values[2],
+        ])
+
+        self.page.wait_for_selector("button[type=submit]").click(delay=CLICK_DELAY)
+
+        # Wait for one of the error messages to disappear (indicating that the form has been re-rendered)
+        expect(self.page.locator(".invalid-feedback").all()[0]).not_to_be_attached()
+        # Make sure no errors remain
+        assert len(self.page.query_selector_all(".invalid-feedback")) == 0
+
+    def test_model_form(self):
+        navigate_to_page(self, "/form/model/")
+
+        uuid = uuid4().hex
+        self.page.wait_for_selector("form")
+
+        sleep(1)
+        self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+        self.page.wait_for_selector(".errorlist")
+
+        # Submitting an empty form should result in 1 error element.
+        assert len(self.page.query_selector_all(".errorlist")) == 1
+
+        # Fill out the form
+        self.page.locator("#id_text").type(uuid, delay=CLICK_DELAY)
+
+        # Submit the form
+        self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+
+        # Wait for the error message to disappear (indicating that the form has been re-rendered)
+        expect(self.page.locator(".errorlist").all()[0]).not_to_be_attached()
+
+        # Make sure no errors remain
+        assert len(self.page.query_selector_all(".errorlist")) == 0
+
+        # Check if `auto_save` created the TodoItem's database entry
+        try:
+            from test_app.models import TodoItem
+
+            os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+
+            assert TodoItem.objects.filter(text=uuid).exists()
+        finally:
+            os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
+
+    def test_sync_form_events(self):
+        navigate_to_page(self, "/form/sync_event/")
+        self.page.wait_for_selector("form")
+
+        # Check initial state
+        self.page.wait_for_selector("#success[data-value='false']")
+        self.page.wait_for_selector("#error[data-value='false']")
+        self.page.wait_for_selector("#receive_data[data-value='false']")
+        self.page.wait_for_selector("#change[data-value='false']")
+
+        # Submit empty the form
+        sleep(1)
+        self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+
+        # The empty form was submitted, should result in an error
+        self.page.wait_for_selector("#success[data-value='false']")
+        self.page.wait_for_selector("#error[data-value='true']")
+        self.page.wait_for_selector("#receive_data[data-value='true']")
+        self.page.wait_for_selector("#change[data-value='false']")
+
+        # Fill out the form and re-submit
+        self.page.wait_for_selector("#id_char_field").type("test", delay=CLICK_DELAY)
+        self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+
+        # Form should have been successfully submitted
+        self.page.wait_for_selector("#success[data-value='true']")
+        self.page.wait_for_selector("#error[data-value='true']")
+        self.page.wait_for_selector("#receive_data[data-value='true']")
+        self.page.wait_for_selector("#change[data-value='true']")
+
+    def test_async_form_events(self):
+        navigate_to_page(self, "/form/async_event/")
+        self.page.wait_for_selector("form")
+
+        # Check initial state
+        self.page.wait_for_selector("#success[data-value='false']")
+        self.page.wait_for_selector("#error[data-value='false']")
+        self.page.wait_for_selector("#receive_data[data-value='false']")
+        self.page.wait_for_selector("#change[data-value='false']")
+
+        # Submit empty the form
+        sleep(1)
+        self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+
+        # The empty form was submitted, should result in an error
+        self.page.wait_for_selector("#success[data-value='false']")
+        self.page.wait_for_selector("#error[data-value='true']")
+        self.page.wait_for_selector("#receive_data[data-value='true']")
+        self.page.wait_for_selector("#change[data-value='false']")
+
+        # Fill out the form and re-submit
+        self.page.wait_for_selector("#id_char_field").type("test", delay=CLICK_DELAY)
+        self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+
+        # Form should have been successfully submitted
+        self.page.wait_for_selector("#success[data-value='true']")
+        self.page.wait_for_selector("#error[data-value='true']")
+        self.page.wait_for_selector("#receive_data[data-value='true']")
+        self.page.wait_for_selector("#change[data-value='true']")

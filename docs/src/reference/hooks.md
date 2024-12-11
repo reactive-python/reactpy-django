@@ -46,7 +46,7 @@ Query functions can be sync or async.
     | --- | --- | --- | --- |
     | `#!python query` | `#!python Callable[FuncParams, Awaitable[Inferred]] | Callable[FuncParams, Inferred]` | A function that executes a query and returns some data. | N/A |
     | `#!python kwargs` | `#!python dict[str, Any] | None` | Keyword arguments to passed into the `#!python query` function. | `#!python None` |
-    | `#!python thread_sensitive` | `#!python bool` | Whether to run your query function in thread sensitive mode. This mode only applies to sync query functions, and is turned on by default due to Django ORM limitations. | `#!python True` |
+    | `#!python thread_sensitive` | `#!python bool` | Whether to run your query function in thread sensitive mode. This setting only applies to sync functions, and is turned on by default due to Django ORM limitations. | `#!python True` |
     | `#!python postprocessor` | `#!python AsyncPostprocessor | SyncPostprocessor | None` | A callable that processes the query `#!python data` before it is returned. The first argument of postprocessor function must be the query `#!python data`. All proceeding arguments are optional `#!python postprocessor_kwargs`. This postprocessor function must return the modified `#!python data`. | `#!python None` |
     | `#!python postprocessor_kwargs` | `#!python dict[str, Any] | None` | Keyworded arguments passed into the `#!python postprocessor` function. | `#!python None` |
 
@@ -188,7 +188,7 @@ Mutation functions can be sync or async.
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
     | `#!python mutation` | `#!python Callable[FuncParams, bool | None] | Callable[FuncParams, Awaitable[bool | None]]` | A callable that performs Django ORM create, update, or delete functionality. If this function returns `#!python False`, then your `#!python refetch` function will not be used. | N/A |
-    | `#!python thread_sensitive` | `#!python bool` | Whether to run the mutation in thread sensitive mode. This mode only applies to sync mutation functions, and is turned on by default due to Django ORM limitations. | `#!python True` |
+    | `#!python thread_sensitive` | `#!python bool` | Whether to run the mutation in thread sensitive mode. This setting only applies to sync functions, and is turned on by default due to Django ORM limitations. | `#!python True` |
     | `#!python refetch` | `#!python Callable[..., Any] | Sequence[Callable[..., Any]] | None` | A query function (the function you provide to your `#!python use_query` hook) or a sequence of query functions that need a `#!python refetch` if the mutation succeeds. This is useful for refreshing data after a mutation has been performed. | `#!python None` |
 
     <font size="4">**Returns**</font>

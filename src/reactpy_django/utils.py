@@ -11,6 +11,7 @@ from asyncio import iscoroutinefunction
 from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
 from fnmatch import fnmatch
+from functools import wraps
 from importlib import import_module
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable
@@ -30,8 +31,8 @@ from django.template import engines
 from django.templatetags.static import static
 from django.utils.encoding import smart_str
 from reactpy import vdom_to_html
-from reactpy.backend.hooks import ConnectionContext
 from reactpy.backend.types import Connection, Location
+from reactpy.core.hooks import ConnectionContext
 from reactpy.core.layout import Layout
 
 from reactpy_django.exceptions import (
@@ -42,10 +43,13 @@ from reactpy_django.exceptions import (
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, Sequence
+    from collections.abc import Awaitable, Mapping, Sequence
 
     from django.views import View
     from reactpy.types import ComponentConstructor
+
+    from reactpy_django.types import FuncParams, Inferred
+
 
 _logger = logging.getLogger(__name__)
 _TAG_PATTERN = r"(?P<tag>component)"
@@ -549,3 +553,20 @@ class FileAsyncIterator:
         finally:
             if file_opened:
                 file_handle.close()
+
+
+def ensure_async(
+    func: Callable[FuncParams, Inferred], *, thread_sensitive: bool = True
+) -> Callable[FuncParams, Awaitable[Inferred]]:
+    """Ensure the provided function is always an async coroutine. If the provided function is
+    not async, it will be adapted."""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return (
+            func(*args, **kwargs)
+            if inspect.iscoroutinefunction(func)
+            else database_sync_to_async(func, thread_sensitive=thread_sensitive)(*args, **kwargs)
+        )
+
+    return wrapper
