@@ -62,6 +62,7 @@ By utilizing `hatch`, the following commands are available to manage the develop
 | `hatch fmt --formatter` | Run only formatters |
 | `hatch run javascript:check` | Run the JavaScript linter/formatter |
 | `hatch run javascript:fix` | Run the JavaScript linter/formatter and write fixes to disk |
+| `hatch run python:type_check` | Run the Python type checker |
 
 ??? tip "Configure your IDE for linting"
 

@@ -185,6 +185,16 @@ linkcheck = [
 deploy_latest = ["cd docs && mike deploy --push --update-aliases {args} latest"]
 deploy_develop = ["cd docs && mike deploy --push develop"]
 
+################################
+# >>> Hatch Python Scripts <<< #
+################################
+
+[tool.hatch.envs.python]
+extra-dependencies = ["django-stubs", "channels-redis", "pyright"]
+
+[tool.hatch.envs.python.scripts]
+type_check = ["pyright src"]
+
 ############################
 # >>> Hatch JS Scripts <<< #
 ############################
