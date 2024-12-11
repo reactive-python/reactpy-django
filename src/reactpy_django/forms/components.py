@@ -17,7 +17,7 @@ from reactpy_django.forms.transforms import (
     set_value_prop_on_select_element,
     transform_value_prop_on_input_element,
 )
-from reactpy_django.forms.utils import convert_boolean_fields, convert_multiple_choice_fields
+from reactpy_django.forms.utils import convert_form_fields
 from reactpy_django.types import AsyncFormEvent, FormEventData, SyncFormEvent
 from reactpy_django.utils import ensure_async
 
@@ -95,8 +95,7 @@ def _django_form(
     async def on_submit_callback(new_data: dict[str, Any]):
         """Callback function provided directly to the client side listener. This is responsible for transmitting
         the submitted form data to the server for processing."""
-        convert_multiple_choice_fields(new_data, initialized_form)
-        convert_boolean_fields(new_data, initialized_form)
+        convert_form_fields(new_data, initialized_form)
 
         if on_receive_data:
             new_form_event = FormEventData(
