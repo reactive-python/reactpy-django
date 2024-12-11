@@ -20,7 +20,7 @@ from reactpy_django.utils import (
     prerender_component,
     reactpy_to_string,
     save_component_params,
-    strtobool,
+    str_to_bool,
     validate_component_args,
     validate_host,
 )
@@ -128,7 +128,7 @@ def component(
             return failure_context(dotted_path, e)
 
     # Pre-render the component, if requested
-    if strtobool(prerender):
+    if str_to_bool(prerender):
         if not is_local:
             msg = "Cannot pre-render non-local components."
             _logger.error(msg)

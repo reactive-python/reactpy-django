@@ -8,11 +8,11 @@ import pytest
 from playwright.sync_api import TimeoutError, expect
 
 from reactpy_django.models import ComponentSession
-from reactpy_django.utils import strtobool
+from reactpy_django.utils import str_to_bool
 
 from .utils import GITHUB_ACTIONS, PlaywrightTestCase, navigate_to_page
 
-CLICK_DELAY = 250 if strtobool(GITHUB_ACTIONS) else 25  # Delay in miliseconds.
+CLICK_DELAY = 250 if str_to_bool(GITHUB_ACTIONS) else 25  # Delay in miliseconds.
 
 
 class GenericComponentTests(PlaywrightTestCase):

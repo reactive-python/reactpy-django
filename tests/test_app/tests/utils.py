@@ -12,7 +12,7 @@ from django.db import connections
 from django.test.utils import modify_settings
 from playwright.sync_api import sync_playwright
 
-from reactpy_django.utils import strtobool
+from reactpy_django.utils import str_to_bool
 
 GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "False")
 
@@ -41,7 +41,7 @@ class PlaywrightTestCase(ChannelsLiveServerTestCase):
         if sys.platform == "win32":
             asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
         cls.playwright = sync_playwright().start()
-        headless = strtobool(os.environ.get("PLAYWRIGHT_HEADLESS", GITHUB_ACTIONS))
+        headless = str_to_bool(os.environ.get("PLAYWRIGHT_HEADLESS", GITHUB_ACTIONS))
         cls.browser = cls.playwright.chromium.launch(headless=bool(headless))
         cls.page = cls.browser.new_page()
         cls.page.set_default_timeout(10000)
