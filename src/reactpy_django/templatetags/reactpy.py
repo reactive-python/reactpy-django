@@ -18,11 +18,11 @@ from reactpy_django.exceptions import (
 from reactpy_django.pyscript.utils import PYSCRIPT_LAYOUT_HANDLER, extend_pyscript_config, render_pyscript_template
 from reactpy_django.utils import (
     prerender_component,
+    reactpy_to_string,
     save_component_params,
     strtobool,
     validate_component_args,
     validate_host,
-    vdom_or_component_to_string,
 )
 
 if TYPE_CHECKING:
@@ -203,7 +203,7 @@ def pyscript_component(
 
     uuid = uuid4().hex
     request: HttpRequest | None = context.get("request")
-    initial = vdom_or_component_to_string(initial, request=request, uuid=uuid)
+    initial = reactpy_to_string(initial, request=request, uuid=uuid)
     executor = render_pyscript_template(file_paths, uuid, root)
 
     return {

@@ -410,9 +410,7 @@ def prerender_component(
     return vdom_to_html(vdom_tree)  # type: ignore
 
 
-def vdom_or_component_to_string(
-    vdom_or_component: Any, request: HttpRequest | None = None, uuid: str | None = None
-) -> str:
+def reactpy_to_string(vdom_or_component: Any, request: HttpRequest | None = None, uuid: str | None = None) -> str:
     """Converts a VdomDict or component to an HTML string. If a string is provided instead, it will be
     automatically returned."""
     if isinstance(vdom_or_component, dict):

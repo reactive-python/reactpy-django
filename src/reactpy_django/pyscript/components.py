@@ -7,7 +7,7 @@ from reactpy.types import ComponentType, VdomDict
 
 from reactpy_django.html import pyscript
 from reactpy_django.pyscript.utils import render_pyscript_template
-from reactpy_django.utils import vdom_or_component_to_string
+from reactpy_django.utils import reactpy_to_string
 
 
 @component
@@ -19,7 +19,7 @@ def _pyscript_component(
     rendered, set_rendered = hooks.use_state(False)
     uuid_ref = hooks.use_ref(uuid4().hex.replace("-", ""))
     uuid = uuid_ref.current
-    initial = vdom_or_component_to_string(initial, uuid=uuid)
+    initial = reactpy_to_string(initial, uuid=uuid)
     executor = render_pyscript_template(file_paths, uuid, root)
 
     if not rendered:
