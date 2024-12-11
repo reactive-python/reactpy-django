@@ -1,6 +1,6 @@
 import { ReactPyDjangoClient } from "./client";
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom";
 import { Layout } from "@reactpy/client/src/components";
 import { DjangoFormProps } from "./types";
 
@@ -92,7 +92,8 @@ export function mountComponent(
   }
 
   // Start rendering the component
-  ReactDOM.render(<Layout client={client} />, client.mountElement);
+  const root = createRoot(client.mountElement);
+  root.render(<Layout client={client} />);
 }
 
 export function DjangoForm({
