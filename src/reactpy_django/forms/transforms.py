@@ -68,6 +68,23 @@ def intercept_anchor_links(vdom_tree: VdomDict) -> VdomDict:
     return vdom_tree
 
 
+def infer_key_from_attributes(vdom_tree: VdomDict) -> VdomDict:
+    """Infer the node's 'key' by looking at any attributes that should be unique."""
+    attributes = vdom_tree.get("attributes", {})
+
+    # Infer 'key' from 'id'
+    _id = attributes.get("id")
+
+    # Fallback: Infer 'key' from 'name'
+    if not _id and vdom_tree["tagName"] in {"input", "select", "textarea"}:
+        _id = attributes.get("name")
+
+    if _id:
+        vdom_tree["key"] = _id
+
+    return vdom_tree
+
+
 def _find_selected_options(vdom_node: Any) -> list[str]:
     """Recursively iterate through the tree to find all <option> tags with the 'selected' prop.
     Removes the 'selected' prop and returns a list of the 'value' prop of each selected <option>."""

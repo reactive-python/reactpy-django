@@ -13,6 +13,7 @@ from reactpy.web import export, module_from_file
 from reactpy_django.forms.transforms import (
     convert_html_props_to_reactjs,
     convert_textarea_children_to_prop,
+    infer_key_from_attributes,
     intercept_anchor_links,
     set_value_prop_on_select_element,
     transform_value_prop_on_input_element,
@@ -56,7 +57,7 @@ def _django_form(
     rendered_form, set_rendered_form = hooks.use_state(cast(Union[str, None], None))
     uuid = uuid_ref.current
 
-    # Check the provided arguments
+    # Validate the provided arguments
     if len(top_children) != top_children_count.current or len(bottom_children) != bottom_children_count.current:
         msg = "Dynamically changing the number of top or bottom children is not allowed."
         raise ValueError(msg)
@@ -67,14 +68,14 @@ def _django_form(
         )
         raise TypeError(msg)
 
-    # Try to initialize the form with the provided data
+    # Initialize the form with the provided data
     initialized_form = form(data=submitted_data)
     form_event = FormEventData(
         form=initialized_form, submitted_data=submitted_data or {}, set_submitted_data=set_submitted_data
     )
 
     # Validate and render the form
-    @hooks.use_effect
+    @hooks.use_effect(dependencies=[str(submitted_data)])
     async def render_form():
         """Forms must be rendered in an async loop to allow database fields to execute."""
         if submitted_data:
@@ -85,14 +86,12 @@ def _django_form(
             if not success and on_error:
                 await ensure_async(on_error, thread_sensitive=thread_sensitive)(form_event)
             if success and auto_save and isinstance(initialized_form, ModelForm):
-                await database_sync_to_async(initialized_form.save)()
+                await ensure_async(initialized_form.save)()
                 set_submitted_data(None)
 
-        new_form = await database_sync_to_async(initialized_form.render)(
-            form_template or config.REACTPY_DEFAULT_FORM_TEMPLATE
+        set_rendered_form(
+            await ensure_async(initialized_form.render)(form_template or config.REACTPY_DEFAULT_FORM_TEMPLATE)
         )
-        if new_form != rendered_form:
-            set_rendered_form(new_form)
 
     async def on_submit_callback(new_data: dict[str, Any]):
         """Callback function provided directly to the client side listener. This is responsible for transmitting
@@ -134,6 +133,7 @@ def _django_form(
             set_value_prop_on_select_element,
             transform_value_prop_on_input_element,
             intercept_anchor_links,
+            infer_key_from_attributes,
             *extra_transforms,
             strict=False,
         ),

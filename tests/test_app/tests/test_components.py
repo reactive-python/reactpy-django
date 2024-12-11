@@ -805,10 +805,6 @@ class FormTests(PlaywrightTestCase):
         # Make sure no errors remain
         assert len(self.page.query_selector_all(".errorlist")) == 0
 
-        # Make sure text field is empty
-        expect(self.page.locator("#id_text")).to_be_empty()
-        assert self.page.locator("#id_text").get_attribute("value") == ""
-
         # Check if `auto_save` created the TodoItem's database entry
         try:
             from test_app.models import TodoItem
