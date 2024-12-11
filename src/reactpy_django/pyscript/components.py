@@ -1,13 +1,16 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from reactpy import component, hooks, html
-from reactpy.types import ComponentType, VdomDict
 
 from reactpy_django.html import pyscript
 from reactpy_django.pyscript.utils import render_pyscript_template
 from reactpy_django.utils import reactpy_to_string
+
+if TYPE_CHECKING:
+    from reactpy.types import ComponentType, VdomDict
 
 
 @component

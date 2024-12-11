@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 from fnmatch import fnmatch
 from functools import wraps
 from importlib import import_module
-from typing import TYPE_CHECKING, Any, Awaitable, Callable
+from typing import TYPE_CHECKING, Any, Callable
 from uuid import UUID, uuid4
 
 import dill
@@ -35,7 +35,6 @@ from reactpy_django.exceptions import (
     InvalidHostError,
     ViewDoesNotExistError,
 )
-from reactpy_django.types import FuncParams, Inferred
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Mapping, Sequence
