@@ -75,7 +75,7 @@ installer = "uv"
 [[tool.hatch.build.hooks.build-scripts.scripts]]
 commands = [
   "bun install --cwd src/js",
-  "bun build src/js/src/index.tsx --outfile src/reactpy_django/static/reactpy_django/client.js --minify",
+  "bun build src/js/src/index.ts --outfile src/reactpy_django/static/reactpy_django/client.js --minify",
   'cd src/build_scripts && python copy_dir.py "src/js/node_modules/@pyscript/core/dist" "src/reactpy_django/static/reactpy_django/pyscript"',
   'cd src/build_scripts && python copy_dir.py "src/js/node_modules/morphdom/dist" "src/reactpy_django/static/reactpy_django/morphdom"',
 ]
