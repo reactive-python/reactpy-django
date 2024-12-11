@@ -17,7 +17,7 @@ from reactpy_django.forms.transforms import (
     set_value_prop_on_select_element,
     transform_value_prop_on_input_element,
 )
-from reactpy_django.forms.utils import convert_form_fields
+from reactpy_django.forms.utils import convert_form_fields, validate_form_args
 from reactpy_django.types import AsyncFormEvent, FormEventData, SyncFormEvent
 from reactpy_django.utils import ensure_async
 
@@ -56,18 +56,8 @@ def _django_form(
     rendered_form, set_rendered_form = hooks.use_state(cast(Union[str, None], None))
     uuid = uuid_ref.current
 
-    # Validate the provided arguments
-    if len(top_children) != top_children_count.current or len(bottom_children) != bottom_children_count.current:
-        msg = "Dynamically changing the number of top or bottom children is not allowed."
-        raise ValueError(msg)
-    if not isinstance(form, (type(Form), type(ModelForm))):
-        msg = (
-            "The provided form must be an uninitialized Django Form. "
-            "Do NOT initialize your form by calling it (ex. `MyForm()`)."
-        )
-        raise TypeError(msg)
-
     # Initialize the form with the provided data
+    validate_form_args(top_children, top_children_count, bottom_children, bottom_children_count, form)
     initialized_form = form(data=submitted_data)
     form_event = FormEventData(
         form=initialized_form, submitted_data=submitted_data or {}, set_submitted_data=set_submitted_data
