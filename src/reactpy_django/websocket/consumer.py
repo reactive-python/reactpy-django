@@ -21,7 +21,7 @@ from reactpy.core.hooks import ConnectionContext
 from reactpy.core.layout import Layout
 from reactpy.core.serve import serve_layout
 
-from reactpy_django.clean import clean
+from reactpy_django.tasks import clean
 from reactpy_django.utils import ensure_async
 
 if TYPE_CHECKING:

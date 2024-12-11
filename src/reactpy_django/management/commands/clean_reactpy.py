@@ -10,7 +10,7 @@ class Command(BaseCommand):
     help = "Manually clean ReactPy data. When using this command without args, it will perform all cleaning operations."
 
     def handle(self, **options):
-        from reactpy_django.clean import clean
+        from reactpy_django.tasks import clean
 
         verbosity = options.get("verbosity", 1)
 

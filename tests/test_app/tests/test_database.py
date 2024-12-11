@@ -6,7 +6,7 @@ from uuid import uuid4
 import dill
 from django.test import TransactionTestCase
 
-from reactpy_django import clean
+from reactpy_django import tasks
 from reactpy_django.models import ComponentSession, UserDataModel
 from reactpy_django.types import ComponentParams
 
@@ -29,7 +29,7 @@ class RoutedDatabaseTests(TransactionTestCase):
         config.REACTPY_CLEAN_USER_DATA = False
 
         try:
-            clean.clean(immediate=True)
+            tasks.clean(immediate=True)
 
             # Make sure the ComponentParams table is empty
             assert ComponentSession.objects.count() == 0
@@ -48,7 +48,7 @@ class RoutedDatabaseTests(TransactionTestCase):
 
             # Try to delete the `params_1` via cleaning (it should be expired)
             # Note: We don't use `immediate` here in order to test timestamping logic
-            clean.clean()
+            tasks.clean()
 
             # Make sure `params_1` has expired, but `params_2` is still there
             assert ComponentSession.objects.count() == 1
@@ -98,7 +98,7 @@ class MultiDatabaseTests(TransactionTestCase):
 
         # Make sure the orphaned user data object is deleted
         assert UserDataModel.objects.count() == initial_count + 1
-        clean.clean_user_data()
+        tasks.clean_user_data()
         assert UserDataModel.objects.count() == initial_count
 
         # Check if deleting a user deletes the associated UserData
