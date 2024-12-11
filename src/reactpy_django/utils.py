@@ -80,10 +80,10 @@ async def render_view(
     """Ingests a Django view (class or function) and returns an HTTP response object."""
     # Convert class-based view to function-based view
     if getattr(view, "as_view", None):
-        view = view.as_view()
+        view = view.as_view()  # type: ignore
 
     # Sync/Async function view
-    response = await ensure_async(view)(request, *args, **kwargs)
+    response = await ensure_async(view)(request, *args, **kwargs)  # type: ignore
 
     # TemplateView needs an extra render step
     if getattr(response, "render", None):
@@ -122,7 +122,7 @@ def register_iframe(view: Callable | View | str):
     from reactpy_django.config import REACTPY_REGISTERED_IFRAME_VIEWS
 
     if hasattr(view, "view_class"):
-        view = view.view_class
+        view = view.view_class  # type: ignore
     dotted_path = view if isinstance(view, str) else generate_obj_name(view)
     try:
         REACTPY_REGISTERED_IFRAME_VIEWS[dotted_path] = import_dotted_path(dotted_path)
@@ -165,7 +165,7 @@ class RootComponentFinder:
         template_source_loaders = []
         for e in engines.all():
             if hasattr(e, "engine"):
-                template_source_loaders.extend(e.engine.get_template_loaders(e.engine.loaders))
+                template_source_loaders.extend(e.engine.get_template_loaders(e.engine.loaders))  # type: ignore
         loaders = []
         for loader in template_source_loaders:
             if hasattr(loader, "loaders"):
@@ -366,7 +366,7 @@ class SyncLayout(Layout):
     def __exit__(self, *_):
         async_to_sync(self.__aexit__)(*_)
 
-    def render(self):
+    def sync_render(self):
         return async_to_sync(super().render)()
 
 
@@ -413,9 +413,9 @@ def prerender_component(
             ),
         )
     ) as layout:
-        vdom_tree = layout.render()["model"]
+        vdom_tree = layout.sync_render()["model"]
 
-    return vdom_to_html(vdom_tree)
+    return vdom_to_html(vdom_tree)  # type: ignore
 
 
 def vdom_or_component_to_string(
@@ -424,7 +424,7 @@ def vdom_or_component_to_string(
     """Converts a VdomDict or component to an HTML string. If a string is provided instead, it will be
     automatically returned."""
     if isinstance(vdom_or_component, dict):
-        return vdom_to_html(vdom_or_component)
+        return vdom_to_html(vdom_or_component)  # type: ignore
 
     if hasattr(vdom_or_component, "render"):
         if not request:
@@ -536,17 +536,16 @@ class FileAsyncIterator:
         self.file_path = file_path
 
     async def __aiter__(self):
-        file_opened = False
+        file_handle = None
         try:
             file_handle = FILE_ASYNC_ITERATOR_THREAD.submit(open, self.file_path, "rb").result()
-            file_opened = True
             while True:
                 chunk = FILE_ASYNC_ITERATOR_THREAD.submit(file_handle.read, 8192).result()
                 if not chunk:
                     break
                 yield chunk
         finally:
-            if file_opened:
+            if file_handle:
                 file_handle.close()
 
 

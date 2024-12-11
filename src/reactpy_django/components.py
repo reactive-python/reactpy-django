@@ -32,14 +32,14 @@ if TYPE_CHECKING:
     from django.forms import Form, ModelForm
     from django.views import View
 
-    from reactpy_django.types import AsyncFormEvent, SyncFormEvent
+    from reactpy_django.types import AsyncFormEvent, SyncFormEvent, ViewToComponentConstructor, ViewToIframeConstructor
 
 
 def view_to_component(
     view: Callable | View | str,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
     strict_parsing: bool = True,
-) -> Any:
+) -> ViewToComponentConstructor:
     """Converts a Django view to a ReactPy component.
 
     Keyword Args:
@@ -58,7 +58,7 @@ def view_to_component(
         *args,
         key: Key | None = None,
         **kwargs,
-    ):
+    ) -> ComponentType:
         return _view_to_component(
             view=view,
             transforms=transforms,
@@ -72,7 +72,7 @@ def view_to_component(
     return constructor
 
 
-def view_to_iframe(view: Callable | View | str, extra_props: dict[str, Any] | None = None):
+def view_to_iframe(view: Callable | View | str, extra_props: dict[str, Any] | None = None) -> ViewToIframeConstructor:
     """
     Args:
         view: The view function or class to convert, or the dotted path to the view.
@@ -88,13 +88,13 @@ def view_to_iframe(view: Callable | View | str, extra_props: dict[str, Any] | No
         *args,
         key: Key | None = None,
         **kwargs,
-    ):
+    ) -> ComponentType:
         return _view_to_iframe(view=view, extra_props=extra_props, args=args, kwargs=kwargs, key=key)
 
     return constructor
 
 
-def django_css(static_path: str, key: Key | None = None):
+def django_css(static_path: str, key: Key | None = None) -> ComponentType:
     """Fetches a CSS static file for use within ReactPy. This allows for deferred CSS loading.
 
     Args:
@@ -107,7 +107,7 @@ def django_css(static_path: str, key: Key | None = None):
     return _django_css(static_path=static_path, key=key)
 
 
-def django_js(static_path: str, key: Key | None = None):
+def django_js(static_path: str, key: Key | None = None) -> ComponentType:
     """Fetches a JS static file for use within ReactPy. This allows for deferred JS loading.
 
     Args:
@@ -135,7 +135,7 @@ def django_form(
     top_children: Sequence[Any] = (),
     bottom_children: Sequence[Any] = (),
     key: Key | None = None,
-):
+) -> ComponentType:
     """Converts a Django form to a ReactPy component.
 
     Args:
@@ -182,7 +182,7 @@ def pyscript_component(
     *file_paths: str,
     initial: str | VdomDict | ComponentType = "",
     root: str = "root",
-):
+) -> ComponentType:
     """
     Args:
         file_paths: File path to your client-side component. If multiple paths are \
@@ -219,7 +219,7 @@ def _view_to_component(
     else:
         _request = HttpRequest()
         _request.method = "GET"
-    resolved_view: Callable = import_module(view) if isinstance(view, str) else view
+    resolved_view: Callable = import_module(view) if isinstance(view, str) else view  # type: ignore
 
     # Render the view render within a hook
     @hooks.use_effect(
@@ -251,12 +251,12 @@ def _view_to_iframe(
     extra_props: dict[str, Any] | None,
     args: Sequence,
     kwargs: dict,
-) -> VdomDict:
+):
     """The actual component. Used to prevent pollution of acceptable kwargs keys."""
     from reactpy_django.config import REACTPY_REGISTERED_IFRAME_VIEWS
 
     if hasattr(view, "view_class"):
-        view = view.view_class
+        view = view.view_class  # type: ignore
     dotted_path = view if isinstance(view, str) else generate_obj_name(view)
     registered_view = REACTPY_REGISTERED_IFRAME_VIEWS.get(dotted_path)
 

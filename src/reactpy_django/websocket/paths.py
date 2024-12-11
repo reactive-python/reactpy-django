@@ -5,7 +5,7 @@ from reactpy_django.websocket.consumer import ReactpyAsyncWebsocketConsumer
 
 REACTPY_WEBSOCKET_ROUTE = path(
     f"{REACTPY_URL_PREFIX}/<str:dotted_path>/<uuid:uuid>/<int:has_args>/",
-    ReactpyAsyncWebsocketConsumer.as_asgi(),
+    ReactpyAsyncWebsocketConsumer.as_asgi(),  # type: ignore
 )
 """A URL path for :class:`ReactpyAsyncWebsocketConsumer`.
 

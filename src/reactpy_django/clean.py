@@ -84,7 +84,7 @@ def clean_user_data(verbosity: int = 1):
     start_time = timezone.now()
     user_model = get_user_model()
     all_users = user_model.objects.all()
-    all_user_pks = all_users.values_list(user_model._meta.pk.name, flat=True)
+    all_user_pks = all_users.values_list(user_model._meta.pk.name, flat=True)  # type: ignore
 
     # Django doesn't support using QuerySets as an argument with cross-database relations.
     if user_model.objects.db != UserDataModel.objects.db:

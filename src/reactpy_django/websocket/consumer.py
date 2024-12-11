@@ -16,8 +16,8 @@ import orjson
 from channels.auth import login
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from django.utils import timezone
-from reactpy.backend.hooks import ConnectionContext
 from reactpy.backend.types import Connection, Location
+from reactpy.core.hooks import ConnectionContext
 from reactpy.core.layout import Layout
 from reactpy.core.serve import serve_layout
 
@@ -210,7 +210,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         # Start the ReactPy component rendering loop
         with contextlib.suppress(Exception):
             await serve_layout(
-                Layout(ConnectionContext(root_component, value=connection)),
+                Layout(ConnectionContext(root_component, value=connection)),  # type: ignore
                 self.send_json,
                 self.recv_queue.get,
             )

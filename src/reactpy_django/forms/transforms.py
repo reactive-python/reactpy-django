@@ -1,3 +1,4 @@
+# type: ignore
 # TODO: Almost everything in this module should be moved to `reactpy.utils._mutate_vdom()`.
 from __future__ import annotations
 

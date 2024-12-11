@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from collections import defaultdict
+from collections.abc import Awaitable
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -36,7 +37,7 @@ from reactpy_django.types import (
 from reactpy_django.utils import django_query_postprocessor, ensure_async, generate_obj_name, get_pk
 
 if TYPE_CHECKING:
-    from collections.abc import Awaitable, Sequence
+    from collections.abc import Sequence
 
     from channels_redis.core import RedisChannelLayer
     from django.contrib.auth.models import AbstractUser
@@ -137,13 +138,17 @@ def use_query(
         """The main running function for `use_query`"""
         try:
             # Run the query
-            new_data = await ensure_async(query, thread_sensitive=thread_sensitive)(**kwargs)
+            query_async = cast(
+                Callable[..., Awaitable[Inferred]], ensure_async(query, thread_sensitive=thread_sensitive)
+            )
+            new_data = await query_async(**kwargs)
 
             # Run the postprocessor
             if postprocessor:
-                new_data = await ensure_async(postprocessor, thread_sensitive=thread_sensitive)(
-                    new_data, **postprocessor_kwargs
+                async_postprocessor = cast(
+                    Callable[..., Awaitable[Any]], ensure_async(postprocessor, thread_sensitive=thread_sensitive)
                 )
+                new_data = await async_postprocessor(new_data, **postprocessor_kwargs)
 
         # Log any errors and set the error state
         except Exception as e:
@@ -230,7 +235,7 @@ def use_mutation(
     async_task_refs = use_ref(set())
 
     # The main "running" function for `use_mutation`
-    async def execute_mutation(exec_args, exec_kwargs) -> None:
+    async def execute_mutation(*exec_args: FuncParams.args, **exec_kwargs: FuncParams.kwargs) -> None:
         # Run the mutation
         try:
             should_refetch = await ensure_async(mutation, thread_sensitive=thread_sensitive)(*exec_args, **exec_kwargs)
@@ -262,7 +267,7 @@ def use_mutation(
         set_loading(True)
 
         # Execute the mutation in the background
-        task = asyncio.ensure_future(execute_mutation(exec_args=exec_args, exec_kwargs=exec_kwargs))
+        task = asyncio.ensure_future(execute_mutation(*exec_args, **exec_kwargs))
 
         # Add the task to a set to prevent it from being garbage collected
         async_task_refs.current.add(task)
@@ -359,7 +364,7 @@ def use_channel_layer(
         layer: The channel layer to use. This layer must be defined in \
             `settings.py:CHANNEL_LAYERS`.
     """
-    channel_layer: InMemoryChannelLayer | RedisChannelLayer = get_channel_layer(layer)
+    channel_layer: InMemoryChannelLayer | RedisChannelLayer = get_channel_layer(layer)  # type: ignore
     channel_name = use_memo(lambda: str(name or uuid4()))
 
     if not name and not group_name:
