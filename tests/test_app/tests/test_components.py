@@ -791,7 +791,8 @@ class FormTests(PlaywrightTestCase):
         self.page.wait_for_selector(".errorlist")
 
         # Submitting an empty form should result in 1 error element.
-        assert len(self.page.query_selector_all(".errorlist")) == 1
+        error_list = self.page.locator(".errorlist").all()
+        assert len(error_list) == 1
 
         # Fill out the form
         self.page.locator("#id_text").type(uuid, delay=CLICK_DELAY)
@@ -800,7 +801,7 @@ class FormTests(PlaywrightTestCase):
         self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
 
         # Wait for the error message to disappear (indicating that the form has been re-rendered)
-        expect(self.page.locator(".errorlist").all()[0]).not_to_be_attached()
+        expect(error_list[0]).not_to_be_attached()
 
         # Make sure no errors remain
         assert len(self.page.query_selector_all(".errorlist")) == 0
