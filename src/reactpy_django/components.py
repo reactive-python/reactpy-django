@@ -6,7 +6,6 @@ import json
 import os
 from typing import TYPE_CHECKING, Any, Callable, Union, cast
 from urllib.parse import urlencode
-from uuid import uuid4
 
 from django.contrib.staticfiles.finders import find
 from django.core.cache import caches
@@ -17,13 +16,11 @@ from reactpy.types import ComponentType, Key, VdomDict
 
 from reactpy_django.exceptions import ViewNotRegisteredError
 from reactpy_django.forms.components import _django_form
-from reactpy_django.html import pyscript
+from reactpy_django.pyscript.components import _pyscript_component
 from reactpy_django.utils import (
     generate_obj_name,
     import_module,
-    render_pyscript_template,
     render_view,
-    vdom_or_component_to_string,
 )
 
 if TYPE_CHECKING:
@@ -316,30 +313,3 @@ def _cached_static_contents(static_path: str) -> str:
         caches[REACTPY_CACHE].set(cache_key, file_contents, timeout=None, version=int(last_modified_time))
 
     return file_contents
-
-
-@component
-def _pyscript_component(
-    *file_paths: str,
-    initial: str | VdomDict | ComponentType = "",
-    root: str = "root",
-):
-    rendered, set_rendered = hooks.use_state(False)
-    uuid_ref = hooks.use_ref(uuid4().hex.replace("-", ""))
-    uuid = uuid_ref.current
-    initial = vdom_or_component_to_string(initial, uuid=uuid)
-    executor = render_pyscript_template(file_paths, uuid, root)
-
-    if not rendered:
-        # FIXME: This is needed to properly re-render PyScript during a WebSocket
-        # disconnection / reconnection. There may be a better way to do this in the future.
-        set_rendered(True)
-        return None
-
-    return html._(
-        html.div(
-            {"id": f"pyscript-{uuid}", "className": "pyscript", "data-uuid": uuid},
-            initial,
-        ),
-        pyscript({"async": ""}, executor),
-    )

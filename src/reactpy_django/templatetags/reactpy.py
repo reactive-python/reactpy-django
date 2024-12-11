@@ -15,11 +15,9 @@ from reactpy_django.exceptions import (
     InvalidHostError,
     OfflineComponentMissingError,
 )
+from reactpy_django.pyscript.utils import PYSCRIPT_LAYOUT_HANDLER, extend_pyscript_config, render_pyscript_template
 from reactpy_django.utils import (
-    PYSCRIPT_LAYOUT_HANDLER,
-    extend_pyscript_config,
     prerender_component,
-    render_pyscript_template,
     save_component_params,
     strtobool,
     validate_component_args,
