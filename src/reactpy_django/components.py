@@ -217,7 +217,7 @@ def _view_to_component(
             json.dumps([_args, _kwargs], default=generate_obj_name),
         ]
     )
-    async def async_render():
+    async def _render_view():
         """Render the view in an async hook to avoid blocking the main thread."""
         # Render the view
         response = await render_view(resolved_view, _request, _args, _kwargs)
