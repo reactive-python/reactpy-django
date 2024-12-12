@@ -3,7 +3,9 @@ import asyncio
 import os
 import sys
 from functools import partial
+from typing import Callable
 
+import decorator
 from channels.testing import ChannelsLiveServerTestCase
 from channels.testing.live import make_application
 from django.core.exceptions import ImproperlyConfigured
@@ -89,7 +91,14 @@ class PlaywrightTestCase(ChannelsLiveServerTestCase):
         occurring due to a bug within `ChannelsLiveServerTestCase`."""
 
 
-def navigate_to_page(self: PlaywrightTestCase, path: str):
-    """Redirect the page's URL to the given link, if the page is not already there."""
-    if self.page.url != path:
-        self.page.goto(f"http://{self.host}:{self._port}/{path.lstrip('/')}")
+def navigate_to_page(path: str):
+    def _decorator(func: Callable):
+        @decorator.decorator
+        def _wrapper(func: Callable, self: PlaywrightTestCase, *args, **kwargs):
+            if self.page.url != path:
+                self.page.goto(f"http://{self.host}:{self._port}/{path.lstrip('/')}")
+            return func(self, *args, **kwargs)
+
+        return _wrapper(func)
+
+    return _decorator

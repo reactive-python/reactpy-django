@@ -95,6 +95,8 @@ extra-dependencies = [
   "tblib",
   "servestatic",
   "django-bootstrap5",
+  "decorator",
+
 ]
 matrix-name-format = "{variable}-{value}"
 # TODO: Remove the `retries` value once we fix flakiness of `test_sync_form_events`

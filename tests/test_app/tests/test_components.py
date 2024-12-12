@@ -585,9 +585,8 @@ class OfflineTests(PlaywrightTestCase):
 
 
 class FormTests(PlaywrightTestCase):
+    @navigate_to_page("/form/")
     def test_basic_form(self):
-        navigate_to_page(self, "/form/")
-
         try:
             from test_app.models import TodoItem
 
@@ -682,9 +681,8 @@ class FormTests(PlaywrightTestCase):
         # Make sure no errors remain
         assert len(self.page.query_selector_all(".errorlist")) == 0
 
+    @navigate_to_page("/form/bootstrap/")
     def test_bootstrap_form(self):
-        navigate_to_page(self, "/form/bootstrap/")
-
         try:
             from test_app.models import TodoItem
 
@@ -780,9 +778,8 @@ class FormTests(PlaywrightTestCase):
         # Make sure no errors remain
         assert len(self.page.query_selector_all(".invalid-feedback")) == 0
 
+    @navigate_to_page("/form/model/")
     def test_model_form(self):
-        navigate_to_page(self, "/form/model/")
-
         uuid = uuid4().hex
         self.page.wait_for_selector("form")
 
@@ -816,8 +813,8 @@ class FormTests(PlaywrightTestCase):
         finally:
             os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
 
+    @navigate_to_page("/form/sync_event/")
     def test_sync_form_events(self):
-        navigate_to_page(self, "/form/sync_event/")
         self.page.wait_for_selector("form")
 
         # Check initial state
@@ -846,8 +843,8 @@ class FormTests(PlaywrightTestCase):
         self.page.wait_for_selector("#receive_data[data-value='true']")
         self.page.wait_for_selector("#change[data-value='true']")
 
+    @navigate_to_page("/form/async_event/")
     def test_async_form_events(self):
-        navigate_to_page(self, "/form/async_event/")
         self.page.wait_for_selector("form")
 
         # Check initial state
