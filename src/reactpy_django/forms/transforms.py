@@ -131,8 +131,8 @@ def _do_nothing_event(*args, **kwargs):
     """A placeholder event function that does nothing."""
 
 
-# TODO: After the bulk of this file to ReactPy core, we should create some kind of script that will
-# auto-generate this into a file dump. The current implementation of manually copy-pasting it isn't ideal.
+# TODO: Create a script that will auto-generate this into a file dump.
+# The current implementation of manually copy-pasting it isn't ideal.
 # https://react.dev/reference/react-dom/components/common#common-props
 SPECIAL_PROPS = r"""
 children: A React node (an element, a string, a number, a portal, an empty node like null, undefined and booleans, or an array of other React nodes). Specifies the content inside the component. When you use JSX, you will usually specify the children prop implicitly by nesting tags like <div><span /></div>.
