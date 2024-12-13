@@ -21,7 +21,7 @@ class GenericComponentTests(PlaywrightTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.page.goto(f"http://{cls.host}:{cls._port}")
+        cls.page.goto(f"http://{cls.host}:{cls._port_0}")
 
     def test_hello_world(self):
         self.page.wait_for_selector("#hello-world")
@@ -288,7 +288,7 @@ class PrerenderTests(PlaywrightTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.page.goto(f"http://{cls.host}:{cls._port}/prerender/")
+        cls.page.goto(f"http://{cls.host}:{cls._port_0}/prerender/")
 
     def test_prerender(self):
         """Verify if round-robin host selection is working."""
@@ -326,7 +326,7 @@ class ErrorTests(PlaywrightTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.page.goto(f"http://{cls.host}:{cls._port}/errors/")
+        cls.page.goto(f"http://{cls.host}:{cls._port_0}/errors/")
 
     def test_component_does_not_exist_error(self):
         broken_component = self.page.locator("#component_does_not_exist_error")
@@ -435,7 +435,7 @@ class ChannelLayersTests(PlaywrightTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.page.goto(f"http://{cls.host}:{cls._port}/channel-layers/")
+        cls.page.goto(f"http://{cls.host}:{cls._port_0}/channel-layers/")
 
     def test_channel_layer_components(self):
         sender = self.page.wait_for_selector("#sender")
@@ -459,7 +459,7 @@ class PyscriptTests(PlaywrightTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.page.goto(f"http://{cls.host}:{cls._port}/pyscript/")
+        cls.page.goto(f"http://{cls.host}:{cls._port_0}/pyscript/")
 
     def test_0_hello_world(self):
         self.page.wait_for_selector("#hello-world-loading")
@@ -510,23 +510,9 @@ class PyscriptTests(PlaywrightTestCase):
 
 
 class DistributedComputingTests(PlaywrightTestCase):
-    @classmethod
-    def setUpServer(cls):
-        super().setUpServer()
-        cls._server_process2 = cls.ProtocolServerProcess(cls.host, cls.get_application)
-        cls._server_process2.start()
-        cls._server_process2.ready.wait()
-        cls._port2 = cls._server_process2.port.value
-
-    @classmethod
-    def tearDownServer(cls):
-        super().tearDownServer()
-        cls._server_process2.terminate()
-        cls._server_process2.join()
-
     def test_host_roundrobin(self):
         """Verify if round-robin host selection is working."""
-        self.page.goto(f"{self.live_server_url}/roundrobin/{self._port}/{self._port2}/8")
+        self.page.goto(f"{self.live_server_url}/roundrobin/{self._port_0}/{self._port_1}/8")
         elem0 = self.page.locator(".custom_host-0")
         elem1 = self.page.locator(".custom_host-1")
         elem2 = self.page.locator(".custom_host-2")
@@ -544,8 +530,8 @@ class DistributedComputingTests(PlaywrightTestCase):
             elem3.get_attribute("data-port"),
         }
         correct_ports = {
-            str(self._port),
-            str(self._port2),
+            str(self._port_0),
+            str(self._port_1),
         }
 
         # There should only be two ports in the set
@@ -554,15 +540,15 @@ class DistributedComputingTests(PlaywrightTestCase):
 
     def test_custom_host(self):
         """Make sure that the component is rendered by a separate server."""
-        self.page.goto(f"{self.live_server_url}/port/{self._port2}/")
+        self.page.goto(f"{self.live_server_url}/port/{self._port_1}/")
         elem = self.page.locator(".custom_host-0")
         elem.wait_for()
-        assert f"Server Port: {self._port2}" in elem.text_content()
+        assert f"Server Port: {self._port_1}" in elem.text_content()
 
     def test_custom_host_wrong_port(self):
         """Make sure that other ports are not rendering components."""
         tmp_sock = socket.socket()
-        tmp_sock.bind((self._server_process.host, 0))
+        tmp_sock.bind((self._server_process_0.host, 0))
         random_port = tmp_sock.getsockname()[1]
         self.page.goto(f"{self.live_server_url}/port/{random_port}/")
         with pytest.raises(TimeoutError):
@@ -573,13 +559,13 @@ class OfflineTests(PlaywrightTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.page.goto(f"http://{cls.host}:{cls._port}/offline/")
+        cls.page.goto(f"http://{cls.host}:{cls._port_0}/offline/")
 
     def test_offline_components(self):
         self.page.wait_for_selector("div:not([hidden]) > #online")
         assert self.page.query_selector("div[hidden] > #offline") is not None
-        self._server_process.terminate()
-        self._server_process.join()
+        self._server_process_0.terminate()
+        self._server_process_0.join()
         self.page.wait_for_selector("div:not([hidden]) > #offline")
         assert self.page.query_selector("div[hidden] > #online") is not None
 
