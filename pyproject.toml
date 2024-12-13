@@ -99,9 +99,6 @@ extra-dependencies = [
 
 ]
 matrix-name-format = "{variable}-{value}"
-# TODO: Remove the `retries` value once we fix flakiness of `test_sync_form_events`
-# https://github.com/reactive-python/reactpy-django/issues/272
-retries = 5
 
 # Django 4.2
 [[tool.hatch.envs.hatch-test.matrix]]

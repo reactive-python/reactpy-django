@@ -799,6 +799,9 @@ class FormTests(PlaywrightTestCase):
         finally:
             os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
 
+    # TODO: Remove the `reruns` value once we fix flakiness of `test_sync_form_events`
+    # https://github.com/reactive-python/reactpy-django/issues/272
+    @pytest.mark.flaky(reruns=5)
     @navigate_to_page("/form/sync_event/")
     def test_sync_form_events(self):
         self.page.wait_for_selector("form")
