@@ -214,9 +214,17 @@ The entire file path provided is loaded directly into the browser, and must have
         {% include "../../examples/python/pyodide_js_module.py" %}
         ```
 
-    **PyScript FFI**
+    **PyScript Foriegn Function Interface (FFI)**
 
-    ...
+    PyScript FFI has similar functionality to Pyodide's `js` module, but utilizes a different API.
+
+    There are two importable modules available that are available within the FFI interface: `window` and `document`.
+
+    === "root.py"
+
+        ```python
+        {% include "../../examples/python/pyscript_ffi.py" %}
+        ```
 
     **PyScript JS Modules**
 
