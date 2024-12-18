@@ -3,6 +3,7 @@ import asyncio
 import os
 import sys
 from collections.abc import Iterable
+from functools import partial
 from typing import TYPE_CHECKING, Any, Callable
 
 import decorator
@@ -24,11 +25,11 @@ GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "False")
 
 class PlaywrightTestCase(ChannelsLiveServerTestCase):
     databases = {"default"}
-    total_servers = 3
+    total_servers = 4
     _server_process_0: "DaphneProcess"
-    _server_process_1: "DaphneProcess"
-    _server_process_2: "DaphneProcess"
-    _server_process_3: "DaphneProcess"
+    _server_process_1: "DaphneProcess"  # For Offline Tests
+    _server_process_2: "DaphneProcess"  # For Distributed Computing Tests
+    _server_process_3: "DaphneProcess"  # For Distributed Computing Tests
     _port_0: int
     _port_1: int
     _port_2: int
@@ -46,7 +47,7 @@ class PlaywrightTestCase(ChannelsLiveServerTestCase):
                 raise ImproperlyConfigured(msg)
         cls._live_server_modified_settings = modify_settings(ALLOWED_HOSTS={"append": cls.host})
         cls._live_server_modified_settings.enable()
-        cls.get_application = get_default_application
+        cls.get_application = partial(get_default_application)
 
         # Start the Django webserver(s)
         for i in range(cls.total_servers):
@@ -138,9 +139,10 @@ def navigate_to_page(path: str, *, server_num=0):
     def _decorator(func: Callable):
         @decorator.decorator
         def _wrapper(func: Callable, self: PlaywrightTestCase, *args, **kwargs):
-            if self.page.url != path:
-                _port = getattr(self, f"_port_{server_num}")
-                self.page.goto(f"http://{self.host}:{_port}/{path.lstrip('/')}")
+            _port = getattr(self, f"_port_{server_num}")
+            _path = f"http://{self.host}:{_port}/{path.lstrip('/')}"
+            if self.page.url != _path:
+                self.page.goto(_path)
             return func(self, *args, **kwargs)
 
         return _wrapper(func)

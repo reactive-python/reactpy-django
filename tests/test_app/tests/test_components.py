@@ -15,43 +15,48 @@ from .utils import GITHUB_ACTIONS, PlaywrightTestCase, navigate_to_page
 CLICK_DELAY = 250 if str_to_bool(GITHUB_ACTIONS) else 25  # Delay in miliseconds.
 
 
-class GenericComponentTests(PlaywrightTestCase):
+class ComponentTests(PlaywrightTestCase):
     databases = {"default"}
 
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.page.goto(f"http://{cls.host}:{cls._port_0}")
-
+    @navigate_to_page("/")
     def test_hello_world(self):
         self.page.wait_for_selector("#hello-world")
 
+    @navigate_to_page("/")
     def test_counter(self):
         for i in range(5):
             self.page.locator(f"#counter-num[data-count={i}]")
             self.page.locator("#counter-inc").click()
 
+    @navigate_to_page("/")
     def test_parametrized_component(self):
         self.page.locator("#parametrized-component[data-value='579']").wait_for()
 
+    @navigate_to_page("/")
     def test_object_in_templatetag(self):
         self.page.locator("#object_in_templatetag[data-success=true]").wait_for()
 
+    @navigate_to_page("/")
     def test_component_from_web_module(self):
         self.page.wait_for_selector("#button-from-js-module")
 
+    @navigate_to_page("/")
     def test_use_connection(self):
         self.page.locator("#use-connection[data-success=true]").wait_for()
 
+    @navigate_to_page("/")
     def test_use_scope(self):
         self.page.locator("#use-scope[data-success=true]").wait_for()
 
+    @navigate_to_page("/")
     def test_use_location(self):
         self.page.locator("#use-location[data-success=true]").wait_for()
 
+    @navigate_to_page("/")
     def test_use_origin(self):
         self.page.locator("#use-origin[data-success=true]").wait_for()
 
+    @navigate_to_page("/")
     def test_static_css(self):
         assert (
             self.page.wait_for_selector("#django-css button").evaluate(
@@ -60,27 +65,33 @@ class GenericComponentTests(PlaywrightTestCase):
             == "rgb(0, 0, 255)"
         )
 
+    @navigate_to_page("/")
     def test_static_js(self):
         self.page.locator("#django-js[data-success=true]").wait_for()
 
+    @navigate_to_page("/")
     def test_unauthorized_user(self):
         with pytest.raises(TimeoutError):
             self.page.wait_for_selector("#unauthorized-user", timeout=1)
         self.page.wait_for_selector("#unauthorized-user-fallback")
 
+    @navigate_to_page("/")
     def test_authorized_user(self):
         with pytest.raises(TimeoutError):
             self.page.wait_for_selector("#authorized-user-fallback", timeout=1)
         self.page.wait_for_selector("#authorized-user")
 
+    @navigate_to_page("/")
     def test_relational_query(self):
         self.page.locator("#relational-query").wait_for()
         self.page.locator("#relational-query[data-success=true]").wait_for()
 
+    @navigate_to_page("/")
     def test_async_relational_query(self):
         self.page.locator("#async-relational-query").wait_for()
         self.page.locator("#async-relational-query[data-success=true]").wait_for()
 
+    @navigate_to_page("/")
     def test_use_query_and_mutation(self):
         todo_input = self.page.wait_for_selector("#todo-input")
 
@@ -94,6 +105,7 @@ class GenericComponentTests(PlaywrightTestCase):
             with pytest.raises(TimeoutError):
                 self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}", timeout=1)
 
+    @navigate_to_page("/")
     def test_async_use_query_and_mutation(self):
         todo_input = self.page.wait_for_selector("#async-todo-input")
 
@@ -107,68 +119,85 @@ class GenericComponentTests(PlaywrightTestCase):
             with pytest.raises(TimeoutError):
                 self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}", timeout=1)
 
+    @navigate_to_page("/")
     def test_view_to_component_sync_func(self):
         self.page.locator("#view_to_component_sync_func[data-success=true]").wait_for()
 
+    @navigate_to_page("/")
     def test_view_to_component_async_func(self):
         self.page.locator("#view_to_component_async_func[data-success=true]").wait_for()
 
+    @navigate_to_page("/")
     def test_view_to_component_sync_class(self):
         self.page.locator("#ViewToComponentSyncClass[data-success=true]").wait_for()
 
+    @navigate_to_page("/")
     def test_view_to_component_async_class(self):
         self.page.locator("#ViewToComponentAsyncClass[data-success=true]").wait_for()
 
+    @navigate_to_page("/")
     def test_view_to_component_template_view_class(self):
         self.page.locator("#ViewToComponentTemplateViewClass[data-success=true]").wait_for()
 
+    @navigate_to_page("/")
     def _click_btn_and_check_success(self, name):
         self.page.locator(f"#{name}:not([data-success=true])").wait_for()
         self.page.wait_for_selector(f"#{name}_btn").click()
         self.page.locator(f"#{name}[data-success=true]").wait_for()
 
+    @navigate_to_page("/")
     def test_view_to_component_script(self):
         self._click_btn_and_check_success("view_to_component_script")
 
+    @navigate_to_page("/")
     def test_view_to_component_request(self):
         self._click_btn_and_check_success("view_to_component_request")
 
+    @navigate_to_page("/")
     def test_view_to_component_args(self):
         self._click_btn_and_check_success("view_to_component_args")
 
+    @navigate_to_page("/")
     def test_view_to_component_kwargs(self):
         self._click_btn_and_check_success("view_to_component_kwargs")
 
+    @navigate_to_page("/")
     def test_view_to_iframe_sync_func(self):
         self.page.frame_locator("#view_to_iframe_sync_func > iframe").locator(
             "#view_to_iframe_sync_func[data-success=true]"
         ).wait_for()
 
+    @navigate_to_page("/")
     def test_view_to_iframe_async_func(self):
         self.page.frame_locator("#view_to_iframe_async_func > iframe").locator(
             "#view_to_iframe_async_func[data-success=true]"
         ).wait_for()
 
+    @navigate_to_page("/")
     def test_view_to_iframe_sync_class(self):
         self.page.frame_locator("#view_to_iframe_sync_class > iframe").locator(
             "#ViewToIframeSyncClass[data-success=true]"
         ).wait_for()
 
+    @navigate_to_page("/")
     def test_view_to_iframe_async_class(self):
         self.page.frame_locator("#view_to_iframe_async_class > iframe").locator(
             "#ViewToIframeAsyncClass[data-success=true]"
         ).wait_for()
 
+    @navigate_to_page("/")
     def test_view_to_iframe_template_view_class(self):
         self.page.frame_locator("#view_to_iframe_template_view_class > iframe").locator(
             "#ViewToIframeTemplateViewClass[data-success=true]"
         ).wait_for()
 
+    @navigate_to_page("/")
     def test_view_to_iframe_args(self):
         self.page.frame_locator("#view_to_iframe_args > iframe").locator(
             "#view_to_iframe_args[data-success=Success]"
         ).wait_for()
 
+    @navigate_to_page("/")
     def test_component_session_exists(self):
         """Session should exist for components with args/kwargs."""
         component = self.page.locator("#parametrized-component")
@@ -181,6 +210,7 @@ class GenericComponentTests(PlaywrightTestCase):
         os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
         assert query_exists
 
+    @navigate_to_page("/")
     def test_component_session_missing(self):
         """No session should exist for components that don't have args/kwargs."""
         component = self.page.locator("#button-from-js-module")
@@ -193,6 +223,7 @@ class GenericComponentTests(PlaywrightTestCase):
         os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
         assert not query_exists
 
+    @navigate_to_page("/")
     def test_use_user_data(self):
         text_input = self.page.wait_for_selector("#use-user-data input")
         login_1 = self.page.wait_for_selector("#use-user-data .login-1")
@@ -248,6 +279,7 @@ class GenericComponentTests(PlaywrightTestCase):
         )
         assert "Data: None" in user_data_div.text_content()
 
+    @navigate_to_page("/")
     def test_use_user_data_with_default(self):
         text_input = self.page.wait_for_selector("#use-user-data-with-default input")
         login_3 = self.page.wait_for_selector("#use-user-data-with-default .login-3")
@@ -283,13 +315,11 @@ class GenericComponentTests(PlaywrightTestCase):
         )
         assert "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3'}" in user_data_div.text_content()
 
+    ###################
+    # Prerender Tests #
+    ###################
 
-class PrerenderTests(PlaywrightTestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.page.goto(f"http://{cls.host}:{cls._port_0}/prerender/")
-
+    @navigate_to_page("/prerender/")
     def test_prerender(self):
         """Verify if round-robin host selection is working."""
         string = self.page.locator("#prerender_string")
@@ -321,45 +351,50 @@ class PrerenderTests(PlaywrightTestCase):
         use_user_ws.wait_for()
         assert use_root_id_ws.get_attribute("data-value") == root_id_value
 
+    ###############
+    # Error Tests #
+    ###############
 
-class ErrorTests(PlaywrightTestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.page.goto(f"http://{cls.host}:{cls._port_0}/errors/")
-
+    @navigate_to_page("/errors/")
     def test_component_does_not_exist_error(self):
         broken_component = self.page.locator("#component_does_not_exist_error")
         broken_component.wait_for()
         assert "ComponentDoesNotExistError:" in broken_component.text_content()
 
+    @navigate_to_page("/errors/")
     def test_component_param_error(self):
         broken_component = self.page.locator("#component_param_error")
         broken_component.wait_for()
         assert "ComponentParamError:" in broken_component.text_content()
 
+    @navigate_to_page("/errors/")
     def test_invalid_host_error(self):
         broken_component = self.page.locator("#invalid_host_error")
         broken_component.wait_for()
         assert "InvalidHostError:" in broken_component.text_content()
 
+    @navigate_to_page("/errors/")
     def test_synchronous_only_operation_error(self):
         broken_component = self.page.locator("#broken_postprocessor_query pre")
         broken_component.wait_for()
         assert "SynchronousOnlyOperation:" in broken_component.text_content()
 
+    @navigate_to_page("/errors/")
     def test_view_not_registered_error(self):
         broken_component = self.page.locator("#view_to_iframe_not_registered pre")
         broken_component.wait_for()
         assert "ViewNotRegisteredError:" in broken_component.text_content()
 
+    @navigate_to_page("/errors/")
     def test_decorator_param_error(self):
         broken_component = self.page.locator("#incorrect_user_passes_test_decorator")
         broken_component.wait_for()
         assert "DecoratorParamError:" in broken_component.text_content()
 
+    ####################
+    # URL Router Tests #
+    ####################
 
-class UrlRouterTests(PlaywrightTestCase):
     def test_url_router(self):
         self.page.goto(f"{self.live_server_url}/router/")
         path = self.page.wait_for_selector("#router-path")
@@ -430,13 +465,11 @@ class UrlRouterTests(PlaywrightTestCase):
         string = self.page.query_selector("#router-string")
         assert string.text_content() == "/router/two/<int:value>/<str:value2>/"
 
+    #######################
+    # Channel Layer Tests #
+    #######################
 
-class ChannelLayersTests(PlaywrightTestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.page.goto(f"http://{cls.host}:{cls._port_0}/channel-layers/")
-
+    @navigate_to_page("/channel-layers/")
     def test_channel_layer_components(self):
         sender = self.page.wait_for_selector("#sender")
         sender.type("test", delay=CLICK_DELAY)
@@ -454,25 +487,27 @@ class ChannelLayersTests(PlaywrightTestCase):
         assert receiver_2 is not None
         assert receiver_3 is not None
 
+    ##################
+    # PyScript Tests #
+    ##################
 
-class PyscriptTests(PlaywrightTestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.page.goto(f"http://{cls.host}:{cls._port_0}/pyscript/")
-
-    def test_0_hello_world(self):
+    @navigate_to_page("/pyscript/")
+    def test_pyscript_0_hello_world(self):
+        # Use this test to wait for PyScript to fully load on the page
         self.page.wait_for_selector("#hello-world-loading")
         self.page.wait_for_selector("#hello-world")
 
-    def test_1_custom_root(self):
+    @navigate_to_page("/pyscript/")
+    def test_pyscript_1_custom_root(self):
         self.page.wait_for_selector("#custom-root")
 
-    def test_1_multifile(self):
+    @navigate_to_page("/pyscript/")
+    def test_pyscript_1_multifile(self):
         self.page.wait_for_selector("#multifile-parent")
         self.page.wait_for_selector("#multifile-child")
 
-    def test_1_counter(self):
+    @navigate_to_page("/pyscript/")
+    def test_pyscript_1_counter(self):
         self.page.wait_for_selector("#counter")
         self.page.wait_for_selector("#counter pre[data-value='0']")
         self.page.wait_for_selector("#counter .plus").click(delay=CLICK_DELAY)
@@ -482,7 +517,8 @@ class PyscriptTests(PlaywrightTestCase):
         self.page.wait_for_selector("#counter .minus").click(delay=CLICK_DELAY)
         self.page.wait_for_selector("#counter pre[data-value='1']")
 
-    def test_1_server_side_parent(self):
+    @navigate_to_page("/pyscript/")
+    def test_pyscript_1_server_side_parent(self):
         self.page.wait_for_selector("#parent")
         self.page.wait_for_selector("#child")
         self.page.wait_for_selector("#child pre[data-value='0']")
@@ -493,7 +529,8 @@ class PyscriptTests(PlaywrightTestCase):
         self.page.wait_for_selector("#child .minus").click(delay=CLICK_DELAY)
         self.page.wait_for_selector("#child pre[data-value='1']")
 
-    def test_1_server_side_parent_with_toggle(self):
+    @navigate_to_page("/pyscript/")
+    def test_pyscript_1_server_side_parent_with_toggle(self):
         self.page.wait_for_selector("#parent-toggle")
         self.page.wait_for_selector("#parent-toggle button").click(delay=CLICK_DELAY)
         self.page.wait_for_selector("#parent-toggle")
@@ -505,14 +542,17 @@ class PyscriptTests(PlaywrightTestCase):
         self.page.wait_for_selector("#parent-toggle .minus").click(delay=CLICK_DELAY)
         self.page.wait_for_selector("#parent-toggle pre[data-value='1']")
 
-    def test_1_javascript_module_execution_within_pyscript(self):
+    @navigate_to_page("/pyscript/")
+    def test_pyscript_1_javascript_module_execution_within_pyscript(self):
         self.page.wait_for_selector("#moment[data-success=true]")
 
+    ###############################
+    # Distributed Computing Tests #
+    ###############################
 
-class DistributedComputingTests(PlaywrightTestCase):
     def test_host_roundrobin(self):
         """Verify if round-robin host selection is working."""
-        self.page.goto(f"{self.live_server_url}/roundrobin/{self._port_0}/{self._port_1}/8")
+        self.page.goto(f"{self.live_server_url}/roundrobin/{self._port_2}/{self._port_3}/8")
         elem0 = self.page.locator(".custom_host-0")
         elem1 = self.page.locator(".custom_host-1")
         elem2 = self.page.locator(".custom_host-2")
@@ -530,8 +570,8 @@ class DistributedComputingTests(PlaywrightTestCase):
             elem3.get_attribute("data-port"),
         }
         correct_ports = {
-            str(self._port_0),
-            str(self._port_1),
+            str(self._port_2),
+            str(self._port_3),
         }
 
         # There should only be two ports in the set
@@ -540,10 +580,10 @@ class DistributedComputingTests(PlaywrightTestCase):
 
     def test_custom_host(self):
         """Make sure that the component is rendered by a separate server."""
-        self.page.goto(f"{self.live_server_url}/port/{self._port_1}/")
+        self.page.goto(f"{self.live_server_url}/port/{self._port_2}/")
         elem = self.page.locator(".custom_host-0")
         elem.wait_for()
-        assert f"Server Port: {self._port_1}" in elem.text_content()
+        assert f"Server Port: {self._port_2}" in elem.text_content()
 
     def test_custom_host_wrong_port(self):
         """Make sure that other ports are not rendering components."""
@@ -554,23 +594,23 @@ class DistributedComputingTests(PlaywrightTestCase):
         with pytest.raises(TimeoutError):
             self.page.locator(".custom_host").wait_for(timeout=1000)
 
+    #################
+    # Offline Tests #
+    #################
 
-class OfflineTests(PlaywrightTestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.page.goto(f"http://{cls.host}:{cls._port_0}/offline/")
-
+    @navigate_to_page("/offline/", server_num=1)
     def test_offline_components(self):
         self.page.wait_for_selector("div:not([hidden]) > #online")
         assert self.page.query_selector("div[hidden] > #offline") is not None
-        self._server_process_0.terminate()
-        self._server_process_0.join()
+        self._server_process_1.terminate()
+        self._server_process_1.join()
         self.page.wait_for_selector("div:not([hidden]) > #offline")
         assert self.page.query_selector("div[hidden] > #online") is not None
 
+    ##############
+    # Form Tests #
+    ##############
 
-class FormTests(PlaywrightTestCase):
     @navigate_to_page("/form/")
     def test_basic_form(self):
         try:
