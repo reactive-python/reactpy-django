@@ -214,7 +214,7 @@ The entire file path provided is loaded directly into the browser, and must have
         {% include "../../examples/python/pyodide_js_module.py" %}
         ```
 
-    **PyScript Foriegn Function Interface (FFI)**
+    **PyScript Foreign Function Interface (FFI)**
 
     PyScript FFI has similar functionality to Pyodide's `js` module, but utilizes a different API.
 
