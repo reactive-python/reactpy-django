@@ -4,7 +4,9 @@ from reactpy import component, html
 
 import reactpy_django
 
-SLEEP_TIME = 1
+from ..tests.utils import GITHUB_ACTIONS
+
+SLEEP_TIME = 1.5 if GITHUB_ACTIONS else 0.5
 
 
 @component
