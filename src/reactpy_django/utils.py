@@ -1,34 +1,30 @@
+"""Generic functions that are used throughout the ReactPy Django package."""
+
 from __future__ import annotations
 
 import contextlib
 import inspect
-import json
 import logging
 import os
 import re
-import textwrap
 from asyncio import iscoroutinefunction
 from concurrent.futures import ThreadPoolExecutor
-from copy import deepcopy
 from fnmatch import fnmatch
 from functools import wraps
 from importlib import import_module
-from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable
 from uuid import UUID, uuid4
 
 import dill
-import jsonpointer
-import orjson
-import reactpy
 from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
+from django.contrib.staticfiles.finders import find
+from django.core.cache import caches
 from django.db.models import ManyToManyField, ManyToOneRel, prefetch_related_objects
 from django.db.models.base import Model
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.template import engines
-from django.templatetags.static import static
 from django.utils.encoding import smart_str
 from reactpy import vdom_to_html
 from reactpy.backend.types import Connection, Location
@@ -65,9 +61,6 @@ COMPONENT_REGEX = re.compile(
     + rf"({_OFFLINE_KWARG_PATTERN}|{_GENERIC_KWARG_PATTERN})*?"
     + r"\s*%}"
 )
-PYSCRIPT_COMPONENT_TEMPLATE = (Path(__file__).parent / "pyscript" / "component_template.py").read_text(encoding="utf-8")
-PYSCRIPT_LAYOUT_HANDLER = (Path(__file__).parent / "pyscript" / "layout_handler.py").read_text(encoding="utf-8")
-PYSCRIPT_DEFAULT_CONFIG: dict[str, Any] = {}
 FILE_ASYNC_ITERATOR_THREAD = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ReactPy-Django-FileAsyncIterator")
 
 
@@ -80,19 +73,14 @@ async def render_view(
     """Ingests a Django view (class or function) and returns an HTTP response object."""
     # Convert class-based view to function-based view
     if getattr(view, "as_view", None):
-        view = view.as_view()
+        view = view.as_view()  # type: ignore
 
-    # Async function view
-    if iscoroutinefunction(view):
-        response = await view(request, *args, **kwargs)
+    # Sync/Async function view
+    response = await ensure_async(view)(request, *args, **kwargs)  # type: ignore
 
-    # Sync function view
-    else:
-        response = await database_sync_to_async(view)(request, *args, **kwargs)
-
-    # TemplateView
+    # TemplateView needs an extra render step
     if getattr(response, "render", None):
-        response = await database_sync_to_async(response.render)()
+        response = await ensure_async(response.render)()
 
     return response
 
@@ -127,7 +115,7 @@ def register_iframe(view: Callable | View | str):
     from reactpy_django.config import REACTPY_REGISTERED_IFRAME_VIEWS
 
     if hasattr(view, "view_class"):
-        view = view.view_class
+        view = view.view_class  # type: ignore
     dotted_path = view if isinstance(view, str) else generate_obj_name(view)
     try:
         REACTPY_REGISTERED_IFRAME_VIEWS[dotted_path] = import_dotted_path(dotted_path)
@@ -170,7 +158,7 @@ class RootComponentFinder:
         template_source_loaders = []
         for e in engines.all():
             if hasattr(e, "engine"):
-                template_source_loaders.extend(e.engine.get_template_loaders(e.engine.loaders))
+                template_source_loaders.extend(e.engine.get_template_loaders(e.engine.loaders))  # type: ignore
         loaders = []
         for loader in template_source_loaders:
             if hasattr(loader, "loaders"):
@@ -371,7 +359,7 @@ class SyncLayout(Layout):
     def __exit__(self, *_):
         async_to_sync(self.__aexit__)(*_)
 
-    def render(self):
+    def sync_render(self):
         return async_to_sync(super().render)()
 
 
@@ -380,7 +368,7 @@ def get_pk(model):
     return getattr(model, model._meta.pk.name)
 
 
-def strtobool(val: str) -> bool:
+def str_to_bool(val: str) -> bool:
     """Convert a string representation of truth to true (1) or false (0).
 
     True values are 'y', 'yes', 't', 'true', 'on', and '1'; false values
@@ -418,18 +406,16 @@ def prerender_component(
             ),
         )
     ) as layout:
-        vdom_tree = layout.render()["model"]
+        vdom_tree = layout.sync_render()["model"]
 
-    return vdom_to_html(vdom_tree)
+    return vdom_to_html(vdom_tree)  # type: ignore
 
 
-def vdom_or_component_to_string(
-    vdom_or_component: Any, request: HttpRequest | None = None, uuid: str | None = None
-) -> str:
+def reactpy_to_string(vdom_or_component: Any, request: HttpRequest | None = None, uuid: str | None = None) -> str:
     """Converts a VdomDict or component to an HTML string. If a string is provided instead, it will be
     automatically returned."""
     if isinstance(vdom_or_component, dict):
-        return vdom_to_html(vdom_or_component)
+        return vdom_to_html(vdom_or_component)  # type: ignore
 
     if hasattr(vdom_or_component, "render"):
         if not request:
@@ -444,72 +430,6 @@ def vdom_or_component_to_string(
 
     msg = f"Invalid type for vdom_or_component: {type(vdom_or_component)}. Expected a VdomDict, component, or string."
     raise ValueError(msg)
-
-
-def render_pyscript_template(file_paths: Sequence[str], uuid: str, root: str):
-    """Inserts the user's code into the PyScript template using pattern matching."""
-    from django.core.cache import caches
-
-    from reactpy_django.config import REACTPY_CACHE
-
-    # Create a valid PyScript executor by replacing the template values
-    executor = PYSCRIPT_COMPONENT_TEMPLATE.replace("UUID", uuid)
-    executor = executor.replace("return root()", f"return {root}()")
-
-    # Fetch the user's PyScript code
-    all_file_contents: list[str] = []
-    for file_path in file_paths:
-        # Try to get user code from cache
-        cache_key = create_cache_key("pyscript", file_path)
-        last_modified_time = os.stat(file_path).st_mtime
-        file_contents: str = caches[REACTPY_CACHE].get(cache_key, version=int(last_modified_time))
-        if file_contents:
-            all_file_contents.append(file_contents)
-
-        # If not cached, read from file system
-        else:
-            file_contents = Path(file_path).read_text(encoding="utf-8").strip()
-            all_file_contents.append(file_contents)
-            caches[REACTPY_CACHE].set(cache_key, file_contents, version=int(last_modified_time))
-
-    # Prepare the PyScript code block
-    user_code = "\n".join(all_file_contents)  # Combine all user code
-    user_code = user_code.replace("\t", "    ")  # Normalize the text
-    user_code = textwrap.indent(user_code, "    ")  # Add indentation to match template
-
-    # Insert the user code into the PyScript template
-    return executor.replace("    def root(): ...", user_code)
-
-
-def extend_pyscript_config(extra_py: Sequence, extra_js: dict | str, config: dict | str) -> str:
-    """Extends ReactPy's default PyScript config with user provided values."""
-    # Lazily set up the initial config in to wait for Django's static file system
-    if not PYSCRIPT_DEFAULT_CONFIG:
-        PYSCRIPT_DEFAULT_CONFIG.update({
-            "packages": [
-                f"reactpy=={reactpy.__version__}",
-                f"jsonpointer=={jsonpointer.__version__}",
-                "ssl",
-            ],
-            "js_modules": {"main": {static("reactpy_django/morphdom/morphdom-esm.js"): "morphdom"}},
-        })
-
-    # Extend the Python dependency list
-    pyscript_config = deepcopy(PYSCRIPT_DEFAULT_CONFIG)
-    pyscript_config["packages"].extend(extra_py)
-
-    # Extend the JavaScript dependency list
-    if extra_js and isinstance(extra_js, str):
-        pyscript_config["js_modules"]["main"].update(json.loads(extra_js))
-    elif extra_js and isinstance(extra_js, dict):
-        pyscript_config["js_modules"]["main"].update(extra_py)
-
-    # Update the config
-    if config and isinstance(config, str):
-        pyscript_config.update(json.loads(config))
-    elif config and isinstance(config, dict):
-        pyscript_config.update(config)
-    return orjson.dumps(pyscript_config).decode("utf-8")
 
 
 def save_component_params(args, kwargs, uuid) -> None:
@@ -541,17 +461,16 @@ class FileAsyncIterator:
         self.file_path = file_path
 
     async def __aiter__(self):
-        file_opened = False
+        file_handle = None
         try:
             file_handle = FILE_ASYNC_ITERATOR_THREAD.submit(open, self.file_path, "rb").result()
-            file_opened = True
             while True:
                 chunk = FILE_ASYNC_ITERATOR_THREAD.submit(file_handle.read, 8192).result()
                 if not chunk:
                     break
                 yield chunk
         finally:
-            if file_opened:
+            if file_handle:
                 file_handle.close()
 
 
@@ -565,8 +484,32 @@ def ensure_async(
     def wrapper(*args, **kwargs):
         return (
             func(*args, **kwargs)
-            if inspect.iscoroutinefunction(func)
+            if iscoroutinefunction(func)
             else database_sync_to_async(func, thread_sensitive=thread_sensitive)(*args, **kwargs)
         )
 
     return wrapper
+
+
+def cached_static_file(static_path: str) -> str:
+    from reactpy_django.config import REACTPY_CACHE
+
+    # Try to find the file within Django's static files
+    abs_path = find(static_path)
+    if not abs_path:
+        msg = f"Could not find static file {static_path} within Django's static files."
+        raise FileNotFoundError(msg)
+    if isinstance(abs_path, (list, tuple)):
+        abs_path = abs_path[0]
+
+    # Fetch the file from cache, if available
+    last_modified_time = os.stat(abs_path).st_mtime
+    cache_key = f"reactpy_django:static_contents:{static_path}"
+    file_contents: str | None = caches[REACTPY_CACHE].get(cache_key, version=int(last_modified_time))
+    if file_contents is None:
+        with open(abs_path, encoding="utf-8") as static_file:
+            file_contents = static_file.read()
+        caches[REACTPY_CACHE].delete(cache_key)
+        caches[REACTPY_CACHE].set(cache_key, file_contents, timeout=None, version=int(last_modified_time))
+
+    return file_contents

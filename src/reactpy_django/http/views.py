@@ -8,7 +8,7 @@ from reactpy.config import REACTPY_WEB_MODULES_DIR
 from reactpy_django.utils import FileAsyncIterator, render_view
 
 
-def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
+def web_modules_file(request: HttpRequest, file: str) -> FileResponse:
     """Gets JavaScript required for ReactPy modules at runtime."""
 
     web_modules_dir = REACTPY_WEB_MODULES_DIR.current

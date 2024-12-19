@@ -15,16 +15,14 @@ from reactpy_django.exceptions import (
     InvalidHostError,
     OfflineComponentMissingError,
 )
+from reactpy_django.pyscript.utils import PYSCRIPT_LAYOUT_HANDLER, extend_pyscript_config, render_pyscript_template
 from reactpy_django.utils import (
-    PYSCRIPT_LAYOUT_HANDLER,
-    extend_pyscript_config,
     prerender_component,
-    render_pyscript_template,
+    reactpy_to_string,
     save_component_params,
-    strtobool,
+    str_to_bool,
     validate_component_args,
     validate_host,
-    vdom_or_component_to_string,
 )
 
 if TYPE_CHECKING:
@@ -130,7 +128,7 @@ def component(
             return failure_context(dotted_path, e)
 
     # Pre-render the component, if requested
-    if strtobool(prerender):
+    if str_to_bool(prerender):
         if not is_local:
             msg = "Cannot pre-render non-local components."
             _logger.error(msg)
@@ -205,7 +203,7 @@ def pyscript_component(
 
     uuid = uuid4().hex
     request: HttpRequest | None = context.get("request")
-    initial = vdom_or_component_to_string(initial, request=request, uuid=uuid)
+    initial = reactpy_to_string(initial, request=request, uuid=uuid)
     executor = render_pyscript_template(file_paths, uuid, root)
 
     return {

@@ -14,15 +14,15 @@ from urllib.parse import parse_qs
 import dill
 import orjson
 from channels.auth import login
-from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from django.utils import timezone
-from reactpy.backend.hooks import ConnectionContext
 from reactpy.backend.types import Connection, Location
+from reactpy.core.hooks import ConnectionContext
 from reactpy.core.layout import Layout
 from reactpy.core.serve import serve_layout
 
-from reactpy_django.clean import clean
+from reactpy_django.tasks import clean
+from reactpy_django.utils import ensure_async
 
 if TYPE_CHECKING:
     from collections.abc import MutableMapping, Sequence
@@ -80,7 +80,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                     f"ReactPy websocket authentication has failed!\n{traceback.format_exc()}",
                 )
             try:
-                await database_sync_to_async(self.scope["session"].save)()
+                await ensure_async(self.scope["session"].save)()
             except Exception:
                 await asyncio.to_thread(
                     _logger.error,
@@ -116,7 +116,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         # Queue a cleanup, if needed
         if REACTPY_CLEAN_INTERVAL is not None:
             try:
-                await database_sync_to_async(clean)()
+                await ensure_async(clean)()
             except Exception:
                 await asyncio.to_thread(
                     _logger.error,
@@ -210,7 +210,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         # Start the ReactPy component rendering loop
         with contextlib.suppress(Exception):
             await serve_layout(
-                Layout(ConnectionContext(root_component, value=connection)),
+                Layout(ConnectionContext(root_component, value=connection)),  # type: ignore
                 self.send_json,
                 self.recv_queue.get,
             )

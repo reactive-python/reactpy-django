@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Union, cast
 from uuid import uuid4
 
-from channels.db import database_sync_to_async
 from django.forms import Form, ModelForm
 from reactpy import component, hooks, html, utils
 from reactpy.core.events import event
@@ -18,7 +17,7 @@ from reactpy_django.forms.transforms import (
     set_value_prop_on_select_element,
     transform_value_prop_on_input_element,
 )
-from reactpy_django.forms.utils import convert_boolean_fields, convert_multiple_choice_fields
+from reactpy_django.forms.utils import convert_form_fields, validate_form_args
 from reactpy_django.types import AsyncFormEvent, FormEventData, SyncFormEvent
 from reactpy_django.utils import ensure_async
 
@@ -57,18 +56,8 @@ def _django_form(
     rendered_form, set_rendered_form = hooks.use_state(cast(Union[str, None], None))
     uuid = uuid_ref.current
 
-    # Validate the provided arguments
-    if len(top_children) != top_children_count.current or len(bottom_children) != bottom_children_count.current:
-        msg = "Dynamically changing the number of top or bottom children is not allowed."
-        raise ValueError(msg)
-    if not isinstance(form, (type(Form), type(ModelForm))):
-        msg = (
-            "The provided form must be an uninitialized Django Form. "
-            "Do NOT initialize your form by calling it (ex. `MyForm()`)."
-        )
-        raise TypeError(msg)
-
     # Initialize the form with the provided data
+    validate_form_args(top_children, top_children_count, bottom_children, bottom_children_count, form)
     initialized_form = form(data=submitted_data)
     form_event = FormEventData(
         form=initialized_form, submitted_data=submitted_data or {}, set_submitted_data=set_submitted_data
@@ -79,7 +68,7 @@ def _django_form(
     async def render_form():
         """Forms must be rendered in an async loop to allow database fields to execute."""
         if submitted_data:
-            await database_sync_to_async(initialized_form.full_clean)()
+            await ensure_async(initialized_form.full_clean, thread_sensitive=thread_sensitive)()
             success = not initialized_form.errors.as_data()
             if success and on_success:
                 await ensure_async(on_success, thread_sensitive=thread_sensitive)(form_event)
@@ -96,8 +85,7 @@ def _django_form(
     async def on_submit_callback(new_data: dict[str, Any]):
         """Callback function provided directly to the client side listener. This is responsible for transmitting
         the submitted form data to the server for processing."""
-        convert_multiple_choice_fields(new_data, initialized_form)
-        convert_boolean_fields(new_data, initialized_form)
+        convert_form_fields(new_data, initialized_form)
 
         if on_receive_data:
             new_form_event = FormEventData(

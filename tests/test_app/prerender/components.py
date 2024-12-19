@@ -4,17 +4,20 @@ from reactpy import component, html
 
 import reactpy_django
 
-SLEEP_TIME = 0.25
+from ..tests.utils import GITHUB_ACTIONS
+
+SLEEP_TIME = 1.5 if GITHUB_ACTIONS else 0.5
 
 
 @component
 def prerender_string():
     scope = reactpy_django.hooks.use_scope()
 
-    if scope.get("type") != "http":
-        sleep(SLEEP_TIME)
+    if scope.get("type") == "http":
+        return "prerender_string: Prerendered"
 
-    return "prerender_string: Fully Rendered" if scope.get("type") == "websocket" else "prerender_string: Prerendered"
+    sleep(SLEEP_TIME)
+    return "prerender_string: Fully Rendered"
 
 
 @component
@@ -32,13 +35,13 @@ def prerender_component():
     scope = reactpy_django.hooks.use_scope()
 
     @component
-    def inner(value):
+    def inner_component(value):
         return html.div(value)
 
     if scope.get("type") == "http":
-        return inner("prerender_component: Prerendered")
+        return inner_component("prerender_component: Prerendered")
 
-    return inner("prerender_component: Fully Rendered")
+    return inner_component("prerender_component: Fully Rendered")
 
 
 @component

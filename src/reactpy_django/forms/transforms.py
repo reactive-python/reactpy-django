@@ -1,3 +1,4 @@
+# type: ignore
 # TODO: Almost everything in this module should be moved to `reactpy.utils._mutate_vdom()`.
 from __future__ import annotations
 
@@ -73,14 +74,14 @@ def infer_key_from_attributes(vdom_tree: VdomDict) -> VdomDict:
     attributes = vdom_tree.get("attributes", {})
 
     # Infer 'key' from 'id'
-    _id = attributes.get("id")
+    key = attributes.get("id")
 
     # Fallback: Infer 'key' from 'name'
-    if not _id and vdom_tree["tagName"] in {"input", "select", "textarea"}:
-        _id = attributes.get("name")
+    if not key and vdom_tree["tagName"] in {"input", "select", "textarea"}:
+        key = attributes.get("name")
 
-    if _id:
-        vdom_tree["key"] = _id
+    if key:
+        vdom_tree["key"] = key
 
     return vdom_tree
 
@@ -130,8 +131,8 @@ def _do_nothing_event(*args, **kwargs):
     """A placeholder event function that does nothing."""
 
 
-# TODO: After the bulk of this file to ReactPy core, we should create some kind of script that will
-# auto-generate this into a file dump. The current implementation of manually copy-pasting it isn't ideal.
+# TODO: Create a script that will auto-generate this into a file dump.
+# The current implementation of manually copy-pasting it isn't ideal.
 # https://react.dev/reference/react-dom/components/common#common-props
 SPECIAL_PROPS = r"""
 children: A React node (an element, a string, a number, a portal, an empty node like null, undefined and booleans, or an array of other React nodes). Specifies the content inside the component. When you use JSX, you will usually specify the children prop implicitly by nesting tags like <div><span /></div>.
@@ -478,7 +479,8 @@ KNOWN_REACT_PROPS = _parse_react_props(
     + SCRIPT_PROPS
 )
 
-# lowercase the prop name as the key, and have values be the original react prop name
+# Old Prop (Key) : New Prop (Value)
+# Also includes some special cases like 'class' -> 'className'
 REACT_PROP_SUBSTITUTIONS = {prop.lower(): prop for prop in KNOWN_REACT_PROPS} | {
     "for": "htmlFor",
     "class": "className",

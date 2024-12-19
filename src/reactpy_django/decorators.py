@@ -35,10 +35,10 @@ def user_passes_test(
 
         return _wrapper
 
-    return decorator
+    return decorator  # type: ignore
 
 
-@component
+@component  # type: ignore
 def _user_passes_test(component_constructor, fallback, test_func, *args, **kwargs):
     """Dedicated component for `user_passes_test` to allow us to always have access to hooks."""
     user = use_user()
