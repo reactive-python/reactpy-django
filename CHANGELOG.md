@@ -23,6 +23,10 @@ Don't forget to remove deprecated code on each major release!
 
 -   Automatically convert Django forms to ReactPy forms via the new `reactpy_django.components.django_form` component!
 
+### Changed
+
+-   Refactoring of internal code to improve maintainability. No changes to public/documented API.
+
 ## [5.1.1] - 2024-12-02
 
 ### Fixed
