@@ -1,3 +1,4 @@
+# type: ignore
 # ruff: noqa: RUF012, N802
 import os
 import socket

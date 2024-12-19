@@ -4,7 +4,7 @@ from reactpy import component, html
 
 import reactpy_django
 
-SLEEP_TIME = 0.5
+SLEEP_TIME = 1
 
 
 @component
