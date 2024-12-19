@@ -74,14 +74,14 @@ def infer_key_from_attributes(vdom_tree: VdomDict) -> VdomDict:
     attributes = vdom_tree.get("attributes", {})
 
     # Infer 'key' from 'id'
-    _id = attributes.get("id")
+    key = attributes.get("id")
 
     # Fallback: Infer 'key' from 'name'
-    if not _id and vdom_tree["tagName"] in {"input", "select", "textarea"}:
-        _id = attributes.get("name")
+    if not key and vdom_tree["tagName"] in {"input", "select", "textarea"}:
+        key = attributes.get("name")
 
-    if _id:
-        vdom_tree["key"] = _id
+    if key:
+        vdom_tree["key"] = key
 
     return vdom_tree
 
@@ -479,7 +479,8 @@ KNOWN_REACT_PROPS = _parse_react_props(
     + SCRIPT_PROPS
 )
 
-# lowercase the prop name as the key, and have values be the original react prop name
+# Old Prop (Key) : New Prop (Value)
+# Also includes some special cases like 'class' -> 'className'
 REACT_PROP_SUBSTITUTIONS = {prop.lower(): prop for prop in KNOWN_REACT_PROPS} | {
     "for": "htmlFor",
     "class": "className",

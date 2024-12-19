@@ -1,3 +1,5 @@
+"""Generic functions that are used throughout the ReactPy Django package."""
+
 from __future__ import annotations
 
 import contextlib
