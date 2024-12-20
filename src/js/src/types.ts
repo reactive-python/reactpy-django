@@ -23,3 +23,8 @@ export interface DjangoFormProps {
   onSubmitCallback: (data: Object) => void;
   formId: string;
 }
+
+export interface OnlyOnceProps {
+  jsPath: string;
+  autoRemove: boolean;
+}

@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Union, cast
 from urllib.parse import urlencode
 
 from django.http import HttpRequest
+from django.templatetags.static import static
 from django.urls import reverse
-from reactpy import component, hooks, html, utils
+from reactpy import component, hooks, html, utils, web
 from reactpy.types import ComponentType, Key, VdomDict
 
 from reactpy_django.exceptions import ViewNotRegisteredError
@@ -23,6 +25,12 @@ if TYPE_CHECKING:
     from django.views import View
 
     from reactpy_django.types import AsyncFormEvent, SyncFormEvent, ViewToComponentConstructor, ViewToIframeConstructor
+
+
+DjangoJS = web.export(
+    web.module_from_file("reactpy-django", file=Path(__file__).parent / "static" / "reactpy_django" / "client.js"),
+    ("OnlyOnceJS"),
+)
 
 
 def view_to_component(
@@ -97,7 +105,9 @@ def django_css(static_path: str, key: Key | None = None) -> ComponentType:
     return _django_css(static_path=static_path, key=key)
 
 
-def django_js(static_path: str, key: Key | None = None) -> ComponentType:
+def django_js(
+    static_path: str, only_once: bool = False, only_once_auto_remove: bool = False, key: Key | None = None
+) -> ComponentType:
     """Fetches a JS static file for use within ReactPy. This allows for deferred JS loading.
 
     Args:
@@ -107,7 +117,9 @@ def django_js(static_path: str, key: Key | None = None) -> ComponentType:
             immediate siblings
     """
 
-    return _django_js(static_path=static_path, key=key)
+    return _django_js(
+        static_path=static_path, only_once=only_once, only_once_auto_remove=only_once_auto_remove, key=key
+    )
 
 
 def django_form(
@@ -278,5 +290,8 @@ def _django_css(static_path: str):
 
 
 @component
-def _django_js(static_path: str):
+def _django_js(static_path: str, only_once: bool, only_once_auto_remove: bool):
+    if only_once:
+        return DjangoJS({"jsPath": static(static_path), "autoRemove": only_once_auto_remove})
+
     return html.script(cached_static_file(static_path))

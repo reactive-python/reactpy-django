@@ -1,4 +1,4 @@
-import { DjangoFormProps } from "./types";
+import { DjangoFormProps, OnlyOnceProps } from "./types";
 import React from "react";
 import ReactDOM from "react-dom";
 /**
@@ -58,6 +58,45 @@ export function DjangoForm({
         form.removeEventListener("submit", onSubmitEvent);
       }
     };
+  }, []);
+
+  return null;
+}
+
+export function OnlyOnceJS({ jsPath, autoRemove }: OnlyOnceProps): null {
+  React.useEffect(() => {
+    // Check if the script element already exists
+    let el = document.head.querySelector(
+      "script.reactpy-staticfile[src='" + jsPath + "']",
+    );
+
+    // Create a new script element, if needed
+    if (el === null) {
+      el = document.createElement("script");
+      el.className = "reactpy-staticfile";
+      if (jsPath) {
+        el.setAttribute("src", jsPath);
+      }
+      document.head.appendChild(el);
+    }
+
+    // If requested, auto remove the script when it is no longer needed
+    if (autoRemove) {
+      // Keep track of the number of ReactPy components that are dependent on this script
+      let count = Number(el.getAttribute("data-count"));
+      count += 1;
+      el.setAttribute("data-count", count.toString());
+
+      // Remove the script element when the last dependent component is unmounted
+      return () => {
+        count -= 1;
+        if (count === 0) {
+          el.remove();
+        } else {
+          el.setAttribute("data-count", count.toString());
+        }
+      };
+    }
   }, []);
 
   return null;

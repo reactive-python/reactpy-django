@@ -492,6 +492,7 @@ def ensure_async(
 
 
 def cached_static_file(static_path: str) -> str:
+    """Fetches a static file from Django and caches it for future use."""
     from reactpy_django.config import REACTPY_CACHE
 
     # Try to find the file within Django's static files
