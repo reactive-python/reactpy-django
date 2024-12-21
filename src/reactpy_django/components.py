@@ -278,6 +278,9 @@ def _view_to_iframe(
     )
 
 
+# TODO: Consider on_load callback. Store whether something is loaded in the scope.
+# TODO: Consider a boolean to change load behavior between text content and file loading
+# TODO: Consider doing server side CSS de-duplication to allow for instant loading
 @component
 def _django_css(static_path: str, only_once: bool, auto_remove: bool):
     if only_once:
