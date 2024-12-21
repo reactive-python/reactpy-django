@@ -63,31 +63,47 @@ export function DjangoForm({
   return null;
 }
 
-export function OnlyOnceJS({ jsPath, autoRemove }: OnlyOnceProps): null {
+export function LoadOnlyOnce({
+  path,
+  nodeName,
+  autoRemove,
+}: OnlyOnceProps): null {
   React.useEffect(() => {
-    // Check if the script element already exists
-    let el = document.head.querySelector(
-      "script.reactpy-staticfile[src='" + jsPath + "']",
-    );
+    // Check if the element already exists
+    let el: null | HTMLElement = null;
+    if (nodeName === "script") {
+      el = document.head.querySelector(
+        "script.reactpy-staticfile[src='" + path + "']",
+      );
+    } else if (nodeName === "link") {
+      el = document.head.querySelector(
+        "link.reactpy-staticfile[href='" + path + "']",
+      );
+    } else {
+      throw new Error("Invalid nodeName provided to LoadOnlyOnce");
+    }
 
-    // Create a new script element, if needed
+    // Create a new element, if needed
     if (el === null) {
-      el = document.createElement("script");
+      el = document.createElement(nodeName);
       el.className = "reactpy-staticfile";
-      if (jsPath) {
-        el.setAttribute("src", jsPath);
+      if (nodeName === "script") {
+        el.setAttribute("src", path);
+      } else if (nodeName === "link") {
+        el.setAttribute("href", path);
+        el.setAttribute("rel", "stylesheet");
       }
       document.head.appendChild(el);
     }
 
-    // If requested, auto remove the script when it is no longer needed
+    // If requested, auto remove the element when it is no longer needed
     if (autoRemove) {
       // Keep track of the number of ReactPy components that are dependent on this script
       let count = Number(el.getAttribute("data-count"));
       count += 1;
       el.setAttribute("data-count", count.toString());
 
-      // Remove the script element when the last dependent component is unmounted
+      // Remove the element when the last dependent component is unmounted
       return () => {
         count -= 1;
         if (count === 0) {

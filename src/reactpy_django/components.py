@@ -27,12 +27,6 @@ if TYPE_CHECKING:
     from reactpy_django.types import AsyncFormEvent, SyncFormEvent, ViewToComponentConstructor, ViewToIframeConstructor
 
 
-DjangoJS = web.export(
-    web.module_from_file("reactpy-django", file=Path(__file__).parent / "static" / "reactpy_django" / "client.js"),
-    ("OnlyOnceJS"),
-)
-
-
 def view_to_component(
     view: Callable | View | str,
     transforms: Sequence[Callable[[VdomDict], Any]] = (),
@@ -92,7 +86,9 @@ def view_to_iframe(view: Callable | View | str, extra_props: dict[str, Any] | No
     return constructor
 
 
-def django_css(static_path: str, key: Key | None = None) -> ComponentType:
+def django_css(
+    static_path: str, only_once: bool = False, auto_remove: bool = False, key: Key | None = None
+) -> ComponentType:
     """Fetches a CSS static file for use within ReactPy. This allows for deferred CSS loading.
 
     Args:
@@ -102,11 +98,11 @@ def django_css(static_path: str, key: Key | None = None) -> ComponentType:
             immediate siblings
     """
 
-    return _django_css(static_path=static_path, key=key)
+    return _django_css(static_path=static_path, only_once=only_once, auto_remove=auto_remove, key=key)
 
 
 def django_js(
-    static_path: str, only_once: bool = False, only_once_auto_remove: bool = False, key: Key | None = None
+    static_path: str, only_once: bool = False, auto_remove: bool = False, key: Key | None = None
 ) -> ComponentType:
     """Fetches a JS static file for use within ReactPy. This allows for deferred JS loading.
 
@@ -117,9 +113,7 @@ def django_js(
             immediate siblings
     """
 
-    return _django_js(
-        static_path=static_path, only_once=only_once, only_once_auto_remove=only_once_auto_remove, key=key
-    )
+    return _django_js(static_path=static_path, only_once=only_once, auto_remove=auto_remove, key=key)
 
 
 def django_form(
@@ -285,13 +279,30 @@ def _view_to_iframe(
 
 
 @component
-def _django_css(static_path: str):
+def _django_css(static_path: str, only_once: bool, auto_remove: bool):
+    if only_once:
+        return LoadOnlyOnce({
+            "path": static(static_path),
+            "nodeName": "link",
+            "autoRemove": auto_remove,
+        })
+
     return html.style(cached_static_file(static_path))
 
 
 @component
-def _django_js(static_path: str, only_once: bool, only_once_auto_remove: bool):
+def _django_js(static_path: str, only_once: bool, auto_remove: bool):
     if only_once:
-        return DjangoJS({"jsPath": static(static_path), "autoRemove": only_once_auto_remove})
+        return LoadOnlyOnce({
+            "path": static(static_path),
+            "nodeName": "script",
+            "autoRemove": auto_remove,
+        })
 
     return html.script(cached_static_file(static_path))
+
+
+LoadOnlyOnce = web.export(
+    web.module_from_file("reactpy-django", file=Path(__file__).parent / "static" / "reactpy_django" / "client.js"),
+    ("LoadOnlyOnce"),
+)

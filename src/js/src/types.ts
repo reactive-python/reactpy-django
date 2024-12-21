@@ -25,6 +25,7 @@ export interface DjangoFormProps {
 }
 
 export interface OnlyOnceProps {
-  jsPath: string;
+  path: string;
+  nodeName: "script" | "link";
   autoRemove: boolean;
 }
