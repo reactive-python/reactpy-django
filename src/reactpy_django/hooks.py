@@ -15,6 +15,7 @@ from uuid import uuid4
 
 import orjson
 from channels import DEFAULT_CHANNEL_LAYER
+from channels import auth as channels_auth
 from channels.layers import InMemoryChannelLayer, get_channel_layer
 from reactpy import use_callback, use_effect, use_memo, use_ref, use_state
 from reactpy import use_connection as _use_connection
@@ -414,6 +415,24 @@ def use_root_id() -> str:
     scope = use_scope()
 
     return scope["reactpy"]["id"]
+
+
+def use_auth():
+    """Provides the ability to login/logout a user using Django's standard authentication framework."""
+    from reactpy_django import config
+
+    scope = use_scope()
+
+    async def login(user: AbstractUser):
+        await channels_auth.login(scope, user, backend=config.REACTPY_AUTH_BACKEND)
+        session_save_func = getattr(scope["session"], "asave", getattr(scope["session"], "save"))
+        await ensure_async(session_save_func)()
+        scope["reactpy_login"] = True
+
+    async def logout():
+        await channels_auth.logout(scope)
+
+    return login, logout
 
 
 async def _get_user_data(user: AbstractUser, default_data: None | dict, save_default_data: bool) -> dict | None:

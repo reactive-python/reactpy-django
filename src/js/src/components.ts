@@ -1,4 +1,4 @@
-import { DjangoFormProps } from "./types";
+import { DjangoFormProps, SetCookieProps } from "./types";
 import React from "react";
 import ReactDOM from "react-dom";
 /**
@@ -58,6 +58,16 @@ export function DjangoForm({
         form.removeEventListener("submit", onSubmitEvent);
       }
     };
+  }, []);
+
+  return null;
+}
+
+export function SetCookie({ cookie, completeCallback }: SetCookieProps) {
+  React.useEffect(() => {
+    // Set the `sessionid` cookie
+    document.cookie = cookie;
+    completeCallback(true);
   }, []);
 
   return null;

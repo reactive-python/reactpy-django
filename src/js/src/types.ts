@@ -23,3 +23,8 @@ export interface DjangoFormProps {
   onSubmitCallback: (data: Object) => void;
   formId: string;
 }
+
+export interface SetCookieProps {
+  cookie: string;
+  completeCallback: (success: boolean) => void;
+}
