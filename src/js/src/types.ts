@@ -24,7 +24,9 @@ export interface DjangoFormProps {
   formId: string;
 }
 
-export interface SetCookieProps {
-  cookie: string;
-  completeCallback: (success: boolean) => void;
+export interface HttpRequestProps {
+  method: string;
+  url: string;
+  body: string;
+  callback: (status: Number, response: string) => void;
 }

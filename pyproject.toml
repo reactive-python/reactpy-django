@@ -155,6 +155,7 @@ runserver = [
   "cd tests && python manage.py migrate --noinput",
   "cd tests && python manage.py runserver",
 ]
+makemigrations = ["cd tests && python manage.py makemigrations"]
 
 #######################################
 # >>> Hatch Documentation Scripts <<< #

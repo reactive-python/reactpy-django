@@ -425,8 +425,10 @@ def use_auth():
 
     async def login(user: AbstractUser):
         await channels_auth.login(scope, user, backend=config.REACTPY_AUTH_BACKEND)
-        session_save_func = getattr(scope["session"], "asave", getattr(scope["session"], "save"))
+        session_save_func = getattr(scope["session"], "asave", scope["session"].save)
         await ensure_async(session_save_func)()
+
+        # TODO: Pick a different method of triggering a login action
         scope["reactpy_login"] = True
 
     async def logout():

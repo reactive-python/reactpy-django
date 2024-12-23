@@ -1,4 +1,4 @@
-import { DjangoFormProps, SetCookieProps } from "./types";
+import { DjangoFormProps, HttpRequestProps } from "./types";
 import React from "react";
 import ReactDOM from "react-dom";
 /**
@@ -63,11 +63,20 @@ export function DjangoForm({
   return null;
 }
 
-export function SetCookie({ cookie, completeCallback }: SetCookieProps) {
+export function HttpRequest({ method, url, body, callback }: HttpRequestProps) {
   React.useEffect(() => {
-    // Set the `sessionid` cookie
-    document.cookie = cookie;
-    completeCallback(true);
+    fetch(url, {
+      method: method,
+      body: body,
+    })
+      .then((response) => {
+        response.text().then((text) => {
+          callback(response.status, text);
+        });
+      })
+      .catch(() => {
+        callback(520, "");
+      });
   }, []);
 
   return null;

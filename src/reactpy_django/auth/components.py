@@ -1,18 +1,13 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import TYPE_CHECKING
 
-from reactpy import component, hooks, web
+from reactpy import component, hooks
 
 if TYPE_CHECKING:
     from django.contrib.sessions.backends.base import SessionBase
 
-
-SetCookie = web.export(
-    web.module_from_file("reactpy-django", file=Path(__file__).parent.parent / "static" / "client.js"),
-    ("SetCookie"),
-)
+from reactpy_django.javascript_components import HttpRequest
 
 
 @component
@@ -62,13 +57,23 @@ def auth_manager():
         if new_cookie != session_cookie:
             set_session_cookie(new_cookie)
 
-    def on_complete_callback(success: bool):
+    def http_request_callback(status_code: int, response: str):
         """Remove the cookie from server-side memory if it was successfully set.
-        This will subsequently remove the client-side cookie-setter component from the DOM."""
-        if success:
-            set_session_cookie("")
+        Doing this will subsequently remove the client-side HttpRequest component from the DOM."""
+        set_session_cookie("")
+        # if status_code >= 300:
+        #     print(f"Unexpected status code {status_code} while trying to login user.")
 
     # If a session cookie was generated, send it to the client
     if session_cookie:
-        print("Session Cookie: ", session_cookie)
-        return SetCookie({"sessionCookie": session_cookie}, on_complete_callback)
+        # print("Session Cookie: ", session_cookie)
+        return HttpRequest(
+            {
+                "method": "POST",
+                "url": "",
+                "body": {},
+                "callback": http_request_callback,
+            },
+        )
+
+    return None
