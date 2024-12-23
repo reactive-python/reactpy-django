@@ -49,12 +49,11 @@ def _django_form(
 ):
     from reactpy_django import config
 
-    uuid_ref = hooks.use_ref(uuid4().hex.replace("-", ""))
+    uuid = hooks.use_ref(uuid4().hex.replace("-", "")).current
     top_children_count = hooks.use_ref(len(top_children))
     bottom_children_count = hooks.use_ref(len(bottom_children))
     submitted_data, set_submitted_data = hooks.use_state({} or None)
     rendered_form, set_rendered_form = hooks.use_state(cast(Union[str, None], None))
-    uuid = uuid_ref.current
 
     # Initialize the form with the provided data
     validate_form_args(top_children, top_children_count, bottom_children, bottom_children_count, form)
