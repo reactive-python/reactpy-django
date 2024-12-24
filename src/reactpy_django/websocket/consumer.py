@@ -143,7 +143,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
     async def run_dispatcher(self):
         """Runs the main loop that performs component rendering tasks."""
         from reactpy_django import models
-        from reactpy_django.auth.components import auth_manager
+        from reactpy_django.auth.components import session_manager
         from reactpy_django.config import (
             REACTPY_REGISTERED_COMPONENTS,
             REACTPY_SESSION_MAX_AGE,
@@ -212,11 +212,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         with contextlib.suppress(Exception):
             await serve_layout(
                 Layout(  # type: ignore
-                    ConnectionContext(
-                        root_component,
-                        auth_manager(),
-                        value=connection,
-                    )
+                    ConnectionContext(session_manager(root_component), value=connection)
                 ),
                 self.send_json,
                 self.recv_queue.get,

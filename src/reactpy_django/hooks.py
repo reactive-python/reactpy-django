@@ -429,8 +429,10 @@ def use_auth():
         await ensure_async(session_save_func)()
         await scope["reactpy"]["synchronize_session"]()
 
-    async def logout():
+    async def logout(rerender: bool = True):
         await channels_auth.logout(scope)
+        if rerender:
+            await scope["reactpy"]["rerender"]()
 
     return login, logout
 
