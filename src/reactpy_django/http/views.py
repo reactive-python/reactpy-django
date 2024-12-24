@@ -1,7 +1,6 @@
 import os
 from urllib.parse import parse_qs
 
-from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import SuspiciousOperation
 from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponseNotFound
 from reactpy.config import REACTPY_WEB_MODULES_DIR
@@ -48,35 +47,38 @@ async def view_to_iframe(request: HttpRequest, dotted_path: str) -> HttpResponse
 async def switch_session(request: HttpRequest, uuid: str) -> HttpResponse:
     """Switches the client's active session.
 
-    Django's authentication design requires HTTP cookies to persist login via cookies.
+    This view exists because ReactPy is rendered via WebSockets, and browsers do not
+    allow active WebSocket connections to modify HTTP cookies. Django's authentication
+    design requires HTTP cookies to persist state changes.
+    """
+    from reactpy_django.models import SwitchSession
 
-    This is problematic since ReactPy is rendered via WebSockets, and browsers do not
-    allow active WebSocket connections to modify HTTP cookies, which necessitates this
-    view to exist."""
-    from reactpy_django.models import AuthSession
+    # Find out what session the client wants to switch
+    data = await SwitchSession.objects.aget(uuid=uuid)
 
-    # TODO: Maybe just relogin the user instead of switching sessions?
-
-    # Find out what session we're switching to
-    auth_session = await AuthSession.objects.aget(uuid=uuid)
-
-    # Validate the session
-    if auth_session.expired:
+    # CHECK: Session has expired?
+    if data.expired:
         msg = "Session expired."
-        raise SuspiciousOperation(msg)
-    if not request.session.exists(auth_session.session_key):
-        msg = "Session does not exist."
+        await data.adelete()
         raise SuspiciousOperation(msg)
 
-    # Delete the existing session
-    flush_method = getattr(request.session, "aflush", request.session.flush)
-    await ensure_async(flush_method)()
-    request.user = AnonymousUser()
+    # CHECK: Session does not exist?
+    exists_method = getattr(request.session, "aexists", request.session.exists)
+    if not await ensure_async(exists_method)(data.session_key):
+        msg = "Attempting to switch to a session that does not exist."
+        raise SuspiciousOperation(msg)
+
+    # CHECK: Client already using the correct session?
+    if request.session.session_key == data.session_key:
+        await data.adelete()
+        return HttpResponse(status=204)
 
     # Switch the client's session
-    request.session = type(request.session)(auth_session.session_key)
+    request.session = type(request.session)(session_key=data.session_key)
     load_method = getattr(request.session, "aload", request.session.load)
     await ensure_async(load_method)()
-    await auth_session.adelete()
-
+    request.session.modified = True
+    save_method = getattr(request.session, "asave", request.session.save)
+    await ensure_async(save_method)()
+    await data.adelete()
     return HttpResponse(status=204)

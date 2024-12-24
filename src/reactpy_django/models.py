@@ -20,10 +20,13 @@ class ComponentSession(models.Model):
     last_accessed = models.DateTimeField(auto_now=True)
 
 
-class AuthSession(models.Model):
-    """A model for storing Django authentication sessions, tied to a UUID.
+class SwitchSession(models.Model):
+    """A model for stores any relevant data needed to force Django's HTTP session to
+    match the websocket session.
 
-    This is used to switch Django's HTTP session to match the websocket session."""
+    This data is tied to an arbitrary UUID for security (obfuscation) purposes.
+
+    Source code must be written to respect the expiration property of this model."""
 
     # TODO: Add cleanup task for this.
     uuid = models.UUIDField(primary_key=True, editable=False, unique=True)

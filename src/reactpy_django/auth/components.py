@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 from logging import getLogger
 from typing import TYPE_CHECKING
 from uuid import uuid4
@@ -9,7 +10,7 @@ from django.urls import reverse
 from reactpy import component, hooks
 
 from reactpy_django.javascript_components import HttpRequest
-from reactpy_django.models import AuthSession
+from reactpy_django.models import SwitchSession
 
 if TYPE_CHECKING:
     from django.contrib.sessions.backends.base import SessionBase
@@ -25,13 +26,15 @@ def auth_manager():
     from reactpy_django import config
 
     switch_sessions, set_switch_sessions = hooks.use_state(False)
-    uuid = hooks.use_ref(str(uuid4())).current
+    uuid_ref = hooks.use_ref(str(uuid4()))
+    uuid = uuid_ref.current
     scope = hooks.use_connection().scope
 
     @hooks.use_effect(dependencies=[])
     def setup_asgi_scope():
         """Store a trigger function in websocket scope so that ReactPy-Django's hooks can command a session synchronization."""
-        scope["reactpy-synchronize-session"] = synchronize_session
+        scope.setdefault("reactpy", {})
+        scope["reactpy"]["synchronize_session"] = synchronize_session
         print("configure_asgi_scope")
 
     @hooks.use_effect(dependencies=[switch_sessions])
@@ -49,16 +52,23 @@ def auth_manager():
         """Entrypoint where the server will command the client to switch HTTP sessions
         to match the websocket session. This function is stored in the websocket scope so that
         ReactPy-Django's hooks can access it."""
-        print("sync command ", uuid)
+        print("sync command")
         session: SessionBase | None = scope.get("session")
         if not session or not session.session_key:
             print("sync error")
             return
 
-        await AuthSession.objects.aget_or_create(uuid=uuid, session_key=session.session_key)
+        # Delete any sessions currently associated with this UUID
+        with contextlib.suppress(SwitchSession.DoesNotExist):
+            obj = await SwitchSession.objects.aget(uuid=uuid)
+            await obj.adelete()
+
+        obj = await SwitchSession.objects.acreate(uuid=uuid, session_key=session.session_key)
+        await obj.asave()
+
         set_switch_sessions(True)
 
-    async def synchronize_sessions_callback(status_code: int, response: str):
+    async def synchronize_session_callback(status_code: int, response: str):
         """This callback acts as a communication bridge between the client and server, notifying the server
         of the client's response to the session switch command."""
         print("callback")
@@ -72,13 +82,13 @@ def auth_manager():
     # If a session cookie was generated, send it to the client
     print("render")
     if switch_sessions:
-        print("switching to ", uuid)
+        print("Rendering HTTP request component with UUID ", uuid)
         return HttpRequest(
             {
                 "method": "GET",
                 "url": reverse("reactpy:switch_session", args=[uuid]),
                 "body": None,
-                "callback": synchronize_sessions_callback,
+                "callback": synchronize_session_callback,
             },
         )
     return None
