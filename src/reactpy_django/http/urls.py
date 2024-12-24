@@ -17,7 +17,7 @@ urlpatterns = [
     ),
     path(
         "session/<uuid:uuid>",
-        views.switch_user_session,
-        name="auth",
+        views.switch_session,
+        name="switch_session",
     ),
 ]

@@ -70,9 +70,14 @@ export function HttpRequest({ method, url, body, callback }: HttpRequestProps) {
       body: body,
     })
       .then((response) => {
-        response.text().then((text) => {
-          callback(response.status, text);
-        });
+        response
+          .text()
+          .then((text) => {
+            callback(response.status, text);
+          })
+          .catch(() => {
+            callback(response.status, "");
+          });
       })
       .catch(() => {
         callback(520, "");

@@ -45,7 +45,7 @@ async def view_to_iframe(request: HttpRequest, dotted_path: str) -> HttpResponse
     return response
 
 
-async def switch_user_session(request: HttpRequest, uuid: str) -> HttpResponse:
+async def switch_session(request: HttpRequest, uuid: str) -> HttpResponse:
     """Switches the client's active session.
 
     Django's authentication design requires HTTP cookies to persist login via cookies.

@@ -1,79 +1,84 @@
 from __future__ import annotations
 
+import asyncio
+from logging import getLogger
 from typing import TYPE_CHECKING
+from uuid import uuid4
 
+from django.urls import reverse
 from reactpy import component, hooks
+
+from reactpy_django.javascript_components import HttpRequest
+from reactpy_django.models import AuthSession
 
 if TYPE_CHECKING:
     from django.contrib.sessions.backends.base import SessionBase
 
-from reactpy_django.javascript_components import HttpRequest
+_logger = getLogger(__name__)
 
 
 @component
 def auth_manager():
-    session_cookie, set_session_cookie = hooks.use_state("")
+    """Component that can force the client to switch HTTP sessions to match the websocket session.
+
+    Used to force persistent authentication between Django's websocket and HTTP stack."""
+    from reactpy_django import config
+
+    switch_sessions, set_switch_sessions = hooks.use_state(False)
+    uuid = hooks.use_ref(str(uuid4())).current
     scope = hooks.use_connection().scope
 
-    @hooks.use_effect(dependencies=None)
-    async def _session_check():
-        """Generate a session cookie if `login` was called in a user's component."""
-        from django.conf import settings
+    @hooks.use_effect(dependencies=[])
+    def setup_asgi_scope():
+        """Store a trigger function in websocket scope so that ReactPy-Django's hooks can command a session synchronization."""
+        scope["reactpy-synchronize-session"] = synchronize_session
+        print("configure_asgi_scope")
 
+    @hooks.use_effect(dependencies=[switch_sessions])
+    async def synchronize_session_timeout():
+        """Ensure that the ASGI scope is available to this component."""
+        if switch_sessions:
+            await asyncio.sleep(config.REACTPY_AUTH_TIMEOUT + 0.1)
+            await asyncio.to_thread(
+                _logger.warning,
+                f"Client did not switch sessions within {config.REACTPY_AUTH_TIMEOUT} (REACTPY_AUTH_TIMEOUT) seconds.",
+            )
+            set_switch_sessions(False)
+
+    async def synchronize_session():
+        """Entrypoint where the server will command the client to switch HTTP sessions
+        to match the websocket session. This function is stored in the websocket scope so that
+        ReactPy-Django's hooks can access it."""
+        print("sync command ", uuid)
         session: SessionBase | None = scope.get("session")
-        login_required: bool = scope.get("reactpy-login", False)
-        if not login_required or not session or not session.session_key:
+        if not session or not session.session_key:
+            print("sync error")
             return
 
-        # Begin generating a cookie string
-        key = session.session_key
-        domain: str | None = settings.SESSION_COOKIE_DOMAIN
-        httponly: bool = settings.SESSION_COOKIE_HTTPONLY
-        name: str = settings.SESSION_COOKIE_NAME
-        path: str = settings.SESSION_COOKIE_PATH
-        samesite: str | bool = settings.SESSION_COOKIE_SAMESITE
-        secure: bool = settings.SESSION_COOKIE_SECURE
-        new_cookie = f"{name}={key}"
-        if domain:
-            new_cookie += f"; Domain={domain}"
-        if httponly:
-            new_cookie += "; HttpOnly"
-        if isinstance(path, str):
-            new_cookie += f"; Path={path}"
-        if samesite:
-            new_cookie += f"; SameSite={samesite}"
-        if secure:
-            new_cookie += "; Secure"
-        if not session.get_expire_at_browser_close():
-            session_max_age: int = session.get_expiry_age()
-            session_expiration: str = session.get_expiry_date().strftime("%a, %d-%b-%Y %H:%M:%S GMT")
-            if session_expiration:
-                new_cookie += f"; Expires={session_expiration}"
-            if isinstance(session_max_age, int):
-                new_cookie += f"; Max-Age={session_max_age}"
+        await AuthSession.objects.aget_or_create(uuid=uuid, session_key=session.session_key)
+        set_switch_sessions(True)
 
-        # Save the cookie within this component's state so that the client-side component can ingest it
-        scope.pop("reactpy-login")
-        if new_cookie != session_cookie:
-            set_session_cookie(new_cookie)
-
-    def http_request_callback(status_code: int, response: str):
-        """Remove the cookie from server-side memory if it was successfully set.
-        Doing this will subsequently remove the client-side HttpRequest component from the DOM."""
-        set_session_cookie("")
-        # if status_code >= 300:
-        #     print(f"Unexpected status code {status_code} while trying to login user.")
+    async def synchronize_sessions_callback(status_code: int, response: str):
+        """This callback acts as a communication bridge between the client and server, notifying the server
+        of the client's response to the session switch command."""
+        print("callback")
+        set_switch_sessions(False)
+        if status_code >= 300 or status_code < 200:
+            await asyncio.to_thread(
+                _logger.warning,
+                f"Client returned unexpected HTTP status code ({status_code}) while trying to sychronize sessions.",
+            )
 
     # If a session cookie was generated, send it to the client
-    if session_cookie:
-        # print("Session Cookie: ", session_cookie)
+    print("render")
+    if switch_sessions:
+        print("switching to ", uuid)
         return HttpRequest(
             {
-                "method": "POST",
-                "url": "",
-                "body": {},
-                "callback": http_request_callback,
+                "method": "GET",
+                "url": reverse("reactpy:switch_session", args=[uuid]),
+                "body": None,
+                "callback": synchronize_sessions_callback,
             },
         )
-
     return None

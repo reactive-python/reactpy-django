@@ -1,6 +1,7 @@
 import contextlib
 import math
 import sys
+from uuid import uuid4
 
 from django.contrib.staticfiles.finders import find
 from django.core.checks import Error, Tags, Warning, register
@@ -37,6 +38,7 @@ def reactpy_warnings(app_configs, **kwargs):
     try:
         reverse("reactpy:web_modules", kwargs={"file": "example"})
         reverse("reactpy:view_to_iframe", kwargs={"dotted_path": "example"})
+        reverse("reactpy:switch_session", args=[str(uuid4())])
     except Exception:
         warnings.append(
             Warning(
