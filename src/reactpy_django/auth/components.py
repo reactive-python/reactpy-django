@@ -41,13 +41,15 @@ def session_manager(child: Any):
 
     @hooks.use_effect(dependencies=[synchronize_requested])
     async def synchronize_session_watchdog():
-        """This effect will automatically be cancelled if the session is successfully
+        """Detected if the client has taken too long to request a session synchronization.
+
+        This effect will automatically be cancelled if the session is successfully
         switched (via effect dependencies)."""
         if synchronize_requested:
-            await asyncio.sleep(config.REACTPY_AUTH_TIMEOUT + 0.1)
+            await asyncio.sleep(config.REACTPY_AUTH_SYNC_TIMEOUT + 0.1)
             await asyncio.to_thread(
                 _logger.warning,
-                f"Client did not switch sessions within {config.REACTPY_AUTH_TIMEOUT} (REACTPY_AUTH_TIMEOUT) seconds.",
+                f"Client did not switch sessions within {config.REACTPY_AUTH_SYNC_TIMEOUT} (REACTPY_AUTH_SYNC_TIMEOUT) seconds.",
             )
             set_synchronize_requested(False)
 

@@ -1,5 +1,4 @@
 from logging import getLogger
-from typing import Literal
 
 from django.core.management.base import BaseCommand
 
@@ -9,18 +8,12 @@ _logger = getLogger(__name__)
 class Command(BaseCommand):
     help = "Manually clean ReactPy data. When using this command without args, it will perform all cleaning operations."
 
-    def handle(self, **options):
-        from reactpy_django.tasks import clean
+    def handle(self, *_args, **options):
+        from reactpy_django.tasks import CleaningArgs, clean
 
-        verbosity = options.get("verbosity", 1)
-
-        cleaning_args: set[Literal["all", "sessions", "user_data"]] = set()
-        if options.get("sessions"):
-            cleaning_args.add("sessions")
-        if options.get("user_data"):
-            cleaning_args.add("user_data")
-        if not cleaning_args:
-            cleaning_args = {"all"}
+        verbosity = options.pop("verbosity", 1)
+        valid_args: set[CleaningArgs] = {"all", "sessions", "auth_sync", "user_data"}
+        cleaning_args: set[CleaningArgs] = {arg for arg in options if arg in valid_args and options[arg]} or {"all"}
 
         clean(*cleaning_args, immediate=True, verbosity=verbosity)
 
@@ -31,10 +24,15 @@ class Command(BaseCommand):
         parser.add_argument(
             "--sessions",
             action="store_true",
-            help="Clean session data. This value can be combined with other cleaning options.",
+            help="Clean component session data. This value can be combined with other cleaning options.",
         )
         parser.add_argument(
             "--user-data",
             action="store_true",
             help="Clean user data. This value can be combined with other cleaning options.",
+        )
+        parser.add_argument(
+            "--auth-sync",
+            action="store_true",
+            help="Clean authentication synchronizer data. This value can be combined with other cleaning options.",
         )

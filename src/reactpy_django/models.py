@@ -28,17 +28,16 @@ class SynchronizeSession(models.Model):
 
     Source code must be written to respect the expiration property of this model."""
 
-    # TODO: Add cleanup task for this.
     uuid = models.UUIDField(primary_key=True, editable=False, unique=True)
     session_key = models.CharField(max_length=40, editable=False)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
 
     @property
     def expired(self) -> bool:
-        """Check if the login UUID has expired."""
-        from reactpy_django.config import REACTPY_AUTH_TIMEOUT
+        """Check the client has exceeded the max timeout."""
+        from reactpy_django.config import REACTPY_AUTH_SYNC_TIMEOUT
 
-        return self.created_at < (timezone.now() - timedelta(seconds=REACTPY_AUTH_TIMEOUT))
+        return self.created_at < (timezone.now() - timedelta(seconds=REACTPY_AUTH_SYNC_TIMEOUT))
 
 
 class Config(models.Model):

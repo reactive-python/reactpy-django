@@ -148,6 +148,8 @@ extra-dependencies = [
   "twisted",
   "servestatic",
   "django-bootstrap5",
+  "decorator",
+  "playwright",
 ]
 
 [tool.hatch.envs.django.scripts]
@@ -156,6 +158,14 @@ runserver = [
   "cd tests && python manage.py runserver",
 ]
 makemigrations = ["cd tests && python manage.py makemigrations"]
+clean = ["cd tests && python manage.py clean_reactpy -v 3"]
+clean_sessions = ["cd tests && python manage.py clean_reactpy --sessions -v 3"]
+clean_auth_sync = [
+  "cd tests && python manage.py clean_reactpy --auth-sync -v 3",
+]
+clean_user_data = [
+  "cd tests && python manage.py clean_reactpy --user-data -v 3",
+]
 
 #######################################
 # >>> Hatch Documentation Scripts <<< #

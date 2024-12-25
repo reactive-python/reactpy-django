@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Literal, TypeAlias
 
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -13,37 +13,39 @@ if TYPE_CHECKING:
     from reactpy_django.models import Config
 
 CLEAN_NEEDED_BY: datetime = datetime(year=1, month=1, day=1, tzinfo=timezone.now().tzinfo)
+CleaningArgs: TypeAlias = Literal["all", "sessions", "auth_sync", "user_data"]
 
 
-def clean(
-    *args: Literal["all", "sessions", "user_data"],
-    immediate: bool = False,
-    verbosity: int = 1,
-):
+def clean(*args: CleaningArgs, immediate: bool = False, verbosity: int = 1):
     from reactpy_django.config import (
+        REACTPY_CLEAN_AUTH_SYNC,
         REACTPY_CLEAN_SESSIONS,
         REACTPY_CLEAN_USER_DATA,
     )
     from reactpy_django.models import Config
 
     config = Config.load()
-    if immediate or is_clean_needed(config):
+    if immediate or clean_is_needed(config):
         config.cleaned_at = timezone.now()
         config.save()
         sessions = REACTPY_CLEAN_SESSIONS
+        auth_sync = REACTPY_CLEAN_AUTH_SYNC
         user_data = REACTPY_CLEAN_USER_DATA
 
         if args:
             sessions = any(value in args for value in ("sessions", "all"))
+            auth_sync = any(value in args for value in ("auth_sync", "all"))
             user_data = any(value in args for value in ("user_data", "all"))
 
         if sessions:
-            clean_sessions(verbosity)
+            clean_component_sessions(verbosity)
+        if auth_sync:
+            clean_auth_synchronizer(verbosity)
         if user_data:
             clean_user_data(verbosity)
 
 
-def clean_sessions(verbosity: int = 1):
+def clean_component_sessions(verbosity: int = 1):
     """Deletes expired component sessions from the database.
     As a performance optimization, this is only run once every REACTPY_SESSION_MAX_AGE seconds.
     """
@@ -65,6 +67,25 @@ def clean_sessions(verbosity: int = 1):
 
     if DJANGO_DEBUG or verbosity >= 2:
         inspect_clean_duration(start_time, "component sessions", verbosity)
+
+
+def clean_auth_synchronizer(verbosity: int = 1):
+    from reactpy_django.config import DJANGO_DEBUG, REACTPY_AUTH_SYNC_TIMEOUT
+    from reactpy_django.models import SynchronizeSession
+
+    if verbosity >= 2:
+        _logger.info("Cleaning ReactPy auth sync data...")
+    start_time = timezone.now()
+    expiration_date = timezone.now() - timedelta(seconds=REACTPY_AUTH_SYNC_TIMEOUT)
+    synchronizer_objects = SynchronizeSession.objects.filter(created_at__lte=expiration_date)
+
+    if verbosity >= 2:
+        _logger.info("Deleting %d expired auth sync objects...", synchronizer_objects.count())
+
+    synchronizer_objects.delete()
+
+    if DJANGO_DEBUG or verbosity >= 2:
+        inspect_clean_duration(start_time, "auth sync", verbosity)
 
 
 def clean_user_data(verbosity: int = 1):
@@ -101,7 +122,7 @@ def clean_user_data(verbosity: int = 1):
         inspect_clean_duration(start_time, "user data", verbosity)
 
 
-def is_clean_needed(config: Config | None = None) -> bool:
+def clean_is_needed(config: Config | None = None) -> bool:
     """Check if a clean is needed. This function avoids unnecessary database reads by caching the
     CLEAN_NEEDED_BY date."""
     from reactpy_django.config import REACTPY_CLEAN_INTERVAL
