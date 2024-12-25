@@ -16,8 +16,8 @@ urlpatterns = [
         name="view_to_iframe",
     ),
     path(
-        "session/<uuid:uuid>",
-        views.session_manager,
-        name="session_manager",
+        "auth/<uuid:uuid>",
+        views.auth_manager,
+        name="auth_manager",
     ),
 ]

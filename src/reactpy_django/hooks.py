@@ -432,7 +432,7 @@ def use_auth():
         await channels_auth.login(scope, user, backend=config.REACTPY_AUTH_BACKEND)
         session_save_method = getattr(scope["session"], "asave", scope["session"].save)
         await ensure_async(session_save_method)()
-        await scope["reactpy"]["synchronize_session"]()
+        await scope["reactpy"]["synchronize_auth"]()
 
         if rerender:
             await scope["reactpy"]["rerender"]()

@@ -44,8 +44,8 @@ async def view_to_iframe(request: HttpRequest, dotted_path: str) -> HttpResponse
     return response
 
 
-async def session_manager(request: HttpRequest, uuid: str) -> HttpResponse:
-    """Switches the client's active session to match ReactPy.
+async def auth_manager(request: HttpRequest, uuid: str) -> HttpResponse:
+    """Switches the client's active auth session to match ReactPy's session.
 
     This view exists because ReactPy is rendered via WebSockets, and browsers do not
     allow active WebSocket connections to modify cookies. Django's authentication

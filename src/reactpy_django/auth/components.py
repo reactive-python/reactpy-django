@@ -37,9 +37,9 @@ def root_manager(child: Any):
 
 
 @component
-def session_manager():
-    """This component can force the client (browser) to switch HTTP sessions,
-    making it match the websocket session, by using a authentication token.
+def auth_manager():
+    """This component uses a client-side component alongside an authentication token
+    to make the client (browser) to switch the HTTP auth session, to make it match the websocket session.
 
     Used to force persistent authentication between Django's websocket and HTTP stack."""
     from reactpy_django import config
@@ -52,24 +52,24 @@ def session_manager():
     def setup_asgi_scope():
         """Store trigger functions in the websocket scope so that ReactPy-Django's hooks can command
         any relevant actions."""
-        scope["reactpy"]["synchronize_session"] = synchronize_session
+        scope["reactpy"]["synchronize_auth"] = synchronize_auth
 
     @hooks.use_effect(dependencies=[synchronize_requested])
-    async def synchronize_session_watchdog():
-        """Detected if the client has taken too long to request a session synchronization.
+    async def synchronize_auth_watchdog():
+        """Detected if the client has taken too long to request a auth session synchronization.
 
         This effect will automatically be cancelled if the session is successfully
-        switched (via effect dependencies)."""
+        synchronized (via effect dependencies)."""
         if synchronize_requested:
             await asyncio.sleep(config.REACTPY_AUTH_TOKEN_TIMEOUT + 0.1)
             await asyncio.to_thread(
                 _logger.warning,
-                f"Client did not switch sessions within {config.REACTPY_AUTH_TOKEN_TIMEOUT} (REACTPY_AUTH_TOKEN_TIMEOUT) seconds.",
+                f"Client did not switch authentication sessions within {config.REACTPY_AUTH_TOKEN_TIMEOUT} (REACTPY_AUTH_TOKEN_TIMEOUT) seconds.",
             )
             set_synchronize_requested(False)
 
-    async def synchronize_session():
-        """Event that can command the client to switch HTTP sessions (to match the websocket session)."""
+    async def synchronize_auth():
+        """Event that can command the client to switch HTTP auth sessions (to match the websocket session)."""
         session: SessionBase | None = scope.get("session")
         if not session or not session.session_key:
             return
@@ -85,30 +85,31 @@ def session_manager():
         # Create a fresh token
         token.set_current(str(uuid4()))
 
-        # Begin the process of synchronizing HTTP and websocket sessions
+        # Begin the process of synchronizing HTTP and websocket auth sessions
         obj = await AuthToken.objects.acreate(value=token.current, session_key=session.session_key)
         await obj.asave()
         set_synchronize_requested(True)
 
-    async def synchronize_session_callback(status_code: int, response: str):
+    async def synchronize_auth_callback(status_code: int, response: str):
         """This callback acts as a communication bridge, allowing the client to notify the server
-        of the status of session switch."""
+        of the status of auth session switch."""
         set_synchronize_requested(False)
         if status_code >= 300 or status_code < 200:
             await asyncio.to_thread(
-                _logger.warning,
-                f"Client returned unexpected HTTP status code ({status_code}) while trying to sychronize sessions.",
+                _logger.error,
+                f"Client returned unexpected HTTP status code ({status_code}) while trying to synchronize authentication sessions.",
             )
 
-    # If needed, synchronize sessions by configuring all relevant session cookies.
-    # This is achieved by commanding the client to perform a HTTP request to our session manager endpoint.
+    # If needed, synchronize authenication sessions by configuring all relevant session cookies.
+    # This is achieved by commanding the client to perform a HTTP request to our session manager endpoint,
+    # which will set any required cookies.
     if synchronize_requested:
         return HttpRequest(
             {
                 "method": "GET",
-                "url": reverse("reactpy:session_manager", args=[token.current]),
+                "url": reverse("reactpy:auth_manager", args=[token.current]),
                 "body": None,
-                "callback": synchronize_session_callback,
+                "callback": synchronize_auth_callback,
             },
         )
 
