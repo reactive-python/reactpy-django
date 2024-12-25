@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Literal, TypeAlias
+from typing import TYPE_CHECKING, Literal
 
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from reactpy_django.models import Config
 
 CLEAN_NEEDED_BY: datetime = datetime(year=1, month=1, day=1, tzinfo=timezone.now().tzinfo)
-CleaningArgs: TypeAlias = Literal["all", "sessions", "auth_tokens", "user_data"]
+CleaningArgs = Literal["all", "sessions", "auth_tokens", "user_data"]
 
 
 def clean(*args: CleaningArgs, immediate: bool = False, verbosity: int = 1):
