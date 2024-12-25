@@ -52,17 +52,15 @@ def session_manager(child: Any):
             set_synchronize_requested(False)
 
     async def synchronize_session():
-        """Entrypoint where the server will command the client to switch HTTP sessions
-        to match the websocket session. This function is stored in the websocket scope so that
-        ReactPy-Django's hooks can access it."""
+        """Event that can command the client to switch HTTP sessions (to match the websocket sessions)."""
         session: SessionBase | None = scope.get("session")
         if not session or not session.session_key:
             return
 
         # Delete any sessions currently associated with the previous UUID.
         # This exists to fix scenarios where...
-        # 1) A component tree performs multiple login commands for different users.
-        # 2) A login is requested, but the server failed to respond to the HTTP request.
+        # 1) Login is called multiple times before the first one is completed.
+        # 2) Login was called, but the server failed to respond to the HTTP request.
         if uuid.current:
             with contextlib.suppress(SynchronizeSession.DoesNotExist):
                 obj = await SynchronizeSession.objects.aget(uuid=uuid.current)

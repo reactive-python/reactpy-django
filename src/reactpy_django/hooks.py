@@ -418,15 +418,15 @@ def use_root_id() -> str:
 
 
 def use_auth():
-    """Provides the ability to login/logout a user using Django's standard authentication framework."""
+    """Provides the ability to login/logout a user using Django's authentication framework."""
     from reactpy_django import config
 
     scope = use_scope()
 
     async def login(user: AbstractUser):
         await channels_auth.login(scope, user, backend=config.REACTPY_AUTH_BACKEND)
-        session_save_func = getattr(scope["session"], "asave", scope["session"].save)
-        await ensure_async(session_save_func)()
+        session_save_method = getattr(scope["session"], "asave", scope["session"].save)
+        await ensure_async(session_save_method)()
         await scope["reactpy"]["synchronize_session"]()
 
     async def logout(rerender: bool = True):

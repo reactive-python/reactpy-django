@@ -21,7 +21,7 @@ class ComponentSession(models.Model):
 
 
 class SynchronizeSession(models.Model):
-    """A model for stores any relevant data needed to force Django's HTTP session to
+    """A model that contains any relevant data needed to force Django's HTTP session to
     match the websocket session.
 
     This data is tied to an arbitrary UUID for security (obfuscation) purposes.
