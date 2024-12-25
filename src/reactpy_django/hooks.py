@@ -33,6 +33,7 @@ from reactpy_django.types import (
     Mutation,
     Query,
     SyncPostprocessor,
+    UseAuthTuple,
     UserData,
 )
 from reactpy_django.utils import django_query_postprocessor, ensure_async, generate_obj_name, get_pk
@@ -417,37 +418,35 @@ def use_root_id() -> str:
     return scope["reactpy"]["id"]
 
 
-def use_auth():
+def use_rerender() -> Callable[[], None]:
+    """Provides a callable that can re-render the entire component tree without disconnecting the websocket."""
+    scope = use_scope()
+    return scope["reactpy"]["rerender"]
+
+
+def use_auth() -> UseAuthTuple:
     """Provides the ability to login/logout a user using Django's authentication framework."""
     from reactpy_django import config
 
     scope = use_scope()
+    trigger_rerender = use_rerender()
 
-    async def login(user: AbstractUser, rerender: bool = True):
-        """Login a user.
-
-        Args:
-            user: The user to login.
-            rerender: If True, the root component will be re-rendered after the user is logged in."""
+    async def login(user: AbstractUser, rerender: bool = True) -> None:
         await channels_auth.login(scope, user, backend=config.REACTPY_AUTH_BACKEND)
         session_save_method = getattr(scope["session"], "asave", scope["session"].save)
         await ensure_async(session_save_method)()
         await scope["reactpy"]["synchronize_auth"]()
 
         if rerender:
-            await scope["reactpy"]["rerender"]()
+            trigger_rerender()
 
-    async def logout(rerender: bool = True):
-        """Logout the current user.
-
-        Args:
-            rerender: If True, the root component will be re-rendered after the user is logged out."""
+    async def logout(rerender: bool = True) -> None:
         await channels_auth.logout(scope)
 
         if rerender:
-            await scope["reactpy"]["rerender"]()
+            trigger_rerender()
 
-    return login, logout
+    return UseAuthTuple(login=login, logout=logout)
 
 
 async def _get_user_data(user: AbstractUser, default_data: None | dict, save_default_data: bool) -> dict | None:

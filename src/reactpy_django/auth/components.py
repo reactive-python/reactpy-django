@@ -20,6 +20,8 @@ _logger = getLogger(__name__)
 
 @component
 def root_manager(child: Any):
+    """This component is serves as the parent component for any ReactPy component tree,
+    which allows for the management of the entire component tree."""
     scope = hooks.use_connection().scope
     _, set_rerender = hooks.use_state(uuid4)
 
@@ -29,7 +31,7 @@ def root_manager(child: Any):
         any relevant actions."""
         scope["reactpy"]["rerender"] = rerender
 
-    async def rerender():
+    def rerender():
         """Event that can force a rerender of the entire component tree."""
         set_rerender(uuid4())
 
@@ -44,7 +46,7 @@ def auth_manager():
     Used to force persistent authentication between Django's websocket and HTTP stack."""
     from reactpy_django import config
 
-    synchronize_requested, set_synchronize_requested = hooks.use_state(False)
+    sync_needed, set_sync_needed = hooks.use_state(False)
     token = hooks.use_ref("")
     scope = hooks.use_connection().scope
 
@@ -54,19 +56,19 @@ def auth_manager():
         any relevant actions."""
         scope["reactpy"]["synchronize_auth"] = synchronize_auth
 
-    @hooks.use_effect(dependencies=[synchronize_requested])
+    @hooks.use_effect(dependencies=[sync_needed])
     async def synchronize_auth_watchdog():
-        """Detected if the client has taken too long to request a auth session synchronization.
+        """Detect if the client has taken too long to request a auth session synchronization.
 
         This effect will automatically be cancelled if the session is successfully
         synchronized (via effect dependencies)."""
-        if synchronize_requested:
+        if sync_needed:
             await asyncio.sleep(config.REACTPY_AUTH_TOKEN_TIMEOUT + 0.1)
             await asyncio.to_thread(
                 _logger.warning,
                 f"Client did not switch authentication sessions within {config.REACTPY_AUTH_TOKEN_TIMEOUT} (REACTPY_AUTH_TOKEN_TIMEOUT) seconds.",
             )
-            set_synchronize_requested(False)
+            set_sync_needed(False)
 
     async def synchronize_auth():
         """Event that can command the client to switch HTTP auth sessions (to match the websocket session)."""
@@ -88,12 +90,12 @@ def auth_manager():
         # Begin the process of synchronizing HTTP and websocket auth sessions
         obj = await AuthToken.objects.acreate(value=token.current, session_key=session.session_key)
         await obj.asave()
-        set_synchronize_requested(True)
+        set_sync_needed(True)
 
     async def synchronize_auth_callback(status_code: int, response: str):
         """This callback acts as a communication bridge, allowing the client to notify the server
         of the status of auth session switch."""
-        set_synchronize_requested(False)
+        set_sync_needed(False)
         if status_code >= 300 or status_code < 200:
             await asyncio.to_thread(
                 _logger.error,
@@ -103,7 +105,7 @@ def auth_manager():
     # If needed, synchronize authenication sessions by configuring all relevant session cookies.
     # This is achieved by commanding the client to perform a HTTP request to our session manager endpoint,
     # which will set any required cookies.
-    if synchronize_requested:
+    if sync_needed:
         return HttpRequest(
             {
                 "method": "GET",
