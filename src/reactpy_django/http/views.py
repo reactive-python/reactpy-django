@@ -48,37 +48,37 @@ async def session_manager(request: HttpRequest, uuid: str) -> HttpResponse:
     """Switches the client's active session to match ReactPy.
 
     This view exists because ReactPy is rendered via WebSockets, and browsers do not
-    allow active WebSocket connections to modify HTTP cookies. Django's authentication
+    allow active WebSocket connections to modify cookies. Django's authentication
     design requires HTTP cookies to persist state changes.
     """
-    from reactpy_django.models import SynchronizeSession
+    from reactpy_django.models import AuthToken
 
-    # Find out what session the client wants to switch
-    data = await SynchronizeSession.objects.aget(uuid=uuid)
+    # Find out what session the client wants to switch to
+    token = await AuthToken.objects.aget(value=uuid)
 
-    # CHECK: Session has expired?
-    if data.expired:
+    # CHECK: Token has expired?
+    if token.expired:
         msg = "Session expired."
-        await data.adelete()
+        await token.adelete()
         raise SuspiciousOperation(msg)
 
-    # CHECK: Session does not exist?
+    # CHECK: Token does not exist?
     exists_method = getattr(request.session, "aexists", request.session.exists)
-    if not await ensure_async(exists_method)(data.session_key):
+    if not await ensure_async(exists_method)(token.session_key):
         msg = "Attempting to switch to a session that does not exist."
         raise SuspiciousOperation(msg)
 
-    # CHECK: Client already using the correct session?
-    if request.session.session_key == data.session_key:
-        await data.adelete()
+    # CHECK: Client already using the correct session key?
+    if request.session.session_key == token.session_key:
+        await token.adelete()
         return HttpResponse(status=204)
 
     # Switch the client's session
-    request.session = type(request.session)(session_key=data.session_key)
+    request.session = type(request.session)(session_key=token.session_key)
     load_method = getattr(request.session, "aload", request.session.load)
     await ensure_async(load_method)()
     request.session.modified = True
     save_method = getattr(request.session, "asave", request.session.save)
     await ensure_async(save_method)()
-    await data.adelete()
+    await token.adelete()
     return HttpResponse(status=204)

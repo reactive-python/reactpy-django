@@ -7,10 +7,10 @@ from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 from django.urls import reverse
-from reactpy import component, hooks, html
+from reactpy import component, hooks
 
 from reactpy_django.javascript_components import HttpRequest
-from reactpy_django.models import SynchronizeSession
+from reactpy_django.models import AuthToken
 
 if TYPE_CHECKING:
     from django.contrib.sessions.backends.base import SessionBase
@@ -39,13 +39,13 @@ def root_manager(child: Any):
 @component
 def session_manager():
     """This component can force the client (browser) to switch HTTP sessions,
-    making it match the websocket session.
+    making it match the websocket session, by using a authentication token.
 
     Used to force persistent authentication between Django's websocket and HTTP stack."""
     from reactpy_django import config
 
     synchronize_requested, set_synchronize_requested = hooks.use_state(False)
-    uuid = hooks.use_ref("")
+    token = hooks.use_ref("")
     scope = hooks.use_connection().scope
 
     @hooks.use_effect(dependencies=[])
@@ -61,33 +61,32 @@ def session_manager():
         This effect will automatically be cancelled if the session is successfully
         switched (via effect dependencies)."""
         if synchronize_requested:
-            await asyncio.sleep(config.REACTPY_AUTH_SYNC_TIMEOUT + 0.1)
+            await asyncio.sleep(config.REACTPY_AUTH_TOKEN_TIMEOUT + 0.1)
             await asyncio.to_thread(
                 _logger.warning,
-                f"Client did not switch sessions within {config.REACTPY_AUTH_SYNC_TIMEOUT} (REACTPY_AUTH_SYNC_TIMEOUT) seconds.",
+                f"Client did not switch sessions within {config.REACTPY_AUTH_TOKEN_TIMEOUT} (REACTPY_AUTH_TOKEN_TIMEOUT) seconds.",
             )
             set_synchronize_requested(False)
 
     async def synchronize_session():
-        """Event that can command the client to switch HTTP sessions (to match the websocket sessions)."""
+        """Event that can command the client to switch HTTP sessions (to match the websocket session)."""
         session: SessionBase | None = scope.get("session")
         if not session or not session.session_key:
             return
 
-        # Delete any sessions currently associated with the previous UUID.
-        # This exists to fix scenarios where...
-        # 1) Login is called multiple times before the first one is completed.
-        # 2) Login was called, but the server failed to respond to the HTTP request.
-        if uuid.current:
-            with contextlib.suppress(SynchronizeSession.DoesNotExist):
-                obj = await SynchronizeSession.objects.aget(uuid=uuid.current)
+        # Delete previous token to resolve race conditions where...
+        # 1. Login was called multiple times before the first one is completed.
+        # 2. Login was called, but the server failed to respond to the HTTP request.
+        if token.current:
+            with contextlib.suppress(AuthToken.DoesNotExist):
+                obj = await AuthToken.objects.aget(value=token.current)
                 await obj.adelete()
 
-        # Create a fresh UUID
-        uuid.set_current(str(uuid4()))
+        # Create a fresh token
+        token.set_current(str(uuid4()))
 
         # Begin the process of synchronizing HTTP and websocket sessions
-        obj = await SynchronizeSession.objects.acreate(uuid=uuid.current, session_key=session.session_key)
+        obj = await AuthToken.objects.acreate(value=token.current, session_key=session.session_key)
         await obj.asave()
         set_synchronize_requested(True)
 
@@ -107,7 +106,7 @@ def session_manager():
         return HttpRequest(
             {
                 "method": "GET",
-                "url": reverse("reactpy:session_manager", args=[uuid.current]),
+                "url": reverse("reactpy:session_manager", args=[token.current]),
                 "body": None,
                 "callback": synchronize_session_callback,
             },

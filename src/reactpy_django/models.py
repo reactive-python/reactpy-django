@@ -20,24 +20,24 @@ class ComponentSession(models.Model):
     last_accessed = models.DateTimeField(auto_now=True)
 
 
-class SynchronizeSession(models.Model):
+class AuthToken(models.Model):
     """A model that contains any relevant data needed to force Django's HTTP session to
     match the websocket session.
 
-    This data is tied to an arbitrary UUID for security (obfuscation) purposes.
+    The session key is tied to an arbitrary UUID token for security (obfuscation) purposes.
 
     Source code must be written to respect the expiration property of this model."""
 
-    uuid = models.UUIDField(primary_key=True, editable=False, unique=True)
+    value = models.UUIDField(primary_key=True, editable=False, unique=True)
     session_key = models.CharField(max_length=40, editable=False)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
 
     @property
     def expired(self) -> bool:
         """Check the client has exceeded the max timeout."""
-        from reactpy_django.config import REACTPY_AUTH_SYNC_TIMEOUT
+        from reactpy_django.config import REACTPY_AUTH_TOKEN_TIMEOUT
 
-        return self.created_at < (timezone.now() - timedelta(seconds=REACTPY_AUTH_SYNC_TIMEOUT))
+        return self.created_at < (timezone.now() - timedelta(seconds=REACTPY_AUTH_TOKEN_TIMEOUT))
 
 
 class Config(models.Model):

@@ -39,9 +39,9 @@ REACTPY_SESSION_MAX_AGE: int = getattr(
     "REACTPY_SESSION_MAX_AGE",
     259200,  # Default to 3 days
 )
-REACTPY_AUTH_SYNC_TIMEOUT: int = getattr(
+REACTPY_AUTH_TOKEN_TIMEOUT: int = getattr(
     settings,
-    "REACTPY_AUTH_SYNC_TIMEOUT",
+    "REACTPY_AUTH_TOKEN_TIMEOUT",
     30,  # Default to 30 seconds
 )
 REACTPY_CACHE: str = getattr(
@@ -126,9 +126,9 @@ REACTPY_CLEAN_SESSIONS: bool = getattr(
     "REACTPY_CLEAN_SESSIONS",
     True,
 )
-REACTPY_CLEAN_AUTH_SYNC: bool = getattr(
+REACTPY_CLEAN_AUTH_TOKENS: bool = getattr(
     settings,
-    "REACTPY_CLEAN_AUTH_SYNC",
+    "REACTPY_CLEAN_AUTH_TOKENS",
     True,
 )
 REACTPY_CLEAN_USER_DATA: bool = getattr(
