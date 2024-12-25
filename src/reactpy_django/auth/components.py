@@ -28,8 +28,7 @@ def session_manager(child: Any):
 
     synchronize_requested, set_synchronize_requested = hooks.use_state(False)
     _, set_rerender = hooks.use_state(uuid4)
-    uuid_ref = hooks.use_ref(str(uuid4()))
-    uuid = uuid_ref.current
+    uuid = hooks.use_ref("")
     scope = hooks.use_connection().scope
 
     @hooks.use_effect(dependencies=[])
@@ -60,18 +59,20 @@ def session_manager(child: Any):
         if not session or not session.session_key:
             return
 
-        # Delete any sessions currently associated with this UUID, which also resets
-        # the SynchronizeSession validity time.
+        # Delete any sessions currently associated with the previous UUID.
         # This exists to fix scenarios where...
-        # 1) The developer manually rotates the session key.
-        # 2) A component tree requests multiple logins back-to-back before they finish.
-        # 3) A login is requested, but the server failed to respond to the HTTP request.
-        with contextlib.suppress(SynchronizeSession.DoesNotExist):
-            obj = await SynchronizeSession.objects.aget(uuid=uuid)
-            await obj.adelete()
+        # 1) A component tree performs multiple login commands for different users.
+        # 2) A login is requested, but the server failed to respond to the HTTP request.
+        if uuid.current:
+            with contextlib.suppress(SynchronizeSession.DoesNotExist):
+                obj = await SynchronizeSession.objects.aget(uuid=uuid.current)
+                await obj.adelete()
+
+        # Create a fresh UUID
+        uuid.set_current(str(uuid4()))
 
         # Begin the process of synchronizing HTTP and websocket sessions
-        obj = await SynchronizeSession.objects.acreate(uuid=uuid, session_key=session.session_key)
+        obj = await SynchronizeSession.objects.acreate(uuid=uuid.current, session_key=session.session_key)
         await obj.asave()
         set_synchronize_requested(True)
 
@@ -96,7 +97,7 @@ def session_manager(child: Any):
         http_request = HttpRequest(
             {
                 "method": "GET",
-                "url": reverse("reactpy:session_manager", args=[uuid]),
+                "url": reverse("reactpy:session_manager", args=[uuid.current]),
                 "body": None,
                 "callback": synchronize_session_callback,
             },
