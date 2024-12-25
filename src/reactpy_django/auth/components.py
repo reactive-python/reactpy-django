@@ -19,7 +19,25 @@ _logger = getLogger(__name__)
 
 
 @component
-def session_manager(child: Any):
+def root_manager(child: Any):
+    scope = hooks.use_connection().scope
+    _, set_rerender = hooks.use_state(uuid4)
+
+    @hooks.use_effect(dependencies=[])
+    def setup_asgi_scope():
+        """Store trigger functions in the websocket scope so that ReactPy-Django's hooks can command
+        any relevant actions."""
+        scope["reactpy"]["rerender"] = rerender
+
+    async def rerender():
+        """Event that can force a rerender of the entire component tree."""
+        set_rerender(uuid4())
+
+    return child
+
+
+@component
+def session_manager():
     """This component can force the client (browser) to switch HTTP sessions,
     making it match the websocket session.
 
@@ -27,7 +45,6 @@ def session_manager(child: Any):
     from reactpy_django import config
 
     synchronize_requested, set_synchronize_requested = hooks.use_state(False)
-    _, set_rerender = hooks.use_state(uuid4)
     uuid = hooks.use_ref("")
     scope = hooks.use_connection().scope
 
@@ -35,9 +52,7 @@ def session_manager(child: Any):
     def setup_asgi_scope():
         """Store trigger functions in the websocket scope so that ReactPy-Django's hooks can command
         any relevant actions."""
-        scope.setdefault("reactpy", {})
         scope["reactpy"]["synchronize_session"] = synchronize_session
-        scope["reactpy"]["rerender"] = rerender
 
     @hooks.use_effect(dependencies=[synchronize_requested])
     async def synchronize_session_watchdog():
@@ -86,15 +101,10 @@ def session_manager(child: Any):
                 f"Client returned unexpected HTTP status code ({status_code}) while trying to sychronize sessions.",
             )
 
-    async def rerender():
-        """Event that can force a rerender of the entire component tree."""
-        set_rerender(uuid4())
-
     # If needed, synchronize sessions by configuring all relevant session cookies.
     # This is achieved by commanding the client to perform a HTTP request to our session manager endpoint.
-    http_request = None
     if synchronize_requested:
-        http_request = HttpRequest(
+        return HttpRequest(
             {
                 "method": "GET",
                 "url": reverse("reactpy:session_manager", args=[uuid.current]),
@@ -103,4 +113,4 @@ def session_manager(child: Any):
             },
         )
 
-    return html._(child, http_request)
+    return None

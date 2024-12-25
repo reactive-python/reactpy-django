@@ -423,14 +423,27 @@ def use_auth():
 
     scope = use_scope()
 
-    async def login(user: AbstractUser):
+    async def login(user: AbstractUser, rerender: bool = True):
+        """Login a user.
+
+        Args:
+            user: The user to login.
+            rerender: If True, the root component will be re-rendered after the user is logged in."""
         await channels_auth.login(scope, user, backend=config.REACTPY_AUTH_BACKEND)
         session_save_method = getattr(scope["session"], "asave", scope["session"].save)
         await ensure_async(session_save_method)()
         await scope["reactpy"]["synchronize_session"]()
 
+        if rerender:
+            await scope["reactpy"]["rerender"]()
+
     async def logout(rerender: bool = True):
+        """Logout the current user.
+
+        Args:
+            rerender: If True, the root component will be re-rendered after the user is logged out."""
         await channels_auth.logout(scope)
+
         if rerender:
             await scope["reactpy"]["rerender"]()
 
