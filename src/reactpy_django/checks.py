@@ -38,7 +38,7 @@ def reactpy_warnings(app_configs, **kwargs):
     try:
         reverse("reactpy:web_modules", kwargs={"file": "example"})
         reverse("reactpy:view_to_iframe", kwargs={"dotted_path": "example"})
-        reverse("reactpy:switch_session", args=[str(uuid4())])
+        reverse("reactpy:session_manager", args=[str(uuid4())])
     except Exception:
         warnings.append(
             Warning(

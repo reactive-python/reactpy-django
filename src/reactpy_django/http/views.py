@@ -44,17 +44,17 @@ async def view_to_iframe(request: HttpRequest, dotted_path: str) -> HttpResponse
     return response
 
 
-async def switch_session(request: HttpRequest, uuid: str) -> HttpResponse:
-    """Switches the client's active session.
+async def session_manager(request: HttpRequest, uuid: str) -> HttpResponse:
+    """Switches the client's active session to match ReactPy.
 
     This view exists because ReactPy is rendered via WebSockets, and browsers do not
     allow active WebSocket connections to modify HTTP cookies. Django's authentication
     design requires HTTP cookies to persist state changes.
     """
-    from reactpy_django.models import SwitchSession
+    from reactpy_django.models import SynchronizeSession
 
     # Find out what session the client wants to switch
-    data = await SwitchSession.objects.aget(uuid=uuid)
+    data = await SynchronizeSession.objects.aget(uuid=uuid)
 
     # CHECK: Session has expired?
     if data.expired:

@@ -20,7 +20,7 @@ class ComponentSession(models.Model):
     last_accessed = models.DateTimeField(auto_now=True)
 
 
-class SwitchSession(models.Model):
+class SynchronizeSession(models.Model):
     """A model for stores any relevant data needed to force Django's HTTP session to
     match the websocket session.
 
