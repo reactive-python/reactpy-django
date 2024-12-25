@@ -87,9 +87,7 @@ Register ReactPy's WebSocket using `#!python REACTPY_WEBSOCKET_ROUTE` in your [`
 
     In these situations will need to ensure you are using `#!python AuthMiddlewareStack`.
 
-    ```python linenums="0"
-    {% include "../../examples/python/configure_asgi_middleware.py" start="# start" %}
-    ```
+    {% include "../../includes/auth-middleware-stack.md" %}
 
 ??? question "Where is my `asgi.py`?"
 

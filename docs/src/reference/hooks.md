@@ -271,6 +271,83 @@ Mutation functions can be sync or async.
 
 ---
 
+## User Hooks
+
+---
+
+### Use Auth
+
+Provides a `#!python NamedTuple` containing `#!python async login` and `#!python async logout` functions.
+
+This hook utilizes the Django's authentication framework in a way that provides **persistent** authentication across WebSocket and HTTP connections.
+
+=== "components.py"
+
+    ```python
+    {% include "../../examples/python/use_auth.py" %}
+    ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    `#!python None`
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `#!python UseAuthTuple` | A named tuple containing `#!python login` and `#!python logout` async functions. |
+
+??? warning "Extra Django configuration required"
+
+    Your ReactPy WebSocket must utilize `#!python AuthMiddlewareStack` in order to use this hook.
+
+    {% include "../../includes/auth-middleware-stack.md" %}
+
+??? question "Why use this instead of `#!python channels.auth.login`?"
+
+    The `#!python channels.auth.*` functions cannot trigger re-renders of your ReactPy components. Additionally, it does not provide persistent authentication when used within ReactPy.
+
+    Django's authentication design requires cookies to retain login status. ReactPy is rendered via WebSockets, and browsers do not allow active WebSocket connections to modify cookies.
+
+    To work around this limitation, when `#!python use_auth().login()` is called within your application, ReactPy performs the following process...
+
+    1. The server authenticates the user into the WebSocket session
+    2. The server generates a temporary login token linked to the WebSocket session
+    3. The server commands the browser to fetch the login token via HTTP
+    4. The client performs the HTTP request
+    5. The server returns the HTTP response, which contains all necessary cookies
+    6. The client stores these cookies in the browser
+
+    This ultimately results in persistent authentication which will be retained even if the browser tab is refreshed.
+
+---
+
+### Use User
+
+Shortcut that returns the WebSocket or HTTP connection's `#!python User`.
+
+=== "components.py"
+
+    ```python
+    {% include "../../examples/python/use_user.py" %}
+    ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    `#!python None`
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `#!python AbstractUser` | A Django `#!python User`, which can also be an `#!python AnonymousUser`. |
+
+---
+
 ### Use User Data
 
 Store or retrieve a `#!python dict` containing user data specific to the connection's `#!python User`.
@@ -522,7 +599,7 @@ You can expect this hook to provide strings such as `http://example.com`.
 
 Shortcut that returns the root component's `#!python id` from the WebSocket or HTTP connection.
 
-The root ID is a randomly generated `#!python uuid4`. It is notable to mention that it is persistent across the current connection. The `uuid` is reset when the page is refreshed.
+The root ID is a randomly generated `#!python uuid4`. It is notable to mention that it is persistent across the current connection. The `uuid` is reset only when the page is refreshed.
 
 This is useful when used in combination with [`#!python use_channel_layer`](#use-channel-layer) to send messages to a specific component instance, and/or retain a backlog of messages in case that component is disconnected via `#!python use_channel_layer( ... , group_discard=False)`.
 
@@ -546,14 +623,14 @@ This is useful when used in combination with [`#!python use_channel_layer`](#use
 
 ---
 
-### Use User
+### Use Re-render
 
-Shortcut that returns the WebSocket or HTTP connection's `#!python User`.
+Returns a function that can be used to trigger a re-render of the entire component tree.
 
 === "components.py"
 
     ```python
-    {% include "../../examples/python/use_user.py" %}
+    {% include "../../examples/python/use_rerender.py" %}
     ```
 
 ??? example "See Interface"
@@ -566,4 +643,4 @@ Shortcut that returns the WebSocket or HTTP connection's `#!python User`.
 
     | Type | Description |
     | --- | --- |
-    | `#!python AbstractUser` | A Django `#!python User`, which can also be an `#!python AnonymousUser`. |
+    | `#!python Callable[[], None]` | A function that triggers a re-render of the entire component tree. |

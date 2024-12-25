@@ -21,11 +21,16 @@ Don't forget to remove deprecated code on each major release!
 
 ### Added
 
+-   User login/logout features!
+    -   `reactpy_django.hooks.use_auth` to provide **persistent** `login` and `logout` functionality to your components.
+    -   `settings.py:REACTPY_AUTH_TOKEN_TIMEOUT` to control the maximum seconds before ReactPy no longer allows the browser to obtain a persistent login cookie.
+    -   `settings.py:REACTPY_CLEAN_AUTH_TOKENS` to control whether ReactPy should clean up expired authentication tokens during automatic cleanups.
 -   Automatically convert Django forms to ReactPy forms via the new `reactpy_django.components.django_form` component!
+-   The ReactPy component tree can now be forcibly re-rendered via the new `reactpy_django.hooks.use_rerender` hook.
 
 ### Changed
 
--   Refactoring of internal code to improve maintainability. No changes to public/documented API.
+-   Refactoring of internal code to improve maintainability. No changes to publicly documented API.
 
 ## [5.1.1] - 2024-12-02
 
