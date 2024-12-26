@@ -320,6 +320,76 @@ class ComponentTests(PlaywrightTestCase):
         )
         assert "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3'}" in user_data_div.text_content()
 
+    @navigate_to_page("/")
+    def test_component_use_auth(self):
+        uuid = self.page.wait_for_selector("#use-auth").get_attribute("data-uuid")
+        assert len(uuid) == 36
+
+        login_btn = self.page.wait_for_selector("#use-auth .login")
+        login_btn.click()
+
+        # Wait for #use-auth[data-username="user_4"] to appear
+        self.page.wait_for_selector("#use-auth[data-username='user_4']")
+        self.page.wait_for_selector(f"#use-auth[data-uuid='{uuid}']")
+
+        # Press disconnect and wait for #use-auth[data-uuid=...] to disappear
+        self.page.wait_for_selector("#use-auth .disconnect").click()
+        expect(self.page.locator(f"#use-auth[data-uuid='{uuid}']")).to_have_count(0)
+
+        # Double check that the same user is logged in
+        self.page.wait_for_selector("#use-auth[data-username='user_4']")
+
+        # Press logout and wait for #use-auth[data-username="AnonymousUser"] to appear
+        self.page.wait_for_selector("#use-auth .logout").click()
+        self.page.wait_for_selector("#use-auth[data-username='AnonymousUser']")
+
+        # Press disconnect and wait for #use-auth[data-uuid=...] to disappear
+        self.page.wait_for_selector("#use-auth .disconnect").click()
+        expect(self.page.locator(f"#use-auth[data-uuid='{uuid}']")).to_have_count(0)
+
+        # Double check that the user stayed logged out
+        self.page.wait_for_selector("#use-auth[data-username='AnonymousUser']")
+
+    @navigate_to_page("/")
+    def test_component_use_auth_no_rerender(self):
+        uuid = self.page.wait_for_selector("#use-auth-no-rerender").get_attribute("data-uuid")
+        assert len(uuid) == 36
+
+        login_btn = self.page.wait_for_selector("#use-auth-no-rerender .login")
+        login_btn.click()
+
+        # Make sure #use-auth[data-username="user_5"] does not appear
+        with pytest.raises(TimeoutError):
+            self.page.wait_for_selector("#use-auth-no-rerender[data-username='user_5']", timeout=1)
+
+        # Press disconnect and see if #use-auth[data-username="user_5"] appears
+        self.page.wait_for_selector("#use-auth-no-rerender .disconnect").click()
+        self.page.wait_for_selector("#use-auth-no-rerender[data-username='user_5']")
+
+        # Press logout and make sure #use-auth[data-username="AnonymousUser"] does not appear
+        with pytest.raises(TimeoutError):
+            self.page.wait_for_selector("#use-auth-no-rerender[data-username='AnonymousUser']", timeout=1)
+
+        # Press disconnect and see if #use-auth[data-username="AnonymousUser"] appears
+        self.page.wait_for_selector("#use-auth-no-rerender .disconnect").click()
+
+    @navigate_to_page("/")
+    def test_component_use_rerender(self):
+        initial_uuid = self.page.wait_for_selector("#use-rerender").get_attribute("data-uuid")
+        assert len(initial_uuid) == 36
+
+        rerender_button = self.page.wait_for_selector("#use-rerender button")
+        rerender_button.click()
+
+        # Wait for #use-rerender[data-uuid=...] to disappear
+        expect(self.page.locator(f"#use-rerender[data-uuid='{initial_uuid}']")).to_have_count(0)
+
+        # Find the new #use-rerender[data-uuid=...]
+        self.page.wait_for_selector("#use-rerender")
+        new_uuid = self.page.wait_for_selector("#use-rerender").get_attribute("data-uuid")
+        assert len(new_uuid) == 36
+        assert new_uuid != initial_uuid
+
     ###################
     # Prerender Tests #
     ###################

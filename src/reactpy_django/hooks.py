@@ -421,7 +421,11 @@ def use_root_id() -> str:
 def use_rerender() -> Callable[[], None]:
     """Provides a callable that can re-render the entire component tree without disconnecting the websocket."""
     scope = use_scope()
-    return scope["reactpy"]["rerender"]
+
+    def rerender():
+        scope["reactpy"]["rerender"]()
+
+    return rerender
 
 
 def use_auth() -> UseAuthTuple:

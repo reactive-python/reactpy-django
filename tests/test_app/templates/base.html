@@ -3,90 +3,96 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
-  <title>ReactPy</title>
-  <style>
-    iframe {
-      width: 100%;
-      height: 45px;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
+    <title>ReactPy</title>
+    <style>
+        iframe {
+            width: 100%;
+            height: 45px;
+        }
+    </style>
 </head>
 
 <body>
-  <h1>ReactPy Test Page</h1>
-  <hr>
-  {% component "test_app.components.hello_world" class="hello-world" %}
-  <hr>
-  {% component "test_app.components.button" class="button" %}
-  <hr>
-  {% component "test_app.components.parameterized_component" class="parametarized-component" x=123 y=456 %}
-  <hr>
-  {% component "test_app.components.object_in_templatetag" my_object %}
-  <hr>
-  {% component "test_app.components.button_from_js_module" %}
-  <hr>
-  {% component "test_app.components.use_connection" %}
-  <hr>
-  {% component "test_app.components.use_scope" %}
-  <hr>
-  {% component "test_app.components.use_location" %}
-  <hr>
-  {% component "test_app.components.use_origin" %}
-  <hr>
-  {% component "test_app.components.django_css" %}
-  <hr>
-  {% component "test_app.components.django_js" %}
-  <hr>
-  {% component "test_app.components.unauthorized_user" %}
-  <hr>
-  {% component "test_app.components.authorized_user" %}
-  <hr>
-  {% component "test_app.components.relational_query" %}
-  <hr>
-  {% component "test_app.components.async_relational_query" %}
-  <hr>
-  {% component "test_app.components.todo_list" %}
-  <hr>
-  {% component "test_app.components.async_todo_list" %}
-  <hr>
-  {% component "test_app.components.view_to_component_sync_func" %}
-  <hr>
-  {% component "test_app.components.view_to_component_async_func" %}
-  <hr>
-  {% component "test_app.components.view_to_component_sync_class" %}
-  <hr>
-  {% component "test_app.components.view_to_component_async_class" %}
-  <hr>
-  {% component "test_app.components.view_to_component_template_view_class" %}
-  <hr>
-  {% component "test_app.components.view_to_component_script" %}
-  <hr>
-  {% component "test_app.components.view_to_component_request" %}
-  <hr>
-  {% component "test_app.components.view_to_component_args" %}
-  <hr>
-  {% component "test_app.components.view_to_component_kwargs" %}
-  <hr>
-  {% component "test_app.components.view_to_iframe_sync_func" %}
-  <hr>
-  {% component "test_app.components.view_to_iframe_async_func" %}
-  <hr>
-  {% component "test_app.components.view_to_iframe_sync_class" %}
-  <hr>
-  {% component "test_app.components.view_to_iframe_async_class" %}
-  <hr>
-  {% component "test_app.components.view_to_iframe_template_view_class" %}
-  <hr>
-  {% component "test_app.components.view_to_iframe_args" %}
-  <hr>
-  {% component "test_app.components.use_user_data" %}
-  <hr>
-  {% component "test_app.components.use_user_data_with_default" %}
-  <hr>
+    <h1>ReactPy Test Page</h1>
+    <hr>
+    {% component "test_app.components.hello_world" class="hello-world" %}
+    <hr>
+    {% component "test_app.components.button" class="button" %}
+    <hr>
+    {% component "test_app.components.parameterized_component" class="parametarized-component" x=123 y=456 %}
+    <hr>
+    {% component "test_app.components.object_in_templatetag" my_object %}
+    <hr>
+    {% component "test_app.components.button_from_js_module" %}
+    <hr>
+    {% component "test_app.components.use_connection" %}
+    <hr>
+    {% component "test_app.components.use_scope" %}
+    <hr>
+    {% component "test_app.components.use_location" %}
+    <hr>
+    {% component "test_app.components.use_origin" %}
+    <hr>
+    {% component "test_app.components.django_css" %}
+    <hr>
+    {% component "test_app.components.django_js" %}
+    <hr>
+    {% component "test_app.components.unauthorized_user" %}
+    <hr>
+    {% component "test_app.components.authorized_user" %}
+    <hr>
+    {% component "test_app.components.relational_query" %}
+    <hr>
+    {% component "test_app.components.async_relational_query" %}
+    <hr>
+    {% component "test_app.components.todo_list" %}
+    <hr>
+    {% component "test_app.components.async_todo_list" %}
+    <hr>
+    {% component "test_app.components.view_to_component_sync_func" %}
+    <hr>
+    {% component "test_app.components.view_to_component_async_func" %}
+    <hr>
+    {% component "test_app.components.view_to_component_sync_class" %}
+    <hr>
+    {% component "test_app.components.view_to_component_async_class" %}
+    <hr>
+    {% component "test_app.components.view_to_component_template_view_class" %}
+    <hr>
+    {% component "test_app.components.view_to_component_script" %}
+    <hr>
+    {% component "test_app.components.view_to_component_request" %}
+    <hr>
+    {% component "test_app.components.view_to_component_args" %}
+    <hr>
+    {% component "test_app.components.view_to_component_kwargs" %}
+    <hr>
+    {% component "test_app.components.view_to_iframe_sync_func" %}
+    <hr>
+    {% component "test_app.components.view_to_iframe_async_func" %}
+    <hr>
+    {% component "test_app.components.view_to_iframe_sync_class" %}
+    <hr>
+    {% component "test_app.components.view_to_iframe_async_class" %}
+    <hr>
+    {% component "test_app.components.view_to_iframe_template_view_class" %}
+    <hr>
+    {% component "test_app.components.view_to_iframe_args" %}
+    <hr>
+    {% component "test_app.components.use_user_data" %}
+    <hr>
+    {% component "test_app.components.use_user_data_with_default" %}
+    <hr>
+    {% component "test_app.components.use_auth" %}
+    <hr>
+    {% component "test_app.components.use_auth_no_rerender" %}
+    <hr>
+    {% component "test_app.components.use_rerender" %}
+    <hr>
 </body>
 
 </html>
