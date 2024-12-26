@@ -220,13 +220,34 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
-    # Check if REACTPY_CLEAN_SESSION is not a valid property
+    # Check if user misspelled REACTPY_CLEAN_SESSIONS
     if getattr(settings, "REACTPY_CLEAN_SESSION", None):
         warnings.append(
             Warning(
                 "REACTPY_CLEAN_SESSION is not a valid property value.",
                 hint="Did you mean to use REACTPY_CLEAN_SESSIONS instead?",
                 id="reactpy_django.W019",
+            )
+        )
+
+    # Check if REACTPY_AUTH_TOKEN_TIMEOUT is a large value
+    auth_token_timeout = config.REACTPY_AUTH_TOKEN_TIMEOUT
+    if isinstance(auth_token_timeout, int) and auth_token_timeout > 120:
+        warnings.append(
+            Warning(
+                "REACTPY_AUTH_TOKEN_TIMEOUT is set to a very large value.",
+                hint="It is suggested to keep REACTPY_AUTH_TOKEN_TIMEOUT under 120 seconds to prevent security risks.",
+                id="reactpy_django.W020",
+            )
+        )
+
+    # Check if REACTPY_AUTH_TOKEN_TIMEOUT is a small value
+    if isinstance(auth_token_timeout, int) and auth_token_timeout <= 2:
+        warnings.append(
+            Warning(
+                "REACTPY_AUTH_TOKEN_TIMEOUT is set to a very low value.",
+                hint="It is suggested to keep REACTPY_AUTH_TOKEN_TIMEOUT above 2 seconds to account for client and server latency.",
+                id="reactpy_django.W021",
             )
         )
 
@@ -510,6 +531,36 @@ def reactpy_errors(app_configs, **kwargs):
                 "Invalid type for REACTPY_CLEAN_USER_DATA.",
                 hint="REACTPY_CLEAN_USER_DATA should be a boolean.",
                 id="reactpy_django.E026",
+            )
+        )
+
+    # Check if REACTPY_CLEAN_AUTH_TOKENS is a valid data type
+    if not isinstance(config.REACTPY_CLEAN_AUTH_TOKENS, bool):
+        errors.append(
+            Error(
+                "Invalid type for REACTPY_CLEAN_AUTH_TOKENS.",
+                hint="REACTPY_CLEAN_AUTH_TOKENS should be a boolean.",
+                id="reactpy_django.E027",
+            )
+        )
+
+    # Check if REACTPY_AUTH_TOKEN_TIMEOUT is a valid data type
+    if not isinstance(config.REACTPY_AUTH_TOKEN_TIMEOUT, int):
+        errors.append(
+            Error(
+                "Invalid type for REACTPY_AUTH_TOKEN_TIMEOUT.",
+                hint="REACTPY_AUTH_TOKEN_TIMEOUT should be an integer.",
+                id="reactpy_django.E028",
+            )
+        )
+
+    # Check if REACTPY_AUTH_TOKEN_TIMEOUT is a positive integer
+    if isinstance(config.REACTPY_AUTH_TOKEN_TIMEOUT, int) and config.REACTPY_AUTH_TOKEN_TIMEOUT < 0:
+        errors.append(
+            Error(
+                "Invalid value for REACTPY_AUTH_TOKEN_TIMEOUT.",
+                hint="REACTPY_AUTH_TOKEN_TIMEOUT should be a non-negative integer.",
+                id="reactpy_django.E029",
             )
         )
 
