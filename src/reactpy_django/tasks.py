@@ -72,13 +72,13 @@ def clean_component_sessions(verbosity: int = 1):
 
 
 def clean_auth_tokens(verbosity: int = 1):
-    from reactpy_django.config import DJANGO_DEBUG, REACTPY_AUTH_TOKEN_TIMEOUT
+    from reactpy_django.config import DJANGO_DEBUG, REACTPY_AUTH_TOKEN_MAX_AGE
     from reactpy_django.models import AuthToken
 
     if verbosity >= 2:
         _logger.info("Cleaning ReactPy auth tokens...")
     start_time = timezone.now()
-    expiration_date = timezone.now() - timedelta(seconds=REACTPY_AUTH_TOKEN_TIMEOUT)
+    expiration_date = timezone.now() - timedelta(seconds=REACTPY_AUTH_TOKEN_MAX_AGE)
     synchronizer_objects = AuthToken.objects.filter(created_at__lte=expiration_date)
 
     if verbosity >= 2:

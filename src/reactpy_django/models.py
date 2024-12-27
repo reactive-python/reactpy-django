@@ -34,10 +34,9 @@ class AuthToken(models.Model):
 
     @property
     def expired(self) -> bool:
-        """Check the client has exceeded the max timeout."""
-        from reactpy_django.config import REACTPY_AUTH_TOKEN_TIMEOUT
+        from reactpy_django.config import REACTPY_AUTH_TOKEN_MAX_AGE
 
-        return self.created_at < (timezone.now() - timedelta(seconds=REACTPY_AUTH_TOKEN_TIMEOUT))
+        return self.created_at < (timezone.now() - timedelta(seconds=REACTPY_AUTH_TOKEN_MAX_AGE))
 
 
 class Config(models.Model):

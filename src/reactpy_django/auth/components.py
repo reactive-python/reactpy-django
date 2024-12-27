@@ -63,10 +63,10 @@ def auth_manager():
         This effect will automatically be cancelled if the session is successfully
         synchronized (via effect dependencies)."""
         if sync_needed:
-            await asyncio.sleep(config.REACTPY_AUTH_TOKEN_TIMEOUT + 0.1)
+            await asyncio.sleep(config.REACTPY_AUTH_TOKEN_MAX_AGE + 0.1)
             await asyncio.to_thread(
                 _logger.warning,
-                f"Client did not switch authentication sessions within {config.REACTPY_AUTH_TOKEN_TIMEOUT} (REACTPY_AUTH_TOKEN_TIMEOUT) seconds.",
+                f"Client did not switch authentication sessions within {config.REACTPY_AUTH_TOKEN_MAX_AGE} (REACTPY_AUTH_TOKEN_MAX_AGE) seconds.",
             )
             set_sync_needed(False)
 

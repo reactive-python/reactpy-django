@@ -73,15 +73,15 @@ Dotted path to the Django authentication backend to use for ReactPy components. 
 
 ---
 
-### `#!python REACTPY_AUTH_TOKEN_TIMEOUT`
+### `#!python REACTPY_AUTH_TOKEN_MAX_AGE`
 
 **Default:** `#!python 30`
 
 **Example Value(s):** `#!python 5`
 
-Maximum seconds before ReactPy no longer allows the browser to obtain a login cookie.
+Maximum seconds before ReactPy's login token expires.
 
-This setting exists because Django's authentication design require cookies to retain login status. ReactPy is rendered via WebSockets, and browsers do not allow active WebSocket connections to modify cookies.
+This setting exists because Django's authentication design requires cookies to retain login status. ReactPy is rendered via WebSockets, and browsers do not allow active WebSocket connections to modify cookies.
 
 To work around this limitation, this setting provides a maximum validity period of a temporary login token. When `#!python reactpy_django.hooks.use_auth().login()` is called within your application, ReactPy will automatically create this temporary login token and command the browser to fetch it via HTTP.
 

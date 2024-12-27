@@ -39,9 +39,9 @@ REACTPY_SESSION_MAX_AGE: int = getattr(
     "REACTPY_SESSION_MAX_AGE",
     259200,  # Default to 3 days
 )
-REACTPY_AUTH_TOKEN_TIMEOUT: int = getattr(
+REACTPY_AUTH_TOKEN_MAX_AGE: int = getattr(
     settings,
-    "REACTPY_AUTH_TOKEN_TIMEOUT",
+    "REACTPY_AUTH_TOKEN_MAX_AGE",
     30,  # Default to 30 seconds
 )
 REACTPY_CACHE: str = getattr(
