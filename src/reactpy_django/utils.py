@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import contextlib
 import inspect
 import logging
@@ -16,7 +17,6 @@ from typing import TYPE_CHECKING, Any, Callable
 from uuid import UUID, uuid4
 
 import dill
-from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from django.contrib.staticfiles.finders import find
 from django.core.cache import caches
@@ -353,14 +353,18 @@ class SyncLayout(Layout):
     """
 
     def __enter__(self):
-        async_to_sync(self.__aenter__)()
-        return self
+        self.loop = asyncio.new_event_loop()
+        self.thread = ThreadPoolExecutor(max_workers=1)
+        return self.thread.submit(self.loop.run_until_complete, self.__aenter__()).result()
 
-    def __exit__(self, *_):
-        async_to_sync(self.__aexit__)(*_)
+    def __exit__(self, *exec):
+        result = self.thread.submit(self.loop.run_until_complete, self.__aexit__(*exec)).result()
+        self.loop.close()
+        self.thread.shutdown()
+        return result
 
     def sync_render(self):
-        return async_to_sync(super().render)()
+        return self.thread.submit(self.loop.run_until_complete, self.render()).result()
 
 
 def get_pk(model):

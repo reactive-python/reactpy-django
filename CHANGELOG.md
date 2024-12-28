@@ -32,6 +32,10 @@ Don't forget to remove deprecated code on each major release!
 
 -   Refactoring of internal code to improve maintainability. No changes to publicly documented API.
 
+### Fixed
+
+-   Fixed bug where prerendered components could generate a `SynchronousOnlyOperation` exception if they utilize the Django ORM.
+
 ## [5.1.1] - 2024-12-02
 
 ### Fixed
