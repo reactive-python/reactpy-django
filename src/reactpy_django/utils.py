@@ -62,6 +62,7 @@ COMPONENT_REGEX = re.compile(
     + r"\s*%}"
 )
 FILE_ASYNC_ITERATOR_THREAD = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ReactPy-Django-FileAsyncIterator")
+SYNC_LAYOUT_THREAD = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ReactPy-Django-SyncLayout")
 
 
 async def render_view(
@@ -354,17 +355,15 @@ class SyncLayout(Layout):
 
     def __enter__(self):
         self.loop = asyncio.new_event_loop()
-        self.thread = ThreadPoolExecutor(max_workers=1)
-        self.thread.submit(self.loop.run_until_complete, self.__aenter__()).result()
+        SYNC_LAYOUT_THREAD.submit(self.loop.run_until_complete, self.__aenter__()).result()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.thread.submit(self.loop.run_until_complete, self.__aexit__()).result()
+        SYNC_LAYOUT_THREAD.submit(self.loop.run_until_complete, self.__aexit__()).result()
         self.loop.close()
-        self.thread.shutdown()
 
     def sync_render(self):
-        return self.thread.submit(self.loop.run_until_complete, self.render()).result()
+        return SYNC_LAYOUT_THREAD.submit(self.loop.run_until_complete, self.render()).result()
 
 
 def get_pk(model):
