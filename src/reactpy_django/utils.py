@@ -355,13 +355,13 @@ class SyncLayout(Layout):
     def __enter__(self):
         self.loop = asyncio.new_event_loop()
         self.thread = ThreadPoolExecutor(max_workers=1)
-        return self.thread.submit(self.loop.run_until_complete, self.__aenter__()).result()
+        self.thread.submit(self.loop.run_until_complete, self.__aenter__()).result()
+        return self
 
-    def __exit__(self, *exec):
-        result = self.thread.submit(self.loop.run_until_complete, self.__aexit__(*exec)).result()
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.thread.submit(self.loop.run_until_complete, self.__aexit__()).result()
         self.loop.close()
         self.thread.shutdown()
-        return result
 
     def sync_render(self):
         return self.thread.submit(self.loop.run_until_complete, self.render()).result()
