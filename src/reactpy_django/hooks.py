@@ -15,6 +15,7 @@ from uuid import uuid4
 
 import orjson
 from channels import DEFAULT_CHANNEL_LAYER
+from channels import auth as channels_auth
 from channels.layers import InMemoryChannelLayer, get_channel_layer
 from reactpy import use_callback, use_effect, use_memo, use_ref, use_state
 from reactpy import use_connection as _use_connection
@@ -32,6 +33,7 @@ from reactpy_django.types import (
     Mutation,
     Query,
     SyncPostprocessor,
+    UseAuthTuple,
     UserData,
 )
 from reactpy_django.utils import django_query_postprocessor, ensure_async, generate_obj_name, get_pk
@@ -414,6 +416,41 @@ def use_root_id() -> str:
     scope = use_scope()
 
     return scope["reactpy"]["id"]
+
+
+def use_rerender() -> Callable[[], None]:
+    """Provides a callable that can re-render the entire component tree without disconnecting the websocket."""
+    scope = use_scope()
+
+    def rerender():
+        scope["reactpy"]["rerender"]()
+
+    return rerender
+
+
+def use_auth() -> UseAuthTuple:
+    """Provides the ability to login/logout a user using Django's authentication framework."""
+    from reactpy_django import config
+
+    scope = use_scope()
+    trigger_rerender = use_rerender()
+
+    async def login(user: AbstractUser, rerender: bool = True) -> None:
+        await channels_auth.login(scope, user, backend=config.REACTPY_AUTH_BACKEND)
+        session_save_method = getattr(scope["session"], "asave", scope["session"].save)
+        await ensure_async(session_save_method)()
+        await scope["reactpy"]["synchronize_auth"]()
+
+        if rerender:
+            trigger_rerender()
+
+    async def logout(rerender: bool = True) -> None:
+        await channels_auth.logout(scope)
+
+        if rerender:
+            trigger_rerender()
+
+    return UseAuthTuple(login=login, logout=logout)
 
 
 async def _get_user_data(user: AbstractUser, default_data: None | dict, save_default_data: bool) -> dict | None:

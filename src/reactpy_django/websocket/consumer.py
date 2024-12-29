@@ -142,7 +142,9 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
     async def run_dispatcher(self):
         """Runs the main loop that performs component rendering tasks."""
+        # TODO: Figure out why exceptions raised in this method are not being printed to the console.
         from reactpy_django import models
+        from reactpy_django.auth.components import auth_manager, root_manager
         from reactpy_django.config import (
             REACTPY_REGISTERED_COMPONENTS,
             REACTPY_SESSION_MAX_AGE,
@@ -210,7 +212,13 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         # Start the ReactPy component rendering loop
         with contextlib.suppress(Exception):
             await serve_layout(
-                Layout(ConnectionContext(root_component, value=connection)),  # type: ignore
+                Layout(  # type: ignore
+                    ConnectionContext(
+                        auth_manager(),
+                        root_manager(root_component),
+                        value=connection,
+                    )
+                ),
                 self.send_json,
                 self.recv_queue.get,
             )

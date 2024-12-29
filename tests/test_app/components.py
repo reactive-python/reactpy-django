@@ -1,6 +1,7 @@
 import asyncio
 import inspect
 from pathlib import Path
+from uuid import uuid4
 
 from channels.auth import login, logout
 from channels.db import database_sync_to_async
@@ -691,4 +692,87 @@ def use_user_data_with_default():
         html.div(f"Data State: (loading={user_data_query.loading}, error={user_data_query.error})"),
         html.div(f"Mutation State: (loading={user_data_mutation.loading}, error={user_data_mutation.error})"),
         html.div(html.input({"on_key_press": on_submit, "placeholder": "Type here to add data"})),
+    )
+
+
+@component
+def use_auth():
+    _login, _logout = reactpy_django.hooks.use_auth()
+    uuid = hooks.use_ref(str(uuid4())).current
+    current_user = reactpy_django.hooks.use_user()
+    connection = reactpy_django.hooks.use_connection()
+
+    async def login_user(event):
+        new_user, _created = await get_user_model().objects.aget_or_create(username="user_4")
+        await _login(new_user)
+
+    async def logout_user(event):
+        await _logout()
+
+    async def disconnect(event):
+        await connection.carrier.close()
+
+    return html.div(
+        {
+            "id": "use-auth",
+            "data-username": ("AnonymousUser" if current_user.is_anonymous else current_user.username),
+            "data-uuid": uuid,
+        },
+        html.div("use_auth"),
+        html.div(f"UUID: {uuid}"),
+        html.button({"className": "login", "on_click": login_user}, "Login"),
+        html.button({"className": "logout", "on_click": logout_user}, "Logout"),
+        html.button({"className": "disconnect", "on_click": disconnect}, "disconnect"),
+        html.div(f"User: {current_user}"),
+    )
+
+
+@component
+def use_auth_no_rerender():
+    _login, _logout = reactpy_django.hooks.use_auth()
+    uuid = hooks.use_ref(str(uuid4())).current
+    current_user = reactpy_django.hooks.use_user()
+    connection = reactpy_django.hooks.use_connection()
+
+    async def login_user(event):
+        new_user, _created = await get_user_model().objects.aget_or_create(username="user_5")
+        await _login(new_user, rerender=False)
+
+    async def logout_user(event):
+        await _logout(rerender=False)
+
+    async def disconnect(event):
+        await connection.carrier.close()
+
+    return html.div(
+        {
+            "id": "use-auth-no-rerender",
+            "data-username": ("AnonymousUser" if current_user.is_anonymous else current_user.username),
+            "data-uuid": uuid,
+        },
+        html.div("use_auth_no_rerender"),
+        html.div(f"UUID: {uuid}"),
+        html.button({"className": "login", "on_click": login_user}, "Login"),
+        html.button({"className": "logout", "on_click": logout_user}, "Logout"),
+        html.button({"className": "disconnect", "on_click": disconnect}, "disconnect"),
+        html.div(f"User: {current_user}"),
+    )
+
+
+@component
+def use_rerender():
+    uuid = str(uuid4())
+    rerender = reactpy_django.hooks.use_rerender()
+
+    def on_click(event):
+        rerender()
+
+    return html.div(
+        {
+            "id": "use-rerender",
+            "data-uuid": uuid,
+        },
+        html.div("use_rerender"),
+        html.div(f"UUID: {uuid}"),
+        html.button({"on_click": on_click}, "Rerender"),
     )

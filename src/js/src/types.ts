@@ -23,3 +23,10 @@ export interface DjangoFormProps {
   onSubmitCallback: (data: Object) => void;
   formId: string;
 }
+
+export interface HttpRequestProps {
+  method: string;
+  url: string;
+  body: string;
+  callback: (status: Number, response: string) => void;
+}

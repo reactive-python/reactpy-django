@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import contextlib
 import inspect
 import logging
@@ -16,7 +17,6 @@ from typing import TYPE_CHECKING, Any, Callable
 from uuid import UUID, uuid4
 
 import dill
-from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from django.contrib.staticfiles.finders import find
 from django.core.cache import caches
@@ -62,6 +62,7 @@ COMPONENT_REGEX = re.compile(
     + r"\s*%}"
 )
 FILE_ASYNC_ITERATOR_THREAD = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ReactPy-Django-FileAsyncIterator")
+SYNC_LAYOUT_THREAD = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ReactPy-Django-SyncLayout")
 
 
 async def render_view(
@@ -353,14 +354,16 @@ class SyncLayout(Layout):
     """
 
     def __enter__(self):
-        async_to_sync(self.__aenter__)()
+        self.loop = asyncio.new_event_loop()
+        SYNC_LAYOUT_THREAD.submit(self.loop.run_until_complete, self.__aenter__()).result()
         return self
 
-    def __exit__(self, *_):
-        async_to_sync(self.__aexit__)(*_)
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        SYNC_LAYOUT_THREAD.submit(self.loop.run_until_complete, self.__aexit__()).result()
+        self.loop.close()
 
     def sync_render(self):
-        return async_to_sync(super().render)()
+        return SYNC_LAYOUT_THREAD.submit(self.loop.run_until_complete, self.render()).result()
 
 
 def get_pk(model):
@@ -395,6 +398,7 @@ def prerender_component(
     search = request.GET.urlencode()
     scope = getattr(request, "scope", {})
     scope["reactpy"] = {"id": str(uuid)}
+    dir(request.user)  # Call `dir` before prerendering to make sure the user object is loaded
 
     with SyncLayout(
         ConnectionContext(

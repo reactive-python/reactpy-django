@@ -6,12 +6,6 @@ These are ReactPy-Django's default settings values. You can modify these values 
 
 </p>
 
-!!! abstract "Note"
-
-    The default configuration of ReactPy is suitable for the vast majority of use cases.
-
-    You should only consider changing settings when the necessity arises.
-
 ---
 
 ## General Settings
@@ -60,18 +54,38 @@ This file path must be valid to Django's [template finder](https://docs.djangopr
 
 ---
 
+## Authentication Settings
+
+---
+
 ### `#!python REACTPY_AUTH_BACKEND`
 
 **Default:** `#!python "django.contrib.auth.backends.ModelBackend"`
 
 **Example Value(s):** `#!python "example_project.auth.MyModelBackend"`
 
-Dotted path to the Django authentication backend to use for ReactPy components. This is only needed if:
+Dotted path to the Django authentication backend to use for ReactPy components. This is typically needed if:
 
 1. You are using `#!python settings.py:REACTPY_AUTO_RELOGIN=True` and...
 2. You are using `#!python AuthMiddlewareStack` and...
 3. You are using Django's `#!python AUTHENTICATION_BACKENDS` setting and...
 4. Your Django user model does not define a `#!python backend` attribute.
+
+---
+
+### `#!python REACTPY_AUTH_TOKEN_MAX_AGE`
+
+**Default:** `#!python 30`
+
+**Example Value(s):** `#!python 5`
+
+Maximum seconds before ReactPy's login token expires.
+
+This setting exists because Django's authentication design requires cookies to retain login status. ReactPy is rendered via WebSockets, and browsers do not allow active WebSocket connections to modify cookies.
+
+To work around this limitation, this setting provides a maximum validity period of a temporary login token. When `#!python reactpy_django.hooks.use_auth().login()` is called within your application, ReactPy will automatically create this temporary login token and command the browser to fetch it via HTTP.
+
+This setting should be a reasonably low value, but still be high enough to account for a combination of client lag, slow internet, and server response time.
 
 ---
 
@@ -141,9 +155,9 @@ This setting is incompatible with [`daphne`](https://github.com/django/daphne).
 
 **Example Value(s):** `#!python True`
 
-Configures whether to use an async ReactPy rendering queue. When enabled, large renders will no longer block smaller renders from taking place. Additionally, prevents the rendering queue from being blocked on waiting for async effects to startup/shutdown (which is typically a relatively slow operation).
+Configures whether to use an async ReactPy rendering queue. When enabled, large renders will no longer block smaller renders from taking place. Additionally, prevents the rendering queue from being blocked on waiting for async effects to startup/shutdown (which is a relatively slow operation).
 
-This setting is currently in early release, and currently no effort is made to de-duplicate renders. For example, if parent and child components are scheduled to render at the same time, both renders will take place even though a single render of the parent component would have been sufficient.
+This setting is currently in early release, and currently no effort is made to de-duplicate renders. For example, if parent and child components are scheduled to render at the same time, both renders will take place, even though a single render would have been sufficient.
 
 ---
 
@@ -267,6 +281,16 @@ Set this value to `#!python None` to disable automatic clean up operations.
 **Example Value(s):** `#!python False`
 
 Configures whether ReactPy should clean up expired component sessions during automatic clean up operations.
+
+---
+
+### `#!python REACTPY_CLEAN_AUTH_TOKENS`
+
+**Default:** `#!python True`
+
+**Example Value(s):** `#!python False`
+
+Configures whether ReactPy should clean up expired authentication tokens during automatic clean up operations.
 
 ---
 

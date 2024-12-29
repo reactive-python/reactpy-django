@@ -20,8 +20,7 @@ def _pyscript_component(
     root: str = "root",
 ):
     rendered, set_rendered = hooks.use_state(False)
-    uuid_ref = hooks.use_ref(uuid4().hex.replace("-", ""))
-    uuid = uuid_ref.current
+    uuid = hooks.use_ref(uuid4().hex.replace("-", "")).current
     initial = reactpy_to_string(initial, uuid=uuid)
     executor = render_pyscript_template(file_paths, uuid, root)
 

@@ -1,4 +1,4 @@
-import { DjangoFormProps } from "./types";
+import { DjangoFormProps, HttpRequestProps } from "./types";
 import React from "react";
 import ReactDOM from "react-dom";
 /**
@@ -58,6 +58,30 @@ export function DjangoForm({
         form.removeEventListener("submit", onSubmitEvent);
       }
     };
+  }, []);
+
+  return null;
+}
+
+export function HttpRequest({ method, url, body, callback }: HttpRequestProps) {
+  React.useEffect(() => {
+    fetch(url, {
+      method: method,
+      body: body,
+    })
+      .then((response) => {
+        response
+          .text()
+          .then((text) => {
+            callback(response.status, text);
+          })
+          .catch(() => {
+            callback(response.status, "");
+          });
+      })
+      .catch(() => {
+        callback(520, "");
+      });
   }, []);
 
   return null;

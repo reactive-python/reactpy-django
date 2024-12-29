@@ -31,7 +31,7 @@ class ComponentTests(PlaywrightTestCase):
     def test_component_counter(self):
         for i in range(5):
             self.page.locator(f"#counter-num[data-count={i}]")
-            self.page.locator("#counter-inc").click()
+            self.page.locator("#counter-inc").click(delay=CLICK_DELAY)
 
     @navigate_to_page("/")
     def test_component_parametrized_component(self):
@@ -106,7 +106,7 @@ class ComponentTests(PlaywrightTestCase):
             todo_input.type(f"sample-{i}", delay=CLICK_DELAY)
             todo_input.press("Enter", delay=CLICK_DELAY)
             self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}")
-            self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}-checkbox").click()
+            self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}-checkbox").click(delay=CLICK_DELAY)
             with pytest.raises(TimeoutError):
                 self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}", timeout=1)
 
@@ -120,7 +120,7 @@ class ComponentTests(PlaywrightTestCase):
             todo_input.type(f"sample-{i}", delay=CLICK_DELAY)
             todo_input.press("Enter", delay=CLICK_DELAY)
             self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}")
-            self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}-checkbox").click()
+            self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}-checkbox").click(delay=CLICK_DELAY)
             with pytest.raises(TimeoutError):
                 self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}", timeout=1)
 
@@ -147,7 +147,7 @@ class ComponentTests(PlaywrightTestCase):
     @navigate_to_page("/")
     def _click_btn_and_check_success(self, name):
         self.page.locator(f"#{name}:not([data-success=true])").wait_for()
-        self.page.wait_for_selector(f"#{name}_btn").click()
+        self.page.wait_for_selector(f"#{name}_btn").click(delay=CLICK_DELAY)
         self.page.locator(f"#{name}[data-success=true]").wait_for()
 
     @navigate_to_page("/")
@@ -243,7 +243,7 @@ class ComponentTests(PlaywrightTestCase):
         assert "Data: None" in user_data_div.text_content()
 
         # Test first user's data
-        login_1.click()
+        login_1.click(delay=CLICK_DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_1]"
         )
@@ -256,7 +256,7 @@ class ComponentTests(PlaywrightTestCase):
         assert "Data: {'test': 'test'}" in user_data_div.text_content()
 
         # Test second user's data
-        login_2.click()
+        login_2.click(delay=CLICK_DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_2]"
         )
@@ -271,14 +271,14 @@ class ComponentTests(PlaywrightTestCase):
         assert "Data: {'test 2': 'test 2'}" in user_data_div.text_content()
 
         # Attempt to clear data
-        clear.click()
+        clear.click(delay=CLICK_DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_2]"
         )
         assert "Data: {}" in user_data_div.text_content()
 
         # Attempt to logout
-        logout.click()
+        logout.click(delay=CLICK_DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=AnonymousUser]"
         )
@@ -297,7 +297,7 @@ class ComponentTests(PlaywrightTestCase):
         assert "Data: None" in user_data_div.text_content()
 
         # Test first user's data
-        login_3.click()
+        login_3.click(delay=CLICK_DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_3]"
         )
@@ -313,12 +313,80 @@ class ComponentTests(PlaywrightTestCase):
         )
 
         # Attempt to clear data
-        clear.click()
+        clear.click(delay=CLICK_DELAY)
         sleep(0.25)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_3]"
         )
         assert "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3'}" in user_data_div.text_content()
+
+    @navigate_to_page("/")
+    def test_component_use_auth(self):
+        uuid = self.page.wait_for_selector("#use-auth").get_attribute("data-uuid")
+        assert len(uuid) == 36
+
+        self.page.wait_for_selector("#use-auth .login").click(delay=CLICK_DELAY)
+
+        # Wait for #use-auth[data-username="user_4"] to appear
+        self.page.wait_for_selector("#use-auth[data-username='user_4']")
+        self.page.wait_for_selector(f"#use-auth[data-uuid='{uuid}']")
+
+        # Press disconnect and wait for #use-auth[data-uuid=...] to disappear
+        self.page.wait_for_selector("#use-auth .disconnect").click(delay=CLICK_DELAY)
+        expect(self.page.locator(f"#use-auth[data-uuid='{uuid}']")).to_have_count(0)
+
+        # Double check that the same user is logged in
+        self.page.wait_for_selector("#use-auth[data-username='user_4']")
+
+        # Press logout and wait for #use-auth[data-username="AnonymousUser"] to appear
+        self.page.wait_for_selector("#use-auth .logout").click(delay=CLICK_DELAY)
+        self.page.wait_for_selector("#use-auth[data-username='AnonymousUser']")
+
+        # Press disconnect and wait for #use-auth[data-uuid=...] to disappear
+        self.page.wait_for_selector("#use-auth .disconnect").click(delay=CLICK_DELAY)
+        expect(self.page.locator(f"#use-auth[data-uuid='{uuid}']")).to_have_count(0)
+
+        # Double check that the user stayed logged out
+        self.page.wait_for_selector("#use-auth[data-username='AnonymousUser']")
+
+    @navigate_to_page("/")
+    def test_component_use_auth_no_rerender(self):
+        uuid = self.page.wait_for_selector("#use-auth-no-rerender").get_attribute("data-uuid")
+        assert len(uuid) == 36
+
+        self.page.wait_for_selector("#use-auth-no-rerender .login").click(delay=CLICK_DELAY)
+
+        # Make sure #use-auth[data-username="user_5"] does not appear
+        with pytest.raises(TimeoutError):
+            self.page.wait_for_selector("#use-auth-no-rerender[data-username='user_5']", timeout=1)
+
+        # Press disconnect and see if #use-auth[data-username="user_5"] appears
+        self.page.wait_for_selector("#use-auth-no-rerender .disconnect").click(delay=CLICK_DELAY)
+        self.page.wait_for_selector("#use-auth-no-rerender[data-username='user_5']")
+
+        # Press logout and make sure #use-auth[data-username="AnonymousUser"] does not appear
+        with pytest.raises(TimeoutError):
+            self.page.wait_for_selector("#use-auth-no-rerender[data-username='AnonymousUser']", timeout=1)
+
+        # Press disconnect and see if #use-auth[data-username="AnonymousUser"] appears
+        self.page.wait_for_selector("#use-auth-no-rerender .disconnect").click(delay=CLICK_DELAY)
+
+    @navigate_to_page("/")
+    def test_component_use_rerender(self):
+        initial_uuid = self.page.wait_for_selector("#use-rerender").get_attribute("data-uuid")
+        assert len(initial_uuid) == 36
+
+        rerender_button = self.page.wait_for_selector("#use-rerender button")
+        rerender_button.click(delay=CLICK_DELAY)
+
+        # Wait for #use-rerender[data-uuid=...] to disappear
+        expect(self.page.locator(f"#use-rerender[data-uuid='{initial_uuid}']")).to_have_count(0)
+
+        # Find the new #use-rerender[data-uuid=...]
+        self.page.wait_for_selector("#use-rerender")
+        new_uuid = self.page.wait_for_selector("#use-rerender").get_attribute("data-uuid")
+        assert len(new_uuid) == 36
+        assert new_uuid != initial_uuid
 
     ###################
     # Prerender Tests #

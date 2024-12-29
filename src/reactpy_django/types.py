@@ -19,6 +19,7 @@ from typing_extensions import ParamSpec
 if TYPE_CHECKING:
     from collections.abc import MutableMapping, Sequence
 
+    from django.contrib.auth.models import AbstractUser
     from django.forms import Form, ModelForm
 
     from reactpy_django.websocket.consumer import ReactpyAsyncWebsocketConsumer
@@ -108,3 +109,26 @@ class ViewToComponentConstructor(Protocol):
 
 class ViewToIframeConstructor(Protocol):
     def __call__(self, *args: Any, key: Key | None = None, **kwargs: Any) -> ComponentType: ...
+
+
+class UseAuthLogin(Protocol):
+    async def __call__(self, user: AbstractUser, rerender: bool = True) -> None: ...
+
+
+class UseAuthLogout(Protocol):
+    async def __call__(self, rerender: bool = True) -> None: ...
+
+
+class UseAuthTuple(NamedTuple):
+    login: UseAuthLogin
+    """Login a user.
+
+        Args:
+            user: The user to login.
+            rerender: If True, the root component will be re-rendered after the user is logged in."""
+
+    logout: UseAuthLogout
+    """Logout the current user.
+
+        Args:
+            rerender: If True, the root component will be re-rendered after the user is logged out."""

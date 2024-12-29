@@ -1,17 +1,42 @@
+from datetime import timedelta
+
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.utils import timezone
 
 from reactpy_django.utils import get_pk
 
 
 class ComponentSession(models.Model):
-    """A model for storing component sessions."""
+    """A model for storing component sessions.
+
+    This is used to store component arguments provided within Django templates.
+    These arguments are retrieved within the layout renderer (WebSocket consumer)."""
 
     uuid = models.UUIDField(primary_key=True, editable=False, unique=True)
     params = models.BinaryField(editable=False)
     last_accessed = models.DateTimeField(auto_now=True)
+
+
+class AuthToken(models.Model):
+    """A model that contains any relevant data needed to force Django's HTTP session to
+    match the websocket session.
+
+    The session key is tied to an arbitrary UUID token for security (obfuscation) purposes.
+
+    Source code must be written to respect the expiration property of this model."""
+
+    value = models.UUIDField(primary_key=True, editable=False, unique=True)
+    session_key = models.CharField(max_length=40, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+
+    @property
+    def expired(self) -> bool:
+        from reactpy_django.config import REACTPY_AUTH_TOKEN_MAX_AGE
+
+        return self.created_at < (timezone.now() - timedelta(seconds=REACTPY_AUTH_TOKEN_MAX_AGE))
 
 
 class Config(models.Model):

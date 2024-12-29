@@ -29,6 +29,23 @@ jobs:
               run: pip install --upgrade pip hatch uv
             - name: Run Single DB Tests
               run: hatch test --python ${{ matrix.python-version }} --ds=test_app.settings_single_db -v
+
+    python-source-multi-db:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                python-version: ["3.9", "3.10", "3.11", "3.12"]
+        steps:
+            - uses: actions/checkout@v4
+            - uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: latest
+            - name: Use Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ matrix.python-version }}
+            - name: Install Python Dependencies
+              run: pip install --upgrade pip hatch uv
             - name: Run Multi-DB Tests
               run: hatch test --python ${{ matrix.python-version }} --ds=test_app.settings_multi_db -v
 

@@ -15,4 +15,9 @@ urlpatterns = [
         views.view_to_iframe,
         name="view_to_iframe",
     ),
+    path(
+        "auth/<uuid:uuid>",
+        views.auth_manager,
+        name="auth_manager",
+    ),
 ]
