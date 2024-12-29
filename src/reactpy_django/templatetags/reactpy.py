@@ -144,6 +144,10 @@ def component(
             )
             _logger.error(msg)
             return failure_context(dotted_path, ComponentCarrierError(msg))
+
+        # Call `dir` before prerendering to make sure the user object is loaded
+        dir(request.user)
+
         _prerender_html = prerender_component(user_component, args, kwargs, uuid, request)
 
     # Fetch the offline component's HTML, if requested

@@ -34,7 +34,7 @@ Don't forget to remove deprecated code on each major release!
 
 ### Fixed
 
--   Fixed bug where pre-rendered components could generate a `SynchronousOnlyOperation` exception if they utilize the Django ORM.
+-   Fixed bug where pre-rendered components could generate a `SynchronousOnlyOperation` exception if they access a freshly logged out Django user object.
 
 ## [5.1.1] - 2024-12-02
 
