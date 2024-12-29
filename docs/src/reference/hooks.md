@@ -279,7 +279,7 @@ Mutation functions can be sync or async.
 
 Provides a `#!python NamedTuple` containing `#!python async login` and `#!python async logout` functions.
 
-This hook utilizes the Django's authentication framework in a way that provides **persistent** authentication across WebSocket and HTTP connections.
+This hook utilizes the Django's authentication framework in a way that provides **persistent** login.
 
 === "components.py"
 
@@ -307,7 +307,7 @@ This hook utilizes the Django's authentication framework in a way that provides 
 
 ??? question "Why use this instead of `#!python channels.auth.login`?"
 
-    The `#!python channels.auth.*` functions cannot trigger re-renders of your ReactPy components. Additionally, it does not provide persistent authentication when used within ReactPy.
+    The `#!python channels.auth.*` functions cannot trigger re-renders of your ReactPy components. Additionally, they do not provide persistent authentication when used within ReactPy.
 
     Django's authentication design requires cookies to retain login status. ReactPy is rendered via WebSockets, and browsers do not allow active WebSocket connections to modify cookies.
 
@@ -350,7 +350,7 @@ Shortcut that returns the WebSocket or HTTP connection's `#!python User`.
 
 ### Use User Data
 
-Store or retrieve a `#!python dict` containing user data specific to the connection's `#!python User`.
+Store or retrieve a `#!python dict` containing arbitrary data specific to the connection's `#!python User`.
 
 This hook is useful for storing user-specific data, such as preferences, settings, or any generic key-value pairs.
 

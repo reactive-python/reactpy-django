@@ -103,8 +103,8 @@ def auth_manager():
             )
 
     # If needed, synchronize authenication sessions by configuring all relevant session cookies.
-    # This is achieved by commanding the client to perform a HTTP request to our session manager endpoint,
-    # which will set any required cookies.
+    # This is achieved by commanding the client to perform a HTTP request to our API endpoint
+    # that will set any required cookies.
     if sync_needed:
         return HttpRequest(
             {
