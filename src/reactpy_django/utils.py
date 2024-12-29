@@ -398,6 +398,7 @@ def prerender_component(
     search = request.GET.urlencode()
     scope = getattr(request, "scope", {})
     scope["reactpy"] = {"id": str(uuid)}
+    dir(request.user)  # Call `dir` before prerendering to make sure the user object is loaded
 
     with SyncLayout(
         ConnectionContext(
