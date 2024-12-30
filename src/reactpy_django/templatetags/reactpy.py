@@ -144,7 +144,6 @@ def component(
             )
             _logger.error(msg)
             return failure_context(dotted_path, ComponentCarrierError(msg))
-
         _prerender_html = prerender_component(user_component, args, kwargs, uuid, request)
 
     # Fetch the offline component's HTML, if requested
