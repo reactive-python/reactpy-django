@@ -19,6 +19,10 @@ Don't forget to remove deprecated code on each major release!
 
 ## [Unreleased]
 
+-   Nothing (yet)!
+
+### [5.2.0] - 2024-12-29
+
 ### Added
 
 -   User login/logout features!
@@ -540,7 +544,8 @@ Don't forget to remove deprecated code on each major release!
 
 -   Support for IDOM within the Django
 
-[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/5.1.1...HEAD
+[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/5.2.0...HEAD
+[5.2.0]: https://github.com/reactive-python/reactpy-django/compare/5.1.1...5.2.0
 [5.1.1]: https://github.com/reactive-python/reactpy-django/compare/5.1.0...5.1.1
 [5.1.0]: https://github.com/reactive-python/reactpy-django/compare/5.0.0...5.1.0
 [5.0.0]: https://github.com/reactive-python/reactpy-django/compare/4.0.0...5.0.0
