@@ -358,7 +358,7 @@ class ComponentTests(PlaywrightTestCase):
 
         # Make sure #use-auth[data-username="user_5"] does not appear
         with pytest.raises(TimeoutError):
-            self.page.wait_for_selector("#use-auth-no-rerender[data-username='user_5']", timeout=1)
+            self.page.wait_for_selector("#use-auth-no-rerender[data-username='user_5']", timeout=2)
 
         # Press disconnect and see if #use-auth[data-username="user_5"] appears
         self.page.wait_for_selector("#use-auth-no-rerender .disconnect").click(delay=CLICK_DELAY)
