@@ -2,10 +2,10 @@
 <span class=normal>2</span>
 <span class=normal>3</span>
 <span class=normal>4</span>
-<span class=normal>5</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>5</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>hello_world</span><span class=p>(</span><span class=n>recipient</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>hello_world</span><span class=p>(</span><span class=n>recipient</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;Hello </span><span class=si>{</span><span class=n>recipient</span><span class=si>}</span><span class=s2>!&quot;</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> <details class=question> <summary>What should I name my ReactPy files and functions?</summary> <p>You have full freedom in naming/placement of your files and functions.</p> <p>We recommend creating a <code>components.py</code> for small <strong>Django apps</strong>. If your app has a lot of components, you should consider breaking them apart into individual modules such as <code>components/navbar.py</code>.</p> <p>Ultimately, components are referenced by Python dotted path in <code>my_template.html</code> (<a href=#embedding-in-a-template><em>see next step</em></a>). This dotted path must be valid to Python's <code class=highlight><span class=n>importlib</span></code>.</p> </details> <details class=question> <summary>What does the decorator actually do?</summary> <p>While not all components need to be decorated, there are a few features this decorator adds to your components.</p> <ol> <li>The ability to be used as a root component.<ul> <li>The decorator is required for any component that you want to reference in your Django templates (<a href=#embedding-in-a-template><em>see next step</em></a>).</li> </ul> </li> <li>The ability to use <a href=../../reference/hooks/ >hooks</a>.<ul> <li>The decorator is required on any component where hooks are defined.</li> </ul> </li> <li>Scoped failures.<ul> <li>If a decorated component generates an exception, then only that one component will fail to render.</li> </ul> </li> </ol> </details> <h2 id=embedding-in-a-template>Embedding in a template<a class=headerlink href=#embedding-in-a-template title="Permanent link">&para;</a></h2> <p>In your <strong>Django app</strong>'s HTML template, you can now embed your ReactPy component using the <code class=highlight><span class=cp>{%</span> <span class=k>component</span> <span class=cp>%}</span></code> template tag. Within this tag, you will need to type in the dotted path to the component.</p> <p>Additionally, you can pass in <code class=highlight><span class=n>args</span></code> and <code class=highlight><span class=n>kwargs</span></code> into your component function. After reading the code below, pay attention to how the function definition for <code class=highlight><span class=n>hello_world</span></code> (<a href=#defining-a-component><em>from the previous step</em></a>) accepts a <code class=highlight><span class=n>recipient</span></code> argument.</p> <div class="tabbed-set tabbed-alternate" data-tabs=2:1><input checked=checked id=__tabbed_2_1 name=__tabbed_2 type=radio><div class=tabbed-labels><label for=__tabbed_2_1>my_template.html</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1</span>
 <span class=normal>2</span>
@@ -37,10 +37,10 @@
 <span class=normal>6</span>
 <span class=normal>7</span>
 <span class=normal>8</span>
-<span class=normal>9</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>django.shortcuts</span> <span class=kn>import</span> <span class=n>render</span>
+<span class=normal>9</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>django.shortcuts</span><span class=w> </span><span class=kn>import</span> <span class=n>render</span>
 
 
-<span class=k>def</span> <span class=nf>example_view</span><span class=p>(</span><span class=n>request</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>example_view</span><span class=p>(</span><span class=n>request</span><span class=p>):</span>
     <span class=k>return</span> <span class=n>render</span><span class=p>(</span>
         <span class=n>request</span><span class=p>,</span>
         <span class=s2>&quot;my_template.html&quot;</span><span class=p>,</span>
@@ -67,10 +67,10 @@
 <span class=normal>2</span>
 <span class=normal>3</span>
 <span class=normal>4</span>
-<span class=normal>5</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>django.shortcuts</span> <span class=kn>import</span> <span class=n>render</span>
+<span class=normal>5</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>django.shortcuts</span><span class=w> </span><span class=kn>import</span> <span class=n>render</span>
 
 
-<span class=k>def</span> <span class=nf>index</span><span class=p>(</span><span class=n>request</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>index</span><span class=p>(</span><span class=n>request</span><span class=p>):</span>
     <span class=k>return</span> <span class=n>render</span><span class=p>(</span><span class=n>request</span><span class=p>,</span> <span class=s2>&quot;my_template.html&quot;</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> <p>We will add this new view into your <a href=https://docs.djangoproject.com/en/stable/intro/tutorial01/#write-your-first-view><code>urls.py</code></a> and define what URL it should be accessible at.</p> <div class="tabbed-set tabbed-alternate" data-tabs=6:1><input checked=checked id=__tabbed_6_1 name=__tabbed_6 type=radio><div class=tabbed-labels><label for=__tabbed_6_1>urls.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1</span>
 <span class=normal>2</span>
@@ -78,9 +78,9 @@
 <span class=normal>4</span>
 <span class=normal>5</span>
 <span class=normal>6</span>
-<span class=normal>7</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>django.urls</span> <span class=kn>import</span> <span class=n>path</span>
+<span class=normal>7</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>django.urls</span><span class=w> </span><span class=kn>import</span> <span class=n>path</span>
 
-<span class=kn>from</span> <span class=nn>example</span> <span class=kn>import</span> <span class=n>views</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>example</span><span class=w> </span><span class=kn>import</span> <span class=n>views</span>
 
 <span class=n>urlpatterns</span> <span class=o>=</span> <span class=p>[</span>
     <span class=n>path</span><span class=p>(</span><span class=s2>&quot;example/&quot;</span><span class=p>,</span> <span class=n>views</span><span class=o>.</span><span class=n>index</span><span class=p>),</span>

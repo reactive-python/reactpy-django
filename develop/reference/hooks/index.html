@@ -20,19 +20,19 @@
 <span class=normal>20</span>
 <span class=normal>21</span>
 <span class=normal>22</span>
-<span class=normal>23</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>channels.db</span> <span class=kn>import</span> <span class=n>database_sync_to_async</span>
-<span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>23</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>channels.db</span><span class=w> </span><span class=kn>import</span> <span class=n>database_sync_to_async</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>example.models</span> <span class=kn>import</span> <span class=n>TodoItem</span>
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_query</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>example.models</span><span class=w> </span><span class=kn>import</span> <span class=n>TodoItem</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_query</span>
 
 
-<span class=k>async</span> <span class=k>def</span> <span class=nf>get_items</span><span class=p>():</span>
+<span class=k>async</span> <span class=k>def</span><span class=w> </span><span class=nf>get_items</span><span class=p>():</span>
     <span class=k>return</span> <span class=k>await</span> <span class=n>database_sync_to_async</span><span class=p>(</span><span class=n>TodoItem</span><span class=o>.</span><span class=n>objects</span><span class=o>.</span><span class=n>all</span><span class=p>)()</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>todo_list</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>todo_list</span><span class=p>():</span>
     <span class=n>item_query</span> <span class=o>=</span> <span class=n>use_query</span><span class=p>(</span><span class=n>get_items</span><span class=p>)</span>
 
     <span class=k>if</span> <span class=n>item_query</span><span class=o>.</span><span class=n>loading</span><span class=p>:</span>
@@ -47,10 +47,10 @@
 <span class=normal>2</span>
 <span class=normal>3</span>
 <span class=normal>4</span>
-<span class=normal>5</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>django.db.models</span> <span class=kn>import</span> <span class=n>CharField</span><span class=p>,</span> <span class=n>Model</span>
+<span class=normal>5</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>django.db.models</span><span class=w> </span><span class=kn>import</span> <span class=n>CharField</span><span class=p>,</span> <span class=n>Model</span>
 
 
-<span class=k>class</span> <span class=nc>TodoItem</span><span class=p>(</span><span class=n>Model</span><span class=p>):</span>
+<span class=k>class</span><span class=w> </span><span class=nc>TodoItem</span><span class=p>(</span><span class=n>Model</span><span class=p>):</span>
     <span class=n>text</span><span class=p>:</span> <span class=n>CharField</span> <span class=o>=</span> <span class=n>CharField</span><span class=p>(</span><span class=n>max_length</span><span class=o>=</span><span class=mi>255</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> <details class=example> <summary>See Interface</summary> <p><font size=4><strong>Parameters</strong></font></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr> <td><code class=highlight><span class=n>query</span></code></td> <td><code class=highlight><span class=n>Callable</span><span class=p>[</span><span class=n>FuncParams</span><span class=p>,</span> <span class=n>Awaitable</span><span class=p>[</span><span class=n>Inferred</span><span class=p>]]</span> <span class=o>|</span> <span class=n>Callable</span><span class=p>[</span><span class=n>FuncParams</span><span class=p>,</span> <span class=n>Inferred</span><span class=p>]</span></code></td> <td>A function that executes a query and returns some data.</td> <td>N/A</td> </tr> <tr> <td><code class=highlight><span class=n>kwargs</span></code></td> <td><code class=highlight><span class=nb>dict</span><span class=p>[</span><span class=nb>str</span><span class=p>,</span> <span class=n>Any</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span></code></td> <td>Keyword arguments to passed into the <code class=highlight><span class=n>query</span></code> function.</td> <td><code class=highlight><span class=kc>None</span></code></td> </tr> <tr> <td><code class=highlight><span class=n>thread_sensitive</span></code></td> <td><code class=highlight><span class=nb>bool</span></code></td> <td>Whether to run your query function in thread sensitive mode. This setting only applies to sync functions, and is turned on by default due to Django ORM limitations.</td> <td><code class=highlight><span class=kc>True</span></code></td> </tr> <tr> <td><code class=highlight><span class=n>postprocessor</span></code></td> <td><code class=highlight><span class=n>AsyncPostprocessor</span> <span class=o>|</span> <span class=n>SyncPostprocessor</span> <span class=o>|</span> <span class=kc>None</span></code></td> <td>A callable that processes the query <code class=highlight><span class=n>data</span></code> before it is returned. The first argument of postprocessor function must be the query <code class=highlight><span class=n>data</span></code>. All proceeding arguments are optional <code class=highlight><span class=n>postprocessor_kwargs</span></code>. This postprocessor function must return the modified <code class=highlight><span class=n>data</span></code>.</td> <td><code class=highlight><span class=kc>None</span></code></td> </tr> <tr> <td><code class=highlight><span class=n>postprocessor_kwargs</span></code></td> <td><code class=highlight><span class=nb>dict</span><span class=p>[</span><span class=nb>str</span><span class=p>,</span> <span class=n>Any</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span></code></td> <td>Keyworded arguments passed into the <code class=highlight><span class=n>postprocessor</span></code> function.</td> <td><code class=highlight><span class=kc>None</span></code></td> </tr> </tbody> </table> <p><font size=4><strong>Returns</strong></font></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr> <td><code class=highlight><span class=n>Query</span><span class=p>[</span><span class=n>Inferred</span><span class=p>]</span></code></td> <td>An object containing <code class=highlight><span class=n>loading</span></code>/<code class=highlight><span class=n>error</span></code> states, your <code class=highlight><span class=n>data</span></code> (if the query has successfully executed), and a <code class=highlight><span class=n>refetch</span></code> callable that can be used to re-run the query.</td> </tr> </tbody> </table> </details> <details class=question> <summary>How can I provide arguments to my query function?</summary> <p><code class=highlight><span class=n>kwargs</span></code> can be provided to your query function via the <code class=highlight><span class=n>kwargs</span><span class=o>=...</span></code> parameter.</p> <div class="tabbed-set tabbed-alternate" data-tabs=2:1><input checked=checked id=__tabbed_2_1 name=__tabbed_2 type=radio><div class=tabbed-labels><label for=__tabbed_2_1>components.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 1</span>
 <span class=normal> 2</span>
@@ -64,16 +64,16 @@
 <span class=normal>10</span>
 <span class=normal>11</span>
 <span class=normal>12</span>
-<span class=normal>13</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span>
+<span class=normal>13</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_query</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_query</span>
 
 
-<span class=k>def</span> <span class=nf>example_query</span><span class=p>(</span><span class=n>value</span><span class=p>:</span> <span class=nb>int</span><span class=p>,</span> <span class=n>other_value</span><span class=p>:</span> <span class=nb>bool</span> <span class=o>=</span> <span class=kc>False</span><span class=p>):</span> <span class=o>...</span>
+<span class=k>def</span><span class=w> </span><span class=nf>example_query</span><span class=p>(</span><span class=n>value</span><span class=p>:</span> <span class=nb>int</span><span class=p>,</span> <span class=n>other_value</span><span class=p>:</span> <span class=nb>bool</span> <span class=o>=</span> <span class=kc>False</span><span class=p>):</span> <span class=o>...</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>query</span> <span class=o>=</span> <span class=n>use_query</span><span class=p>(</span><span class=n>example_query</span><span class=p>,</span> <span class=p>{</span><span class=s2>&quot;value&quot;</span><span class=p>:</span> <span class=mi>123</span><span class=p>,</span> <span class=s2>&quot;other_value&quot;</span><span class=p>:</span> <span class=kc>True</span><span class=p>})</span>
 
     <span class=k>return</span> <span class=nb>str</span><span class=p>(</span><span class=n>query</span><span class=o>.</span><span class=n>data</span><span class=p>)</span>
@@ -93,17 +93,17 @@
 <span class=normal>14</span>
 <span class=normal>15</span>
 <span class=normal>16</span>
-<span class=normal>17</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span>
+<span class=normal>17</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_query</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_query</span>
 
 
-<span class=k>def</span> <span class=nf>execute_thread_safe_operation</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>execute_thread_safe_operation</span><span class=p>():</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;This is an example query function that does some thread-safe operation.&quot;&quot;&quot;</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>query</span> <span class=o>=</span> <span class=n>use_query</span><span class=p>(</span><span class=n>execute_thread_safe_operation</span><span class=p>,</span> <span class=n>thread_sensitive</span><span class=o>=</span><span class=kc>False</span><span class=p>)</span>
 
     <span class=k>if</span> <span class=n>query</span><span class=o>.</span><span class=n>loading</span> <span class=ow>or</span> <span class=n>query</span><span class=o>.</span><span class=n>error</span><span class=p>:</span>
@@ -129,17 +129,17 @@
 <span class=normal>17</span>
 <span class=normal>18</span>
 <span class=normal>19</span>
-<span class=normal>20</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span>
+<span class=normal>20</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_query</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_query</span>
 
 
-<span class=k>def</span> <span class=nf>execute_io_intensive_operation</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>execute_io_intensive_operation</span><span class=p>():</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;This is an example query function that does something IO intensive.&quot;&quot;&quot;</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>query</span> <span class=o>=</span> <span class=n>use_query</span><span class=p>(</span>
         <span class=n>execute_io_intensive_operation</span><span class=p>,</span>
         <span class=n>postprocessor</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span>
@@ -176,24 +176,24 @@
 <span class=normal>25</span>
 <span class=normal>26</span>
 <span class=normal>27</span>
-<span class=normal>28</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span>
+<span class=normal>28</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_query</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_query</span>
 
 
-<span class=k>def</span> <span class=nf>my_postprocessor</span><span class=p>(</span><span class=n>data</span><span class=p>,</span> <span class=n>example_kwarg</span><span class=o>=</span><span class=kc>True</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_postprocessor</span><span class=p>(</span><span class=n>data</span><span class=p>,</span> <span class=n>example_kwarg</span><span class=o>=</span><span class=kc>True</span><span class=p>):</span>
     <span class=k>if</span> <span class=n>example_kwarg</span><span class=p>:</span>
         <span class=k>return</span> <span class=n>data</span>
 
     <span class=k>return</span> <span class=nb>dict</span><span class=p>(</span><span class=n>data</span><span class=p>)</span>
 
 
-<span class=k>def</span> <span class=nf>execute_io_intensive_operation</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>execute_io_intensive_operation</span><span class=p>():</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;This is an example query function that does something IO intensive.&quot;&quot;&quot;</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>query</span> <span class=o>=</span> <span class=n>use_query</span><span class=p>(</span>
         <span class=n>execute_io_intensive_operation</span><span class=p>,</span>
         <span class=n>postprocessor</span><span class=o>=</span><span class=n>my_postprocessor</span><span class=p>,</span>
@@ -232,13 +232,13 @@
 <span class=normal>26</span>
 <span class=normal>27</span>
 <span class=normal>28</span>
-<span class=normal>29</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span>
+<span class=normal>29</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span>
 
-<span class=kn>from</span> <span class=nn>example.models</span> <span class=kn>import</span> <span class=n>TodoItem</span>
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_query</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>example.models</span><span class=w> </span><span class=kn>import</span> <span class=n>TodoItem</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_query</span>
 
 
-<span class=k>def</span> <span class=nf>get_model_with_relationships</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>get_model_with_relationships</span><span class=p>():</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;This is an example query function that gets `MyModel` which has a ManyToMany field, and</span>
 <span class=sd>    additionally other models that have formed a ForeignKey association to `MyModel`.</span>
 
@@ -249,7 +249,7 @@
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>query</span> <span class=o>=</span> <span class=n>use_query</span><span class=p>(</span>
         <span class=n>get_model_with_relationships</span><span class=p>,</span>
         <span class=n>postprocessor_kwargs</span><span class=o>=</span><span class=p>{</span><span class=s2>&quot;many_to_many&quot;</span><span class=p>:</span> <span class=kc>False</span><span class=p>,</span> <span class=s2>&quot;many_to_one&quot;</span><span class=p>:</span> <span class=kc>False</span><span class=p>},</span>
@@ -293,24 +293,24 @@
 <span class=normal>30</span>
 <span class=normal>31</span>
 <span class=normal>32</span>
-<span class=normal>33</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>33</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>example.models</span> <span class=kn>import</span> <span class=n>TodoItem</span>
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_mutation</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>example.models</span><span class=w> </span><span class=kn>import</span> <span class=n>TodoItem</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_mutation</span>
 
 
-<span class=k>def</span> <span class=nf>add_item</span><span class=p>(</span><span class=n>text</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>add_item</span><span class=p>(</span><span class=n>text</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
     <span class=n>TodoItem</span><span class=p>(</span><span class=n>text</span><span class=o>=</span><span class=n>text</span><span class=p>)</span><span class=o>.</span><span class=n>save</span><span class=p>()</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>todo_list</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>todo_list</span><span class=p>():</span>
     <span class=n>item_mutation</span> <span class=o>=</span> <span class=n>use_mutation</span><span class=p>(</span><span class=n>add_item</span><span class=p>)</span>
 
-    <span class=k>def</span> <span class=nf>reset_event</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
+    <span class=k>def</span><span class=w> </span><span class=nf>reset_event</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
         <span class=n>item_mutation</span><span class=o>.</span><span class=n>reset</span><span class=p>()</span>
 
-    <span class=k>def</span> <span class=nf>submit_event</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
+    <span class=k>def</span><span class=w> </span><span class=nf>submit_event</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
         <span class=k>if</span> <span class=n>event</span><span class=p>[</span><span class=s2>&quot;key&quot;</span><span class=p>]</span> <span class=o>==</span> <span class=s2>&quot;Enter&quot;</span><span class=p>:</span>
             <span class=n>item_mutation</span><span class=p>(</span><span class=n>text</span><span class=o>=</span><span class=n>event</span><span class=p>[</span><span class=s2>&quot;target&quot;</span><span class=p>][</span><span class=s2>&quot;value&quot;</span><span class=p>])</span>
 
@@ -330,10 +330,10 @@
 <span class=normal>2</span>
 <span class=normal>3</span>
 <span class=normal>4</span>
-<span class=normal>5</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>django.db.models</span> <span class=kn>import</span> <span class=n>CharField</span><span class=p>,</span> <span class=n>Model</span>
+<span class=normal>5</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>django.db.models</span><span class=w> </span><span class=kn>import</span> <span class=n>CharField</span><span class=p>,</span> <span class=n>Model</span>
 
 
-<span class=k>class</span> <span class=nc>TodoItem</span><span class=p>(</span><span class=n>Model</span><span class=p>):</span>
+<span class=k>class</span><span class=w> </span><span class=nc>TodoItem</span><span class=p>(</span><span class=n>Model</span><span class=p>):</span>
     <span class=n>text</span><span class=p>:</span> <span class=n>CharField</span> <span class=o>=</span> <span class=n>CharField</span><span class=p>(</span><span class=n>max_length</span><span class=o>=</span><span class=mi>255</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> </details> <details class=question> <summary>Why does the example query function return <code class=highlight><span class=n>TodoItem</span><span class=o>.</span><span class=n>objects</span><span class=o>.</span><span class=n>all</span><span class=p>()</span></code>?</summary> <p>This design decision was based on <a href=https://www.apollographql.com/docs/react/data/queries/ >Apollo's <code class=highlight><span class=nx>useQuery</span></code> hook</a>, but ultimately helps avoid Django's <code class=highlight><span class=n>SynchronousOnlyOperation</span></code> exceptions.</p> <p>With the <code class=highlight><span class=n>Model</span></code> or <code class=highlight><span class=n>QuerySet</span></code> your function returns, this hook uses the <a href=../utils/#django-query-postprocessor>default postprocessor</a> to ensure that all <a href=https://docs.djangoproject.com/en/stable/ref/models/instances/#django.db.models.Model.get_deferred_fields>deferred</a> or <a href=https://docs.djangoproject.com/en/stable/topics/db/queries/#querysets-are-lazy>lazy</a> fields are executed.</p> </details> <hr> <h3 id=use-mutation>Use Mutation<a class=headerlink href=#use-mutation title="Permanent link">&para;</a></h3> <p>Modify data in the background, typically to <a href=https://www.sumologic.com/glossary/crud/ >create/update/delete</a> data from the Django ORM.</p> <p>Mutation functions can <code class=highlight><span class=k>return</span> <span class=kc>False</span></code> to manually prevent your <code class=highlight><span class=n>refetch</span><span class=o>=...</span></code> function from executing. All other returns are ignored.</p> <p>Mutation functions can be sync or async.</p> <div class="tabbed-set tabbed-alternate" data-tabs=8:2><input checked=checked id=__tabbed_8_1 name=__tabbed_8 type=radio><input id=__tabbed_8_2 name=__tabbed_8 type=radio><div class=tabbed-labels><label for=__tabbed_8_1>components.py</label><label for=__tabbed_8_2>models.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 1</span>
 <span class=normal> 2</span>
@@ -364,21 +364,21 @@
 <span class=normal>27</span>
 <span class=normal>28</span>
 <span class=normal>29</span>
-<span class=normal>30</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>30</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>example.models</span> <span class=kn>import</span> <span class=n>TodoItem</span>
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_mutation</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>example.models</span><span class=w> </span><span class=kn>import</span> <span class=n>TodoItem</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_mutation</span>
 
 
-<span class=k>async</span> <span class=k>def</span> <span class=nf>add_item</span><span class=p>(</span><span class=n>text</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
+<span class=k>async</span> <span class=k>def</span><span class=w> </span><span class=nf>add_item</span><span class=p>(</span><span class=n>text</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
     <span class=k>await</span> <span class=n>TodoItem</span><span class=p>(</span><span class=n>text</span><span class=o>=</span><span class=n>text</span><span class=p>)</span><span class=o>.</span><span class=n>asave</span><span class=p>()</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>todo_list</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>todo_list</span><span class=p>():</span>
     <span class=n>item_mutation</span> <span class=o>=</span> <span class=n>use_mutation</span><span class=p>(</span><span class=n>add_item</span><span class=p>)</span>
 
-    <span class=k>def</span> <span class=nf>submit_event</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
+    <span class=k>def</span><span class=w> </span><span class=nf>submit_event</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
         <span class=k>if</span> <span class=n>event</span><span class=p>[</span><span class=s2>&quot;key&quot;</span><span class=p>]</span> <span class=o>==</span> <span class=s2>&quot;Enter&quot;</span><span class=p>:</span>
             <span class=n>item_mutation</span><span class=p>(</span><span class=n>text</span><span class=o>=</span><span class=n>event</span><span class=p>[</span><span class=s2>&quot;target&quot;</span><span class=p>][</span><span class=s2>&quot;value&quot;</span><span class=p>])</span>
 
@@ -398,10 +398,10 @@
 <span class=normal>2</span>
 <span class=normal>3</span>
 <span class=normal>4</span>
-<span class=normal>5</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>django.db.models</span> <span class=kn>import</span> <span class=n>CharField</span><span class=p>,</span> <span class=n>Model</span>
+<span class=normal>5</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>django.db.models</span><span class=w> </span><span class=kn>import</span> <span class=n>CharField</span><span class=p>,</span> <span class=n>Model</span>
 
 
-<span class=k>class</span> <span class=nc>TodoItem</span><span class=p>(</span><span class=n>Model</span><span class=p>):</span>
+<span class=k>class</span><span class=w> </span><span class=nc>TodoItem</span><span class=p>(</span><span class=n>Model</span><span class=p>):</span>
     <span class=n>text</span><span class=p>:</span> <span class=n>CharField</span> <span class=o>=</span> <span class=n>CharField</span><span class=p>(</span><span class=n>max_length</span><span class=o>=</span><span class=mi>255</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> <details class=example> <summary>See Interface</summary> <p><font size=4><strong>Parameters</strong></font></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr> <td><code class=highlight><span class=n>mutation</span></code></td> <td><code class=highlight><span class=n>Callable</span><span class=p>[</span><span class=n>FuncParams</span><span class=p>,</span> <span class=nb>bool</span> <span class=o>|</span> <span class=kc>None</span><span class=p>]</span> <span class=o>|</span> <span class=n>Callable</span><span class=p>[</span><span class=n>FuncParams</span><span class=p>,</span> <span class=n>Awaitable</span><span class=p>[</span><span class=nb>bool</span> <span class=o>|</span> <span class=kc>None</span><span class=p>]]</span></code></td> <td>A callable that performs Django ORM create, update, or delete functionality. If this function returns <code class=highlight><span class=kc>False</span></code>, then your <code class=highlight><span class=n>refetch</span></code> function will not be used.</td> <td>N/A</td> </tr> <tr> <td><code class=highlight><span class=n>thread_sensitive</span></code></td> <td><code class=highlight><span class=nb>bool</span></code></td> <td>Whether to run the mutation in thread sensitive mode. This setting only applies to sync functions, and is turned on by default due to Django ORM limitations.</td> <td><code class=highlight><span class=kc>True</span></code></td> </tr> <tr> <td><code class=highlight><span class=n>refetch</span></code></td> <td><code class=highlight><span class=n>Callable</span><span class=p>[</span><span class=o>...</span><span class=p>,</span> <span class=n>Any</span><span class=p>]</span> <span class=o>|</span> <span class=n>Sequence</span><span class=p>[</span><span class=n>Callable</span><span class=p>[</span><span class=o>...</span><span class=p>,</span> <span class=n>Any</span><span class=p>]]</span> <span class=o>|</span> <span class=kc>None</span></code></td> <td>A query function (the function you provide to your <code class=highlight><span class=n>use_query</span></code> hook) or a sequence of query functions that need a <code class=highlight><span class=n>refetch</span></code> if the mutation succeeds. This is useful for refreshing data after a mutation has been performed.</td> <td><code class=highlight><span class=kc>None</span></code></td> </tr> </tbody> </table> <p><font size=4><strong>Returns</strong></font></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr> <td><code class=highlight><span class=n>Mutation</span><span class=p>[</span><span class=n>FuncParams</span><span class=p>]</span></code></td> <td>An object containing <code class=highlight><span class=n>loading</span></code>/<code class=highlight><span class=n>error</span></code> states, and a <code class=highlight><span class=n>reset</span></code> callable that will set <code class=highlight><span class=n>loading</span></code>/<code class=highlight><span class=n>error</span></code> states to defaults. This object can be called to run the query.</td> </tr> </tbody> </table> </details> <details class=question> <summary>How can I provide arguments to my mutation function?</summary> <p><code class=highlight><span class=o>*</span><span class=n>args</span></code> and <code class=highlight><span class=o>**</span><span class=n>kwargs</span></code> can be provided to your mutation function via <code class=highlight><span class=n>mutation</span><span class=p>(</span><span class=o>...</span><span class=p>)</span></code> parameters.</p> <div class="tabbed-set tabbed-alternate" data-tabs=9:1><input checked=checked id=__tabbed_9_1 name=__tabbed_9 type=radio><div class=tabbed-labels><label for=__tabbed_9_1>components.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 1</span>
 <span class=normal> 2</span>
@@ -415,16 +415,16 @@
 <span class=normal>10</span>
 <span class=normal>11</span>
 <span class=normal>12</span>
-<span class=normal>13</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span>
+<span class=normal>13</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_mutation</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_mutation</span>
 
 
-<span class=k>def</span> <span class=nf>example_mutation</span><span class=p>(</span><span class=n>value</span><span class=p>:</span> <span class=nb>int</span><span class=p>,</span> <span class=n>other_value</span><span class=p>:</span> <span class=nb>bool</span> <span class=o>=</span> <span class=kc>False</span><span class=p>):</span> <span class=o>...</span>
+<span class=k>def</span><span class=w> </span><span class=nf>example_mutation</span><span class=p>(</span><span class=n>value</span><span class=p>:</span> <span class=nb>int</span><span class=p>,</span> <span class=n>other_value</span><span class=p>:</span> <span class=nb>bool</span> <span class=o>=</span> <span class=kc>False</span><span class=p>):</span> <span class=o>...</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>mutation</span> <span class=o>=</span> <span class=n>use_mutation</span><span class=p>(</span><span class=n>example_mutation</span><span class=p>)</span>
 
     <span class=n>mutation</span><span class=p>(</span><span class=mi>123</span><span class=p>,</span> <span class=n>other_value</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span>
@@ -458,23 +458,23 @@
 <span class=normal>28</span>
 <span class=normal>29</span>
 <span class=normal>30</span>
-<span class=normal>31</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>31</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_mutation</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_mutation</span>
 
 
-<span class=k>def</span> <span class=nf>execute_thread_safe_mutation</span><span class=p>(</span><span class=n>text</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>execute_thread_safe_mutation</span><span class=p>(</span><span class=n>text</span><span class=p>):</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;This is an example mutation function that does some thread-safe operation.&quot;&quot;&quot;</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>item_mutation</span> <span class=o>=</span> <span class=n>use_mutation</span><span class=p>(</span>
         <span class=n>execute_thread_safe_mutation</span><span class=p>,</span>
         <span class=n>thread_sensitive</span><span class=o>=</span><span class=kc>False</span><span class=p>,</span>
     <span class=p>)</span>
 
-    <span class=k>def</span> <span class=nf>submit_event</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
+    <span class=k>def</span><span class=w> </span><span class=nf>submit_event</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
         <span class=k>if</span> <span class=n>event</span><span class=p>[</span><span class=s2>&quot;key&quot;</span><span class=p>]</span> <span class=o>==</span> <span class=s2>&quot;Enter&quot;</span><span class=p>:</span>
             <span class=n>item_mutation</span><span class=p>(</span><span class=n>text</span><span class=o>=</span><span class=n>event</span><span class=p>[</span><span class=s2>&quot;target&quot;</span><span class=p>][</span><span class=s2>&quot;value&quot;</span><span class=p>])</span>
 
@@ -521,24 +521,24 @@
 <span class=normal>30</span>
 <span class=normal>31</span>
 <span class=normal>32</span>
-<span class=normal>33</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>33</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>example.models</span> <span class=kn>import</span> <span class=n>TodoItem</span>
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_mutation</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>example.models</span><span class=w> </span><span class=kn>import</span> <span class=n>TodoItem</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_mutation</span>
 
 
-<span class=k>def</span> <span class=nf>add_item</span><span class=p>(</span><span class=n>text</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>add_item</span><span class=p>(</span><span class=n>text</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
     <span class=n>TodoItem</span><span class=p>(</span><span class=n>text</span><span class=o>=</span><span class=n>text</span><span class=p>)</span><span class=o>.</span><span class=n>save</span><span class=p>()</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>todo_list</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>todo_list</span><span class=p>():</span>
     <span class=n>item_mutation</span> <span class=o>=</span> <span class=n>use_mutation</span><span class=p>(</span><span class=n>add_item</span><span class=p>)</span>
 
-    <span class=k>def</span> <span class=nf>reset_event</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
+    <span class=k>def</span><span class=w> </span><span class=nf>reset_event</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
         <span class=n>item_mutation</span><span class=o>.</span><span class=n>reset</span><span class=p>()</span>
 
-    <span class=k>def</span> <span class=nf>submit_event</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
+    <span class=k>def</span><span class=w> </span><span class=nf>submit_event</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
         <span class=k>if</span> <span class=n>event</span><span class=p>[</span><span class=s2>&quot;key&quot;</span><span class=p>]</span> <span class=o>==</span> <span class=s2>&quot;Enter&quot;</span><span class=p>:</span>
             <span class=n>item_mutation</span><span class=p>(</span><span class=n>text</span><span class=o>=</span><span class=n>event</span><span class=p>[</span><span class=s2>&quot;target&quot;</span><span class=p>][</span><span class=s2>&quot;value&quot;</span><span class=p>])</span>
 
@@ -558,10 +558,10 @@
 <span class=normal>2</span>
 <span class=normal>3</span>
 <span class=normal>4</span>
-<span class=normal>5</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>django.db.models</span> <span class=kn>import</span> <span class=n>CharField</span><span class=p>,</span> <span class=n>Model</span>
+<span class=normal>5</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>django.db.models</span><span class=w> </span><span class=kn>import</span> <span class=n>CharField</span><span class=p>,</span> <span class=n>Model</span>
 
 
-<span class=k>class</span> <span class=nc>TodoItem</span><span class=p>(</span><span class=n>Model</span><span class=p>):</span>
+<span class=k>class</span><span class=w> </span><span class=nc>TodoItem</span><span class=p>(</span><span class=n>Model</span><span class=p>):</span>
     <span class=n>text</span><span class=p>:</span> <span class=n>CharField</span> <span class=o>=</span> <span class=n>CharField</span><span class=p>(</span><span class=n>max_length</span><span class=o>=</span><span class=mi>255</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> </details> <details class=question> <summary>Can <code class=highlight><span class=n>use_mutation</span></code> trigger a refetch of <code class=highlight><span class=n>use_query</span></code>?</summary> <p>Yes, <code class=highlight><span class=n>use_mutation</span></code> can queue a refetch of a <code class=highlight><span class=n>use_query</span></code> via the <code class=highlight><span class=n>refetch</span><span class=o>=...</span></code> argument.</p> <p>The example below is a merge of the <code class=highlight><span class=n>use_query</span></code> and <code class=highlight><span class=n>use_mutation</span></code> examples above with the addition of a <code class=highlight><span class=n>use_mutation</span><span class=p>(</span><span class=n>refetch</span><span class=o>=...</span><span class=p>)</span></code> argument.</p> <p>Please note that <code class=highlight><span class=n>refetch</span></code> will cause all <code class=highlight><span class=n>use_query</span></code> hooks that use <code class=highlight><span class=n>get_items</span></code> in the current component tree will be refetched.</p> <div class="tabbed-set tabbed-alternate" data-tabs=12:2><input checked=checked id=__tabbed_12_1 name=__tabbed_12 type=radio><input id=__tabbed_12_2 name=__tabbed_12 type=radio><div class=tabbed-labels><label for=__tabbed_12_1>components.py</label><label for=__tabbed_12_2>models.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 1</span>
 <span class=normal> 2</span>
@@ -607,26 +607,26 @@
 <span class=normal>42</span>
 <span class=normal>43</span>
 <span class=normal>44</span>
-<span class=normal>45</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>45</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>example.models</span> <span class=kn>import</span> <span class=n>TodoItem</span>
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_mutation</span><span class=p>,</span> <span class=n>use_query</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>example.models</span><span class=w> </span><span class=kn>import</span> <span class=n>TodoItem</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_mutation</span><span class=p>,</span> <span class=n>use_query</span>
 
 
-<span class=k>def</span> <span class=nf>get_items</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>get_items</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>TodoItem</span><span class=o>.</span><span class=n>objects</span><span class=o>.</span><span class=n>all</span><span class=p>()</span>
 
 
-<span class=k>def</span> <span class=nf>add_item</span><span class=p>(</span><span class=n>text</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>add_item</span><span class=p>(</span><span class=n>text</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
     <span class=n>TodoItem</span><span class=p>(</span><span class=n>text</span><span class=o>=</span><span class=n>text</span><span class=p>)</span><span class=o>.</span><span class=n>save</span><span class=p>()</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>todo_list</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>todo_list</span><span class=p>():</span>
     <span class=n>item_query</span> <span class=o>=</span> <span class=n>use_query</span><span class=p>(</span><span class=n>get_items</span><span class=p>)</span>
     <span class=n>item_mutation</span> <span class=o>=</span> <span class=n>use_mutation</span><span class=p>(</span><span class=n>add_item</span><span class=p>,</span> <span class=n>refetch</span><span class=o>=</span><span class=n>get_items</span><span class=p>)</span>
 
-    <span class=k>def</span> <span class=nf>submit_event</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
+    <span class=k>def</span><span class=w> </span><span class=nf>submit_event</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
         <span class=k>if</span> <span class=n>event</span><span class=p>[</span><span class=s2>&quot;key&quot;</span><span class=p>]</span> <span class=o>==</span> <span class=s2>&quot;Enter&quot;</span><span class=p>:</span>
             <span class=n>item_mutation</span><span class=p>(</span><span class=n>text</span><span class=o>=</span><span class=n>event</span><span class=p>[</span><span class=s2>&quot;target&quot;</span><span class=p>][</span><span class=s2>&quot;value&quot;</span><span class=p>])</span>
 
@@ -656,10 +656,10 @@
 <span class=normal>2</span>
 <span class=normal>3</span>
 <span class=normal>4</span>
-<span class=normal>5</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>django.db.models</span> <span class=kn>import</span> <span class=n>CharField</span><span class=p>,</span> <span class=n>Model</span>
+<span class=normal>5</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>django.db.models</span><span class=w> </span><span class=kn>import</span> <span class=n>CharField</span><span class=p>,</span> <span class=n>Model</span>
 
 
-<span class=k>class</span> <span class=nc>TodoItem</span><span class=p>(</span><span class=n>Model</span><span class=p>):</span>
+<span class=k>class</span><span class=w> </span><span class=nc>TodoItem</span><span class=p>(</span><span class=n>Model</span><span class=p>):</span>
     <span class=n>text</span><span class=p>:</span> <span class=n>CharField</span> <span class=o>=</span> <span class=n>CharField</span><span class=p>(</span><span class=n>max_length</span><span class=o>=</span><span class=mi>255</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> </details> <hr> <h2 id=user-hooks>User Hooks<a class=headerlink href=#user-hooks title="Permanent link">&para;</a></h2> <hr> <h3 id=use-auth>Use Auth<a class=headerlink href=#use-auth title="Permanent link">&para;</a></h3> <p>Provides a <code class=highlight><span class=n>NamedTuple</span></code> containing <code class=highlight><span class=k>async</span> <span class=n>login</span></code> and <code class=highlight><span class=k>async</span> <span class=n>logout</span></code> functions.</p> <p>This hook utilizes the Django's authentication framework in a way that provides <strong>persistent</strong> login.</p> <div class="tabbed-set tabbed-alternate" data-tabs=13:1><input checked=checked id=__tabbed_13_1 name=__tabbed_13 type=radio><div class=tabbed-labels><label for=__tabbed_13_1>components.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 1</span>
 <span class=normal> 2</span>
@@ -683,22 +683,22 @@
 <span class=normal>20</span>
 <span class=normal>21</span>
 <span class=normal>22</span>
-<span class=normal>23</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>django.contrib.auth</span> <span class=kn>import</span> <span class=n>get_user_model</span>
-<span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>23</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>django.contrib.auth</span><span class=w> </span><span class=kn>import</span> <span class=n>get_user_model</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_auth</span><span class=p>,</span> <span class=n>use_user</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_auth</span><span class=p>,</span> <span class=n>use_user</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>auth</span> <span class=o>=</span> <span class=n>use_auth</span><span class=p>()</span>
     <span class=n>user</span> <span class=o>=</span> <span class=n>use_user</span><span class=p>()</span>
 
-    <span class=k>async</span> <span class=k>def</span> <span class=nf>login_user</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
+    <span class=k>async</span> <span class=k>def</span><span class=w> </span><span class=nf>login_user</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
         <span class=n>new_user</span><span class=p>,</span> <span class=n>_created</span> <span class=o>=</span> <span class=k>await</span> <span class=n>get_user_model</span><span class=p>()</span><span class=o>.</span><span class=n>objects</span><span class=o>.</span><span class=n>aget_or_create</span><span class=p>(</span><span class=n>username</span><span class=o>=</span><span class=s2>&quot;ExampleUser&quot;</span><span class=p>)</span>
         <span class=k>await</span> <span class=n>auth</span><span class=o>.</span><span class=n>login</span><span class=p>(</span><span class=n>new_user</span><span class=p>)</span>
 
-    <span class=k>async</span> <span class=k>def</span> <span class=nf>logout_user</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
+    <span class=k>async</span> <span class=k>def</span><span class=w> </span><span class=nf>logout_user</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
         <span class=k>await</span> <span class=n>auth</span><span class=o>.</span><span class=n>logout</span><span class=p>()</span>
 
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span>
@@ -706,7 +706,7 @@
         <span class=n>html</span><span class=o>.</span><span class=n>button</span><span class=p>({</span><span class=s2>&quot;onClick&quot;</span><span class=p>:</span> <span class=n>login_user</span><span class=p>},</span> <span class=s2>&quot;Login&quot;</span><span class=p>),</span>
         <span class=n>html</span><span class=o>.</span><span class=n>button</span><span class=p>({</span><span class=s2>&quot;onClick&quot;</span><span class=p>:</span> <span class=n>logout_user</span><span class=p>},</span> <span class=s2>&quot;Logout&quot;</span><span class=p>),</span>
     <span class=p>)</span>
-</code></pre></div></td></tr></table></div> </div> </div> </div> <details class=example> <summary>See Interface</summary> <p><font size=4><strong>Parameters</strong></font></p> <p><code class=highlight><span class=kc>None</span></code></p> <p><font size=4><strong>Returns</strong></font></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr> <td><code class=highlight><span class=n>UseAuthTuple</span></code></td> <td>A named tuple containing <code class=highlight><span class=n>login</span></code> and <code class=highlight><span class=n>logout</span></code> async functions.</td> </tr> </tbody> </table> </details> <details class=warning> <summary>Extra Django configuration required</summary> <p>Your ReactPy WebSocket must utilize <code class=highlight><span class=n>AuthMiddlewareStack</span></code> in order to use this hook.</p> <div class=highlight><pre><span></span><code><span class=kn>from</span> <span class=nn>channels.auth</span> <span class=kn>import</span> <span class=n>AuthMiddlewareStack</span>  <span class=c1># noqa: E402</span>
+</code></pre></div></td></tr></table></div> </div> </div> </div> <details class=example> <summary>See Interface</summary> <p><font size=4><strong>Parameters</strong></font></p> <p><code class=highlight><span class=kc>None</span></code></p> <p><font size=4><strong>Returns</strong></font></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr> <td><code class=highlight><span class=n>UseAuthTuple</span></code></td> <td>A named tuple containing <code class=highlight><span class=n>login</span></code> and <code class=highlight><span class=n>logout</span></code> async functions.</td> </tr> </tbody> </table> </details> <details class=warning> <summary>Extra Django configuration required</summary> <p>Your ReactPy WebSocket must utilize <code class=highlight><span class=n>AuthMiddlewareStack</span></code> in order to use this hook.</p> <div class=highlight><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>channels.auth</span><span class=w> </span><span class=kn>import</span> <span class=n>AuthMiddlewareStack</span>  <span class=c1># noqa: E402</span>
 
 <span class=n>application</span> <span class=o>=</span> <span class=n>ProtocolTypeRouter</span><span class=p>({</span>
     <span class=s2>&quot;http&quot;</span><span class=p>:</span> <span class=n>django_asgi_app</span><span class=p>,</span>
@@ -721,13 +721,13 @@
 <span class=normal> 7</span>
 <span class=normal> 8</span>
 <span class=normal> 9</span>
-<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_user</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_user</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>user</span> <span class=o>=</span> <span class=n>use_user</span><span class=p>()</span>
 
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span><span class=n>user</span><span class=o>.</span><span class=n>username</span><span class=p>)</span>
@@ -750,16 +750,16 @@
 <span class=normal>17</span>
 <span class=normal>18</span>
 <span class=normal>19</span>
-<span class=normal>20</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>20</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_user_data</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_user_data</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>query</span><span class=p>,</span> <span class=n>mutation</span> <span class=o>=</span> <span class=n>use_user_data</span><span class=p>()</span>
 
-    <span class=k>def</span> <span class=nf>on_submit</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
+    <span class=k>def</span><span class=w> </span><span class=nf>on_submit</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
         <span class=k>if</span> <span class=n>event</span><span class=p>[</span><span class=s2>&quot;key&quot;</span><span class=p>]</span> <span class=o>==</span> <span class=s2>&quot;Enter&quot;</span> <span class=ow>and</span> <span class=n>query</span><span class=o>.</span><span class=n>data</span><span class=p>:</span>
             <span class=n>new_key</span> <span class=o>=</span> <span class=nb>str</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=n>query</span><span class=o>.</span><span class=n>data</span><span class=p>))</span>
             <span class=n>mutation</span><span class=p>({</span><span class=o>**</span><span class=n>query</span><span class=o>.</span><span class=n>data</span><span class=p>,</span> <span class=n>new_key</span><span class=p>:</span> <span class=n>event</span><span class=p>[</span><span class=s2>&quot;target&quot;</span><span class=p>][</span><span class=s2>&quot;value&quot;</span><span class=p>]})</span>
@@ -795,13 +795,13 @@
 <span class=normal>23</span>
 <span class=normal>24</span>
 <span class=normal>25</span>
-<span class=normal>26</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>26</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_user_data</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_user_data</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>user_data</span> <span class=o>=</span> <span class=n>use_user_data</span><span class=p>(</span>
         <span class=n>default_data</span><span class=o>=</span><span class=p>{</span>
             <span class=s2>&quot;basic_example&quot;</span><span class=p>:</span> <span class=s2>&quot;123&quot;</span><span class=p>,</span>
@@ -815,11 +815,11 @@
     <span class=p>)</span>
 
 
-<span class=k>def</span> <span class=nf>sync_default</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>sync_default</span><span class=p>():</span>
     <span class=k>return</span> <span class=o>...</span>
 
 
-<span class=k>async</span> <span class=k>def</span> <span class=nf>async_default</span><span class=p>():</span>
+<span class=k>async</span> <span class=k>def</span><span class=w> </span><span class=nf>async_default</span><span class=p>():</span>
     <span class=k>return</span> <span class=o>...</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> </details> <hr> <h2 id=communication-hooks>Communication Hooks<a class=headerlink href=#communication-hooks title="Permanent link">&para;</a></h2> <hr> <h3 id=use-channel-layer>Use Channel Layer<a class=headerlink href=#use-channel-layer title="Permanent link">&para;</a></h3> <p>Subscribe to a <a href=https://channels.readthedocs.io/en/latest/topics/channel_layers.html>Django Channels layer</a> to send/receive messages.</p> <p>Layers are a multiprocessing-safe communication system that allows you to send/receive messages between different parts of your application.</p> <p>This is often used to create chat systems, synchronize data between components, or signal re-renders from outside your components.</p> <div class="tabbed-set tabbed-alternate" data-tabs=17:1><input checked=checked id=__tabbed_17_1 name=__tabbed_17 type=radio><div class=tabbed-labels><label for=__tabbed_17_1>components.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 1</span>
 <span class=normal> 2</span>
@@ -843,17 +843,17 @@
 <span class=normal>20</span>
 <span class=normal>21</span>
 <span class=normal>22</span>
-<span class=normal>23</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>hooks</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>23</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>hooks</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_channel_layer</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_channel_layer</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
-    <span class=k>async</span> <span class=k>def</span> <span class=nf>receive_message</span><span class=p>(</span><span class=n>message</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
+    <span class=k>async</span> <span class=k>def</span><span class=w> </span><span class=nf>receive_message</span><span class=p>(</span><span class=n>message</span><span class=p>):</span>
         <span class=n>set_message</span><span class=p>(</span><span class=n>message</span><span class=p>[</span><span class=s2>&quot;text&quot;</span><span class=p>])</span>
 
-    <span class=k>async</span> <span class=k>def</span> <span class=nf>send_message</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
+    <span class=k>async</span> <span class=k>def</span><span class=w> </span><span class=nf>send_message</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
         <span class=k>if</span> <span class=n>event</span><span class=p>[</span><span class=s2>&quot;key&quot;</span><span class=p>]</span> <span class=o>==</span> <span class=s2>&quot;Enter&quot;</span><span class=p>:</span>
             <span class=k>await</span> <span class=n>sender</span><span class=p>({</span><span class=s2>&quot;text&quot;</span><span class=p>:</span> <span class=n>event</span><span class=p>[</span><span class=s2>&quot;target&quot;</span><span class=p>][</span><span class=s2>&quot;value&quot;</span><span class=p>]})</span>
 
@@ -915,16 +915,16 @@
 <span class=normal>38</span>
 <span class=normal>39</span>
 <span class=normal>40</span>
-<span class=normal>41</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>hooks</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>41</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>hooks</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_channel_layer</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_channel_layer</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_sender_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_sender_component</span><span class=p>():</span>
     <span class=n>sender</span> <span class=o>=</span> <span class=n>use_channel_layer</span><span class=p>(</span><span class=n>group_name</span><span class=o>=</span><span class=s2>&quot;my-group-name&quot;</span><span class=p>)</span>
 
-    <span class=k>async</span> <span class=k>def</span> <span class=nf>submit_event</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
+    <span class=k>async</span> <span class=k>def</span><span class=w> </span><span class=nf>submit_event</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
         <span class=k>if</span> <span class=n>event</span><span class=p>[</span><span class=s2>&quot;key&quot;</span><span class=p>]</span> <span class=o>==</span> <span class=s2>&quot;Enter&quot;</span><span class=p>:</span>
             <span class=k>await</span> <span class=n>sender</span><span class=p>({</span><span class=s2>&quot;text&quot;</span><span class=p>:</span> <span class=n>event</span><span class=p>[</span><span class=s2>&quot;target&quot;</span><span class=p>][</span><span class=s2>&quot;value&quot;</span><span class=p>]})</span>
 
@@ -935,10 +935,10 @@
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_receiver_component_1</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_receiver_component_1</span><span class=p>():</span>
     <span class=n>message</span><span class=p>,</span> <span class=n>set_message</span> <span class=o>=</span> <span class=n>hooks</span><span class=o>.</span><span class=n>use_state</span><span class=p>(</span><span class=s2>&quot;&quot;</span><span class=p>)</span>
 
-    <span class=k>async</span> <span class=k>def</span> <span class=nf>receive_event</span><span class=p>(</span><span class=n>message</span><span class=p>):</span>
+    <span class=k>async</span> <span class=k>def</span><span class=w> </span><span class=nf>receive_event</span><span class=p>(</span><span class=n>message</span><span class=p>):</span>
         <span class=n>set_message</span><span class=p>(</span><span class=n>message</span><span class=p>[</span><span class=s2>&quot;text&quot;</span><span class=p>])</span>
 
     <span class=n>use_channel_layer</span><span class=p>(</span><span class=n>group_name</span><span class=o>=</span><span class=s2>&quot;my-group-name&quot;</span><span class=p>,</span> <span class=n>receiver</span><span class=o>=</span><span class=n>receive_event</span><span class=p>)</span>
@@ -947,10 +947,10 @@
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_receiver_component_2</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_receiver_component_2</span><span class=p>():</span>
     <span class=n>message</span><span class=p>,</span> <span class=n>set_message</span> <span class=o>=</span> <span class=n>hooks</span><span class=o>.</span><span class=n>use_state</span><span class=p>(</span><span class=s2>&quot;&quot;</span><span class=p>)</span>
 
-    <span class=k>async</span> <span class=k>def</span> <span class=nf>receive_event</span><span class=p>(</span><span class=n>message</span><span class=p>):</span>
+    <span class=k>async</span> <span class=k>def</span><span class=w> </span><span class=nf>receive_event</span><span class=p>(</span><span class=n>message</span><span class=p>):</span>
         <span class=n>set_message</span><span class=p>(</span><span class=n>message</span><span class=p>[</span><span class=s2>&quot;text&quot;</span><span class=p>])</span>
 
     <span class=n>use_channel_layer</span><span class=p>(</span><span class=n>group_name</span><span class=o>=</span><span class=s2>&quot;my-group-name&quot;</span><span class=p>,</span> <span class=n>receiver</span><span class=o>=</span><span class=n>receive_event</span><span class=p>)</span>
@@ -974,18 +974,18 @@
 <span class=normal>16</span>
 <span class=normal>17</span>
 <span class=normal>18</span>
-<span class=normal>19</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>asgiref.sync</span> <span class=kn>import</span> <span class=n>async_to_sync</span>
-<span class=kn>from</span> <span class=nn>channels.layers</span> <span class=kn>import</span> <span class=n>get_channel_layer</span>
-<span class=kn>from</span> <span class=nn>django.db.models</span> <span class=kn>import</span> <span class=n>Model</span>
-<span class=kn>from</span> <span class=nn>django.db.models.signals</span> <span class=kn>import</span> <span class=n>pre_save</span>
-<span class=kn>from</span> <span class=nn>django.dispatch</span> <span class=kn>import</span> <span class=n>receiver</span>
+<span class=normal>19</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>asgiref.sync</span><span class=w> </span><span class=kn>import</span> <span class=n>async_to_sync</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>channels.layers</span><span class=w> </span><span class=kn>import</span> <span class=n>get_channel_layer</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>django.db.models</span><span class=w> </span><span class=kn>import</span> <span class=n>Model</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>django.db.models.signals</span><span class=w> </span><span class=kn>import</span> <span class=n>pre_save</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>django.dispatch</span><span class=w> </span><span class=kn>import</span> <span class=n>receiver</span>
 
 
-<span class=k>class</span> <span class=nc>ExampleModel</span><span class=p>(</span><span class=n>Model</span><span class=p>):</span> <span class=o>...</span>
+<span class=k>class</span><span class=w> </span><span class=nc>ExampleModel</span><span class=p>(</span><span class=n>Model</span><span class=p>):</span> <span class=o>...</span>
 
 
 <span class=nd>@receiver</span><span class=p>(</span><span class=n>pre_save</span><span class=p>,</span> <span class=n>sender</span><span class=o>=</span><span class=n>ExampleModel</span><span class=p>)</span>
-<span class=k>def</span> <span class=nf>my_sender_signal</span><span class=p>(</span><span class=n>sender</span><span class=p>,</span> <span class=n>instance</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_sender_signal</span><span class=p>(</span><span class=n>sender</span><span class=p>,</span> <span class=n>instance</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>):</span>
     <span class=n>layer</span> <span class=o>=</span> <span class=n>get_channel_layer</span><span class=p>()</span>
 
     <span class=c1># Example of sending a message to a channel</span>
@@ -1007,16 +1007,16 @@
 <span class=normal>12</span>
 <span class=normal>13</span>
 <span class=normal>14</span>
-<span class=normal>15</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>hooks</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>15</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>hooks</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_channel_layer</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_channel_layer</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_receiver_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_receiver_component</span><span class=p>():</span>
     <span class=n>message</span><span class=p>,</span> <span class=n>set_message</span> <span class=o>=</span> <span class=n>hooks</span><span class=o>.</span><span class=n>use_state</span><span class=p>(</span><span class=s2>&quot;&quot;</span><span class=p>)</span>
 
-    <span class=k>async</span> <span class=k>def</span> <span class=nf>receive_event</span><span class=p>(</span><span class=n>message</span><span class=p>):</span>
+    <span class=k>async</span> <span class=k>def</span><span class=w> </span><span class=nf>receive_event</span><span class=p>(</span><span class=n>message</span><span class=p>):</span>
         <span class=n>set_message</span><span class=p>(</span><span class=n>message</span><span class=p>[</span><span class=s2>&quot;text&quot;</span><span class=p>])</span>
 
     <span class=n>use_channel_layer</span><span class=p>(</span><span class=s2>&quot;my-channel-name&quot;</span><span class=p>,</span> <span class=n>receiver</span><span class=o>=</span><span class=n>receive_event</span><span class=p>)</span>
@@ -1031,13 +1031,13 @@
 <span class=normal> 7</span>
 <span class=normal> 8</span>
 <span class=normal> 9</span>
-<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_connection</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_connection</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>connection</span> <span class=o>=</span> <span class=n>use_connection</span><span class=p>()</span>
 
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span><span class=nb>str</span><span class=p>(</span><span class=n>connection</span><span class=p>))</span>
@@ -1050,13 +1050,13 @@
 <span class=normal> 7</span>
 <span class=normal> 8</span>
 <span class=normal> 9</span>
-<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_scope</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_scope</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>scope</span> <span class=o>=</span> <span class=n>use_scope</span><span class=p>()</span>
 
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span><span class=nb>str</span><span class=p>(</span><span class=n>scope</span><span class=p>))</span>
@@ -1069,13 +1069,13 @@
 <span class=normal> 7</span>
 <span class=normal> 8</span>
 <span class=normal> 9</span>
-<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_location</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_location</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>location</span> <span class=o>=</span> <span class=n>use_location</span><span class=p>()</span>
 
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span><span class=n>location</span><span class=o>.</span><span class=n>pathname</span> <span class=o>+</span> <span class=n>location</span><span class=o>.</span><span class=n>search</span><span class=p>)</span>
@@ -1088,13 +1088,13 @@
 <span class=normal> 7</span>
 <span class=normal> 8</span>
 <span class=normal> 9</span>
-<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_origin</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_origin</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>origin</span> <span class=o>=</span> <span class=n>use_origin</span><span class=p>()</span>
 
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span><span class=n>origin</span> <span class=ow>or</span> <span class=s2>&quot;No origin&quot;</span><span class=p>)</span>
@@ -1107,13 +1107,13 @@
 <span class=normal> 7</span>
 <span class=normal> 8</span>
 <span class=normal> 9</span>
-<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_root_id</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_root_id</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>root_id</span> <span class=o>=</span> <span class=n>use_root_id</span><span class=p>()</span>
 
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;Root ID: </span><span class=si>{</span><span class=n>root_id</span><span class=si>}</span><span class=s2>&quot;</span><span class=p>)</span>
@@ -1131,18 +1131,18 @@
 <span class=normal>12</span>
 <span class=normal>13</span>
 <span class=normal>14</span>
-<span class=normal>15</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>uuid</span> <span class=kn>import</span> <span class=n>uuid4</span>
+<span class=normal>15</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>uuid</span><span class=w> </span><span class=kn>import</span> <span class=n>uuid4</span>
 
-<span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.hooks</span> <span class=kn>import</span> <span class=n>use_rerender</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.hooks</span><span class=w> </span><span class=kn>import</span> <span class=n>use_rerender</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=n>rerender</span> <span class=o>=</span> <span class=n>use_rerender</span><span class=p>()</span>
 
-    <span class=k>def</span> <span class=nf>on_click</span><span class=p>():</span>
+    <span class=k>def</span><span class=w> </span><span class=nf>on_click</span><span class=p>():</span>
         <span class=n>rerender</span><span class=p>()</span>
 
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;UUID: </span><span class=si>{</span><span class=n>uuid4</span><span class=p>()</span><span class=si>}</span><span class=s2>&quot;</span><span class=p>,</span> <span class=n>html</span><span class=o>.</span><span class=n>button</span><span class=p>({</span><span class=s2>&quot;onClick&quot;</span><span class=p>:</span> <span class=n>on_click</span><span class=p>},</span> <span class=s2>&quot;Rerender&quot;</span><span class=p>))</span>

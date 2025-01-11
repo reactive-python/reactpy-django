@@ -16,7 +16,7 @@
 <span class=normal>3</span>
 <span class=normal>4</span>
 <span class=normal>5</span>
-<span class=normal>6</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>django.urls</span> <span class=kn>import</span> <span class=n>include</span><span class=p>,</span> <span class=n>path</span>
+<span class=normal>6</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>django.urls</span><span class=w> </span><span class=kn>import</span> <span class=n>include</span><span class=p>,</span> <span class=n>path</span>
 
 <span class=n>urlpatterns</span> <span class=o>=</span> <span class=p>[</span>
     <span class=o>...</span><span class=p>,</span>
@@ -40,9 +40,9 @@
 <span class=normal>16</span>
 <span class=normal>17</span>
 <span class=normal>18</span>
-<span class=normal>19</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>import</span> <span class=nn>os</span>
+<span class=normal>19</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>import</span><span class=w> </span><span class=nn>os</span>
 
-<span class=kn>from</span> <span class=nn>django.core.asgi</span> <span class=kn>import</span> <span class=n>get_asgi_application</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>django.core.asgi</span><span class=w> </span><span class=kn>import</span> <span class=n>get_asgi_application</span>
 
 <span class=c1># Ensure DJANGO_SETTINGS_MODULE is set properly based on your project name!</span>
 <span class=n>os</span><span class=o>.</span><span class=n>environ</span><span class=o>.</span><span class=n>setdefault</span><span class=p>(</span><span class=s2>&quot;DJANGO_SETTINGS_MODULE&quot;</span><span class=p>,</span> <span class=s2>&quot;example_project.settings&quot;</span><span class=p>)</span>
@@ -51,15 +51,15 @@
 <span class=n>django_asgi_app</span> <span class=o>=</span> <span class=n>get_asgi_application</span><span class=p>()</span>
 
 
-<span class=kn>from</span> <span class=nn>channels.routing</span> <span class=kn>import</span> <span class=n>ProtocolTypeRouter</span><span class=p>,</span> <span class=n>URLRouter</span>  <span class=c1># noqa: E402</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>channels.routing</span><span class=w> </span><span class=kn>import</span> <span class=n>ProtocolTypeRouter</span><span class=p>,</span> <span class=n>URLRouter</span>  <span class=c1># noqa: E402</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django</span> <span class=kn>import</span> <span class=n>REACTPY_WEBSOCKET_ROUTE</span>  <span class=c1># noqa: E402</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django</span><span class=w> </span><span class=kn>import</span> <span class=n>REACTPY_WEBSOCKET_ROUTE</span>  <span class=c1># noqa: E402</span>
 
 <span class=n>application</span> <span class=o>=</span> <span class=n>ProtocolTypeRouter</span><span class=p>({</span>
     <span class=s2>&quot;http&quot;</span><span class=p>:</span> <span class=n>django_asgi_app</span><span class=p>,</span>
     <span class=s2>&quot;websocket&quot;</span><span class=p>:</span> <span class=n>URLRouter</span><span class=p>([</span><span class=n>REACTPY_WEBSOCKET_ROUTE</span><span class=p>]),</span>
 <span class=p>})</span>
-</code></pre></div></td></tr></table></div> </div> </div> </div> <details class=info> <summary>Add <code class=highlight><span class=n>AuthMiddlewareStack</span></code> (Optional)</summary> <p>There are many situations where you need to access the Django <code class=highlight><span class=n>User</span></code> or <code class=highlight><span class=n>Session</span></code> objects within ReactPy components. For example, if you want to:</p> <ol> <li>Access the <code class=highlight><span class=n>User</span></code> that is currently logged in</li> <li>Access Django's <code class=highlight><span class=n>Session</span></code> object</li> <li>Login or logout the current <code class=highlight><span class=n>User</span></code></li> </ol> <p>In these situations will need to ensure you are using <code class=highlight><span class=n>AuthMiddlewareStack</span></code>.</p> <div class=highlight><pre><span></span><code><span class=kn>from</span> <span class=nn>channels.auth</span> <span class=kn>import</span> <span class=n>AuthMiddlewareStack</span>  <span class=c1># noqa: E402</span>
+</code></pre></div></td></tr></table></div> </div> </div> </div> <details class=info> <summary>Add <code class=highlight><span class=n>AuthMiddlewareStack</span></code> (Optional)</summary> <p>There are many situations where you need to access the Django <code class=highlight><span class=n>User</span></code> or <code class=highlight><span class=n>Session</span></code> objects within ReactPy components. For example, if you want to:</p> <ol> <li>Access the <code class=highlight><span class=n>User</span></code> that is currently logged in</li> <li>Access Django's <code class=highlight><span class=n>Session</span></code> object</li> <li>Login or logout the current <code class=highlight><span class=n>User</span></code></li> </ol> <p>In these situations will need to ensure you are using <code class=highlight><span class=n>AuthMiddlewareStack</span></code>.</p> <div class=highlight><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>channels.auth</span><span class=w> </span><span class=kn>import</span> <span class=n>AuthMiddlewareStack</span>  <span class=c1># noqa: E402</span>
 
 <span class=n>application</span> <span class=o>=</span> <span class=n>ProtocolTypeRouter</span><span class=p>({</span>
     <span class=s2>&quot;http&quot;</span><span class=p>:</span> <span class=n>django_asgi_app</span><span class=p>,</span>
@@ -71,10 +71,10 @@
 <span class=normal>2</span>
 <span class=normal>3</span>
 <span class=normal>4</span>
-<span class=normal>5</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>5</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>hello_world</span><span class=p>(</span><span class=n>recipient</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>hello_world</span><span class=p>(</span><span class=n>recipient</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>h1</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;Hello </span><span class=si>{</span><span class=n>recipient</span><span class=si>}</span><span class=s2>!&quot;</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> <hr> <p><font size=5><strong><code>my_app/templates/my_template.html</code></strong></font></p> <p>In your <strong>Django app</strong>'s HTML template, you can now embed your ReactPy component using the <code>component</code> template tag. Within this tag, you will need to type in the dotted path to the component.</p> <p>Additionally, you can pass in <code>args</code> and <code>kwargs</code> into your component function. After reading the code below, pay attention to how the function definition for <code>hello_world</code> (<em>from the previous example</em>) accepts a <code>recipient</code> argument.</p> <!--html-code-start--> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1</span>
 <span class=normal>2</span>

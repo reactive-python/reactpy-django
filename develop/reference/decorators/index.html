@@ -10,18 +10,18 @@
 <span class=normal>10</span>
 <span class=normal>11</span>
 <span class=normal>12</span>
-<span class=normal>13</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>13</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.decorators</span> <span class=kn>import</span> <span class=n>user_passes_test</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.decorators</span><span class=w> </span><span class=kn>import</span> <span class=n>user_passes_test</span>
 
 
-<span class=k>def</span> <span class=nf>is_authenticated</span><span class=p>(</span><span class=n>user</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>is_authenticated</span><span class=p>(</span><span class=n>user</span><span class=p>):</span>
     <span class=k>return</span> <span class=n>user</span><span class=o>.</span><span class=n>is_authenticated</span>
 
 
 <span class=nd>@user_passes_test</span><span class=p>(</span><span class=n>is_authenticated</span><span class=p>)</span>
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span><span class=s2>&quot;I am logged in!&quot;</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> <details class=example> <summary>See Interface</summary> <p><font size=4><strong>Parameters</strong></font></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr> <td><code class=highlight><span class=n>test_func</span></code></td> <td><code class=highlight><span class=n>Callable</span><span class=p>[[</span><span class=n>AbstractUser</span><span class=p>],</span> <span class=nb>bool</span><span class=p>]</span></code></td> <td>A function that accepts a <code>User</code> returns a boolean.</td> <td>N/A</td> </tr> <tr> <td><code class=highlight><span class=n>fallback</span></code></td> <td><code class=highlight><span class=n>Any</span> <span class=o>|</span> <span class=kc>None</span></code></td> <td>The content to be rendered if the test fails. Typically is a ReactPy component or VDOM (<code>reactpy.html</code> snippet).</td> <td></td> </tr> </tbody> </table> <p><font size=4><strong>Returns</strong></font></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr> <td><code class=highlight><span class=n>ComponentConstructor</span></code></td> <td>A ReactPy component constructor.</td> </tr> </tbody> </table> </details> <details class=question> <summary>How do I render a different component if the test fails?</summary> <p>You can use a component with the <code class=highlight><span class=n>fallback</span></code> argument, as seen below.</p> <div class="tabbed-set tabbed-alternate" data-tabs=2:1><input checked=checked id=__tabbed_2_1 name=__tabbed_2 type=radio><div class=tabbed-labels><label for=__tabbed_2_1>components.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 1</span>
 <span class=normal> 2</span>
@@ -40,23 +40,23 @@
 <span class=normal>15</span>
 <span class=normal>16</span>
 <span class=normal>17</span>
-<span class=normal>18</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>18</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.decorators</span> <span class=kn>import</span> <span class=n>user_passes_test</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.decorators</span><span class=w> </span><span class=kn>import</span> <span class=n>user_passes_test</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component_fallback</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component_fallback</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span><span class=s2>&quot;I am NOT logged in!&quot;</span><span class=p>)</span>
 
 
-<span class=k>def</span> <span class=nf>is_authenticated</span><span class=p>(</span><span class=n>user</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>is_authenticated</span><span class=p>(</span><span class=n>user</span><span class=p>):</span>
     <span class=k>return</span> <span class=n>user</span><span class=o>.</span><span class=n>is_authenticated</span>
 
 
 <span class=nd>@user_passes_test</span><span class=p>(</span><span class=n>is_authenticated</span><span class=p>,</span> <span class=n>fallback</span><span class=o>=</span><span class=n>my_component_fallback</span><span class=p>)</span>
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span><span class=s2>&quot;I am logged in!&quot;</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> </details> <details class=question> <summary>How do I render a simple <code class=highlight><span class=n>reactpy</span><span class=o>.</span><span class=n>html</span></code> snippet if the test fails?</summary> <p>You can use a <code class=highlight><span class=n>reactpy</span><span class=o>.</span><span class=n>html</span></code> snippet with the <code class=highlight><span class=n>fallback</span></code> argument, as seen below.</p> <div class="tabbed-set tabbed-alternate" data-tabs=3:1><input checked=checked id=__tabbed_3_1 name=__tabbed_3 type=radio><div class=tabbed-labels><label for=__tabbed_3_1>components.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 1</span>
 <span class=normal> 2</span>
@@ -70,17 +70,17 @@
 <span class=normal>10</span>
 <span class=normal>11</span>
 <span class=normal>12</span>
-<span class=normal>13</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>13</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>reactpy_django.decorators</span> <span class=kn>import</span> <span class=n>user_passes_test</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy_django.decorators</span><span class=w> </span><span class=kn>import</span> <span class=n>user_passes_test</span>
 
 
-<span class=k>def</span> <span class=nf>is_authenticated</span><span class=p>(</span><span class=n>user</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>is_authenticated</span><span class=p>(</span><span class=n>user</span><span class=p>):</span>
     <span class=k>return</span> <span class=n>user</span><span class=o>.</span><span class=n>is_authenticated</span>
 
 
 <span class=nd>@user_passes_test</span><span class=p>(</span><span class=n>is_authenticated</span><span class=p>,</span> <span class=n>fallback</span><span class=o>=</span><span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span><span class=s2>&quot;I am NOT logged in!&quot;</span><span class=p>))</span>
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>my_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>my_component</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span><span class=s2>&quot;I am logged in!&quot;</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> </details> <hr> <div class=md-source-file> <small> Last update: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">December 2, 2024</span> </small> </div> <div class=md-source-date> <small> Authors: <span class="git-page-authors git-authors"><a href=mailto:archiethemonger@gmail.com>Mark Bakhit</a></span> </small> </div> </article> </div> </div> <button type=button class="md-top md-icon" data-md-component=top hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg> Back to top </button> </main> <footer class=md-footer> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-copyright> <div class=md-copyright__highlight> &copy; <div id=year></div> <script>document.getElementById("year").innerHTML = new Date().getFullYear();</script> Reactive Python and affiliates. <div class=legal-footer-right>This project has no affiliation to ReactJS or Meta Platforms, Inc.</div> </div> </div> </div> </div> </footer> </div> <div class=md-dialog data-md-component=dialog> <div class="md-dialog__inner md-typeset"></div> </div> <script id=__config type=application/json>{"base": "../..", "features": ["navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "content.code.copy", "search.highlight"], "search": "../../assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script> <script src=../../assets/javascripts/bundle.4e0fa4ba.min.js></script> <script src=../../assets/js/main.js></script> </body> </html>

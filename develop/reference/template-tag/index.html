@@ -28,10 +28,10 @@
 <span class=normal>6</span>
 <span class=normal>7</span>
 <span class=normal>8</span>
-<span class=normal>9</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>django.shortcuts</span> <span class=kn>import</span> <span class=n>render</span>
+<span class=normal>9</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>django.shortcuts</span><span class=w> </span><span class=kn>import</span> <span class=n>render</span>
 
 
-<span class=k>def</span> <span class=nf>example_view</span><span class=p>(</span><span class=n>request</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>example_view</span><span class=p>(</span><span class=n>request</span><span class=p>):</span>
     <span class=k>return</span> <span class=n>render</span><span class=p>(</span>
         <span class=n>request</span><span class=p>,</span>
         <span class=s2>&quot;my_template.html&quot;</span><span class=p>,</span>
@@ -60,11 +60,11 @@
 <span class=normal>3</span>
 <span class=normal>4</span>
 <span class=normal>5</span>
-<span class=normal>6</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span>
+<span class=normal>6</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>frog_greeter</span><span class=p>(</span><span class=n>number</span><span class=p>,</span> <span class=n>name</span><span class=p>,</span> <span class=n>species</span><span class=o>=</span><span class=s2>&quot;&quot;</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>frog_greeter</span><span class=p>(</span><span class=n>number</span><span class=p>,</span> <span class=n>name</span><span class=p>,</span> <span class=n>species</span><span class=o>=</span><span class=s2>&quot;&quot;</span><span class=p>):</span>
     <span class=k>return</span> <span class=sa>f</span><span class=s2>&quot;Hello #</span><span class=si>{</span><span class=n>number</span><span class=si>}</span><span class=s2>, </span><span class=si>{</span><span class=n>name</span><span class=si>}</span><span class=s2> the </span><span class=si>{</span><span class=n>species</span><span class=si>}</span><span class=s2>!&quot;</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> </details> <details class=question> <summary>Can I render components on a different server (distributed computing)?</summary> <p>Yes! This is most commonly done through <a href=../settings/#reactpy_default_hosts><code>settings.py:REACTPY_HOSTS</code></a>. However, you can use the <code class=highlight><span class=n>host</span></code> keyword to render components on a specific ASGI server.</p> <div class="tabbed-set tabbed-alternate" data-tabs=5:1><input checked=checked id=__tabbed_5_1 name=__tabbed_5 type=radio><div class=tabbed-labels><label for=__tabbed_5_1>my_template.html</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1</span>
 <span class=normal>2</span>
@@ -81,7 +81,7 @@
 <span class=normal>3</span></pre></div></td><td class=code><div><pre><span></span><code><span class=x>...</span>
 <span class=cp>{%</span> <span class=k>component</span> <span class=s2>&quot;example_project.my_app.components.do_something&quot;</span> <span class=nv>offline</span><span class=o>=</span><span class=s2>&quot;example_project.my_app.components.offline&quot;</span> <span class=cp>%}</span>
 <span class=x>...</span>
-</code></pre></div></td></tr></table></div> </div> </div> </div> <p><em>Note: The <code class=highlight><span class=n>offline</span></code> component will be non-interactive (hooks won't operate).</em></p> </details> <h2 id=pyscript-component>PyScript Component<a class=headerlink href=#pyscript-component title="Permanent link">&para;</a></h2> <p>This template tag can be used to insert any number of <strong>client-side</strong> ReactPy components onto your page.</p> <!--pyscript-def-start--> <p>By default, the only <a href=./#pyscript-setup>available dependencies</a> are the Python standard library, <code>pyscript</code>, <code>pyodide</code>, <code>reactpy</code> core.</p> <p>The entire file path provided is loaded directly into the browser, and must have a <code class=highlight><span class=k>def</span> <span class=nf>root</span><span class=p>()</span></code> component to act as the entry point.</p> <!--pyscript-def-end--> <!--pyscript-raw-text-start--> <div class="admonition warning"> <p class=admonition-title>Pitfall</p> <p>Similar to JavaScript, your provided Python file is loaded directly into the client (web browser) <strong>as raw text</strong> to run using the PyScript interpreter. Be cautious about what you include in your Python file.</p> <p>As a result being client-sided, Python packages within your local environment (such as those installed via <code>pip install ...</code>) are <strong>not accessible</strong> within PyScript components.</p> </div> <!--pyscript-raw-text-end--> <div class="tabbed-set tabbed-alternate" data-tabs=8:2><input checked=checked id=__tabbed_8_1 name=__tabbed_8 type=radio><input id=__tabbed_8_2 name=__tabbed_8 type=radio><div class=tabbed-labels><label for=__tabbed_8_1>my_template.html</label><label for=__tabbed_8_2>hello_world.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 1</span>
+</code></pre></div></td></tr></table></div> </div> </div> </div> <p><em>Note: The <code class=highlight><span class=n>offline</span></code> component will be non-interactive (hooks won't operate).</em></p> </details> <h2 id=pyscript-component>PyScript Component<a class=headerlink href=#pyscript-component title="Permanent link">&para;</a></h2> <p>This template tag can be used to insert any number of <strong>client-side</strong> ReactPy components onto your page.</p> <!--pyscript-def-start--> <p>By default, the only <a href=./#pyscript-setup>available dependencies</a> are the Python standard library, <code>pyscript</code>, <code>pyodide</code>, <code>reactpy</code> core.</p> <p>The entire file path provided is loaded directly into the browser, and must have a <code class=highlight><span class=k>def</span><span class=w> </span><span class=nf>root</span><span class=p>()</span></code> component to act as the entry point.</p> <!--pyscript-def-end--> <!--pyscript-raw-text-start--> <div class="admonition warning"> <p class=admonition-title>Pitfall</p> <p>Similar to JavaScript, your provided Python file is loaded directly into the client (web browser) <strong>as raw text</strong> to run using the PyScript interpreter. Be cautious about what you include in your Python file.</p> <p>As a result being client-sided, Python packages within your local environment (such as those installed via <code>pip install ...</code>) are <strong>not accessible</strong> within PyScript components.</p> </div> <!--pyscript-raw-text-end--> <div class="tabbed-set tabbed-alternate" data-tabs=8:2><input checked=checked id=__tabbed_8_1 name=__tabbed_8 type=radio><input id=__tabbed_8_2 name=__tabbed_8 type=radio><div class=tabbed-labels><label for=__tabbed_8_1>my_template.html</label><label for=__tabbed_8_2>hello_world.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 1</span>
 <span class=normal> 2</span>
 <span class=normal> 3</span>
 <span class=normal> 4</span>
@@ -113,11 +113,11 @@
 <span class=normal>3</span>
 <span class=normal>4</span>
 <span class=normal>5</span>
-<span class=normal>6</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>6</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>root</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>root</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span><span class=s2>&quot;Hello, World!&quot;</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> <details class=example> <summary>See Interface</summary> <p><font size=4><strong>Parameters</strong></font></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr> <td><code class=highlight><span class=o>*</span><span class=n>file_paths</span></code></td> <td><code class=highlight><span class=nb>str</span></code></td> <td>File path to your client-side component. If multiple paths are provided, the contents are automatically merged.</td> <td>N/A</td> </tr> <tr> <td><code class=highlight><span class=n>initial</span></code></td> <td><code class=highlight><span class=nb>str</span> <span class=o>|</span> <span class=n>VdomDict</span> <span class=o>|</span> <span class=n>ComponentType</span></code></td> <td>The initial HTML that is displayed prior to the PyScript component loads. This can either be a string containing raw HTML, a <code class=highlight><span class=n>reactpy</span><span class=o>.</span><span class=n>html</span></code> snippet, or a non-interactive component.</td> <td><code class=highlight><span class=s2>&quot;&quot;</span></code></td> </tr> <tr> <td><code class=highlight><span class=n>root</span></code></td> <td><code class=highlight><span class=nb>str</span></code></td> <td>The name of the root component function.</td> <td><code class=highlight><span class=s2>&quot;root&quot;</span></code></td> </tr> </tbody> </table> </details> <!--pyscript-js-exec-start--> <details class=question> <summary>How do I execute JavaScript within PyScript components?</summary> <p>PyScript components several options available to execute JavaScript, including...</p> <ul> <li><a href=https://pyodide.org/en/stable/usage/type-conversions.html#importing-javascript-objects-into-python>Pyodide's <code>js</code> module</a></li> <li><a href=https://docs.pyscript.net/latest/user-guide/dom/#ffi>Pyscript's foreign function interface</a></li> <li><a href=https://docs.pyscript.net/latest/user-guide/configuration/#javascript-modules>Pyscript's JavaScript modules</a>.</li> </ul> <p><strong>Pyodide JS Module</strong></p> <p>The Pyodide <code class=highlight><span class=n>js</span></code> module has access to everything within the browser's JavaScript environment. Therefore, any global JavaScript functions loaded within your HTML <code class=highlight><span class=p>&lt;</span><span class=nt>head</span><span class=p>&gt;</span></code> can be called as well. However, you will need to be mindful of JavaScript load order if using <a href=https://javascript.info/script-async-defer><code>async</code> or <code>deferred</code></a> loading!</p> <div class="tabbed-set tabbed-alternate" data-tabs=9:1><input checked=checked id=__tabbed_9_1 name=__tabbed_9 type=radio><div class=tabbed-labels><label for=__tabbed_9_1>root.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 1</span>
 <span class=normal> 2</span>
@@ -128,13 +128,13 @@
 <span class=normal> 7</span>
 <span class=normal> 8</span>
 <span class=normal> 9</span>
-<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>import</span> <span class=nn>js</span>
-<span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>import</span><span class=w> </span><span class=nn>js</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>root</span><span class=p>():</span>
-    <span class=k>def</span> <span class=nf>on_click</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>root</span><span class=p>():</span>
+    <span class=k>def</span><span class=w> </span><span class=nf>on_click</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
         <span class=n>js</span><span class=o>.</span><span class=n>document</span><span class=o>.</span><span class=n>title</span> <span class=o>=</span> <span class=s2>&quot;New window title&quot;</span>
 
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>button</span><span class=p>({</span><span class=s2>&quot;onClick&quot;</span><span class=p>:</span> <span class=n>on_click</span><span class=p>},</span> <span class=s2>&quot;Click Me!&quot;</span><span class=p>)</span>
@@ -151,13 +151,13 @@
 <span class=normal>11</span>
 <span class=normal>12</span>
 <span class=normal>13</span>
-<span class=normal>14</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>pyscript</span> <span class=kn>import</span> <span class=n>document</span><span class=p>,</span> <span class=n>window</span>
-<span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>14</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>pyscript</span><span class=w> </span><span class=kn>import</span> <span class=n>document</span><span class=p>,</span> <span class=n>window</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>root</span><span class=p>():</span>
-    <span class=k>def</span> <span class=nf>on_click</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>root</span><span class=p>():</span>
+    <span class=k>def</span><span class=w> </span><span class=nf>on_click</span><span class=p>(</span><span class=n>event</span><span class=p>):</span>
         <span class=n>my_element</span> <span class=o>=</span> <span class=n>document</span><span class=o>.</span><span class=n>querySelector</span><span class=p>(</span><span class=s2>&quot;#example&quot;</span><span class=p>)</span>
         <span class=n>my_element</span><span class=o>.</span><span class=n>innerText</span> <span class=o>=</span> <span class=n>window</span><span class=o>.</span><span class=n>location</span><span class=o>.</span><span class=n>hostname</span>
 
@@ -176,12 +176,12 @@
 <span class=normal> 9</span>
 <span class=normal>10</span>
 <span class=normal>11</span>
-<span class=normal>12</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>12</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>root</span><span class=p>():</span>
-    <span class=kn>from</span> <span class=nn>pyscript.js_modules</span> <span class=kn>import</span> <span class=n>moment</span>
+<span class=k>def</span><span class=w> </span><span class=nf>root</span><span class=p>():</span>
+    <span class=kn>from</span><span class=w> </span><span class=nn>pyscript.js_modules</span><span class=w> </span><span class=kn>import</span> <span class=n>moment</span>
 
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span>
         <span class=p>{</span><span class=s2>&quot;id&quot;</span><span class=p>:</span> <span class=s2>&quot;moment&quot;</span><span class=p>},</span>
@@ -251,24 +251,24 @@
 <span class=normal>5</span>
 <span class=normal>6</span>
 <span class=normal>7</span>
-<span class=normal>8</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>8</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
-<span class=kn>from</span> <span class=nn>example.components</span> <span class=kn>import</span> <span class=n>child_component</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>example.components</span><span class=w> </span><span class=kn>import</span> <span class=n>child_component</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>root</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>root</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span><span class=s2>&quot;This text is from the root component.&quot;</span><span class=p>,</span> <span class=n>child_component</span><span class=p>())</span>
 </code></pre></div></td></tr></table></div> </div> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1</span>
 <span class=normal>2</span>
 <span class=normal>3</span>
 <span class=normal>4</span>
 <span class=normal>5</span>
-<span class=normal>6</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>6</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>child_component</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>child_component</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span><span class=s2>&quot;This is a child component from a different file.&quot;</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> </details> <details class=question> <summary>How do I display something while the component is loading?</summary> <p>You can configure the <code class=highlight><span class=n>initial</span></code> keyword to display HTML while your PyScript component is loading.</p> <p>The value for <code class=highlight><span class=n>initial</span></code> is most commonly be a string containing raw HTML.</p> <div class="tabbed-set tabbed-alternate" data-tabs=13:1><input checked=checked id=__tabbed_13_1 name=__tabbed_13 type=radio><div class=tabbed-labels><label for=__tabbed_13_1>my_template.html</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1</span>
 <span class=normal>2</span>
@@ -289,11 +289,11 @@
 <span class=normal> 7</span>
 <span class=normal> 8</span>
 <span class=normal> 9</span>
-<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>django.shortcuts</span> <span class=kn>import</span> <span class=n>render</span>
-<span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>html</span>
+<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>django.shortcuts</span><span class=w> </span><span class=kn>import</span> <span class=n>render</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>html</span>
 
 
-<span class=k>def</span> <span class=nf>index</span><span class=p>(</span><span class=n>request</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>index</span><span class=p>(</span><span class=n>request</span><span class=p>):</span>
     <span class=k>return</span> <span class=n>render</span><span class=p>(</span>
         <span class=n>request</span><span class=p>,</span>
         <span class=s2>&quot;my_template.html&quot;</span><span class=p>,</span>
@@ -309,11 +309,11 @@
 <span class=normal>3</span>
 <span class=normal>4</span>
 <span class=normal>5</span>
-<span class=normal>6</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>reactpy</span> <span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
+<span class=normal>6</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>reactpy</span><span class=w> </span><span class=kn>import</span> <span class=n>component</span><span class=p>,</span> <span class=n>html</span>
 
 
 <span class=nd>@component</span>
-<span class=k>def</span> <span class=nf>main</span><span class=p>():</span>
+<span class=k>def</span><span class=w> </span><span class=nf>main</span><span class=p>():</span>
     <span class=k>return</span> <span class=n>html</span><span class=o>.</span><span class=n>div</span><span class=p>(</span><span class=s2>&quot;Hello, World!&quot;</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> </details> <h2 id=pyscript-setup>PyScript Setup<a class=headerlink href=#pyscript-setup title="Permanent link">&para;</a></h2> <p>This template tag configures the current page to be able to run <code>pyscript</code>.</p> <p>You can optionally use this tag to configure the current PyScript environment, such as adding dependencies.</p> <div class="tabbed-set tabbed-alternate" data-tabs=16:1><input checked=checked id=__tabbed_16_1 name=__tabbed_16 type=radio><div class=tabbed-labels><label for=__tabbed_16_1>my_template.html</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1</span>
 <span class=normal>2</span>
@@ -369,11 +369,11 @@
 <span class=normal> 7</span>
 <span class=normal> 8</span>
 <span class=normal> 9</span>
-<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>django.shortcuts</span> <span class=kn>import</span> <span class=n>render</span>
-<span class=kn>from</span> <span class=nn>django.templatetags.static</span> <span class=kn>import</span> <span class=n>static</span>
+<span class=normal>10</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>django.shortcuts</span><span class=w> </span><span class=kn>import</span> <span class=n>render</span>
+<span class=kn>from</span><span class=w> </span><span class=nn>django.templatetags.static</span><span class=w> </span><span class=kn>import</span> <span class=n>static</span>
 
 
-<span class=k>def</span> <span class=nf>index</span><span class=p>(</span><span class=n>request</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>index</span><span class=p>(</span><span class=n>request</span><span class=p>):</span>
     <span class=k>return</span> <span class=n>render</span><span class=p>(</span>
         <span class=n>request</span><span class=p>,</span>
         <span class=s2>&quot;my_template.html&quot;</span><span class=p>,</span>
@@ -428,10 +428,10 @@
 <span class=normal>6</span>
 <span class=normal>7</span>
 <span class=normal>8</span>
-<span class=normal>9</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span> <span class=nn>django.shortcuts</span> <span class=kn>import</span> <span class=n>render</span>
+<span class=normal>9</span></pre></div></td><td class=code><div><pre><span></span><code><span class=kn>from</span><span class=w> </span><span class=nn>django.shortcuts</span><span class=w> </span><span class=kn>import</span> <span class=n>render</span>
 
 
-<span class=k>def</span> <span class=nf>index</span><span class=p>(</span><span class=n>request</span><span class=p>):</span>
+<span class=k>def</span><span class=w> </span><span class=nf>index</span><span class=p>(</span><span class=n>request</span><span class=p>):</span>
     <span class=k>return</span> <span class=n>render</span><span class=p>(</span>
         <span class=n>request</span><span class=p>,</span>
         <span class=s2>&quot;my_template.html&quot;</span><span class=p>,</span>
