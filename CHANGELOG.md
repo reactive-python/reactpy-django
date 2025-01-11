@@ -23,6 +23,8 @@ Don't forget to remove deprecated code on each major release!
 
 ### [5.2.1] - 2025-01-10
 
+### Changed
+
 -   Use the latest version of `@reactpy/client` which includes a fix for needless client-side component re-creation.
 
 ### [5.2.0] - 2024-12-29
