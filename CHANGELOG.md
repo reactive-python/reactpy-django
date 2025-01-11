@@ -21,6 +21,10 @@ Don't forget to remove deprecated code on each major release!
 
 -   Nothing (yet)!
 
+### [5.2.1] - 2025-01-10
+
+-   Use the latest version of `@reactpy/client` which includes a fix for needless client-side component re-creation.
+
 ### [5.2.0] - 2024-12-29
 
 ### Added
@@ -544,7 +548,8 @@ Don't forget to remove deprecated code on each major release!
 
 -   Support for IDOM within the Django
 
-[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/5.2.0...HEAD
+[Unreleased]: https://github.com/reactive-python/reactpy-django/compare/5.2.1...HEAD
+[5.2.1]: https://github.com/reactive-python/reactpy-django/compare/5.2.0...5.2.1
 [5.2.0]: https://github.com/reactive-python/reactpy-django/compare/5.1.1...5.2.0
 [5.1.1]: https://github.com/reactive-python/reactpy-django/compare/5.1.0...5.1.1
 [5.1.0]: https://github.com/reactive-python/reactpy-django/compare/5.0.0...5.1.0

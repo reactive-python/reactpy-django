@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "@pyscript/core": "^0.6",
-    "@reactpy/client": "^0.3.1",
+    "@reactpy/client": "^0.3.2",
+    "event-to-object": "^0.1.2",
     "morphdom": "^2.7.4"
   }
 }
