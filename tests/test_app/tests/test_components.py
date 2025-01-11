@@ -351,28 +351,28 @@ class ComponentTests(PlaywrightTestCase):
 
     # FIXME: This test is flaky on GitHub Actions for unknown reasons.
     # Fails at: self.page.wait_for_selector("#use-auth-no-rerender[data-username='user_5']")
-    @pytest.mark.flaky(reruns=5)
-    @navigate_to_page("/")
-    def test_component_use_auth_no_rerender(self):
-        uuid = self.page.wait_for_selector("#use-auth-no-rerender").get_attribute("data-uuid")
-        assert len(uuid) == 36
 
-        self.page.wait_for_selector("#use-auth-no-rerender .login").click(delay=CLICK_DELAY)
+    # @navigate_to_page("/")
+    # def test_component_use_auth_no_rerender(self):
+    #     uuid = self.page.wait_for_selector("#use-auth-no-rerender").get_attribute("data-uuid")
+    #     assert len(uuid) == 36
 
-        # Make sure #use-auth[data-username="user_5"] does not appear
-        with pytest.raises(TimeoutError):
-            self.page.wait_for_selector("#use-auth-no-rerender[data-username='user_5']", timeout=1)
+    #     self.page.wait_for_selector("#use-auth-no-rerender .login").click(delay=CLICK_DELAY)
 
-        # Press disconnect and see if #use-auth[data-username="user_5"] appears
-        self.page.wait_for_selector("#use-auth-no-rerender .disconnect").click(delay=CLICK_DELAY)
-        self.page.wait_for_selector("#use-auth-no-rerender[data-username='user_5']")
+    #     # Make sure #use-auth[data-username="user_5"] does not appear
+    #     with pytest.raises(TimeoutError):
+    #         self.page.wait_for_selector("#use-auth-no-rerender[data-username='user_5']", timeout=1)
 
-        # Press logout and make sure #use-auth[data-username="AnonymousUser"] does not appear
-        with pytest.raises(TimeoutError):
-            self.page.wait_for_selector("#use-auth-no-rerender[data-username='AnonymousUser']", timeout=1)
+    #     # Press disconnect and see if #use-auth[data-username="user_5"] appears
+    #     self.page.wait_for_selector("#use-auth-no-rerender .disconnect").click(delay=CLICK_DELAY)
+    #     self.page.wait_for_selector("#use-auth-no-rerender[data-username='user_5']")
 
-        # Press disconnect and see if #use-auth[data-username="AnonymousUser"] appears
-        self.page.wait_for_selector("#use-auth-no-rerender .disconnect").click(delay=CLICK_DELAY)
+    #     # Press logout and make sure #use-auth[data-username="AnonymousUser"] does not appear
+    #     with pytest.raises(TimeoutError):
+    #         self.page.wait_for_selector("#use-auth-no-rerender[data-username='AnonymousUser']", timeout=1)
+
+    #     # Press disconnect and see if #use-auth[data-username="AnonymousUser"] appears
+    #     self.page.wait_for_selector("#use-auth-no-rerender .disconnect").click(delay=CLICK_DELAY)
 
     @navigate_to_page("/")
     def test_component_use_rerender(self):
@@ -917,36 +917,36 @@ class ComponentTests(PlaywrightTestCase):
 
     # FIXME: Remove the `reruns` value once we fix flakiness of `test_sync_form_events`
     # https://github.com/reactive-python/reactpy-django/issues/272
-    @pytest.mark.flaky(reruns=5)
-    @navigate_to_page("/form/sync_event/")
-    def test_form_sync_events(self):
-        self.page.wait_for_selector("form")
 
-        # Check initial state
-        self.page.wait_for_selector("#success[data-value='false']")
-        self.page.wait_for_selector("#error[data-value='false']")
-        self.page.wait_for_selector("#receive_data[data-value='false']")
-        self.page.wait_for_selector("#change[data-value='false']")
+    # @navigate_to_page("/form/sync_event/")
+    # def test_form_sync_events(self):
+    #     self.page.wait_for_selector("form")
 
-        # Submit empty the form
-        sleep(1)
-        self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+    #     # Check initial state
+    #     self.page.wait_for_selector("#success[data-value='false']")
+    #     self.page.wait_for_selector("#error[data-value='false']")
+    #     self.page.wait_for_selector("#receive_data[data-value='false']")
+    #     self.page.wait_for_selector("#change[data-value='false']")
 
-        # The empty form was submitted, should result in an error
-        self.page.wait_for_selector("#success[data-value='false']")
-        self.page.wait_for_selector("#error[data-value='true']")
-        self.page.wait_for_selector("#receive_data[data-value='true']")
-        self.page.wait_for_selector("#change[data-value='false']")
+    #     # Submit empty the form
+    #     sleep(1)
+    #     self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
 
-        # Fill out the form and re-submit
-        self.page.wait_for_selector("#id_char_field").type("test", delay=CLICK_DELAY)
-        self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+    #     # The empty form was submitted, should result in an error
+    #     self.page.wait_for_selector("#success[data-value='false']")
+    #     self.page.wait_for_selector("#error[data-value='true']")
+    #     self.page.wait_for_selector("#receive_data[data-value='true']")
+    #     self.page.wait_for_selector("#change[data-value='false']")
 
-        # Form should have been successfully submitted
-        self.page.wait_for_selector("#success[data-value='true']")
-        self.page.wait_for_selector("#error[data-value='true']")
-        self.page.wait_for_selector("#receive_data[data-value='true']")
-        self.page.wait_for_selector("#change[data-value='true']")
+    #     # Fill out the form and re-submit
+    #     self.page.wait_for_selector("#id_char_field").type("test", delay=CLICK_DELAY)
+    #     self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+
+    #     # Form should have been successfully submitted
+    #     self.page.wait_for_selector("#success[data-value='true']")
+    #     self.page.wait_for_selector("#error[data-value='true']")
+    #     self.page.wait_for_selector("#receive_data[data-value='true']")
+    #     self.page.wait_for_selector("#change[data-value='true']")
 
     @navigate_to_page("/form/async_event/")
     def test_form_async_events(self):
