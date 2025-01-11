@@ -1,7 +1,4 @@
 import { h, render } from "https://unpkg.com/preact?module";
-import htm from "https://unpkg.com/htm?module";
-
-const html = htm.bind(h);
 
 export function bind(node, config) {
   return {
@@ -16,9 +13,6 @@ export function SimpleButton(props) {
     "button",
     {
       id: props.id,
-      onClick(event) {
-        props.onClick({ data: props.eventResponseData });
-      },
     },
     "simple button",
   );

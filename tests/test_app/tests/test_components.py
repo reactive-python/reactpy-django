@@ -218,7 +218,7 @@ class ComponentTests(PlaywrightTestCase):
     @navigate_to_page("/")
     def test_component_session_missing(self):
         """No session should exist for components that don't have args/kwargs."""
-        component = self.page.locator("#button-from-js-module")
+        component = self.page.locator("#use-scope")
         component.wait_for()
         parent = component.locator("..")
         session_id = parent.get_attribute("id")
