@@ -62,11 +62,11 @@ def reactpy_warnings(app_configs, **kwargs):
             )
         )
 
-    # Check if reactpy_django/client.js is available
-    if not find("reactpy_django/client.js"):
+    # Check if reactpy_django/index.js is available
+    if not find("reactpy_django/index.js"):
         warnings.append(
             Warning(
-                "ReactPy client.js could not be found within Django static files!",
+                "ReactPy index.js could not be found within Django static files!",
                 hint="Check all static files related Django settings and INSTALLED_APPS.",
                 id="reactpy_django.W004",
             )

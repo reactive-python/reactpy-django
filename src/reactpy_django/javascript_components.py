@@ -5,6 +5,6 @@ from pathlib import Path
 from reactpy import web
 
 HttpRequest = web.export(
-    web.module_from_file("reactpy-django", file=Path(__file__).parent / "static" / "reactpy_django" / "client.js"),
+    web.module_from_file("reactpy-django", file=Path(__file__).parent / "static" / "reactpy_django" / "index.js"),
     ("HttpRequest"),
 )

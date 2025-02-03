@@ -50,7 +50,7 @@ By utilizing `hatch`, the following commands are available to manage the develop
 
     The `hatch test` command is a wrapper for `pytest`. Hatch "intercepts" a handful of arguments, which can be previewed by typing `hatch test --help`.
 
-    Any additional arguments in the `test` command are directly passed on to pytest. See the [pytest documentation](https://docs.pytest.org/en/stable/reference/reference.html#command-line-flags) for what additional arguments are available.
+    Any additional arguments in the `test` command are provided directly to pytest. See the [pytest documentation](https://docs.pytest.org/en/stable/reference/reference.html#command-line-flags) for what additional arguments are available.
 
 ### Linting and Formatting
 

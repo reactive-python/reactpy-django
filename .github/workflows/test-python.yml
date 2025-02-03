@@ -76,5 +76,5 @@ jobs:
                   python-version: 3.x
             - name: Install Python Dependencies
               run: pip install --upgrade pip hatch uv
-            - name: Check Python formatting
+            - name: Run Python type checker
               run: hatch run python:type_check

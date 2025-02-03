@@ -7,7 +7,6 @@ export type ReconnectOptions = {
 
 export type ReactPyUrls = {
   componentUrl: URL;
-  query: string;
   jsModules: string;
 };
 
