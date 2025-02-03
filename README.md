@@ -1,8 +1,8 @@
 # <img src="https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg" align="left" height="45"/> ReactPy-Django
 
 <p>
-    <a href="https://github.com/reactive-python/reactpy-django/actions?query=workflow%3ATest">
-        <img src="https://github.com/reactive-python/reactpy-django/workflows/Test/badge.svg?event=push">
+    <a href="https://github.com/reactive-python/reactpy-django/actions/workflows/test-python.yml">
+        <img src="https://github.com/reactive-python/reactpy-django/actions/workflows/test-python.yml/badge.svg">
     </a>
     <a href="https://pypi.python.org/pypi/reactpy-django">
         <img src="https://img.shields.io/pypi/v/reactpy-django.svg?label=PyPI">
