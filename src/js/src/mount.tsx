@@ -1,6 +1,5 @@
 import { ReactPyDjangoClient } from "./client";
-import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "preact/compat";
 import { Layout } from "@reactpy/client/src/components";
 
 export function mountComponent(

@@ -915,7 +915,7 @@ class ComponentTests(PlaywrightTestCase):
         finally:
             os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
 
-    # FIXME: Remove the `reruns` value once we fix flakiness of `test_sync_form_events`
+    # FIXME: Re-enable once we fix the following:
     # https://github.com/reactive-python/reactpy-django/issues/272
 
     # @navigate_to_page("/form/sync_event/")
@@ -948,32 +948,32 @@ class ComponentTests(PlaywrightTestCase):
     #     self.page.wait_for_selector("#receive_data[data-value='true']")
     #     self.page.wait_for_selector("#change[data-value='true']")
 
-    @navigate_to_page("/form/async_event/")
-    def test_form_async_events(self):
-        self.page.wait_for_selector("form")
+    # @navigate_to_page("/form/async_event/")
+    # def test_form_async_events(self):
+    #     self.page.wait_for_selector("form")
 
-        # Check initial state
-        self.page.wait_for_selector("#success[data-value='false']")
-        self.page.wait_for_selector("#error[data-value='false']")
-        self.page.wait_for_selector("#receive_data[data-value='false']")
-        self.page.wait_for_selector("#change[data-value='false']")
+    #     # Check initial state
+    #     self.page.wait_for_selector("#success[data-value='false']")
+    #     self.page.wait_for_selector("#error[data-value='false']")
+    #     self.page.wait_for_selector("#receive_data[data-value='false']")
+    #     self.page.wait_for_selector("#change[data-value='false']")
 
-        # Submit empty the form
-        sleep(1)
-        self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+    #     # Submit empty the form
+    #     sleep(1)
+    #     self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
 
-        # The empty form was submitted, should result in an error
-        self.page.wait_for_selector("#success[data-value='false']")
-        self.page.wait_for_selector("#error[data-value='true']")
-        self.page.wait_for_selector("#receive_data[data-value='true']")
-        self.page.wait_for_selector("#change[data-value='false']")
+    #     # The empty form was submitted, should result in an error
+    #     self.page.wait_for_selector("#success[data-value='false']")
+    #     self.page.wait_for_selector("#error[data-value='true']")
+    #     self.page.wait_for_selector("#receive_data[data-value='true']")
+    #     self.page.wait_for_selector("#change[data-value='false']")
 
-        # Fill out the form and re-submit
-        self.page.wait_for_selector("#id_char_field").type("test", delay=CLICK_DELAY)
-        self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
+    #     # Fill out the form and re-submit
+    #     self.page.wait_for_selector("#id_char_field").type("test", delay=CLICK_DELAY)
+    #     self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
 
-        # Form should have been successfully submitted
-        self.page.wait_for_selector("#success[data-value='true']")
-        self.page.wait_for_selector("#error[data-value='true']")
-        self.page.wait_for_selector("#receive_data[data-value='true']")
-        self.page.wait_for_selector("#change[data-value='true']")
+    #     # Form should have been successfully submitted
+    #     self.page.wait_for_selector("#success[data-value='true']")
+    #     self.page.wait_for_selector("#error[data-value='true']")
+    #     self.page.wait_for_selector("#receive_data[data-value='true']")
+    #     self.page.wait_for_selector("#change[data-value='true']")

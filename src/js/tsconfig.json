@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node"
+  }
+}
