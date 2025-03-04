@@ -29,10 +29,6 @@ if TYPE_CHECKING:
     from django.http import HttpRequest
     from reactpy.core.types import ComponentConstructor, ComponentType, VdomDict
 
-try:
-    RESOLVED_WEB_MODULES_PATH = reverse("reactpy:web_modules", args=["/"]).strip("/")
-except NoReverseMatch:
-    RESOLVED_WEB_MODULES_PATH = ""
 register = template.Library()
 _logger = getLogger(__name__)
 
@@ -161,6 +157,10 @@ def component(
             _logger.error(msg)
             return failure_context(dotted_path, ComponentCarrierError(msg))
         _offline_html = prerender_component(offline_component, [], {}, uuid, request)
+    try:
+        resolved_web_modules_path = reverse("reactpy:web_modules", args=["/"]).strip("/")
+    except NoReverseMatch:
+        resolved_web_modules_path = ""
 
     # Return the template rendering context
     return {
@@ -169,7 +169,7 @@ def component(
         "reactpy_host": host or perceived_host,
         "reactpy_url_prefix": reactpy_config.REACTPY_URL_PREFIX,
         "reactpy_component_path": f"{dotted_path}/{uuid}/{int(has_args)}/",
-        "reactpy_resolved_web_modules_path": RESOLVED_WEB_MODULES_PATH,
+        "reactpy_resolved_web_modules_path": resolved_web_modules_path,
         "reactpy_reconnect_interval": reactpy_config.REACTPY_RECONNECT_INTERVAL,
         "reactpy_reconnect_max_interval": reactpy_config.REACTPY_RECONNECT_MAX_INTERVAL,
         "reactpy_reconnect_backoff_multiplier": reactpy_config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER,
