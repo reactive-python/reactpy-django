@@ -29,12 +29,16 @@ if TYPE_CHECKING:
     from django.http import HttpRequest
     from reactpy.core.types import ComponentConstructor, ComponentType, VdomDict
 
+
+register = template.Library()
+_logger = getLogger(__name__)
+
+
 try:
     RESOLVED_WEB_MODULES_PATH = reverse("reactpy:web_modules", args=["/"]).strip("/")
 except NoReverseMatch:
     RESOLVED_WEB_MODULES_PATH = ""
-register = template.Library()
-_logger = getLogger(__name__)
+    _logger.exception("Could not resolve the 'web_modules' URL path!")
 
 
 @register.inclusion_tag("reactpy/component.html", takes_context=True)
