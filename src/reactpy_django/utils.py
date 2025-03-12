@@ -42,7 +42,7 @@ if TYPE_CHECKING:
     from collections.abc import Awaitable, Mapping, Sequence
 
     from django.views import View
-    from reactpy.types import ComponentConstructor
+    from reactpy.types import ComponentConstructor, VdomDict
 
     from reactpy_django.types import FuncParams, Inferred
 
@@ -517,3 +517,17 @@ def cached_static_file(static_path: str) -> str:
         caches[REACTPY_CACHE].set(cache_key, file_contents, timeout=None, version=int(last_modified_time))
 
     return file_contents
+
+
+def del_html_head_body_transform(vdom: VdomDict) -> VdomDict:
+    """Transform intended for use with `html_to_vdom`.
+
+    Removes `<html>`, `<head>`, and `<body>` while preserving their children.
+
+    Parameters:
+        vdom:
+            The VDOM dictionary to transform.
+    """
+    if vdom["tagName"] in {"html", "body", "head"}:
+        return {"tagName": "", "children": vdom.setdefault("children", [])}
+    return vdom
