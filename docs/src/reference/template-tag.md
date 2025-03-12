@@ -194,6 +194,19 @@ The entire file path provided is loaded directly into the browser, and must have
     | `#!python initial` | `#!python str | VdomDict | ComponentType` | The initial HTML that is displayed prior to the PyScript component loads. This can either be a string containing raw HTML, a `#!python reactpy.html` snippet, or a non-interactive component. | `#!python ""` |
     | `#!python root` | `#!python str` | The name of the root component function. | `#!python "root"` |
 
+<!--pyscript-webtypy-start-->
+
+??? tip "Get PyScript type hints within your editor via `webtypy`!"
+
+    By installing the `webtypy` package, you can get type hints for PyScript components within your editor.
+
+    !!! example "Terminal"
+
+        ```bash linenums="0"
+        pip install webtypy
+        ```
+
+<!--pyscript-webtypy-end-->
 <!--pyscript-js-exec-start-->
 
 ??? question "How do I execute JavaScript within PyScript components?"
