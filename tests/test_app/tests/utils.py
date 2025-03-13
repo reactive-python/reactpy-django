@@ -4,6 +4,7 @@ import os
 import sys
 from collections.abc import Iterable
 from functools import partial
+from logging import getLogger
 from typing import TYPE_CHECKING, Any, Callable
 
 import decorator
@@ -14,7 +15,7 @@ from django.core.management import call_command
 from django.db import connections
 from django.test.utils import modify_settings
 from playwright.sync_api import sync_playwright
-from logging import getLogger
+
 from reactpy_django.utils import str_to_bool
 
 if TYPE_CHECKING:
