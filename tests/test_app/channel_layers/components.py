@@ -10,7 +10,7 @@ def receiver():
     async def receiver(message):
         set_state(message["text"])
 
-    use_channel_layer("channel-messenger", receiver=receiver)
+    use_channel_layer(channel="channel-messenger", receiver=receiver)
 
     return html.div(
         {"id": "receiver", "data-message": state},
@@ -20,7 +20,7 @@ def receiver():
 
 @component
 def sender():
-    sender = use_channel_layer("channel-messenger")
+    sender = use_channel_layer(channel="channel-messenger")
 
     async def submit_event(event):
         if event["key"] == "Enter":
@@ -41,7 +41,7 @@ def group_receiver(id_number: int):
     async def receiver(message):
         set_state(message["text"])
 
-    use_channel_layer(receiver=receiver, group_name="group-messenger")
+    use_channel_layer(receiver=receiver, group="group-messenger")
 
     return html.div(
         {"id": f"group-receiver-{id_number}", "data-message": state},
@@ -51,7 +51,7 @@ def group_receiver(id_number: int):
 
 @component
 def group_sender():
-    sender = use_channel_layer(group_name="group-messenger")
+    sender = use_channel_layer(group="group-messenger")
 
     async def submit_event(event):
         if event["key"] == "Enter":

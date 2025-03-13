@@ -340,11 +340,9 @@ def use_user_data(
 
 
 def use_channel_layer(
-    name: str | None = None,
     *,
-    group_name: str | None = None,
-    group_add: bool = True,
-    group_discard: bool = True,
+    channel: str | None = None,
+    group: str | None = None,
     receiver: AsyncMessageReceiver | None = None,
     layer: str = DEFAULT_CHANNEL_LAYER,
 ) -> AsyncMessageSender:
@@ -352,25 +350,24 @@ def use_channel_layer(
     Subscribe to a Django Channels layer to send/receive messages.
 
     Args:
-        name: The name of the channel to subscribe to. If you define a `group_name`, you \
-            can keep `name` undefined to auto-generate a unique name.
-        group_name: If configured, any messages sent within this hook will be broadcasted \
-            to all channels in this group.
-        group_add: If `True`, the channel will automatically be added to the group \
-            when the component mounts.
-        group_discard: If `True`, the channel will automatically be removed from the \
-            group when the component dismounts.
-        receiver: An async function that receives a `message: dict` from a channel. \
-            If more than one receiver waits on the same channel name, a random receiver \
-            will get the result.
-        layer: The channel layer to use. This layer must be defined in \
-            `settings.py:CHANNEL_LAYERS`.
+        channel:  The name of the channel this hook will send/receive messages on. If `group` is \
+        defined and `channel` is `None`, ReactPy will automatically generate a unique channel name.
+
+    Kwargs:
+        group: If configured, the `channel` is added to a `group` and any messages sent by `AsyncMessageSender` \
+            is broadcasted to all channels within the `group`
+        receiver: An async function that receives a `message: dict` from a channel.
+        layer: The Django Channels layer to use. This layer must be defined in `settings.py:CHANNEL_LAYERS`.
+
+    Returns:
+        An async callable that can send messages to the channel(s). This callable accepts a single \
+        argument, `message: dict`, which is the data sent to the channel or group of channels.
     """
     channel_layer: InMemoryChannelLayer | RedisChannelLayer = get_channel_layer(layer)  # type: ignore
-    channel_name = use_memo(lambda: str(name or uuid4()))
+    channel_name = use_memo(lambda: str(channel or uuid4()))
 
-    if not name and not group_name:
-        msg = "You must define a `name` or `group_name` for the channel."
+    if not channel and not group:
+        msg = "You must either define a `channel` or `group` for this hook."
         raise ValueError(msg)
 
     if not channel_layer:
@@ -383,11 +380,12 @@ def use_channel_layer(
     # Add/remove a group's channel during component mount/dismount respectively.
     @use_effect(dependencies=[])
     async def group_manager():
-        if group_name and group_add:
-            await channel_layer.group_add(group_name, channel_name)
+        if group:
+            await channel_layer.group_add(group, channel_name)
 
-        if group_name and group_discard:
-            return lambda: asyncio.run(channel_layer.group_discard(group_name, channel_name))
+        if group:
+            return lambda: asyncio.run(channel_layer.group_discard(group, channel_name))
+
         return None
 
     # Listen for messages on the channel using the provided `receiver` function.
@@ -402,8 +400,8 @@ def use_channel_layer(
 
     # User interface for sending messages to the channel
     async def message_sender(message: dict):
-        if group_name:
-            await channel_layer.group_send(group_name, message)
+        if group:
+            await channel_layer.group_send(group, message)
         else:
             await channel_layer.send(channel_name, message)
 

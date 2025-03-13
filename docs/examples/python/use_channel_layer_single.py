@@ -5,7 +5,7 @@ from reactpy_django.hooks import use_channel_layer
 
 @component
 def my_sender_component():
-    sender = use_channel_layer(group="my-group-name")
+    sender = use_channel_layer(channel="my-channel-name")
 
     async def submit_event(event):
         if event["key"] == "Enter":
@@ -18,24 +18,12 @@ def my_sender_component():
 
 
 @component
-def my_receiver_component_1():
+def my_receiver_component():
     message, set_message = hooks.use_state("")
 
     async def receive_message(message):
         set_message(message["text"])
 
-    use_channel_layer(group="my-group-name", receiver=receive_message)
+    use_channel_layer(channel="my-channel-name", receiver=receive_message)
 
     return html.div(f"Message Receiver 1: {message}")
-
-
-@component
-def my_receiver_component_2():
-    message, set_message = hooks.use_state("")
-
-    async def receive_message(message):
-        set_message(message["text"])
-
-    use_channel_layer(group="my-group-name", receiver=receive_message)
-
-    return html.div(f"Message Receiver 2: {message}")

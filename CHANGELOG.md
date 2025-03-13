@@ -19,7 +19,13 @@ Don't forget to remove deprecated code on each major release!
 
 ## [Unreleased]
 
--   Nothing (yet)!
+### Changed
+
+-   Updated the interface for `reactpy.hooks.use_channel_layer` to be more intuitive.
+    -   Arguments now must be provided as keyworded arguments.
+    -   The `name` argument has been renamed to `channel`.
+    -   The `group_name` argument has been renamed to `group`.
+    -   The `group_add` and `group_discard` arguments have been removed for simplicity.
 
 ### [5.2.1] - 2025-01-10
 
