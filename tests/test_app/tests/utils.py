@@ -14,14 +14,14 @@ from django.core.management import call_command
 from django.db import connections
 from django.test.utils import modify_settings
 from playwright.sync_api import sync_playwright
-
+from logging import getLogger
 from reactpy_django.utils import str_to_bool
 
 if TYPE_CHECKING:
     from daphne.testing import DaphneProcess
 
 GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "False")
-
+_logger = getLogger(__name__)
 
 class PlaywrightTestCase(ChannelsLiveServerTestCase):
     databases = {"default"}
@@ -115,6 +115,7 @@ class PlaywrightTestCase(ChannelsLiveServerTestCase):
         cls.browser = cls.playwright.chromium.launch(headless=bool(headless))
         cls.page = cls.browser.new_page()
         cls.page.set_default_timeout(10000)
+        cls.page.on("console", lambda msg: _logger.error(f"error: {msg.text}") if msg.type == "error" else None)
 
     @classmethod
     def shutdown_playwright_client(cls):
