@@ -355,7 +355,7 @@ def use_channel_layer(
 
     Kwargs:
         group: If configured, the `channel` is added to a `group` and any messages sent by `AsyncMessageSender` \
-            is broadcasted to all channels within the `group`
+            is broadcasted to all channels within the `group`.
         receiver: An async function that receives a `message: dict` from a channel.
         layer: The Django Channels layer to use. This layer must be defined in `settings.py:CHANNEL_LAYERS`.
 
@@ -366,7 +366,7 @@ def use_channel_layer(
     channel_layer: InMemoryChannelLayer | RedisChannelLayer = get_channel_layer(layer)  # type: ignore
     channel_name = use_memo(lambda: str(channel or uuid4()))
 
-    if not channel and not group:
+    if not (channel or group):
         msg = "You must either define a `channel` or `group` for this hook."
         raise ValueError(msg)
 
@@ -382,10 +382,7 @@ def use_channel_layer(
     async def group_manager():
         if group:
             await channel_layer.group_add(group, channel_name)
-
-        if group:
             return lambda: asyncio.run(channel_layer.group_discard(group, channel_name))
-
         return None
 
     # Listen for messages on the channel using the provided `receiver` function.

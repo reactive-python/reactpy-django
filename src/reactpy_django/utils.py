@@ -292,7 +292,7 @@ def django_query_postprocessor(
             # Force the query to execute
             getattr(data, field.name, None)
 
-            if many_to_one and type(field) == ManyToOneRel:
+            if many_to_one and type(field) is ManyToOneRel:
                 prefetch_fields.append(field.related_name or f"{field.name}_set")
 
             elif many_to_many and isinstance(field, ManyToManyField):
