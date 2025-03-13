@@ -133,6 +133,7 @@ addopts = """\
     --strict-config
     --strict-markers
     --reuse-db
+    --maxfail=10
     """
 django_find_project = false
 DJANGO_SETTINGS_MODULE = "test_app.settings_single_db"
