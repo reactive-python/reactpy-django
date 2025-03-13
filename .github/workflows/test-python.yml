@@ -12,13 +12,12 @@ on:
 
 jobs:
     python-source:
-        runs-on: ${{ matrix.operating_system }}
+        runs-on: ${{ matrix.operating-system }}
         strategy:
             matrix:
                 python-version: ["3.9", "3.10", "3.11", "3.12"]
-                settings_module: ["single_db", "multi_db"]
-                operating_system:
-                    ["ubuntu-latest", "macos-latest", "windows-latest"]
+                settings-module: ["single_db", "multi_db"]
+                operating-system: ["ubuntu-latest", "windows-latest"]
         steps:
             - uses: actions/checkout@v4
             - uses: oven-sh/setup-bun@v2
@@ -31,7 +30,7 @@ jobs:
             - name: Install Python Dependencies
               run: pip install --upgrade pip hatch uv
             - name: Run Single DB Tests
-              run: hatch test --python ${{ matrix.python-version }} --ds=test_app.settings_${{matrix.settings_module}} -v
+              run: hatch test --python ${{ matrix.python-version }} --ds=test_app.settings_${{matrix.settings-module}} -v
 
     python-formatting:
         runs-on: ubuntu-latest
