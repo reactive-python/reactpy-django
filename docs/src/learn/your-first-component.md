@@ -68,7 +68,7 @@ Additionally, you can pass in `#!python args` and `#!python kwargs` into your co
 
 ???+ tip "Components are automatically registered!"
 
-    ReactPy-Django will automatically register any component that is referenced in a Django HTML template. This means you [typically](../reference/utils.md#register-component) do not need to manually register components in your **Django app**.
+    ReactPy-Django will automatically register any component that is referenced in a Django HTML template. This means you typically do not need to [manually register](../reference/utils.md#register-component) components in your **Django app**.
 
     Please note that this HTML template must be properly stored within a registered Django app. ReactPy-Django will output a console log message containing all detected components when the server starts up.
 

@@ -46,11 +46,11 @@ Each component loaded via this template tag will receive a dedicated WebSocket c
     === "my_template.html"
 
         ```jinja
-        <!-- This is good -->
-        {% component "example_project.my_app.components.hello_world" recipient="World" %}
-
         <!-- This is bad -->
         {% component my_variable recipient="World" %}
+
+        <!-- This is good -->
+        {% component "example_project.my_app.components.hello_world" recipient="World" %}
         ```
 
     === "views.py"
