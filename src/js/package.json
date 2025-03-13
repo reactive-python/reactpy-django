@@ -5,6 +5,8 @@
     "check": "prettier --check . && eslint"
   },
   "devDependencies": {
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
     "eslint": "^9.13.0",
     "eslint-plugin-react": "^7.37.1",
     "prettier": "^3.3.3"
@@ -13,7 +15,6 @@
     "@pyscript/core": "^0.6",
     "@reactpy/client": "^0.3.2",
     "event-to-object": "^0.1.2",
-    "morphdom": "^2.7.4",
-    "preact": "^10.25.4"
+    "morphdom": "^2.7.4"
   }
 }
