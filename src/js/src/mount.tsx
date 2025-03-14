@@ -52,7 +52,6 @@ export function mountComponent(
   const client = new ReactPyDjangoClient({
     urls: {
       componentUrl: componentUrl,
-      query: document.location.search,
       jsModules: `${httpOrigin}/${jsModulesPath}`,
     },
     reconnectOptions: {

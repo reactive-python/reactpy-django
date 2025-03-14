@@ -14,7 +14,13 @@ from reactpy.types import ComponentType, Key, VdomDict
 from reactpy_django.exceptions import ViewNotRegisteredError
 from reactpy_django.forms.components import _django_form
 from reactpy_django.pyscript.components import _pyscript_component
-from reactpy_django.utils import cached_static_file, generate_obj_name, import_module, render_view
+from reactpy_django.utils import (
+    cached_static_file,
+    del_html_head_body_transform,
+    generate_obj_name,
+    import_module,
+    render_view,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -224,7 +230,7 @@ def _view_to_component(
         set_converted_view(
             utils.html_to_vdom(
                 response.content.decode("utf-8").strip(),
-                utils.del_html_head_body_transform,
+                del_html_head_body_transform,
                 *transforms,
                 strict=strict_parsing,
             )

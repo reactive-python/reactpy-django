@@ -58,6 +58,8 @@ This allows you to embedded any number of client-side PyScript components within
 
 <!--pyscript-setup-required-end-->
 
+{% include-markdown "./template-tag.md" start="<!--pyscript-webtypy-start-->" end="<!--pyscript-webtypy-end-->" %}
+
 {% include-markdown "./template-tag.md" start="<!--pyscript-js-exec-start-->" end="<!--pyscript-js-exec-end-->" %}
 
 {% include-markdown "./template-tag.md" start="<!--pyscript-multifile-start-->" end="<!--pyscript-multifile-end-->" trailing-newlines=false preserve-includer-indent=false %}

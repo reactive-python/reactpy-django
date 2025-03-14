@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from reactpy.core.types import VdomDict
 
 DjangoForm = export(
-    module_from_file("reactpy-django", file=Path(__file__).parent.parent / "static" / "reactpy_django" / "client.js"),
+    module_from_file("reactpy-django", file=Path(__file__).parent.parent / "static" / "reactpy_django" / "index.js"),
     ("DjangoForm"),
 )
 

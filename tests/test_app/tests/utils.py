@@ -4,6 +4,7 @@ import os
 import sys
 from collections.abc import Iterable
 from functools import partial
+from logging import getLogger
 from typing import TYPE_CHECKING, Any, Callable
 
 import decorator
@@ -21,6 +22,7 @@ if TYPE_CHECKING:
     from daphne.testing import DaphneProcess
 
 GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS", "False")
+_logger = getLogger(__name__)
 
 
 class PlaywrightTestCase(ChannelsLiveServerTestCase):
@@ -115,6 +117,7 @@ class PlaywrightTestCase(ChannelsLiveServerTestCase):
         cls.browser = cls.playwright.chromium.launch(headless=bool(headless))
         cls.page = cls.browser.new_page()
         cls.page.set_default_timeout(10000)
+        cls.page.on("console", lambda msg: _logger.error("error: %s", msg.text) if msg.type == "error" else None)
 
     @classmethod
     def shutdown_playwright_client(cls):

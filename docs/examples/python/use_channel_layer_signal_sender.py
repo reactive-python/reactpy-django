@@ -12,8 +12,10 @@ class ExampleModel(Model): ...
 def my_sender_signal(sender, instance, **kwargs):
     layer = get_channel_layer()
 
-    # Example of sending a message to a channel
-    async_to_sync(layer.send)("my-channel-name", {"text": "Hello World!"})
-
-    # Example of sending a message to a group channel
+    # EXAMPLE 1: Sending a message to a group.
+    # Note that `group_send` requires using the `group` argument in `use_channel_layer`.
     async_to_sync(layer.group_send)("my-group-name", {"text": "Hello World!"})
+
+    # EXAMPLE 2: Sending a message to a single channel.
+    # Note that this is typically only used for channels that use point-to-point communication
+    async_to_sync(layer.send)("my-channel-name", {"text": "Hello World!"})
