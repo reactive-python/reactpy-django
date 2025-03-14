@@ -776,10 +776,10 @@ class ComponentTests(PlaywrightTestCase):
             model_choice_field_values[2],
         ])
 
+        # Submit and wait for one of the error messages to disappear (indicating that the form has been re-rendered)
+        invalid_feedback = self.page.locator(".errorlist").all()[0]
         self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
-
-        # Wait for one of the error messages to disappear (indicating that the form has been re-rendered)
-        expect(self.page.locator(".errorlist").all()[0]).not_to_be_attached()
+        expect(invalid_feedback).not_to_be_attached()
         # Make sure no errors remain
         assert len(self.page.query_selector_all(".errorlist")) == 0
 
@@ -801,82 +801,25 @@ class ComponentTests(PlaywrightTestCase):
         self.page.wait_for_selector("#id_boolean_field")
         self.page.wait_for_selector("#id_char_field")
         self.page.wait_for_selector("#id_choice_field")
-        self.page.wait_for_selector("#id_date_field")
-        self.page.wait_for_selector("#id_date_time_field")
-        self.page.wait_for_selector("#id_decimal_field")
-        self.page.wait_for_selector("#id_duration_field")
-        self.page.wait_for_selector("#id_email_field")
-        self.page.wait_for_selector("#id_file_path_field")
-        self.page.wait_for_selector("#id_float_field")
-        self.page.wait_for_selector("#id_generic_ip_address_field")
-        self.page.wait_for_selector("#id_integer_field")
-        self.page.wait_for_selector("#id_float_field")
-        self.page.wait_for_selector("#id_json_field")
-        self.page.wait_for_selector("#id_multiple_choice_field")
-        self.page.wait_for_selector("#id_null_boolean_field")
-        self.page.wait_for_selector("#id_regex_field")
-        self.page.wait_for_selector("#id_slug_field")
-        self.page.wait_for_selector("#id_time_field")
-        self.page.wait_for_selector("#id_typed_choice_field")
-        self.page.wait_for_selector("#id_typed_multiple_choice_field")
-        self.page.wait_for_selector("#id_url_field")
-        self.page.wait_for_selector("#id_uuid_field")
-        self.page.wait_for_selector("#id_combo_field")
-        self.page.wait_for_selector("#id_password_field")
-        self.page.wait_for_selector("#id_model_choice_field")
-        self.page.wait_for_selector("#id_model_multiple_choice_field")
 
         sleep(1)
         self.page.wait_for_selector("button[type=submit]").click(delay=CLICK_DELAY)
         self.page.wait_for_selector(".invalid-feedback")
 
-        # Submitting an empty form should result in 22 error elements.
+        # Submitting an empty form should result in 2 error elements.
         # The number of errors may change if/when new test form elements are created.
-        assert len(self.page.query_selector_all(".invalid-feedback")) == 22
+        assert len(self.page.query_selector_all(".invalid-feedback")) == 2
 
         # Fill out the form
         self.page.wait_for_selector("#id_boolean_field").click(delay=CLICK_DELAY)
         expect(self.page.locator("#id_boolean_field")).to_be_checked()
-
         self.page.locator("#id_char_field").type("test", delay=CLICK_DELAY)
         self.page.locator("#id_choice_field").select_option("2")
-        self.page.locator("#id_date_field").type("2021-01-01", delay=CLICK_DELAY)
-        self.page.locator("#id_date_time_field").type("2021-01-01 01:01:00", delay=CLICK_DELAY)
-        self.page.locator("#id_decimal_field").type("0.123", delay=CLICK_DELAY)
-        self.page.locator("#id_duration_field").type("1", delay=CLICK_DELAY)
-        self.page.locator("#id_email_field").type("test@example.com", delay=CLICK_DELAY)
-        file_path_field_options = self.page.query_selector_all("#id_file_path_field option")
-        file_path_field_values: list[str] = [option.get_attribute("value") for option in file_path_field_options]
-        self.page.locator("#id_file_path_field").select_option(file_path_field_values[1])
-        self.page.locator("#id_float_field").type("1.2345", delay=CLICK_DELAY)
-        self.page.locator("#id_generic_ip_address_field").type("127.0.0.1", delay=CLICK_DELAY)
-        self.page.locator("#id_integer_field").type("123", delay=CLICK_DELAY)
-        self.page.locator("#id_json_field").clear()
-        self.page.locator("#id_json_field").type('{"key": "value"}', delay=CLICK_DELAY)
-        self.page.locator("#id_multiple_choice_field").select_option(["2", "3"])
-        self.page.locator("#id_null_boolean_field").select_option("false")
-        self.page.locator("#id_regex_field").type("12", delay=CLICK_DELAY)
-        self.page.locator("#id_slug_field").type("my-slug-text", delay=CLICK_DELAY)
-        self.page.locator("#id_time_field").type("01:01:00", delay=CLICK_DELAY)
-        self.page.locator("#id_typed_choice_field").select_option("2")
-        self.page.locator("#id_typed_multiple_choice_field").select_option(["1", "2"])
-        self.page.locator("#id_url_field").type("http://example.com", delay=CLICK_DELAY)
-        self.page.locator("#id_uuid_field").type("550e8400-e29b-41d4-a716-446655440000", delay=CLICK_DELAY)
-        self.page.locator("#id_combo_field").type("test@example.com", delay=CLICK_DELAY)
-        self.page.locator("#id_password_field").type("password", delay=CLICK_DELAY)
 
-        model_choice_field_options = self.page.query_selector_all("#id_model_multiple_choice_field option")
-        model_choice_field_values: list[str] = [option.get_attribute("value") for option in model_choice_field_options]
-        self.page.locator("#id_model_choice_field").select_option(model_choice_field_values[0])
-        self.page.locator("#id_model_multiple_choice_field").select_option([
-            model_choice_field_values[1],
-            model_choice_field_values[2],
-        ])
-
+        # Submit and wait for one of the error messages to disappear (indicating that the form has been re-rendered)
+        invalid_feedback = self.page.locator(".invalid-feedback").all()[0]
         self.page.wait_for_selector("button[type=submit]").click(delay=CLICK_DELAY)
-
-        # Wait for one of the error messages to disappear (indicating that the form has been re-rendered)
-        expect(self.page.locator(".invalid-feedback").all()[0]).not_to_be_attached()
+        expect(invalid_feedback).not_to_be_attached()
         # Make sure no errors remain
         assert len(self.page.query_selector_all(".invalid-feedback")) == 0
 

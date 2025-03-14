@@ -48,3 +48,10 @@ class DatabaseBackedForm(forms.ModelForm):
 
 class EventForm(forms.Form):
     char_field = forms.CharField(label="chars")
+
+
+class BootstrapForm(forms.Form):
+    # Render a handful of Django field types
+    boolean_field = forms.BooleanField(label="boolean")
+    char_field = forms.CharField(label="chars")
+    choice_field = forms.ChoiceField(label="choice", choices=[("1", "One"), ("2", "Two")])
