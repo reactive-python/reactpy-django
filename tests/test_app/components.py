@@ -38,7 +38,7 @@ def button():
         html.div(
             "button:",
             html.button(
-                {"id": "counter-inc", "on_click": lambda _: set_count(count + 1)},
+                {"id": "counter-inc", "onClick": lambda _: set_count(count + 1)},
                 "Click me!",
             ),
             html.p({"id": "counter-num", "data-count": count}, f"Current count is: {count}"),
@@ -293,7 +293,7 @@ def _render_todo_items(items, toggle_item):
                 "id": f"todo-item-{item.text}-checkbox",
                 "type": "checkbox",
                 "checked": item.done,
-                "on_change": lambda _, i=item: toggle_item(i),
+                "onChange": lambda _, i=item: toggle_item(i),
             }),
         )
         for item in items
@@ -342,8 +342,8 @@ def todo_list():
             "type": "text",
             "id": "todo-input",
             "value": input_value,
-            "on_key_press": on_submit,
-            "on_change": on_change,
+            "onKeyPress": on_submit,
+            "onChange": on_change,
         }),
         mutation_status,
         rendered_items,
@@ -413,8 +413,8 @@ def async_todo_list():
             "type": "text",
             "id": "async-todo-input",
             "value": input_value,
-            "on_key_press": on_submit,
-            "on_change": on_change,
+            "onKeyPress": on_submit,
+            "onChange": on_change,
         }),
         mutation_status,
         rendered_items,
@@ -508,7 +508,7 @@ def view_to_component_request():
         html.button(
             {
                 "id": f"{inspect.currentframe().f_code.co_name}_btn",
-                "on_click": on_click,
+                "onClick": on_click,
             },
             "Click me",
         ),
@@ -527,7 +527,7 @@ def view_to_component_args():
         html.button(
             {
                 "id": f"{inspect.currentframe().f_code.co_name}_btn",
-                "on_click": on_click,
+                "onClick": on_click,
             },
             "Click me",
         ),
@@ -546,7 +546,7 @@ def view_to_component_kwargs():
         html.button(
             {
                 "id": f"{inspect.currentframe().f_code.co_name}_btn",
-                "on_click": on_click,
+                "onClick": on_click,
             },
             "Click me",
         ),
@@ -561,7 +561,7 @@ def custom_host(number=0):
 
     return html.div(
         {
-            "class_name": f"{inspect.currentframe().f_code.co_name}-{number}",
+            "className": f"{inspect.currentframe().f_code.co_name}-{number}",
             "data-port": port,
         },
         f"Server Port: {port}",
@@ -630,15 +630,15 @@ def use_user_data():
             "data-username": ("AnonymousUser" if current_user.is_anonymous else current_user.username),
         },
         html.div("use_user_data"),
-        html.button({"className": "login-1", "on_click": login_user1}, "Login 1"),
-        html.button({"className": "login-2", "on_click": login_user2}, "Login 2"),
-        html.button({"className": "logout", "on_click": logout_user}, "Logout"),
-        html.button({"className": "clear", "on_click": clear_data}, "Clear Data"),
+        html.button({"className": "login-1", "onClick": login_user1}, "Login 1"),
+        html.button({"className": "login-2", "onClick": login_user2}, "Login 2"),
+        html.button({"className": "logout", "onClick": logout_user}, "Logout"),
+        html.button({"className": "clear", "onClick": clear_data}, "Clear Data"),
         html.div(f"User: {current_user}"),
         html.div(f"Data: {user_data_query.data}"),
         html.div(f"Data State: (loading={user_data_query.loading}, error={user_data_query.error})"),
         html.div(f"Mutation State: (loading={user_data_mutation.loading}, error={user_data_mutation.error})"),
-        html.div(html.input({"on_key_press": on_submit, "placeholder": "Type here to add data"})),
+        html.div(html.input({"onKeyPress": on_submit, "placeholder": "Type here to add data"})),
     )
 
 
@@ -685,13 +685,13 @@ def use_user_data_with_default():
             "data-username": ("AnonymousUser" if current_user.is_anonymous else current_user.username),
         },
         html.div("use_user_data_with_default"),
-        html.button({"className": "login-3", "on_click": login_user3}, "Login 3"),
-        html.button({"className": "clear", "on_click": clear_data}, "Clear Data"),
+        html.button({"className": "login-3", "onClick": login_user3}, "Login 3"),
+        html.button({"className": "clear", "onClick": clear_data}, "Clear Data"),
         html.div(f"User: {current_user}"),
         html.div(f"Data: {user_data_query.data}"),
         html.div(f"Data State: (loading={user_data_query.loading}, error={user_data_query.error})"),
         html.div(f"Mutation State: (loading={user_data_mutation.loading}, error={user_data_mutation.error})"),
-        html.div(html.input({"on_key_press": on_submit, "placeholder": "Type here to add data"})),
+        html.div(html.input({"onKeyPress": on_submit, "placeholder": "Type here to add data"})),
     )
 
 
@@ -720,9 +720,9 @@ def use_auth():
         },
         html.div("use_auth"),
         html.div(f"UUID: {uuid}"),
-        html.button({"className": "login", "on_click": login_user}, "Login"),
-        html.button({"className": "logout", "on_click": logout_user}, "Logout"),
-        html.button({"className": "disconnect", "on_click": disconnect}, "disconnect"),
+        html.button({"className": "login", "onClick": login_user}, "Login"),
+        html.button({"className": "logout", "onClick": logout_user}, "Logout"),
+        html.button({"className": "disconnect", "onClick": disconnect}, "disconnect"),
         html.div(f"User: {current_user}"),
     )
 
@@ -752,9 +752,9 @@ def use_auth_no_rerender():
         },
         html.div("use_auth_no_rerender"),
         html.div(f"UUID: {uuid}"),
-        html.button({"className": "login", "on_click": login_user}, "Login"),
-        html.button({"className": "logout", "on_click": logout_user}, "Logout"),
-        html.button({"className": "disconnect", "on_click": disconnect}, "disconnect"),
+        html.button({"className": "login", "onClick": login_user}, "Login"),
+        html.button({"className": "logout", "onClick": logout_user}, "Logout"),
+        html.button({"className": "disconnect", "onClick": disconnect}, "disconnect"),
         html.div(f"User: {current_user}"),
     )
 
@@ -774,5 +774,5 @@ def use_rerender():
         },
         html.div("use_rerender"),
         html.div(f"UUID: {uuid}"),
-        html.button({"on_click": on_click}, "Rerender"),
+        html.button({"onClick": on_click}, "Rerender"),
     )

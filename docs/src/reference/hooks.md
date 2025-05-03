@@ -135,22 +135,16 @@ Query functions can be sync or async.
 
     {% include-markdown "../../includes/orm.md" start="<!--orm-excp-start-->" end="<!--orm-excp-end-->" %}
 
-??? question "Can I make a failed query try again?"
+??? question "Can I force a query to run again?"
 
-    Yes, `#!python use_mutation` can be re-executed by calling `#!python reset()` on your `#!python use_mutation` instance.
+    `#!python use_query` can be re-executed by calling `#!python refetch()` on your `#!python use_query` result.
 
-    For example, take a look at `#!python reset_event` below.
+    The example below uses an `#!python onClick` event to determine when to reset the query.
 
     === "components.py"
 
         ```python
-        {% include "../../examples/python/use_mutation_reset.py" %}
-        ```
-
-    === "models.py"
-
-        ```python
-        {% include "../../examples/python/todo_item_model.py" %}
+        {% include "../../examples/python/use_query_refetch.py" %}
         ```
 
 ??? question "Why does the example query function return `#!python TodoItem.objects.all()`?"
@@ -231,9 +225,9 @@ Mutation functions can be sync or async.
 
     {% include-markdown "../../includes/orm.md" start="<!--orm-excp-start-->" end="<!--orm-excp-end-->" %}
 
-??? question "Can I make a failed mutation try again?"
+??? question "Can I force a mutation run again?"
 
-    Yes, `#!python use_mutation` can be re-executed by calling `#!python reset()` on your `#!python use_mutation` instance.
+    `#!python use_mutation` can be re-executed by calling `#!python reset()` on your `#!python use_mutation` result.
 
     For example, take a look at `#!python reset_event` below.
 
@@ -251,7 +245,7 @@ Mutation functions can be sync or async.
 
 ??? question "Can `#!python use_mutation` trigger a refetch of `#!python use_query`?"
 
-    Yes, `#!python use_mutation` can queue a refetch of a `#!python use_query` via the `#!python refetch=...` argument.
+    `#!python use_mutation` can queue a refetch of a `#!python use_query` via the `#!python refetch=...` argument.
 
     The example below is a merge of the `#!python use_query` and `#!python use_mutation` examples above with the addition of a `#!python use_mutation(refetch=...)` argument.
 

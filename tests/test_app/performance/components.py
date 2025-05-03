@@ -17,7 +17,7 @@ def renders_per_second():
     return html.div(
         html.div(f"Total renders: {count}"),
         html.div(
-            {"class_name": "rps", "data-rps": rps},
+            {"className": "rps", "data-rps": rps},
             f"Renders Per Second: {rps}",
         ),
     )
@@ -25,7 +25,7 @@ def renders_per_second():
 
 @component
 def time_to_load():
-    return html.div({"class_name": "ttl"}, "Loaded!")
+    return html.div({"className": "ttl"}, "Loaded!")
 
 
 GIANT_STR_10MB = "@" * 10000000
@@ -34,7 +34,7 @@ GIANT_STR_10MB = "@" * 10000000
 @component
 def net_io_time_to_load():
     return html.div(
-        {"class_name": "ttl"},
+        {"className": "ttl"},
         html.div({"style": {"display": "none"}}, GIANT_STR_10MB),
         html.div("Loaded!"),
     )
@@ -59,7 +59,7 @@ def mixed_time_to_load():
         html.div({"style": {"display": "none"}}, GIANT_STR_1MB),
         html.div(f"Total renders: {count}"),
         html.div(
-            {"class_name": "rps", "data-rps": rps},
+            {"className": "rps", "data-rps": rps},
             f"Renders Per Second: {rps}",
         ),
     )
@@ -79,14 +79,14 @@ def event_renders_per_second():
     return html.div(
         html.div(f"Total events: {count}"),
         html.div(
-            {"class_name": "erps", "data-erps": erps},
+            {"className": "erps", "data-erps": erps},
             f"Event Renders Per Second: {erps}",
         ),
         html.input({
             "type": "text",
-            "default_value": "0",
+            "defaultValue": "0",
             "data-count": str(count),
-            "on_click": event_handler,
+            "onClick": event_handler,
         }),
     )
 
@@ -101,12 +101,12 @@ def event_timing(worker_num: int):
     return html.div(
         html.input(
             {
-                "class_name": "et",
+                "className": "et",
                 "data-clicked": clicked,
                 "data-worker-num": worker_num,
                 "value": f"Clicked: {clicked}",
                 "type": "button",
-                "on_click": event_handler,
+                "onClick": event_handler,
             },
         ),
     )

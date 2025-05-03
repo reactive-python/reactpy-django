@@ -10,11 +10,11 @@ def root():
         html.div(
             {"className": "grid"},
             html.button(
-                {"className": "plus", "on_click": lambda _: set_value(value + 1)},
+                {"className": "plus", "onClick": lambda _: set_value(value + 1)},
                 "+",
             ),
             html.button(
-                {"className": "minus", "on_click": lambda _: set_value(value - 1)},
+                {"className": "minus", "onClick": lambda _: set_value(value - 1)},
                 "-",
             ),
         ),

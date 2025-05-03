@@ -15,5 +15,5 @@ def my_component():
         route("/router/string/<str:value>/", html.div("Example 6")),
         route("/router/uuid/<uuid:value>/", html.div("Example 7")),
         route("/router/two_values/<int:value>/<str:value2>/", html.div("Example 8")),
-        route("/router/*", html.div("Fallback")),
+        route("/router/<any:value>", html.div("Fallback")),
     )

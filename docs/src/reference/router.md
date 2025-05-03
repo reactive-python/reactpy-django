@@ -25,9 +25,7 @@ URL router that enables the ability to conditionally render other components bas
     You can duplicate all your URL patterns within both Django and ReactPy, but it's easiest to use a wildcard `.*` within Django's `#!python urlpatterns` and let ReactPy handle the rest. For example...
 
     ```python linenums="0"
-    urlpatterns = [
-        re_path(r"^.*$", my_reactpy_router_view),
-    ]
+    urlpatterns = [ re_path(r"^.*$", my_reactpy_router_view) ]
     ```
 
 === "components.py"
