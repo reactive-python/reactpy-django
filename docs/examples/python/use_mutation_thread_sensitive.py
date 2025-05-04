@@ -26,6 +26,6 @@ def my_component():
         mutation_status = html.h2("Done.")
 
     return html.div(
-        html.input({"type": "text", "on_key_down": submit_event}),
+        html.input({"type": "text", "onKeyDown": submit_event}),
         mutation_status,
     )

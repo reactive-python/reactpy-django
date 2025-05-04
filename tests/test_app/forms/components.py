@@ -2,7 +2,7 @@ from reactpy import component, hooks, html
 
 from reactpy_django.components import django_form
 
-from .forms import BasicForm, DatabaseBackedForm, EventForm
+from .forms import BasicForm, BootstrapForm, DatabaseBackedForm, EventForm
 
 
 @component
@@ -13,7 +13,7 @@ def basic_form():
 @component
 def bootstrap_form():
     return django_form(
-        BasicForm,
+        BootstrapForm,
         extra_props={"style": {"maxWidth": "600px", "margin": "auto"}},
         form_template="bootstrap_form_template.html",
     )

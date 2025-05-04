@@ -16,5 +16,5 @@ def my_component():
         html.div(f"Data: {query.data}"),
         html.div(f"Loading: {query.loading | mutation.loading}"),
         html.div(f"Error(s): {query.error} {mutation.error}"),
-        html.input({"on_key_press": on_submit}),
+        html.input({"onKeyPress": on_submit}),
     )

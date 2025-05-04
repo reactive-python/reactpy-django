@@ -17,7 +17,7 @@ jobs:
               with:
                   python-version: "3.x"
             - name: Install dependencies
-              run: pip install --upgrade pip hatch uv
+              run: pip install hatch
             - name: Build Package
               run: hatch build --clean
             - name: Publish to PyPI

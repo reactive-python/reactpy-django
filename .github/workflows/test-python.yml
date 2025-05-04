@@ -28,7 +28,7 @@ jobs:
               with:
                   python-version: ${{ matrix.python-version }}
             - name: Install Python Dependencies
-              run: pip install --upgrade pip hatch uv
+              run: pip install hatch
             - name: Run Single DB Tests
               run: hatch test --python ${{ matrix.python-version }} --ds=test_app.settings_${{matrix.settings-module}} -v
 
@@ -43,7 +43,7 @@ jobs:
               with:
                   python-version: 3.x
             - name: Install Python Dependencies
-              run: pip install --upgrade pip hatch uv
+              run: pip install hatch
             - name: Check Python formatting
               run: hatch fmt src tests --check
 
@@ -58,6 +58,6 @@ jobs:
               with:
                   python-version: 3.x
             - name: Install Python Dependencies
-              run: pip install --upgrade pip hatch uv
+              run: pip install hatch
             - name: Run Python type checker
               run: hatch run python:type_check
