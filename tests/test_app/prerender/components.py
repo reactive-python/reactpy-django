@@ -15,9 +15,9 @@ def prerender_string():
 
     if scope.get("type") == "http":
         return "prerender_string: Prerendered"
-    else:
-        # Simulate a processing delay to mimic the behavior of a slow application
-        sleep(SLEEP_TIME)
+
+    # Simulate a processing delay to mimic the behavior of a slow application
+    sleep(SLEEP_TIME)
     return "prerender_string: Fully Rendered"
 
 
