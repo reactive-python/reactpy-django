@@ -159,7 +159,7 @@ This template tag can be used to insert any number of **client-side** ReactPy co
 
 By default, the only [available dependencies](./template-tag.md#pyscript-setup) are the Python standard library, `pyscript`, `pyodide`, `reactpy` core.
 
-The entire file path provided is loaded directly into the browser, and must have a `#!python def root()` component to act as the entry point.
+Your Python component file will be directly loaded into the browser. It must have a `#!python def root()` component to act as the entry point.
 
 <!--pyscript-def-end-->
 <!--pyscript-raw-text-start-->

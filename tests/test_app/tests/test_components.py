@@ -2,7 +2,6 @@
 # ruff: noqa: RUF012, N802
 import os
 import socket
-from time import sleep
 from uuid import uuid4
 
 import pytest
@@ -314,11 +313,12 @@ class ComponentTests(PlaywrightTestCase):
 
         # Attempt to clear data
         clear.click(delay=CLICK_DELAY)
-        sleep(0.25)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_3]"
         )
-        assert "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3'}" in user_data_div.text_content()
+        expect(self.page.locator("#use-user-data-with-default")).to_contain_text(
+            "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3'}"
+        )
 
     @navigate_to_page("/")
     def test_component_use_auth(self):
@@ -407,25 +407,20 @@ class ComponentTests(PlaywrightTestCase):
         use_user_ws = self.page.locator("#use-user-ws[data-success=true]")
 
         # Check if the prerender occurred properly
-        string.wait_for()
-        vdom.wait_for()
-        component.wait_for()
-        use_root_id_http.wait_for()
+        expect(string).to_have_text("prerender_string: Prerendered")
+        expect(vdom).to_have_text("prerender_vdom: Prerendered")
+        expect(component).to_have_text("prerender_component: Prerendered")
         use_user_http.wait_for()
-        assert string.all_inner_texts() == ["prerender_string: Prerendered"]
-        assert vdom.all_inner_texts() == ["prerender_vdom: Prerendered"]
-        assert component.all_inner_texts() == ["prerender_component: Prerendered"]
-        root_id_value = use_root_id_http.get_attribute("data-value")
-        assert len(root_id_value) == 36
+        root_id = use_root_id_http.get_attribute("data-value")
+        assert len(use_root_id_http.get_attribute("data-value")) == 36
 
         # Check if the full render occurred
-        sleep(2)
-        assert string.all_inner_texts() == ["prerender_string: Fully Rendered"]
-        assert vdom.all_inner_texts() == ["prerender_vdom: Fully Rendered"]
-        assert component.all_inner_texts() == ["prerender_component: Fully Rendered"]
+        expect(string).to_have_text("prerender_string: Fully Rendered")
+        expect(vdom).to_have_text("prerender_vdom: Fully Rendered")
+        expect(component).to_have_text("prerender_component: Fully Rendered")
         use_root_id_ws.wait_for()
         use_user_ws.wait_for()
-        assert use_root_id_ws.get_attribute("data-value") == root_id_value
+        expect(use_root_id_ws).to_have_attribute("data-value", root_id)
 
     ###############
     # Error Tests #
@@ -729,8 +724,6 @@ class ComponentTests(PlaywrightTestCase):
         self.page.wait_for_selector("#id_password_field")
         self.page.wait_for_selector("#id_model_choice_field")
         self.page.wait_for_selector("#id_model_multiple_choice_field")
-
-        sleep(1)
         self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
         self.page.wait_for_selector(".errorlist")
 
@@ -801,8 +794,6 @@ class ComponentTests(PlaywrightTestCase):
         self.page.wait_for_selector("#id_boolean_field")
         self.page.wait_for_selector("#id_char_field")
         self.page.wait_for_selector("#id_choice_field")
-
-        sleep(1)
         self.page.wait_for_selector("button[type=submit]").click(delay=CLICK_DELAY)
         self.page.wait_for_selector(".invalid-feedback")
 
@@ -827,8 +818,6 @@ class ComponentTests(PlaywrightTestCase):
     def test_form_orm_model(self):
         uuid = uuid4().hex
         self.page.wait_for_selector("form")
-
-        sleep(1)
         self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
         self.page.wait_for_selector(".errorlist")
 
@@ -872,7 +861,6 @@ class ComponentTests(PlaywrightTestCase):
     #     self.page.wait_for_selector("#change[data-value='false']")
 
     #     # Submit empty the form
-    #     sleep(1)
     #     self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
 
     #     # The empty form was submitted, should result in an error
@@ -902,7 +890,6 @@ class ComponentTests(PlaywrightTestCase):
     #     self.page.wait_for_selector("#change[data-value='false']")
 
     #     # Submit empty the form
-    #     sleep(1)
     #     self.page.wait_for_selector("input[type=submit]").click(delay=CLICK_DELAY)
 
     #     # The empty form was submitted, should result in an error
