@@ -1,6 +1,6 @@
 import { DjangoFormProps, HttpRequestProps } from "./types";
-import React from "react";
-import ReactDOM from "react-dom";
+import React from "preact/compat";
+import ReactDOM from "preact/compat";
 /**
  * Interface used to bind a ReactPy node to React.
  */
