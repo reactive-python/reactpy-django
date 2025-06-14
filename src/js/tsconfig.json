@@ -17,12 +17,17 @@
     "noEmitOnError": true,
     "noUnusedLocals": true,
     "resolveJsonModule": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
+    "typeRoots": ["./node_modules/@types"],
     "paths": {
-      "react": ["./node_modules/preact/compat"],
+      "react": ["./node_modules/preact/compat/"],
       "react-dom": ["./node_modules/preact/compat/"]
     }
-  }
+  },
+  "resolve": {
+    "extensions": [".js", ".jsx", ".ts", ".tsx", ".json", ".svg", ".css"]
+  },
+  "include": ["src"]
 }
