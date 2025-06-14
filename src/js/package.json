@@ -19,5 +19,9 @@
     "event-to-object": "^0.1.2",
     "morphdom": "^2.7.4",
     "preact": "^10.26.9"
+  },
+  "overrides": {
+    "react": "npm:@preact/compat",
+    "react-dom": "npm:@preact/compat"
   }
 }

@@ -1,33 +1,27 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "preact",
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "composite": true,
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "declarationMap": true,
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
     "lib": ["DOM", "DOM.Iterable", "esnext"],
+    "module": "esnext",
+    "moduleResolution": "node",
     "noEmitOnError": true,
     "noUnusedLocals": true,
+    "paths": {
+      "react": ["./node_modules/preact/compat/"],
+      "react-dom": ["./node_modules/preact/compat/"]
+    },
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "typeRoots": ["./node_modules/@types"],
-    "paths": {
-      "react": ["./node_modules/preact/compat/"],
-      "react-dom": ["./node_modules/preact/compat/"]
-    }
-  },
-  "resolve": {
-    "extensions": [".js", ".jsx", ".ts", ".tsx", ".json", ".svg", ".css"]
-  },
-  "include": ["src"]
+    "target": "esnext"
+  }
 }
