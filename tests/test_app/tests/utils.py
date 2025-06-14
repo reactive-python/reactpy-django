@@ -117,16 +117,8 @@ class PlaywrightTestCase(ChannelsLiveServerTestCase):
         cls.browser = cls.playwright.chromium.launch(headless=bool(headless))
         cls.page = cls.browser.new_page()
         cls.page.set_default_timeout(10000)
-        cls.page.on("console", cls.playwright_logging)
-
-    @staticmethod
-    def playwright_logging(msg):
-        if msg.type == "error":
-            _logger.error(msg.text)
-        elif msg.type == "warning":
-            _logger.warning(msg.text)
-        elif msg.type == "info":
-            _logger.info(msg.text)
+        cls.page.on("console", lambda msg: print(f"{msg.type.upper()}: {msg.text}"))
+        cls.page.on("pageerror", lambda err: print(f"ERROR: {err.name}: {err.message}"))
 
     @classmethod
     def shutdown_playwright_client(cls):
