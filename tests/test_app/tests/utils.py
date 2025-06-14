@@ -1,4 +1,4 @@
-# ruff: noqa: N802, RUF012
+# ruff: noqa: N802, RUF012, T201
 import asyncio
 import os
 import sys
