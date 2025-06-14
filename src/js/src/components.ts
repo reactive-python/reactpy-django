@@ -1,17 +1,16 @@
 import { DjangoFormProps, HttpRequestProps } from "./types";
-import React from "preact/compat";
-import ReactDOM from "preact/compat";
+import { useEffect } from "preact/hooks";
+import { render, createElement } from "preact";
 /**
  * Interface used to bind a ReactPy node to React.
  */
 export function bind(node) {
   return {
-    create: (type, props, children) =>
-      React.createElement(type, props, ...children),
+    create: (type, props, children) => createElement(type, props, ...children),
     render: (element) => {
-      ReactDOM.render(element, node);
+      render(element, node);
     },
-    unmount: () => ReactDOM.unmountComponentAtNode(node),
+    unmount: () => render(null, node),
   };
 }
 
@@ -19,7 +18,7 @@ export function DjangoForm({
   onSubmitCallback,
   formId,
 }: DjangoFormProps): null {
-  React.useEffect(() => {
+  useEffect(() => {
     const form = document.getElementById(formId) as HTMLFormElement;
 
     // Submission event function
@@ -64,7 +63,7 @@ export function DjangoForm({
 }
 
 export function HttpRequest({ method, url, body, callback }: HttpRequestProps) {
-  React.useEffect(() => {
+  useEffect(() => {
     fetch(url, {
       method: method,
       body: body,
