@@ -78,6 +78,8 @@ export function mountComponent(
   if (client.mountElement) {
     render(<Layout client={client} />, client.mountElement);
   } else {
-    console.error("Mount element is not defined. Cannot render the component.");
+    console.error(
+      "ReactPy mount element is undefined, cannot render the component!",
+    );
   }
 }

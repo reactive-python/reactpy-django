@@ -1,13 +1,17 @@
 import type { DjangoFormProps, HttpRequestProps } from "./types";
 import { useEffect } from "preact/hooks";
-import { render, createElement } from "preact";
+import { type ComponentChildren, render, createElement } from "preact";
 /**
  * Interface used to bind a ReactPy node to React.
  */
-export function bind(node) {
+export function bind(node: HTMLElement | Element | Node) {
   return {
-    create: (type, props, children) => createElement(type, props, ...children),
-    render: (element) => {
+    create: (
+      type: string,
+      props: Record<string, unknown>,
+      children: ComponentChildren[],
+    ) => createElement(type, props, ...children),
+    render: (element: HTMLElement | Element | Node) => {
       render(element, node);
     },
     unmount: () => render(null, node),
@@ -22,7 +26,7 @@ export function DjangoForm({
     const form = document.getElementById(formId) as HTMLFormElement;
 
     // Submission event function
-    const onSubmitEvent = (event) => {
+    const onSubmitEvent = (event: Event) => {
       event.preventDefault();
       const formData = new FormData(form);
 
@@ -30,18 +34,21 @@ export function DjangoForm({
       // If duplicate keys are present, convert the value into an array of values
       const entries = formData.entries();
       const formDataArray = Array.from(entries);
-      const formDataObject = formDataArray.reduce((acc, [key, value]) => {
-        if (acc[key]) {
-          if (Array.isArray(acc[key])) {
-            acc[key].push(value);
+      const formDataObject = formDataArray.reduce<Record<string, unknown>>(
+        (acc, [key, value]) => {
+          if (acc[key]) {
+            if (Array.isArray(acc[key])) {
+              acc[key].push(value);
+            } else {
+              acc[key] = [acc[key], value];
+            }
           } else {
-            acc[key] = [acc[key], value];
+            acc[key] = value;
           }
-        } else {
-          acc[key] = value;
-        }
-        return acc;
-      }, {});
+          return acc;
+        },
+        {},
+      );
 
       onSubmitCallback(formDataObject);
     };

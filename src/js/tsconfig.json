@@ -10,7 +10,7 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "module": "Preserve",
     "moduleDetection": "force",
     "moduleResolution": "bundler",
@@ -19,7 +19,9 @@
     "noUnusedLocals": true,
     "paths": {
       "react": ["./node_modules/preact/compat/"],
-      "react-dom": ["./node_modules/preact/compat/"]
+      "react-dom": ["./node_modules/preact/compat/"],
+      "react-dom/*": ["./node_modules/preact/compat/*"],
+      "react/jsx-runtime": ["./node_modules/preact/jsx-runtime"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,

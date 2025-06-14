@@ -1,13 +1,10 @@
 {
   "type": "module",
-  "version": "1.0.0",
   "scripts": {
     "format": "prettier --write . && eslint --fix",
     "check": "prettier --check . && eslint"
   },
   "devDependencies": {
-    "@types/react": "^18.2.48",
-    "@types/react-dom": "^18.2.18",
     "eslint": "^9.13.0",
     "eslint-plugin-react": "^7.37.1",
     "prettier": "^3.3.3",
