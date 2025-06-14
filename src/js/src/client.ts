@@ -1,10 +1,10 @@
 import {
   BaseReactPyClient,
-  ReactPyClient,
-  ReactPyModule,
+  type ReactPyClient,
+  type ReactPyModule,
 } from "@reactpy/client";
 import { createReconnectingWebSocket } from "./utils";
-import { ReactPyDjangoClientProps, ReactPyUrls } from "./types";
+import type { ReactPyDjangoClientProps, ReactPyUrls } from "./types";
 
 export class ReactPyDjangoClient
   extends BaseReactPyClient

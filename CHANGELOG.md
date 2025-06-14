@@ -26,6 +26,7 @@ Don't forget to remove deprecated code on each major release!
     -   The `name` argument has been renamed to `channel`.
     -   The `group_name` argument has been renamed to `group`.
     -   The `group_add` and `group_discard` arguments have been removed for simplicity.
+-   To improve performance, `preact` is now used as the default client-side library instead of `react`.
 
 ### [5.2.1] - 2025-01-10
 
