@@ -1,5 +1,6 @@
 {
   "type": "module",
+  "version": "1.0.0",
   "scripts": {
     "format": "prettier --write . && eslint --fix",
     "check": "prettier --check . && eslint"
@@ -9,7 +10,8 @@
     "@types/react-dom": "^18.2.18",
     "eslint": "^9.13.0",
     "eslint-plugin-react": "^7.37.1",
-    "prettier": "^3.3.3"
+    "prettier": "^3.3.3",
+    "bun-types": "^0.5.0"
   },
   "dependencies": {
     "@pyscript/core": "^0.6",
