@@ -18,10 +18,8 @@
     "@reactpy/client": "^0.3.2",
     "event-to-object": "^0.1.2",
     "morphdom": "^2.7.4",
-    "preact": "^10.26.9"
-  },
-  "overrides": {
-    "react": "npm:@preact/compat",
-    "react-dom": "npm:@preact/compat"
+    "preact": "^10.26.9",
+    "react": "npm:@preact/compat@17.1.2",
+    "react-dom": "npm:@preact/compat@17.1.2"
   }
 }

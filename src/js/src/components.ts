@@ -1,4 +1,4 @@
-import { DjangoFormProps, HttpRequestProps } from "./types";
+import type { DjangoFormProps, HttpRequestProps } from "./types";
 import { useEffect } from "preact/hooks";
 import { render, createElement } from "preact";
 /**

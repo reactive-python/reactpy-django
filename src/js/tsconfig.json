@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "allowJs": false,
+    "allowImportingTsExtensions": true,
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "declarationMap": true,
@@ -9,9 +10,11 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "lib": ["DOM", "DOM.Iterable", "esnext"],
-    "module": "esnext",
-    "moduleResolution": "node",
+    "lib": ["ESNext"],
+    "module": "Preserve",
+    "moduleDetection": "force",
+    "moduleResolution": "bundler",
+    "noEmit": true,
     "noEmitOnError": true,
     "noUnusedLocals": true,
     "paths": {
@@ -22,6 +25,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "esnext"
+    "target": "ESNext",
+    "verbatimModuleSyntax": true
   }
 }
