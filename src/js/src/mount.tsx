@@ -1,5 +1,5 @@
 import { ReactPyDjangoClient } from "./client";
-import ReactDOM from "preact/compat";
+import { render } from "preact";
 import { Layout } from "@reactpy/client/src/components";
 
 export function mountComponent(
@@ -75,5 +75,9 @@ export function mountComponent(
   }
 
   // Start rendering the component
-  ReactDOM.render(<Layout client={client} />, client.mountElement);
+  if (client.mountElement) {
+    render(<Layout client={client} />, client.mountElement);
+  } else {
+    console.error("Mount element is not defined. Cannot render the component.");
+  }
 }
