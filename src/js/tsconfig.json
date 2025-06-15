@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
@@ -14,7 +13,6 @@
     "module": "Preserve",
     "moduleDetection": "force",
     "moduleResolution": "bundler",
-    "noEmit": true,
     "noEmitOnError": true,
     "noUnusedLocals": true,
     "paths": {
