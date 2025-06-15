@@ -1,6 +1,5 @@
-import react from "eslint-plugin-react";
-import globals from "globals";
 import path from "node:path";
+import globals from "globals";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
@@ -13,13 +12,10 @@ const compat = new FlatCompat({
   allConfig: js.configs.all,
 });
 
+// ESLint config for Preact project
 export default [
-  ...compat.extends("eslint:recommended", "plugin:react/recommended"),
+  ...compat.extends("eslint:recommended"),
   {
-    plugins: {
-      react,
-    },
-
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -28,16 +24,6 @@ export default [
 
       ecmaVersion: "latest",
       sourceType: "module",
-    },
-
-    settings: {
-      react: {
-        version: "18.2.0",
-      },
-    },
-
-    rules: {
-      "react/prop-types": "off",
     },
   },
 ];
