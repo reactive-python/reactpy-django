@@ -14,8 +14,8 @@ export function mountComponent(
   reconnectBackoffMultiplier: number,
 ) {
   // Protocols
-  let httpProtocol = window.location.protocol;
-  let wsProtocol = `ws${httpProtocol === "https:" ? "s" : ""}:`;
+  const httpProtocol = window.location.protocol;
+  const wsProtocol = `ws${httpProtocol === "https:" ? "s" : ""}:`;
 
   // WebSocket route (for Python components)
   let wsOrigin: string;
@@ -41,7 +41,7 @@ export function mountComponent(
   }
 
   // Embed the initial HTTP path into the WebSocket URL
-  let componentUrl = new URL(`${wsOrigin}/${urlPrefix}/${componentPath}`);
+  const componentUrl = new URL(`${wsOrigin}/${urlPrefix}/${componentPath}`);
   componentUrl.searchParams.append("http_pathname", window.location.pathname);
   if (window.location.search) {
     componentUrl.searchParams.append("http_search", window.location.search);
@@ -66,7 +66,7 @@ export function mountComponent(
 
   // Replace the prerender element with the real element on the first layout update
   if (client.prerenderElement) {
-    client.onMessage("layout-update", ({ path, model }) => {
+    client.onMessage("layout-update", () => {
       if (client.prerenderElement && client.mountElement) {
         client.prerenderElement.replaceWith(client.mountElement);
         client.prerenderElement = null;

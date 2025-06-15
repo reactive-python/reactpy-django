@@ -19,7 +19,7 @@ export type ReactPyDjangoClientProps = {
 };
 
 export interface DjangoFormProps {
-  onSubmitCallback: (data: Object) => void;
+  onSubmitCallback: (data: object) => void;
   formId: string;
 }
 
@@ -27,5 +27,5 @@ export interface HttpRequestProps {
   method: string;
   url: string;
   body: string;
-  callback: (status: Number, response: string) => void;
+  callback: (status: number, response: string) => void;
 }
