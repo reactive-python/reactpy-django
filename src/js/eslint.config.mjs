@@ -1,29 +1,25 @@
-import path from "node:path";
+import { default as eslint } from "@eslint/js";
 import globals from "globals";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
+import tseslint from "typescript-eslint";
 
 // ESLint config for Preact project
 export default [
-  ...compat.extends("eslint:recommended"),
+  eslint.configs.recommended,
+  ...tseslint.configs.recommended,
+  { ignores: ["**/node_modules/", "**/dist/"] },
   {
     languageOptions: {
       globals: {
         ...globals.browser,
         ...globals.node,
       },
-
       ecmaVersion: "latest",
       sourceType: "module",
+    },
+    rules: {
+      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-non-null-assertion": "off",
     },
   },
 ];
