@@ -6,8 +6,8 @@
 
 {% block bottom %}
 <script>
-    let el = document.body.querySelector("#view_to_component_script_btn");
-    el.addEventListener("click", function () {
+    let elem = document.body.querySelector("#view_to_component_script_btn");
+    elem.addEventListener("click", function () {
         let el = document.body.querySelector("#view_to_component_script");
         el.textContent = "view_to_component_script: Success";
         el.dataset.success = "true"

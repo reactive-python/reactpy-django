@@ -7,13 +7,13 @@ from django.conf import settings
 from django.core.cache import DEFAULT_CACHE_ALIAS
 from django.db import DEFAULT_DB_ALIAS
 from reactpy.config import REACTPY_ASYNC_RENDERING as _REACTPY_ASYNC_RENDERING
-from reactpy.config import REACTPY_DEBUG_MODE as _REACTPY_DEBUG_MODE
+from reactpy.config import REACTPY_DEBUG as _REACTPY_DEBUG
 
 from reactpy_django.utils import import_dotted_path
 
 if TYPE_CHECKING:
     from django.views import View
-    from reactpy.core.types import ComponentConstructor
+    from reactpy.types import ComponentConstructor
 
     from reactpy_django.types import (
         AsyncPostprocessor,
@@ -27,7 +27,7 @@ REACTPY_REGISTERED_IFRAME_VIEWS: dict[str, Callable | View] = {}
 
 # Configurable through Django settings.py
 DJANGO_DEBUG = settings.DEBUG  # Snapshot of Django's DEBUG setting
-_REACTPY_DEBUG_MODE.set_current(settings.DEBUG)
+_REACTPY_DEBUG.set_current(settings.DEBUG)
 _REACTPY_ASYNC_RENDERING.set_current(getattr(settings, "REACTPY_ASYNC_RENDERING", _REACTPY_ASYNC_RENDERING.current))
 REACTPY_URL_PREFIX: str = getattr(
     settings,

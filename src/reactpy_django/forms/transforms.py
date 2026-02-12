@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any
 from reactpy.core.events import EventHandler, to_event_handler_function
 
 if TYPE_CHECKING:
-    from reactpy.core.types import VdomDict
+    from reactpy.types import VdomDict
 
 
 def convert_html_props_to_reactjs(vdom_tree: VdomDict) -> VdomDict:
@@ -81,7 +81,8 @@ def infer_key_from_attributes(vdom_tree: VdomDict) -> VdomDict:
         key = attributes.get("name")
 
     if key:
-        vdom_tree["key"] = key
+        attributes["key"] = key
+        vdom_tree["attributes"] = attributes
 
     return vdom_tree
 

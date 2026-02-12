@@ -26,10 +26,10 @@ from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.template import engines
 from django.utils.encoding import smart_str
-from reactpy import vdom_to_html
-from reactpy.backend.types import Connection, Location
+from reactpy import reactpy_to_string as _reactpy_to_string
 from reactpy.core.hooks import ConnectionContext
 from reactpy.core.layout import Layout
+from reactpy.types import Connection, Location
 
 from reactpy_django.exceptions import (
     ComponentDoesNotExistError,
@@ -359,7 +359,7 @@ class SyncLayout(Layout):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        SYNC_LAYOUT_THREAD.submit(self.loop.run_until_complete, self.__aexit__()).result()
+        SYNC_LAYOUT_THREAD.submit(self.loop.run_until_complete, self.__aexit__(exc_type, exc_val, exc_tb)).result()
         self.loop.close()
 
     def sync_render(self):
@@ -405,21 +405,21 @@ def prerender_component(
             user_component(*args, **kwargs),
             value=Connection(
                 scope=scope,
-                location=Location(pathname=request.path, search=f"?{search}" if search else ""),
+                location=Location(path=request.path, query_string=f"?{search}" if search else ""),
                 carrier=request,
             ),
         )
     ) as layout:
         vdom_tree = layout.sync_render()["model"]
 
-    return vdom_to_html(vdom_tree)  # type: ignore
+    return _reactpy_to_string(vdom_tree)  # type: ignore
 
 
 def reactpy_to_string(vdom_or_component: Any, request: HttpRequest | None = None, uuid: str | None = None) -> str:
     """Converts a VdomDict or component to an HTML string. If a string is provided instead, it will be
     automatically returned."""
     if isinstance(vdom_or_component, dict):
-        return vdom_to_html(vdom_or_component)  # type: ignore
+        return _reactpy_to_string(vdom_or_component)  # type: ignore
 
     if hasattr(vdom_or_component, "render"):
         if not request:
@@ -520,7 +520,7 @@ def cached_static_file(static_path: str) -> str:
 
 
 def del_html_head_body_transform(vdom: VdomDict) -> VdomDict:
-    """Transform intended for use with `html_to_vdom`.
+    """Transform intended for use with `string_to_reactpy `.
 
     Removes `<html>`, `<head>`, and `<body>` while preserving their children.
 

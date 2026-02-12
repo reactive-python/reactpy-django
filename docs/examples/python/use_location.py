@@ -7,4 +7,4 @@ from reactpy_django.hooks import use_location
 def my_component():
     location = use_location()
 
-    return html.div(location.pathname + location.search)
+    return html.div(location.path + location.query_string)

@@ -16,10 +16,10 @@ import orjson
 from channels.auth import login
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from django.utils import timezone
-from reactpy.backend.types import Connection, Location
 from reactpy.core.hooks import ConnectionContext
 from reactpy.core.layout import Layout
 from reactpy.core.serve import serve_layout
+from reactpy.types import Connection, Location
 
 from reactpy_django.tasks import clean
 from reactpy_django.utils import ensure_async
@@ -161,7 +161,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         self.recv_queue = asyncio.Queue()
         connection = Connection(  # For `use_connection`
             scope=scope,
-            location=Location(pathname=http_pathname, search=http_search),
+            location=Location(path=http_pathname, query_string=http_search),
             carrier=self,
         )
         now = timezone.now()

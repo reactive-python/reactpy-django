@@ -56,7 +56,7 @@ def auth_manager():
         any relevant actions."""
         scope["reactpy"]["synchronize_auth"] = synchronize_auth
 
-    @hooks.use_effect(dependencies=[sync_needed])
+    @hooks.use_async_effect(dependencies=[sync_needed])
     async def synchronize_auth_watchdog():
         """Detect if the client has taken too long to request a auth session synchronization.
 

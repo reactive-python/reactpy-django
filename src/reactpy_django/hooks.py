@@ -17,7 +17,7 @@ import orjson
 from channels import DEFAULT_CHANNEL_LAYER
 from channels import auth as channels_auth
 from channels.layers import InMemoryChannelLayer, get_channel_layer
-from reactpy import use_callback, use_effect, use_memo, use_ref, use_state
+from reactpy import use_async_effect, use_callback, use_effect, use_memo, use_ref, use_state
 from reactpy import use_connection as _use_connection
 from reactpy import use_location as _use_location
 from reactpy import use_scope as _use_scope
@@ -43,7 +43,7 @@ if TYPE_CHECKING:
 
     from channels_redis.core import RedisChannelLayer
     from django.contrib.auth.models import AbstractUser
-    from reactpy.backend.types import Location
+    from reactpy.types import Location
 
 
 _logger = logging.getLogger(__name__)
@@ -378,7 +378,7 @@ def use_channel_layer(
         raise ValueError(msg)
 
     # Add/remove a group's channel during component mount/dismount respectively.
-    @use_effect(dependencies=[])
+    @use_async_effect(dependencies=[])
     async def group_manager():
         if group:
             await channel_layer.group_add(group, channel_name)
@@ -386,7 +386,7 @@ def use_channel_layer(
         return None
 
     # Listen for messages on the channel using the provided `receiver` function.
-    @use_effect
+    @use_async_effect
     async def message_receiver():
         if not receiver:
             return

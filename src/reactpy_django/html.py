@@ -1,3 +1,3 @@
-from reactpy.core.vdom import make_vdom_constructor
+from reactpy import Vdom
 
-pyscript = make_vdom_constructor("py-script")
+pyscript = Vdom("py-script")

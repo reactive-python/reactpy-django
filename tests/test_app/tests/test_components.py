@@ -485,56 +485,56 @@ class ComponentTests(PlaywrightTestCase):
         path = self.page.wait_for_selector("#router-path")
         assert "/router/unspecified/123/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        assert string.text_content() == "/router/unspecified/<value>/"
+        assert string.text_content() == "/router/unspecified/{value}/"
 
     def test_url_router_integer(self):
         self.page.goto(f"{self.live_server_url}/router/integer/123/")
         path = self.page.wait_for_selector("#router-path")
         assert "/router/integer/123/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        assert string.text_content() == "/router/integer/<int:value>/"
+        assert string.text_content() == "/router/integer/{value:int}/"
 
     def test_url_router_path(self):
         self.page.goto(f"{self.live_server_url}/router/path/abc/123/")
         path = self.page.wait_for_selector("#router-path")
         assert "/router/path/abc/123/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        assert string.text_content() == "/router/path/<path:value>/"
+        assert string.text_content() == "/router/path/{value:path}/"
 
     def test_url_router_slug(self):
         self.page.goto(f"{self.live_server_url}/router/slug/abc-123/")
         path = self.page.wait_for_selector("#router-path")
         assert "/router/slug/abc-123/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        assert string.text_content() == "/router/slug/<slug:value>/"
+        assert string.text_content() == "/router/slug/{value:slug}/"
 
     def test_url_router_string(self):
         self.page.goto(f"{self.live_server_url}/router/string/abc/")
         path = self.page.wait_for_selector("#router-path")
         assert "/router/string/abc/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        assert string.text_content() == "/router/string/<str:value>/"
+        assert string.text_content() == "/router/string/{value:str}/"
 
     def test_url_router_uuid(self):
         self.page.goto(f"{self.live_server_url}/router/uuid/123e4567-e89b-12d3-a456-426614174000/")
         path = self.page.wait_for_selector("#router-path")
         assert "/router/uuid/123e4567-e89b-12d3-a456-426614174000/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        assert string.text_content() == "/router/uuid/<uuid:value>/"
+        assert string.text_content() == "/router/uuid/{value:uuid}/"
 
     def test_url_router_any(self):
         self.page.goto(f"{self.live_server_url}/router/any/adslkjgklasdjhfah/6789543256/")
         path = self.page.wait_for_selector("#router-path")
         assert "/router/any/adslkjgklasdjhfah/6789543256/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        assert string.text_content() == "/router/any/<any:name>"
+        assert string.text_content() == "/router/any/{name:any}"
 
     def test_url_router_int_and_string(self):
         self.page.goto(f"{self.live_server_url}/router/two/123/abc/")
         path = self.page.wait_for_selector("#router-path")
         assert "/router/two/123/abc/" in path.get_attribute("data-path")
         string = self.page.query_selector("#router-string")
-        assert string.text_content() == "/router/two/<int:value>/<str:value2>/"
+        assert string.text_content() == "/router/two/{value:int}/{value2:str}/"
 
     #######################
     # Channel Layer Tests #

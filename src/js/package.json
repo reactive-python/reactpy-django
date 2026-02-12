@@ -1,10 +1,10 @@
 {
   "dependencies": {
     "@pyscript/core": "^0.6",
-    "@reactpy/client": "^0.3.2",
-    "event-to-object": "^0.1.2",
+    "@reactpy/client": "^1.0.3",
+    "event-to-object": "^2.0.0",
     "morphdom": "^2.7.4",
-    "preact": "^10.26.9",
+    "preact": "^10.27.2",
     "react": "npm:@preact/compat@17.1.2",
     "react-dom": "npm:@preact/compat@17.1.2"
   },

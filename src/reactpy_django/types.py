@@ -13,7 +13,7 @@ from typing import (
 )
 
 from django.http import HttpRequest
-from reactpy.types import ComponentType, Connection, Key
+from reactpy.types import Component, Connection, Key
 from typing_extensions import ParamSpec
 
 if TYPE_CHECKING:
@@ -104,11 +104,11 @@ class AsyncMessageSender(Protocol):
 class ViewToComponentConstructor(Protocol):
     def __call__(
         self, request: HttpRequest | None = None, *args: Any, key: Key | None = None, **kwargs: Any
-    ) -> ComponentType: ...
+    ) -> Component: ...
 
 
 class ViewToIframeConstructor(Protocol):
-    def __call__(self, *args: Any, key: Key | None = None, **kwargs: Any) -> ComponentType: ...
+    def __call__(self, *args: Any, key: Key | None = None, **kwargs: Any) -> Component: ...
 
 
 class UseAuthLogin(Protocol):

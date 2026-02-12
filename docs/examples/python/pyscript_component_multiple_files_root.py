@@ -1,6 +1,4 @@
-from reactpy import component, html
-
-from reactpy_django.components import pyscript_component
+from reactpy import component, html, pyscript_component
 
 
 @component

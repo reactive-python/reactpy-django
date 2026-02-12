@@ -10,7 +10,7 @@ from reactpy_django.hooks import use_user
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import AbstractUser
-    from reactpy.core.types import ComponentConstructor
+    from reactpy.types import ComponentConstructor
 
 
 def user_passes_test(

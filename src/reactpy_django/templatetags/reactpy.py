@@ -27,7 +27,7 @@ from reactpy_django.utils import (
 
 if TYPE_CHECKING:
     from django.http import HttpRequest
-    from reactpy.core.types import ComponentConstructor, ComponentType, VdomDict
+    from reactpy.types import Component, ComponentConstructor, VdomDict
 
 
 register = template.Library()
@@ -187,7 +187,7 @@ def component(
 def pyscript_component(
     context: template.RequestContext,
     *file_paths: str,
-    initial: str | VdomDict | ComponentType = "",
+    initial: str | VdomDict | Component = "",
     root: str = "root",
 ):
     """

@@ -7,7 +7,7 @@ from uuid import uuid4
 from django.forms import Form, ModelForm
 from reactpy import component, hooks, html, utils
 from reactpy.core.events import event
-from reactpy.web import export, module_from_file
+from reactpy.reactjs import component_from_file
 
 from reactpy_django.forms.transforms import (
     convert_html_props_to_reactjs,
@@ -24,11 +24,12 @@ from reactpy_django.utils import ensure_async
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from reactpy.core.types import VdomDict
+    from reactpy.types import VdomDict
 
-DjangoForm = export(
-    module_from_file("reactpy-django", file=Path(__file__).parent.parent / "static" / "reactpy_django" / "index.js"),
-    ("DjangoForm"),
+DjangoForm = component_from_file(
+    Path(__file__).parent.parent / "static" / "reactpy_django" / "index.js",
+    import_names=("DjangoForm"),
+    name="reactpy-django",
 )
 
 
@@ -63,7 +64,7 @@ def _django_form(
     )
 
     # Validate and render the form
-    @hooks.use_effect(dependencies=[str(submitted_data)])
+    @hooks.use_async_effect(dependencies=[str(submitted_data)])
     async def render_form():
         """Forms must be rendered in an async loop to allow database fields to execute."""
         if submitted_data:
@@ -113,7 +114,7 @@ def _django_form(
         },
         DjangoForm({"onSubmitCallback": on_submit_callback, "formId": f"reactpy-{uuid}"}),
         *top_children,
-        utils.html_to_vdom(
+        utils.string_to_reactpy(
             rendered_form,
             convert_html_props_to_reactjs,
             convert_textarea_children_to_prop,

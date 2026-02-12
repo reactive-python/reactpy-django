@@ -44,8 +44,8 @@ classifiers = [
 dependencies = [
   "channels>=4.0.0",
   "django>=4.2.0",
-  "reactpy>=1.1.0, <2.0.0",
-  "reactpy-router>=1.0.3, <2.0.0",
+  "reactpy>=2.0.0b10, <3.0.0",
+  "reactpy-router>2.0.0",
   "dill>=0.3.5",
   "orjson>=3.6.0",
   "nest_asyncio>=1.5.0",
@@ -96,18 +96,17 @@ extra-dependencies = [
   "servestatic",
   "django-bootstrap5",
   "decorator",
-
 ]
 matrix-name-format = "{variable}-{value}"
 
 # Django 4.2
 [[tool.hatch.envs.hatch-test.matrix]]
-python = ["3.9", "3.10", "3.11", "3.12"]
+python = ["3.11", "3.12"]
 django = ["4.2"]
 
 # Django 5.0
 [[tool.hatch.envs.hatch-test.matrix]]
-python = ["3.10", "3.11", "3.12"]
+python = ["3.11", "3.12"]
 django = ["5.0"]
 
 # Django 5.1
