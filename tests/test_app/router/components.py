@@ -31,12 +31,12 @@ def show_route(path: str, *children: Route) -> Route:
 def main():
     return django_router(
         show_route("/router/", show_route("subroute/")),
-        show_route("/router/unspecified/{value}/"),
-        show_route("/router/integer/{value:int}/"),
-        show_route("/router/path/{value:path}/"),
-        show_route("/router/slug/{value:slug}/"),
-        show_route("/router/string/{value:str}/"),
-        show_route("/router/uuid/{value:uuid}/"),
-        show_route("/router/any/{name:any}"),
-        show_route("/router/two/{value:int}/{value2:str}/"),
+        show_route("/router/unspecified/<value>/"),
+        show_route("/router/integer/<int:value>/"),
+        show_route("/router/path/<path:value>/"),
+        show_route("/router/slug/<slug:value>/"),
+        show_route("/router/string/<str:value>/"),
+        show_route("/router/uuid/<uuid:value>/"),
+        show_route("/router/any/<any:name>"),
+        show_route("/router/two/<int:value>/<str:value2>/"),
     )
