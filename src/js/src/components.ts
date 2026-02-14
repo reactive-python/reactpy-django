@@ -1,22 +1,5 @@
 import type { DjangoFormProps, HttpRequestProps } from "./types";
 import { useEffect } from "preact/hooks";
-import { type ComponentChildren, render, createElement } from "preact";
-/**
- * Interface used to bind a ReactPy node to React.
- */
-export function bind(node: HTMLElement | Element | Node) {
-  return {
-    create: (
-      type: string,
-      props: Record<string, unknown>,
-      children: ComponentChildren[],
-    ) => createElement(type, props, ...children),
-    render: (element: HTMLElement | Element | Node) => {
-      render(element, node);
-    },
-    unmount: () => render(null, node),
-  };
-}
 
 export function DjangoForm({
   onSubmitCallback,

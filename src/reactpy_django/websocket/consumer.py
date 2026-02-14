@@ -156,12 +156,12 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         has_args = scope["url_route"]["kwargs"].get("has_args")
         scope["reactpy"] = {"id": str(uuid)}
         query_string = parse_qs(scope["query_string"].decode(), strict_parsing=True)
-        http_pathname = query_string.get("http_pathname", [""])[0]
-        http_search = query_string.get("http_search", [""])[0]
+        http_path = query_string.get("http_path", [""])[0]
+        http_query_string = query_string.get("http_query_string", [""])[0]
         self.recv_queue = asyncio.Queue()
         connection = Connection(  # For `use_connection`
             scope=scope,
-            location=Location(path=http_pathname, query_string=http_search),
+            location=Location(path=http_path, query_string=http_query_string),
             carrier=self,
         )
         now = timezone.now()

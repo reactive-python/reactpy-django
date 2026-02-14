@@ -1,2 +1,2 @@
-export { HttpRequest, DjangoForm, bind } from "./components";
+export { HttpRequest, DjangoForm } from "./components";
 export { mountComponent } from "./mount";
