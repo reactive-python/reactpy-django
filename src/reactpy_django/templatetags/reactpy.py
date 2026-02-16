@@ -173,7 +173,7 @@ def component(
         "reactpy_host": host or perceived_host,
         "reactpy_url_prefix": reactpy_config.REACTPY_URL_PREFIX,
         "reactpy_component_path": f"{dotted_path}/{uuid}/{int(has_args)}/",
-        "reactpy_resolved_web_modules_path": RESOLVED_WEB_MODULES_PATH,
+        "reactpy_resolved_web_modules_path": f"/{RESOLVED_WEB_MODULES_PATH.strip('/')}/",
         "reactpy_reconnect_interval": reactpy_config.REACTPY_RECONNECT_INTERVAL,
         "reactpy_reconnect_max_interval": reactpy_config.REACTPY_RECONNECT_MAX_INTERVAL,
         "reactpy_reconnect_backoff_multiplier": reactpy_config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER,

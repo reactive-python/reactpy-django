@@ -128,7 +128,6 @@ def use_query(
     loading, set_loading = use_state(True)
     error, set_error = use_state(cast(Union[Exception, None], None))
     query_ref = use_ref(query)
-    async_task_refs = use_ref(set())
     kwargs = kwargs or {}
     postprocessor_kwargs = postprocessor_kwargs or {}
 
@@ -166,20 +165,16 @@ def use_query(
             set_loading(False)
             set_error(None)
 
-    @use_effect(dependencies=None)
-    def schedule_query() -> None:
-        """Schedule the query to be run"""
+    @use_async_effect(dependencies=None)
+    async def schedule_query() -> None:
+        """Execute a query when needed."""
         # Make sure we don't re-execute the query unless we're told to
         if not should_execute:
             return
         set_should_execute(False)
 
-        # Execute the query in the background
-        task = asyncio.create_task(execute_query())
-
-        # Add the task to a set to prevent it from being garbage collected
-        async_task_refs.current.add(task)
-        task.add_done_callback(async_task_refs.current.remove)
+        # Execute the query
+        await execute_query()
 
     @use_callback
     def refetch() -> None:
@@ -261,11 +256,10 @@ def use_mutation(
                         callback()
 
     # Schedule the mutation to be run when needed
-    @use_callback
     def schedule_mutation(*exec_args: FuncParams.args, **exec_kwargs: FuncParams.kwargs) -> None:
         # Set the loading state.
-        # It's okay to re-execute the mutation if we're told to. The user
-        # can use the `loading` state to prevent this.
+        # It's okay to re-execute the mutation if we're told to. If desired,
+        # The user could use the `loading` state to prevent double execution.
         set_loading(True)
 
         # Execute the mutation in the background

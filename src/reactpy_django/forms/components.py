@@ -85,7 +85,9 @@ def _django_form(
     async def on_submit_callback(new_data: dict[str, Any]):
         """Callback function provided directly to the client side listener. This is responsible for transmitting
         the submitted form data to the server for processing."""
-        convert_form_fields(new_data, initialized_form)
+        # The client side listener passes a ReactPy Event object which needs to be
+        # converted to a standard dictionary.
+        convert_form_fields(dict(new_data), initialized_form)
 
         if on_receive_data:
             new_form_event = FormEventData(

@@ -1,11 +1,11 @@
 import type { DjangoFormProps, HttpRequestProps } from "./types";
-import { useEffect } from "preact/hooks";
+import { React } from "@reactpy/client";
 
 export function DjangoForm({
   onSubmitCallback,
   formId,
 }: DjangoFormProps): null {
-  useEffect(() => {
+  React.useEffect(() => {
     const form = document.getElementById(formId) as HTMLFormElement;
 
     // Submission event function
@@ -53,7 +53,7 @@ export function DjangoForm({
 }
 
 export function HttpRequest({ method, url, body, callback }: HttpRequestProps) {
-  useEffect(() => {
+  React.useEffect(() => {
     fetch(url, {
       method: method,
       body: body,

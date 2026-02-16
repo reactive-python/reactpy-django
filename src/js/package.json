@@ -14,9 +14,9 @@
     "typescript-eslint": "^8.55.0"
   },
   "license": "MIT",
+  "name": "@reactpy-django/app",
   "scripts": {
     "check": "prettier --check . && eslint",
     "format": "prettier --write . && eslint --fix"
-  },
-  "type": "module"
+  }
 }

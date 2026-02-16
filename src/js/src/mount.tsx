@@ -1,6 +1,5 @@
 import { ReactPyDjangoClient } from "./client";
-import { render } from "preact";
-import { Layout } from "@reactpy/client";
+import { Layout, React } from "@reactpy/client";
 
 export function mountComponent(
   mountElement: HTMLElement,
@@ -23,30 +22,25 @@ export function mountComponent(
   // Embed the initial HTTP path into the WebSocket URL
   componentUrl.searchParams.append("http_path", window.location.pathname);
   if (window.location.search) {
-    componentUrl.searchParams.append("http_query_string", window.location.search);
+    componentUrl.searchParams.append(
+      "http_query_string",
+      window.location.search,
+    );
   }
 
   // HTTP route for JavaScript modules
   const httpProtocol = window.location.protocol;
-  let httpOrigin: string;
-  let jsModulesPath: string;
-  if (host) {
-    httpOrigin = `${httpProtocol}//${host}`;
-    jsModulesPath = `${urlPrefix}/web_module`;
-  } else {
-    httpOrigin = `${httpProtocol}//${window.location.host}`;
-    if (resolvedJsModulesPath) {
-      jsModulesPath = resolvedJsModulesPath;
-    } else {
-      jsModulesPath = `${urlPrefix}/web_module`;
-    }
-  }
+  const httpOrigin: string = host
+    ? `${httpProtocol}//${host}`
+    : `${httpProtocol}//${window.location.host}`;
+  const jsModulesPath: string =
+    resolvedJsModulesPath || `${urlPrefix}/web_module/`;
 
   // Configure a new ReactPy client
   const client = new ReactPyDjangoClient({
     urls: {
       componentUrl: componentUrl,
-      jsModulesPath: `${httpOrigin}/${jsModulesPath}`,
+      jsModulesPath: `${httpOrigin}${jsModulesPath.startsWith("/") ? "" : "/"}${jsModulesPath}`,
     },
     reconnectOptions: {
       interval: reconnectInterval,
@@ -69,7 +63,7 @@ export function mountComponent(
 
   // Start rendering the component
   if (client.mountElement) {
-    render(<Layout client={client} />, client.mountElement);
+    React.render(<Layout client={client} />, client.mountElement);
   } else {
     console.error(
       "ReactPy mount element is undefined, cannot render the component!",
