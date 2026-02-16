@@ -1,14 +1,11 @@
-import type { DjangoFormProps, HttpRequestProps } from "./types";
 import { React } from "@reactpy/client";
+import type { DjangoFormProps, HttpRequestProps } from "./types";
 
-export function DjangoForm({
-  onSubmitCallback,
-  formId,
-}: DjangoFormProps): null {
-  React.useEffect(() => {
+export class DjangoForm extends React.Component<DjangoFormProps> {
+  componentDidMount() {
+    const { onSubmitCallback, formId } = this.props;
     const form = document.getElementById(formId) as HTMLFormElement;
 
-    // Submission event function
     const onSubmitEvent = (event: Event) => {
       event.preventDefault();
       const formData = new FormData(form);
@@ -36,24 +33,29 @@ export function DjangoForm({
       onSubmitCallback(formDataObject);
     };
 
-    // Bind the event listener
     if (form) {
       form.addEventListener("submit", onSubmitEvent);
-    }
-
-    // Unbind the event listener when the component dismounts
-    return () => {
-      if (form) {
+      // Store cleanup function in instance
+      (this as any)._cleanup = () => {
         form.removeEventListener("submit", onSubmitEvent);
-      }
-    };
-  }, []);
+      };
+    }
+  }
 
-  return null;
+  componentWillUnmount() {
+    if ((this as any)._cleanup) {
+      (this as any)._cleanup();
+    }
+  }
+
+  render() {
+    return null;
+  }
 }
 
-export function HttpRequest({ method, url, body, callback }: HttpRequestProps) {
-  React.useEffect(() => {
+export class HttpRequest extends React.Component<HttpRequestProps> {
+  componentDidMount() {
+    const { method, url, body, callback } = this.props;
     fetch(url, {
       method: method,
       body: body,
@@ -71,7 +73,9 @@ export function HttpRequest({ method, url, body, callback }: HttpRequestProps) {
       .catch(() => {
         callback(520, "");
       });
-  }, []);
+  }
 
-  return null;
+  render() {
+    return null;
+  }
 }
