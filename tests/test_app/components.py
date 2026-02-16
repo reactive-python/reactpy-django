@@ -7,7 +7,7 @@ from channels.auth import login, logout
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from django.http import HttpRequest
-from reactpy import component, hooks, html, web
+from reactpy import component, hooks, html, reactjs
 
 import reactpy_django
 from reactpy_django.components import view_to_component, view_to_iframe
@@ -64,13 +64,9 @@ def object_in_templatetag(my_object: TestObject):
     return html(html.div({"id": co_name, "data-success": success}, f"{co_name}: ", str(my_object)))
 
 
-SimpleButtonModule = web.module_from_file(
-    "SimpleButton",
-    Path(__file__).parent / "tests" / "js" / "button-from-js-module.js",
-    resolve_exports=False,
-    fallback="...",
+SimpleButton = reactjs.component_from_file(
+    Path(__file__).parent / "tests" / "js" / "button-from-js-module.js", import_names="SimpleButton", fallback="..."
 )
-SimpleButton = web.export(SimpleButtonModule, "SimpleButton")
 
 
 @component
