@@ -5,7 +5,10 @@ from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from django import template
+from django.templatetags.static import static
 from django.urls import NoReverseMatch, reverse
+from django.utils.safestring import mark_safe
+from reactpy.executors.pyscript.utils import PYSCRIPT_LAYOUT_HANDLER, extend_pyscript_config, pyscript_executor_html
 
 from reactpy_django import config as reactpy_config
 from reactpy_django.exceptions import (
@@ -15,8 +18,8 @@ from reactpy_django.exceptions import (
     InvalidHostError,
     OfflineComponentMissingError,
 )
-from reactpy_django.pyscript.utils import PYSCRIPT_LAYOUT_HANDLER, extend_pyscript_config, render_pyscript_template
 from reactpy_django.utils import (
+    fetch_cached_python_file,
     prerender_component,
     reactpy_to_string,
     save_component_params,
@@ -178,10 +181,9 @@ def component(
         "reactpy_reconnect_max_interval": reactpy_config.REACTPY_RECONNECT_MAX_INTERVAL,
         "reactpy_reconnect_backoff_multiplier": reactpy_config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER,
         "reactpy_reconnect_max_retries": reactpy_config.REACTPY_RECONNECT_MAX_RETRIES,
-        "reactpy_prerender_html": _prerender_html,
-        "reactpy_offline_html": _offline_html,
+        "reactpy_prerender_html": mark_safe(_prerender_html),
+        "reactpy_offline_html": mark_safe(_offline_html),
     }
-
 
 @register.inclusion_tag("reactpy/pyscript_component.html", takes_context=True)
 def pyscript_component(
@@ -208,12 +210,12 @@ def pyscript_component(
     uuid = uuid4().hex
     request: HttpRequest | None = context.get("request")
     initial = reactpy_to_string(initial, request=request, uuid=uuid)
-    executor = render_pyscript_template(file_paths, uuid, root)
+    executor = pyscript_executor_html(file_paths, uuid, root, fetch_cached_python_file)
 
     return {
-        "pyscript_executor": executor,
+        "pyscript_executor": mark_safe(executor),
         "pyscript_uuid": uuid,
-        "pyscript_initial_html": initial,
+        "pyscript_initial_html": mark_safe(initial),
     }
 
 
@@ -239,8 +241,12 @@ def pyscript_setup(
     from reactpy_django.config import DJANGO_DEBUG
 
     return {
-        "pyscript_config": extend_pyscript_config(extra_py, extra_js, config),
-        "pyscript_layout_handler": PYSCRIPT_LAYOUT_HANDLER,
+        "pyscript_config": mark_safe(
+            extend_pyscript_config(
+                extra_py, extra_js, config, {static("reactpy_django/morphdom/morphdom-esm.js"): "morphdom"}
+            )
+        ),
+        "pyscript_layout_handler": mark_safe(PYSCRIPT_LAYOUT_HANDLER),
         "django_debug": DJANGO_DEBUG,
     }
 

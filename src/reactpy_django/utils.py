@@ -13,6 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 from fnmatch import fnmatch
 from functools import wraps
 from importlib import import_module
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable
 from uuid import UUID, uuid4
 
@@ -531,3 +532,22 @@ def del_html_head_body_transform(vdom: VdomDict) -> VdomDict:
     if vdom["tagName"] in {"html", "body", "head"}:
         return {"tagName": "", "children": vdom.setdefault("children", [])}
     return vdom
+
+
+def fetch_cached_python_file(file_path: str, minify: bool = True) -> str:
+    from reactpy.executors.pyscript.utils import minify_python
+
+    from reactpy_django.config import REACTPY_CACHE
+
+    # Try to get user code from cache
+    cache_key = create_cache_key("pyscript", file_path)
+    last_modified_time = os.stat(file_path).st_mtime
+    file_contents: str = caches[REACTPY_CACHE].get(cache_key, version=int(last_modified_time))
+    if file_contents:
+        return file_contents
+
+    file_contents = Path(file_path).read_text(encoding="utf-8").strip()
+    if minify:
+        file_contents = minify_python(file_contents)
+    caches[REACTPY_CACHE].set(cache_key, file_contents, version=int(last_modified_time))
+    return file_contents
