@@ -453,7 +453,7 @@ def save_component_params(args, kwargs, uuid) -> None:
 def validate_host(host: str) -> None:
     """Validates the host string to ensure it does not contain a protocol."""
     if "://" in host:
-        protocol = host.split("://")[0]
+        protocol = host.split("://", maxsplit=1)[0]
         msg = f"Invalid host provided to component. Contains a protocol '{protocol}://'."
         _logger.error(msg)
         raise InvalidHostError(msg)

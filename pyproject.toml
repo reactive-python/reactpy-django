@@ -244,6 +244,9 @@ lint.extend-ignore = [
   "S403",    # `dill` module is possibly insecure
   "S301",    # `dill` deserialization is possibly insecure unless using trusted data
   "RUF029",  # Function is declared async but doesn't contain await expression
+  "DOC201",  # `return` is not documented in docstring
+  "DOC501",  # `Exception` is not documented in docstring
+  "S308",    # Django `mark_safe` may expose cross-site scripting vulnerabilities
 ]
 lint.preview = true
 lint.isort.known-first-party = ["reactpy_django", "test_app", "example"]

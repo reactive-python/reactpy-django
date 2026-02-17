@@ -56,7 +56,7 @@ def _django_form(
     top_children_count = hooks.use_ref(len(top_children))
     bottom_children_count = hooks.use_ref(len(bottom_children))
     submitted_data, set_submitted_data = hooks.use_state({} or None)
-    rendered_form, set_rendered_form = hooks.use_state(cast(Union[str, None], None))
+    rendered_form, set_rendered_form = hooks.use_state(cast("Union[str, None]", None))
 
     # Initialize the form with the provided data
     validate_form_args(top_children, top_children_count, bottom_children, bottom_children_count, form)
@@ -70,7 +70,7 @@ def _django_form(
     async def render_form():
         """Forms must be rendered in an async loop to allow database fields to execute."""
 
-        _logger.debug(f"Rendering form with submitted data: {submitted_data}")
+        _logger.debug("Rendering form with submitted data: %s", submitted_data)
         try:
             if submitted_data:
                 await ensure_async(initialized_form.full_clean, thread_sensitive=thread_sensitive)()
@@ -88,7 +88,6 @@ def _django_form(
             )
         except Exception:
             _logger.exception("Error during form processing")
-
 
     async def on_submit_callback(new_data: dict[str, Any]):
         """Callback function provided directly to the client side listener. This is responsible for transmitting

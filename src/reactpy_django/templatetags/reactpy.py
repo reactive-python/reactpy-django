@@ -94,8 +94,8 @@ def component(
     class_ = kwargs.pop("class", "")
     has_args = bool(args or kwargs)
     user_component: ComponentConstructor | None = None
-    _prerender_html = ""
-    _offline_html = ""
+    prerender_html = ""
+    offline_html = ""
 
     # Validate the host
     if host and DJANGO_DEBUG:
@@ -151,7 +151,7 @@ def component(
             )
             _logger.error(msg)
             return failure_context(dotted_path, ComponentCarrierError(msg))
-        _prerender_html = prerender_component(user_component, args, kwargs, uuid, request)
+        prerender_html = prerender_component(user_component, args, kwargs, uuid, request)
 
     # Fetch the offline component's HTML, if requested
     if offline:
@@ -167,7 +167,7 @@ def component(
             )
             _logger.error(msg)
             return failure_context(dotted_path, ComponentCarrierError(msg))
-        _offline_html = prerender_component(offline_component, [], {}, uuid, request)
+        offline_html = prerender_component(offline_component, [], {}, uuid, request)
 
     # Return the template rendering context
     return {
@@ -181,9 +181,10 @@ def component(
         "reactpy_reconnect_max_interval": reactpy_config.REACTPY_RECONNECT_MAX_INTERVAL,
         "reactpy_reconnect_backoff_multiplier": reactpy_config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER,
         "reactpy_reconnect_max_retries": reactpy_config.REACTPY_RECONNECT_MAX_RETRIES,
-        "reactpy_prerender_html": mark_safe(_prerender_html),
-        "reactpy_offline_html": mark_safe(_offline_html),
+        "reactpy_prerender_html": mark_safe(prerender_html),
+        "reactpy_offline_html": mark_safe(offline_html),
     }
+
 
 @register.inclusion_tag("reactpy/pyscript_component.html", takes_context=True)
 def pyscript_component(

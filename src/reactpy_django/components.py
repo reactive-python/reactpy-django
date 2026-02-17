@@ -9,7 +9,6 @@ from urllib.parse import urlencode
 from django.http import HttpRequest
 from django.urls import reverse
 from reactpy import component, hooks, html, utils
-from reactpy.types import Component, Key, VdomDict
 
 from reactpy_django.exceptions import ViewNotRegisteredError
 from reactpy_django.forms.components import _django_form
@@ -26,6 +25,7 @@ if TYPE_CHECKING:
 
     from django.forms import Form, ModelForm
     from django.views import View
+    from reactpy.types import Component, Key, VdomDict
 
     from reactpy_django.types import AsyncFormEvent, SyncFormEvent, ViewToComponentConstructor, ViewToIframeConstructor
 
@@ -182,27 +182,27 @@ def _view_to_component(
     args: Sequence | None,
     kwargs: dict | None,
 ):
-    converted_view, set_converted_view = hooks.use_state(cast(Union[VdomDict, None], None))
-    _args: Sequence = args or ()
-    _kwargs: dict = kwargs or {}
+    converted_view, set_converted_view = hooks.use_state(cast("Union[VdomDict, None]", None))
+    args_: Sequence = args or ()
+    kwargs_: dict = kwargs or {}
     if request:
-        _request: HttpRequest = request
+        request_: HttpRequest = request
     else:
-        _request = HttpRequest()
-        _request.method = "GET"
+        request_ = HttpRequest()
+        request_.method = "GET"
     resolved_view: Callable = import_module(view) if isinstance(view, str) else view  # type: ignore
 
     # Render the view render within a hook
     @hooks.use_async_effect(
         dependencies=[
-            json.dumps(vars(_request), default=generate_obj_name),
-            json.dumps([_args, _kwargs], default=generate_obj_name),
+            json.dumps(vars(request_), default=generate_obj_name),
+            json.dumps([args_, kwargs_], default=generate_obj_name),
         ]
     )
     async def _render_view():
         """Render the view in an async hook to avoid blocking the main thread."""
         # Render the view
-        response = await render_view(resolved_view, _request, _args, _kwargs)
+        response = await render_view(resolved_view, request_, args_, kwargs_)
         set_converted_view(
             utils.string_to_reactpy(
                 response.content.decode("utf-8").strip(),

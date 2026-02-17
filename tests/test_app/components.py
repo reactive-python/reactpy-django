@@ -692,17 +692,17 @@ def use_user_data_with_default():
 
 @component
 def use_auth():
-    _login, _logout = reactpy_django.hooks.use_auth()
+    login_, logout_ = reactpy_django.hooks.use_auth()
     uuid = hooks.use_ref(str(uuid4())).current
     current_user = reactpy_django.hooks.use_user()
     connection = reactpy_django.hooks.use_connection()
 
     async def login_user(event):
         new_user, _created = await get_user_model().objects.aget_or_create(username="user_4")
-        await _login(new_user)
+        await login_(new_user)
 
     async def logout_user(event):
-        await _logout()
+        await logout_()
 
     async def disconnect(event):
         await connection.carrier.close()
@@ -724,17 +724,17 @@ def use_auth():
 
 @component
 def use_auth_no_rerender():
-    _login, _logout = reactpy_django.hooks.use_auth()
+    login_, logout_ = reactpy_django.hooks.use_auth()
     uuid = hooks.use_ref(str(uuid4())).current
     current_user = reactpy_django.hooks.use_user()
     connection = reactpy_django.hooks.use_connection()
 
     async def login_user(event):
         new_user, _created = await get_user_model().objects.aget_or_create(username="user_5")
-        await _login(new_user, rerender=False)
+        await login_(new_user, rerender=False)
 
     async def logout_user(event):
-        await _logout(rerender=False)
+        await logout_(rerender=False)
 
     async def disconnect(event):
         await connection.carrier.close()

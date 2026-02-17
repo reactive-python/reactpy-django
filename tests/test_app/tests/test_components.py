@@ -1,11 +1,12 @@
 # type: ignore
-# ruff: noqa: RUF012, N802
+# ruff: noqa: RUF012
 import os
 import socket
 from uuid import uuid4
 
 import pytest
-from playwright.sync_api import TimeoutError, expect
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
+from playwright.sync_api import expect
 from reactpy.testing import DEFAULT_TYPE_DELAY as DELAY
 
 from reactpy_django.models import ComponentSession
@@ -73,13 +74,13 @@ class ComponentTests(PlaywrightTestCase):
 
     @navigate_to_page("/")
     def test_component_unauthorized_user(self):
-        with pytest.raises(TimeoutError):
+        with pytest.raises(PlaywrightTimeoutError):
             self.page.wait_for_selector("#unauthorized-user", timeout=1)
         self.page.wait_for_selector("#unauthorized-user-fallback")
 
     @navigate_to_page("/")
     def test_component_authorized_user(self):
-        with pytest.raises(TimeoutError):
+        with pytest.raises(PlaywrightTimeoutError):
             self.page.wait_for_selector("#authorized-user-fallback", timeout=1)
         self.page.wait_for_selector("#authorized-user")
 
@@ -104,7 +105,7 @@ class ComponentTests(PlaywrightTestCase):
             todo_input.press("Enter", delay=DELAY)
             self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}")
             self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}-checkbox").click(delay=DELAY)
-            with pytest.raises(TimeoutError):
+            with pytest.raises(PlaywrightTimeoutError):
                 self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}", timeout=1)
 
     @navigate_to_page("/")
@@ -118,7 +119,7 @@ class ComponentTests(PlaywrightTestCase):
             todo_input.press("Enter", delay=DELAY)
             self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}")
             self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}-checkbox").click(delay=DELAY)
-            with pytest.raises(TimeoutError):
+            with pytest.raises(PlaywrightTimeoutError):
                 self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}", timeout=1)
 
     @navigate_to_page("/")
@@ -358,7 +359,7 @@ class ComponentTests(PlaywrightTestCase):
     #     self.page.wait_for_selector("#use-auth-no-rerender .login").click(delay=DELAY)
 
     #     # Make sure #use-auth[data-username="user_5"] does not appear
-    #     with pytest.raises(TimeoutError):
+    #     with pytest.raises(PlaywrightTimeoutError):
     #         self.page.wait_for_selector("#use-auth-no-rerender[data-username='user_5']", timeout=1)
 
     #     # Press disconnect and see if #use-auth[data-username="user_5"] appears
@@ -366,7 +367,7 @@ class ComponentTests(PlaywrightTestCase):
     #     self.page.wait_for_selector("#use-auth-no-rerender[data-username='user_5']")
 
     #     # Press logout and make sure #use-auth[data-username="AnonymousUser"] does not appear
-    #     with pytest.raises(TimeoutError):
+    #     with pytest.raises(PlaywrightTimeoutError):
     #         self.page.wait_for_selector("#use-auth-no-rerender[data-username='AnonymousUser']", timeout=1)
 
     #     # Press disconnect and see if #use-auth[data-username="AnonymousUser"] appears
@@ -660,7 +661,7 @@ class ComponentTests(PlaywrightTestCase):
         tmp_sock.bind((self._server_process_0.host, 0))
         random_port = tmp_sock.getsockname()[1]
         self.page.goto(f"{self.live_server_url}/port/{random_port}/")
-        with pytest.raises(TimeoutError):
+        with pytest.raises(PlaywrightTimeoutError):
             self.page.locator(".custom_host").wait_for(timeout=1000)
 
     #################

@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import logging
 from collections import defaultdict
-from collections.abc import Awaitable
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -39,7 +38,7 @@ from reactpy_django.types import (
 from reactpy_django.utils import django_query_postprocessor, ensure_async, generate_obj_name, get_pk
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Awaitable, Sequence
 
     from channels_redis.core import RedisChannelLayer
     from django.contrib.auth.models import AbstractUser
@@ -124,9 +123,9 @@ def use_query(
     """
 
     should_execute, set_should_execute = use_state(True)
-    data, set_data = use_state(cast(Inferred, None))
+    data, set_data = use_state(cast("Inferred", None))
     loading, set_loading = use_state(True)
-    error, set_error = use_state(cast(Union[Exception, None], None))
+    error, set_error = use_state(cast("Union[Exception, None]", None))
     query_ref = use_ref(query)
     kwargs = kwargs or {}
     postprocessor_kwargs = postprocessor_kwargs or {}
@@ -140,14 +139,14 @@ def use_query(
         try:
             # Run the query
             query_async = cast(
-                Callable[..., Awaitable[Inferred]], ensure_async(query, thread_sensitive=thread_sensitive)
+                "Callable[..., Awaitable[Inferred]]", ensure_async(query, thread_sensitive=thread_sensitive)
             )
             new_data = await query_async(**kwargs)
 
             # Run the postprocessor
             if postprocessor:
                 async_postprocessor = cast(
-                    Callable[..., Awaitable[Any]], ensure_async(postprocessor, thread_sensitive=thread_sensitive)
+                    "Callable[..., Awaitable[Any]]", ensure_async(postprocessor, thread_sensitive=thread_sensitive)
                 )
                 new_data = await async_postprocessor(new_data, **postprocessor_kwargs)
 
@@ -227,7 +226,7 @@ def use_mutation(
     """
 
     loading, set_loading = use_state(False)
-    error, set_error = use_state(cast(Union[Exception, None], None))
+    error, set_error = use_state(cast("Union[Exception, None]", None))
     async_task_refs = use_ref(set())
 
     # The main "running" function for `use_mutation`
@@ -289,7 +288,7 @@ def use_user() -> AbstractUser:
 
 
 def use_user_data(
-    default_data: (None | dict[str, Callable[[], Any] | Callable[[], Awaitable[Any]] | Any]) = None,
+    default_data: (dict[str, Callable[[], Any] | Callable[[], Awaitable[Any]] | Any] | None) = None,
     save_default_data: bool = False,
 ) -> UserData:
     """Get or set user data stored within the REACTPY_DATABASE.
@@ -441,7 +440,7 @@ def use_auth() -> UseAuthTuple:
     return UseAuthTuple(login=login, logout=logout)
 
 
-async def _get_user_data(user: AbstractUser, default_data: None | dict, save_default_data: bool) -> dict | None:
+async def _get_user_data(user: AbstractUser, default_data: dict | None, save_default_data: bool) -> dict | None:
     """The mutation function for `use_user_data`"""
     from reactpy_django.models import UserDataModel
 

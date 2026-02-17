@@ -212,7 +212,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         # Start the ReactPy component rendering loop
         with contextlib.suppress(Exception):
             await serve_layout(
-                Layout(  # type: ignore
+                Layout(
                     ConnectionContext(
                         auth_manager(),
                         root_manager(root_component),
