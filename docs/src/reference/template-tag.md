@@ -72,8 +72,8 @@ Each component loaded via this template tag will receive a dedicated WebSocket c
     === "my_template.html"
 
         ```jinja
-        {% load reactpy %}
         <!DOCTYPE html>
+        {% load reactpy %}
         <html>
             <body>
                 <h1>{% component "example_project.my_app.components.my_title" %}</h1>
