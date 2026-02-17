@@ -58,7 +58,7 @@ def auth_manager():
 
     @hooks.use_async_effect(dependencies=[sync_needed])
     async def synchronize_auth_watchdog():
-        """Detect if the client has taken too long to request a auth session synchronization.
+        """Detect if the client has taken too long to synchronize WebSocket->HTTP auth sessions.
 
         This effect will automatically be cancelled if the session is successfully
         synchronized (via effect dependencies)."""

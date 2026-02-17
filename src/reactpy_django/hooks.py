@@ -153,10 +153,9 @@ def use_query(
 
         # Log any errors and set the error state
         except Exception as e:
-            set_data(cast(Inferred, None))
             set_loading(False)
             set_error(e)
-            _logger.exception("Failed to execute query: %s", generate_obj_name(query))
+            _logger.exception("Failed to execute query '%s'", generate_obj_name(query))
             return
 
         # Query was successful
@@ -165,16 +164,16 @@ def use_query(
             set_loading(False)
             set_error(None)
 
-    @use_async_effect(dependencies=None)
+    @use_async_effect(dependencies=[should_execute])
     async def schedule_query() -> None:
         """Execute a query when needed."""
         # Make sure we don't re-execute the query unless we're told to
         if not should_execute:
             return
-        set_should_execute(False)
 
         # Execute the query
         await execute_query()
+        set_should_execute(False)
 
     @use_callback
     def refetch() -> None:

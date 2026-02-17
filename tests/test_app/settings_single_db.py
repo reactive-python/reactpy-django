@@ -118,12 +118,7 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {
-        "console": {"class": "logging.StreamHandler"},
-    },
-    "loggers": {
-        "reactpy_django": {"handlers": ["console"], "level": LOG_LEVEL},
-        "reactpy": {"handlers": ["console"], "level": LOG_LEVEL},
-        "django.request": {"handlers": ["console"], "level": LOG_LEVEL},
+        "console": {"class": "logging.StreamHandler", "level": LOG_LEVEL},
     },
 }
 
