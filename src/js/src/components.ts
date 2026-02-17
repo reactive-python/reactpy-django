@@ -10,27 +10,10 @@ export class DjangoForm extends React.Component<DjangoFormProps> {
       event.preventDefault();
       const formData = new FormData(form);
 
-      // Convert the FormData object to a plain object by iterating through it
-      // If duplicate keys are present, convert the value into an array of values
-      const entries = formData.entries();
-      const formDataArray = Array.from(entries);
-      const formDataObject = formDataArray.reduce<Record<string, unknown>>(
-        (acc, [key, value]) => {
-          if (acc[key]) {
-            if (Array.isArray(acc[key])) {
-              acc[key].push(value);
-            } else {
-              acc[key] = [acc[key], value];
-            }
-          } else {
-            acc[key] = value;
-          }
-          return acc;
-        },
-        {},
-      );
+      // Convert the FormData object to a plain object
+      const formObject = Object.fromEntries(formData.entries());
 
-      onSubmitCallback(formDataObject);
+      onSubmitCallback(formObject);
     };
 
     if (form) {

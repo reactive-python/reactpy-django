@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from logging import getLogger
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Union, cast
 from uuid import uuid4
@@ -26,6 +27,7 @@ if TYPE_CHECKING:
 
     from reactpy.types import VdomDict
 
+_logger = getLogger(__name__)
 DjangoForm = component_from_file(
     Path(__file__).parent.parent / "static" / "reactpy_django" / "index.js",
     import_names=("DjangoForm"),
@@ -67,27 +69,34 @@ def _django_form(
     @hooks.use_async_effect(dependencies=[str(submitted_data)])
     async def render_form():
         """Forms must be rendered in an async loop to allow database fields to execute."""
-        if submitted_data:
-            await ensure_async(initialized_form.full_clean, thread_sensitive=thread_sensitive)()
-            success = not initialized_form.errors.as_data()
-            if success and on_success:
-                await ensure_async(on_success, thread_sensitive=thread_sensitive)(form_event)
-            if not success and on_error:
-                await ensure_async(on_error, thread_sensitive=thread_sensitive)(form_event)
-            if success and auto_save and isinstance(initialized_form, ModelForm):
-                await ensure_async(initialized_form.save)()
-                set_submitted_data(None)
 
-        set_rendered_form(
-            await ensure_async(initialized_form.render)(form_template or config.REACTPY_DEFAULT_FORM_TEMPLATE)
-        )
+        _logger.debug(f"Rendering form with submitted data: {submitted_data}")
+        try:
+            if submitted_data:
+                await ensure_async(initialized_form.full_clean, thread_sensitive=thread_sensitive)()
+                success = not initialized_form.errors.as_data()
+                if success and on_success:
+                    await ensure_async(on_success, thread_sensitive=thread_sensitive)(form_event)
+                if not success and on_error:
+                    await ensure_async(on_error, thread_sensitive=thread_sensitive)(form_event)
+                if success and auto_save and isinstance(initialized_form, ModelForm):
+                    await ensure_async(initialized_form.save)()
+                    set_submitted_data(None)
+
+            set_rendered_form(
+                await ensure_async(initialized_form.render)(form_template or config.REACTPY_DEFAULT_FORM_TEMPLATE)
+            )
+        except Exception:
+            _logger.exception("Error during form processing")
+
 
     async def on_submit_callback(new_data: dict[str, Any]):
         """Callback function provided directly to the client side listener. This is responsible for transmitting
         the submitted form data to the server for processing."""
         # The client side listener passes a ReactPy Event object which needs to be
         # converted to a standard dictionary.
-        convert_form_fields(dict(new_data), initialized_form)
+        new_data = dict(new_data)
+        convert_form_fields(new_data, initialized_form)
 
         if on_receive_data:
             new_form_event = FormEventData(
