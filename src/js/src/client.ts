@@ -1,21 +1,35 @@
 import {
-  ReactPyClient,
+  BaseReactPyClient,
   createReconnectingWebSocket,
   type GenericReactPyClientProps,
+  type ReactPyClientInterface,
+  type ReactPyModule,
+  type ReactPyUrls,
 } from "@reactpy/client";
 
-export class ReactPyDjangoClient extends ReactPyClient {
+export class ReactPyDjangoClient
+  extends BaseReactPyClient
+  implements ReactPyClientInterface
+{
+  urls: ReactPyUrls;
+  socket: { current?: WebSocket };
+  mountElement: HTMLElement;
   prerenderElement: HTMLElement | null = null;
   offlineElement: HTMLElement | null = null;
+  private readonly messageQueue: any[] = [];
 
   constructor(props: GenericReactPyClientProps) {
-    super(props);
+    super();
+
+    this.urls = props.urls;
+    this.mountElement = props.mountElement;
     this.prerenderElement = document.getElementById(
       props.mountElement.id + "-prerender",
     );
     this.offlineElement = document.getElementById(
       props.mountElement.id + "-offline",
     );
+
     this.socket = createReconnectingWebSocket({
       url: this.urls.componentUrl,
       readyPromise: this.ready,
@@ -41,5 +55,20 @@ export class ReactPyDjangoClient extends ReactPyClient {
         }
       },
     });
+  }
+
+  sendMessage(message: any): void {
+    if (
+      this.socket.current &&
+      this.socket.current.readyState === WebSocket.OPEN
+    ) {
+      this.socket.current.send(JSON.stringify(message));
+    } else {
+      this.messageQueue.push(message);
+    }
+  }
+
+  loadModule(moduleName: string): Promise<ReactPyModule> {
+    return import(`${this.urls.jsModulesPath}${moduleName}`);
   }
 }

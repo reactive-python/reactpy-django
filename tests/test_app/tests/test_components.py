@@ -535,6 +535,19 @@ class ComponentTests(PlaywrightTestCase):
         string = self.page.query_selector("#router-string")
         assert string.text_content() == "/router/two/<int:value>/<str:value2>/"
 
+    def test_url_router_navigation_state(self):
+        self.page.goto(f"{self.live_server_url}/router/next/1/")
+        uuid1 = self.page.wait_for_selector("#router-uuid").get_attribute("data-uuid")
+        self.page.locator("button").click()
+        self.page.wait_for_selector(f"#router-path[data-path='/router/next/2/']")
+        uuid2 = self.page.wait_for_selector("#router-uuid").get_attribute("data-uuid")
+        assert uuid1 == uuid2
+        self.page.go_back()
+        self.page.wait_for_selector(f"#router-path[data-path='/router/next/1/']")
+        uuid3 = self.page.wait_for_selector("#router-uuid").get_attribute("data-uuid")
+        # When going back, it should also be a new mount if navigation always remounts
+        assert uuid1 == uuid3
+
     #######################
     # Channel Layer Tests #
     #######################

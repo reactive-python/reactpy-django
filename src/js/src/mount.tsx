@@ -20,12 +20,9 @@ export function mountComponent(
   const componentUrl = new URL(`${wsOrigin}/${urlPrefix}/${componentPath}`);
 
   // Embed the initial HTTP path into the WebSocket URL
-  componentUrl.searchParams.append("http_path", window.location.pathname);
+  componentUrl.searchParams.append("path", window.location.pathname);
   if (window.location.search) {
-    componentUrl.searchParams.append(
-      "http_query_string",
-      window.location.search,
-    );
+    componentUrl.searchParams.append("qs", window.location.search);
   }
 
   // HTTP route for JavaScript modules

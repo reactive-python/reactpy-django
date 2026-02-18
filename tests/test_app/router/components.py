@@ -1,5 +1,7 @@
-from reactpy import component, html, use_location
-from reactpy_router import route, use_params, use_search_params
+from uuid import uuid4
+
+from reactpy import component, html, use_location, use_state
+from reactpy_router import link, route, use_params, use_search_params
 from reactpy_router.types import Route
 
 from reactpy_django.router import django_router
@@ -28,6 +30,21 @@ def show_route(path: str, *children: Route) -> Route:
 
 
 @component
+def next_page():
+    url_params = use_params()
+    state, set_state = use_state(uuid4)
+    page = url_params.get("page", 0)
+    next_page = page + 1
+    return html.fragment(
+        display_params("/router/next/<int:page>/"),
+        html.div({"id": "router-uuid", "data-uuid": state.hex}, f"UUID: {state.hex}"),
+        html.button(
+            link({"to": f"/router/next/{next_page}/"}, "Next Page"),
+        ),
+    )
+
+
+@component
 def main():
     return django_router(
         show_route("/router/", show_route("subroute/")),
@@ -39,4 +56,5 @@ def main():
         show_route("/router/uuid/<uuid:value>/"),
         show_route("/router/any/<any:name>"),
         show_route("/router/two/<int:value>/<str:value2>/"),
+        route("/router/next/<int:page>/", next_page()),
     )
