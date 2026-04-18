@@ -4,6 +4,7 @@ from logging import getLogger
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
+import reactpy
 from django import template
 from django.templatetags.static import static
 from django.urls import NoReverseMatch, reverse
@@ -244,7 +245,11 @@ def pyscript_setup(
     return {
         "pyscript_config": mark_safe(
             extend_pyscript_config(
-                extra_py, extra_js, config, {static("reactpy_django/morphdom/morphdom-esm.js"): "morphdom"}
+                extra_py,
+                extra_js,
+                config,
+                {static("reactpy_django/morphdom/morphdom-esm.js"): "morphdom"},
+                static(f"reactpy_django/wheels/reactpy-{reactpy.__version__}-py3-none-any.whl"),
             )
         ),
         "pyscript_layout_handler": mark_safe(PYSCRIPT_LAYOUT_HANDLER),

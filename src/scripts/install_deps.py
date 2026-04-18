@@ -1,9 +1,10 @@
 """
-Development/debug script to parse pyproject.toml to find dependecies then install them in the local
-environment via `uv pip install -U <pkg_names>`
+Development/debug script to parse pyproject.toml to find dependencies, then install them in the
+current Python environment via `python -m uv pip install -U <pkg_names>`.
 """
 
 import subprocess
+import sys
 from pathlib import Path
 
 import toml
@@ -29,8 +30,11 @@ def install_deps():
     pyproject_path = Path(__file__).parent.parent.parent / "pyproject.toml"
     pyproject_data = toml.load(pyproject_path)
     find_deps(pyproject_data)
-    DEPENDENCIES.remove("ruff")  # ruff only exists in dev dependencies for CI purposes.
-    subprocess.run(["uv", "pip", "install", "-U", *DEPENDENCIES], check=False)  # noqa: S607
+    DEPENDENCIES.discard("ruff")  # ruff only exists in dev dependencies for CI purposes.
+    subprocess.run(
+        [sys.executable, "-m", "uv", "pip", "install", "-U", *sorted(DEPENDENCIES)],
+        check=True,
+    )
 
 
 if __name__ == "__main__":

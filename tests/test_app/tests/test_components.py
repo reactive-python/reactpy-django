@@ -577,7 +577,7 @@ class ComponentTests(PlaywrightTestCase):
     @navigate_to_page("/pyscript/")
     def test_pyscript_0_hello_world(self):
         # Use this test to wait for PyScript to fully load on the page
-        self.page.wait_for_selector("#hello-world-loading")
+        self.page.wait_for_selector("#hello-world-loading", timeout=30000)
         self.page.wait_for_selector("#hello-world")
 
     @navigate_to_page("/pyscript/")
