@@ -17,7 +17,7 @@ ALLOWED_HOSTS = ["*"]
 
 # Application definition
 INSTALLED_APPS = [
-    "servestatic.runserver_nostatic",
+    "servestatic",
     "daphne",  # Overrides `runserver` command with an ASGI server
     "django.contrib.admin",
     "django.contrib.auth",

@@ -30,7 +30,7 @@ class BasicForm(forms.Form):
     typed_multiple_choice_field = forms.TypedMultipleChoiceField(
         label="typed multiple choice", choices=[("1", "One"), ("2", "Two")]
     )
-    url_field = forms.URLField(label="URL")
+    url_field = forms.URLField(label="URL", assume_scheme="http")
     uuid_field = forms.UUIDField(label="UUID")
     combo_field = forms.ComboField(label="combo", fields=[forms.CharField(), forms.EmailField()])
     password_field = forms.CharField(label="password", widget=forms.PasswordInput)
