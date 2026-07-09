@@ -32,7 +32,7 @@ def show_route(path: str, *children: Route) -> Route:
 @component
 def next_page():
     url_params = use_params()
-    state, set_state = use_state(uuid4)
+    state, _set_state = use_state(uuid4)
     page = url_params.get("page", 0)
     next_page = page + 1
     return html.fragment(
