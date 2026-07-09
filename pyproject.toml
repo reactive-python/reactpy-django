@@ -44,8 +44,8 @@ classifiers = [
 dependencies = [
   "channels>=4.0.0",
   "django>=4.2.0",
-  "reactpy>=2.0.0b10, <3.0.0",
-  "reactpy-router>2.0.0",
+  "reactpy>=2.0.0b12, <3.0.0",
+  "reactpy-router>=3.0.0b1, <4.0.0",
   "dill>=0.3.5",
   "orjson>=3.6.0",
   "typing_extensions",
@@ -177,7 +177,7 @@ template = "docs"
 extra-dependencies = [
   "mkdocs",
   "mkdocs-git-revision-date-localized-plugin",
-  "mkdocs-material==9.4.0",
+  "mkdocs-material",
   "mkdocs-include-markdown-plugin",
   "mkdocs-spellcheck[all]",
   "mkdocs-git-authors-plugin",

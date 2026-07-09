@@ -6,7 +6,7 @@ environment via `uv pip install -U <pkg_names>`
 import subprocess
 from pathlib import Path
 
-import toml
+import tomllib as toml
 
 DEPENDENCIES = set()
 
@@ -26,10 +26,11 @@ def find_deps(data):
 
 
 def install_deps():
-    pyproject_path = Path(__file__).parent.parent.parent / "pyproject.toml"
-    pyproject_data = toml.load(pyproject_path)
+    pyproject_path = Path(__file__).parent.parent / "pyproject.toml"
+    with open(pyproject_path, "rb") as f:
+        pyproject_data = toml.load(f)
     find_deps(pyproject_data)
-    DEPENDENCIES.remove("ruff")  # ruff only exists in dev dependencies for CI purposes.
+    DEPENDENCIES.discard("ruff")  # ruff only exists in dev dependencies for CI purposes.
     subprocess.run(["uv", "pip", "install", "-U", *DEPENDENCIES], check=False)  # noqa: S607
 
 
