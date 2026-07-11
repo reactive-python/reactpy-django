@@ -12,7 +12,7 @@ import threading
 
 import pytest
 
-from reactpy_django import _static_wheels
+from reactpy_django import _static_wheels  # noqa: PLC2701
 
 
 @pytest.fixture

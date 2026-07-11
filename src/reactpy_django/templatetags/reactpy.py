@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import contextlib
 import json
 from logging import getLogger
 from typing import TYPE_CHECKING
@@ -244,33 +243,20 @@ def pyscript_setup(
     """
     from reactpy_django.config import DJANGO_DEBUG
 
-    # Override the default packages list to:
-    #   - Serve the local ReactPy wheel via Django static files
-    #     (rather than reactpy_django's static URL, which is not routed by Django).
-    #   - Drop ``ssl``, which is a Pyodide built-in module and is no longer
-    #     installable as a pure-Python wheel (see https://github.com/pyscript/pyscript/issues/2282).
-    # ``config`` is merged into the PyScript config by ``extend_pyscript_config``,
-    # so passing ``packages`` here replaces the default list entirely.
-    merged_packages = [
-        static(f"reactpy_django/wheels/reactpy-{reactpy.__version__}-py3-none-any.whl"),
-        "jsonpointer==3.*",
-    ]
-    merged_packages.extend(extra_py)
-    merged_config = {"packages": merged_packages}
-    if isinstance(config, dict):
-        merged_config.update(config)
-    else:
-        with contextlib.suppress(TypeError, ValueError):
-            merged_config.update(json.loads(config))
+    pyscript_config_str = extend_pyscript_config(
+        list(extra_py),
+        extra_js,
+        config,
+        {static("reactpy_django/morphdom/morphdom-esm.js"): "morphdom"},
+    )
+    pyscript_config = json.loads(pyscript_config_str)
+    local_reactpy_wheel = static(f"reactpy_django/wheels/reactpy-{reactpy.__version__}-py3-none-any.whl")
+    for i, pkg in enumerate(pyscript_config["packages"]):
+        if "reactpy" in pkg.lower():
+            pyscript_config["packages"][i] = local_reactpy_wheel
+            break
     return {
-        "pyscript_config": mark_safe(
-            extend_pyscript_config(
-                [],
-                extra_js,
-                merged_config,
-                {static("reactpy_django/morphdom/morphdom-esm.js"): "morphdom"},
-            )
-        ),
+        "pyscript_config": mark_safe(json.dumps(pyscript_config)),
         "pyscript_layout_handler": mark_safe(PYSCRIPT_LAYOUT_HANDLER),
         "django_debug": DJANGO_DEBUG,
     }
