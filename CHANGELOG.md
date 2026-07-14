@@ -36,7 +36,6 @@ Don't forget to remove deprecated code on each major release!
 - To improve performance, `preact` is now used as the default client-side library instead of `react`.
 - ReactPy v2 compatibility! This release aligns `reactpy-django` with ReactPy v2's API.
     - Refactored `DjangoResolver` to extend `ReactPyResolver` instead of `StarletteResolver`.
-    - Replaced `reactpy_router.resolvers.StarletteResolver` with `ReactPyResolver` for Django URL routing.
     - Replaced `web.module_from_file`/`web.export` with `reactjs.component_from_file`.
     - Replaced `reactpy.backend.types` and `reactpy.core.types` imports with `reactpy.types`.
     - Renamed `Location.pathname` to `Location.path` and `Location.search` to `Location.query_string`.
