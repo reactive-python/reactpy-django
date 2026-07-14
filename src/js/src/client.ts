@@ -1,28 +1,40 @@
 import {
   BaseReactPyClient,
-  type GenericReactPyClientProps,
   type ReactPyClientInterface,
   type ReactPyModule,
-  type ReactPyUrls,
 } from "@reactpy/client";
-import { createReconnectingWebSocket } from "./websocket";
+import { PageClient } from "./pageClient";
+import type { ComponentConfig } from "./mount";
+
+export type ReactPyDjangoClientProps = {
+  rootId: string;
+  pageClient: PageClient;
+  mountElement: HTMLElement;
+  jsModulesPath: string;
+  componentConfig: ComponentConfig;
+};
 
 export class ReactPyDjangoClient
   extends BaseReactPyClient
   implements ReactPyClientInterface
 {
-  urls: ReactPyUrls;
-  socket: { current?: WebSocket };
-  mountElement: HTMLElement;
-  prerenderElement: HTMLElement | null = null;
-  offlineElement: HTMLElement | null = null;
-  private readonly messageQueue: any[] = [];
+  readonly rootId: string;
+  readonly pageClient: PageClient;
+  readonly mountElement: HTMLElement;
+  readonly prerenderElement: HTMLElement | null = null;
+  readonly offlineElement: HTMLElement | null = null;
+  readonly jsModulesPath: string;
+  private readonly componentConfig: ComponentConfig;
 
-  constructor(props: GenericReactPyClientProps) {
+  constructor(props: ReactPyDjangoClientProps) {
     super();
 
-    this.urls = props.urls;
+    this.rootId = props.rootId;
+    this.pageClient = props.pageClient;
     this.mountElement = props.mountElement;
+    this.jsModulesPath = props.jsModulesPath;
+    this.componentConfig = props.componentConfig;
+
     this.prerenderElement = document.getElementById(
       props.mountElement.id + "-prerender",
     );
@@ -30,13 +42,17 @@ export class ReactPyDjangoClient
       props.mountElement.id + "-offline",
     );
 
-    this.socket = createReconnectingWebSocket({
-      url: this.urls.componentUrl,
-      readyPromise: this.ready,
-      ...props.reconnectOptions,
-      // onMessage: Use standard ReactPy message routing
-      onMessage: async ({ data }) => this.handleIncoming(JSON.parse(data)),
-      // onClose: If offlineElement exists, show it and hide the mountElement/prerenderElement
+    // Register with the shared page client for message routing
+    this.pageClient.registerComponent(this.rootId, {
+      handleIncoming: (message: any) => this.handleIncoming(message),
+      onOpen: () => {
+        // Re-mount the component when the WebSocket reconnects
+        this.sendMountMessage();
+        if (this.offlineElement && this.mountElement) {
+          this.offlineElement.hidden = true;
+          this.mountElement.hidden = false;
+        }
+      },
       onClose: () => {
         if (this.prerenderElement) {
           this.prerenderElement.remove();
@@ -47,28 +63,29 @@ export class ReactPyDjangoClient
           this.offlineElement.hidden = false;
         }
       },
-      // onOpen: If offlineElement exists, hide it and show the mountElement
-      onOpen: () => {
-        if (this.offlineElement && this.mountElement) {
-          this.offlineElement.hidden = true;
-          this.mountElement.hidden = false;
-        }
-      },
+    });
+  }
+
+  /** Send a mount-component message to the server so it constructs this component. */
+  sendMountMessage(): void {
+    this.pageClient.sendMessage(this.rootId, {
+      type: "mount-component",
+      rootId: this.rootId,
+      dottedPath: this.componentConfig.dottedPath,
+      componentUuid: this.componentConfig.componentUuid,
+      hasArgs: Boolean(this.componentConfig.hasArgs),
     });
   }
 
   sendMessage(message: any): void {
-    if (
-      this.socket.current &&
-      this.socket.current.readyState === WebSocket.OPEN
-    ) {
-      this.socket.current.send(JSON.stringify(message));
-    } else {
-      this.messageQueue.push(message);
-    }
+    this.pageClient.sendMessage(this.rootId, message);
   }
 
   loadModule(moduleName: string): Promise<ReactPyModule> {
-    return import(`${this.urls.jsModulesPath}${moduleName}`);
+    return import(`${this.jsModulesPath}${moduleName}`);
+  }
+
+  destroy(): void {
+    this.pageClient.unregisterComponent(this.rootId);
   }
 }

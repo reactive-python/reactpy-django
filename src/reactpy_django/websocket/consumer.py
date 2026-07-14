@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import copy
 import logging
 import traceback
 from datetime import timedelta
@@ -45,17 +46,22 @@ BACKHAUL_THREAD = Thread(target=start_backhaul_loop, daemon=True, name="ReactPyB
 
 
 class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
-    """Communicates with the browser to perform actions on-demand."""
+    """Communicates with the browser to perform actions on-demand.
+
+    Uses a single WebSocket connection per client webpage to serve
+    multiple ReactPy components, reducing connection overhead.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # New WebsocketConsumer attributes created by ReactPy
-        self.dispatcher: Future | asyncio.Task
-        self.threaded: bool
-        self.recv_queue: asyncio.Queue
-        self.dotted_path: str
-        self.component_session: models.ComponentSession | None = None
+        # Shared state across all components on this WebSocket
+        self.threaded: bool = False
+        self.component_queues: dict[str, asyncio.Queue] = {}
+        self.component_sessions: dict[str, models.ComponentSession | None] = {}
+        self.component_tasks: dict[str, Future | asyncio.Task] = {}
+        self.page_path: str = ""
+        self.page_query_string: str = ""
 
     async def connect(self) -> None:
         """The browser has connected."""
@@ -66,6 +72,11 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         )
 
         await super().connect()
+
+        # Parse page-level info from query string (shared across all components)
+        query_string = parse_qs(self.scope["query_string"].decode(), strict_parsing=True)
+        self.page_path = query_string.get("path", [""])[0] or "/"
+        self.page_query_string = query_string.get("qs", [""])[0]
 
         # Automatically re-login the user, if needed
         user = self.scope.get("user")
@@ -85,31 +96,32 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                     f"ReactPy has failed to save scope['session']!\n{traceback.format_exc()}",
                 )
 
-        # Start the component dispatcher
+        # No longer starting a single dispatcher — each component gets its own
+        # rendering task when a "mount-component" message is received.
         self.threaded = REACTPY_BACKHAUL_THREAD
-        if self.threaded:
-            if not BACKHAUL_THREAD.is_alive():
-                await asyncio.to_thread(_logger.debug, "Starting ReactPy backhaul thread.")
-                BACKHAUL_THREAD.start()
-            self.dispatcher = asyncio.run_coroutine_threadsafe(self.run_dispatcher(), BACKHAUL_LOOP)
-        else:
-            self.dispatcher = asyncio.create_task(self.run_dispatcher())
+        self.scope["reactpy"] = {"id": str(id(self))}  # type: ignore[reportGeneralTypeIssues]
 
     async def disconnect(self, code: int) -> None:
         """The browser has disconnected."""
         from reactpy_django.config import REACTPY_CLEAN_INTERVAL
 
-        self.dispatcher.cancel()
+        # Cancel all running component rendering tasks
+        for task in self.component_tasks.values():
+            task.cancel()
+        self.component_tasks.clear()
 
-        # Update the component's last_accessed timestamp
-        if self.component_session:
-            try:
-                await self.component_session.asave()
-            except Exception:
-                await asyncio.to_thread(
-                    _logger.error,
-                    f"ReactPy has failed to save component session!\n{traceback.format_exc()}",
-                )
+        # Save all component sessions
+        for session in self.component_sessions.values():
+            if session:
+                try:
+                    await session.asave()
+                except Exception:
+                    await asyncio.to_thread(
+                        _logger.error,
+                        f"ReactPy has failed to save component session!\n{traceback.format_exc()}",
+                    )
+        self.component_sessions.clear()
+        self.component_queues.clear()
 
         # Queue a cleanup, if needed
         if REACTPY_CLEAN_INTERVAL is not None:
@@ -124,11 +136,31 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         await super().disconnect(code)
 
     async def receive_json(self, content: Any, **_) -> None:
-        """Receive a message from the browser. Typically, messages are event signals."""
-        if self.threaded:
-            asyncio.run_coroutine_threadsafe(self.recv_queue.put(content), BACKHAUL_LOOP)
-        else:
-            await self.recv_queue.put(content)
+        """Receive a message from the browser.
+
+        Handles two message types:
+        - ``mount-component``: Start a new component rendering task.
+        - ``layout-event`` (rootId present): Route the event to the
+          specific component's event queue.
+        """
+        if content.get("type") == "mount-component":
+            if self.threaded:
+                if not BACKHAUL_THREAD.is_alive():
+                    await asyncio.to_thread(_logger.debug, "Starting ReactPy backhaul thread.")
+                    BACKHAUL_THREAD.start()
+
+                future: Future = asyncio.run_coroutine_threadsafe(self._run_component(content), BACKHAUL_LOOP)
+                self.component_tasks[content["rootId"]] = future
+            else:
+                task = asyncio.create_task(self._run_component(content))
+                self.component_tasks[content["rootId"]] = task
+        elif content.get("rootId"):
+            root_id = content["rootId"]
+            if root_id in self.component_queues:
+                if self.threaded:
+                    asyncio.run_coroutine_threadsafe(self.component_queues[root_id].put(content), BACKHAUL_LOOP)
+                else:
+                    await self.component_queues[root_id].put(content)
 
     @classmethod
     async def decode_json(cls, text_data):
@@ -138,9 +170,14 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
     async def encode_json(cls, content):
         return orjson.dumps(content).decode()
 
-    async def run_dispatcher(self):
-        """Runs the main loop that performs component rendering tasks."""
-        # TODO: Figure out why exceptions raised in this method are not being printed to the console.
+    async def _run_component(self, content: dict[str, Any]) -> None:
+        """Construct a component and run its ``serve_layout`` loop.
+
+        Each component gets its own event queue, isolated scope, and runs
+        independently within the shared WebSocket connection. Layout updates
+        are tagged with a ``rootId`` so the client can route them to the
+        correct component.
+        """
         from reactpy_django import models
         from reactpy_django.auth.components import auth_manager, root_manager
         from reactpy_django.config import (
@@ -148,51 +185,57 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             REACTPY_SESSION_MAX_AGE,
         )
 
-        scope = self.scope
-        self.dotted_path = scope["url_route"]["kwargs"]["dotted_path"]  # type: ignore[reportTypedDictNotRequiredAccess]
-        uuid = scope["url_route"]["kwargs"].get("uuid")  # type: ignore[reportTypedDictNotRequiredAccess]
-        has_args = scope["url_route"]["kwargs"].get("has_args")  # type: ignore[reportTypedDictNotRequiredAccess]
+        root_id: str = content["rootId"]
+        dotted_path: str = content["dottedPath"]
+        uuid: str = content.get("componentUuid", root_id)
+        has_args: bool = content.get("hasArgs", False)
+
+        # Maintain backward compatibility for user code that checks
+        # ws.carrier.dotted_path
+        self.dotted_path = dotted_path
+
+        # Each component needs its own isolated scope copy to prevent concurrent
+        # component tasks from overwriting each other's scope["reactpy"] entries.
+        scope = copy.copy(self.scope)
         scope["reactpy"] = {"id": str(uuid)}  # type: ignore[reportGeneralTypeIssues]
-        query_string = parse_qs(scope["query_string"].decode(), strict_parsing=True)
-        http_path = query_string.get("path", [""])[0]
-        http_query_string = query_string.get("qs", [""])[0]
-        self.recv_queue = asyncio.Queue()
-        connection = Connection(  # For `use_connection`
-            scope=cast("dict[str, Any]", scope),
-            location=Location(path=http_path, query_string=http_query_string),
-            carrier=self,
-        )
         now = timezone.now()
         component_session_args: Sequence[Any] = ()
         component_session_kwargs: MutableMapping[str, Any] = {}
 
+        connection = Connection(
+            scope=cast("dict[str, Any]", scope),
+            location=Location(path=self.page_path, query_string=self.page_query_string),
+            carrier=self,
+        )
+
         # Verify the component has already been registered
         try:
-            root_component_constructor = REACTPY_REGISTERED_COMPONENTS[self.dotted_path]
+            root_component_constructor = REACTPY_REGISTERED_COMPONENTS[dotted_path]
         except KeyError:
             await asyncio.to_thread(
                 _logger.warning,
-                f"Attempt to access invalid ReactPy component: {self.dotted_path!r}",
+                f"Attempt to access invalid ReactPy component: {dotted_path!r}",
             )
             return
 
-        # Construct the component. This may require fetching the component's args/kwargs from the database.
+        # Construct the component. This may require fetching the component's
+        # args/kwargs from the database.
         try:
             if has_args:
-                self.component_session = await models.ComponentSession.objects.aget(
+                component_session = await models.ComponentSession.objects.aget(
                     uuid=uuid,
                     last_accessed__gt=now - timedelta(seconds=REACTPY_SESSION_MAX_AGE),
                 )
-                params: ComponentParams = dill.loads(self.component_session.params)
+                params: ComponentParams = dill.loads(component_session.params)
                 component_session_args = params.args
                 component_session_kwargs = params.kwargs
+                self.component_sessions[root_id] = component_session
 
-            # Generate the initial component instance
             root_component = root_component_constructor(*component_session_args, **component_session_kwargs)
         except models.ComponentSession.DoesNotExist:
             await asyncio.to_thread(
                 _logger.warning,
-                f"Component session for '{self.dotted_path}:{uuid}' not found. The "
+                f"Component session for '{dotted_path}:{uuid}' not found. The "
                 "session may have already expired beyond REACTPY_SESSION_MAX_AGE. "
                 "If you are using a custom `host`, you may have forgotten to provide "
                 "args/kwargs.",
@@ -207,6 +250,15 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
             )
             return
 
+        # Create a dedicated event queue for this component
+        recv_queue: asyncio.Queue = asyncio.Queue()
+        self.component_queues[root_id] = recv_queue
+
+        # Wrap outgoing messages with the rootId so the client can route them
+        async def send_wrapper(message: Any) -> None:
+            message["rootId"] = root_id
+            await self.send_json(message)
+
         # Start the ReactPy component rendering loop
         with contextlib.suppress(Exception):
             await serve_layout(
@@ -217,6 +269,11 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                         value=connection,
                     )
                 ),
-                self.send_json,
-                self.recv_queue.get,
+                send_wrapper,
+                recv_queue.get,
             )
+
+        # Cleanup after the component rendering loop finishes
+        self.component_queues.pop(root_id, None)
+        self.component_sessions.pop(root_id, None)
+        self.component_tasks.pop(root_id, None)
