@@ -28,8 +28,6 @@ if TYPE_CHECKING:
     from collections.abc import MutableMapping, Sequence
     from concurrent.futures import Future
 
-    from django.contrib.auth.models import AbstractUser
-
     from reactpy_django import models
     from reactpy_django.types import ComponentParams
 
@@ -160,7 +158,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         http_query_string = query_string.get("qs", [""])[0]
         self.recv_queue = asyncio.Queue()
         connection = Connection(  # For `use_connection`
-            scope=cast(dict[str, Any], scope),
+            scope=cast("dict[str, Any]", scope),
             location=Location(path=http_path, query_string=http_query_string),
             carrier=self,
         )

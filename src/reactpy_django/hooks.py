@@ -77,7 +77,7 @@ def use_scope() -> dict[str, Any]:
     scope = _use_scope()
 
     if isinstance(scope, dict):
-        return cast(dict[str, Any], scope)
+        return cast("dict[str, Any]", scope)
 
     msg = f"Expected scope to be a dict, got {type(scope)}"
     raise TypeError(msg)

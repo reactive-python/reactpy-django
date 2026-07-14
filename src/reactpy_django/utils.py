@@ -43,7 +43,7 @@ if TYPE_CHECKING:
     from collections.abc import Awaitable, Mapping, Sequence
 
     from django.views import View
-    from reactpy.types import ComponentConstructor, VdomDict
+    from reactpy.types import ComponentConstructor
 
     from reactpy_django.types import FuncParams, Inferred
 
