@@ -114,14 +114,16 @@ def _django_form(
     if not rendered_form:
         return None
 
+    form_props = {
+        "id": f"reactpy-{uuid}",
+        # Intercept the form submission to prevent the browser from navigating
+        "onSubmit": event(lambda _: None, prevent_default=True),
+    }
+    if on_change:
+        form_props["onChange"] = _on_change
+
     return html.form(
-        extra_props
-        | {
-            "id": f"reactpy-{uuid}",
-            # Intercept the form submission to prevent the browser from navigating
-            "onSubmit": event(lambda _: None, prevent_default=True),
-            "onChange": _on_change,
-        },
+        extra_props | form_props,
         DjangoForm({"onSubmitCallback": on_submit_callback, "formId": f"reactpy-{uuid}"}),
         *top_children,
         utils.string_to_reactpy(

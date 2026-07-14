@@ -7,6 +7,7 @@ from uuid import uuid4
 import pytest
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 from playwright.sync_api import expect
+from reactpy.testing import DEFAULT_TYPE_DELAY as DELAY
 
 from reactpy_django.models import ComponentSession
 
@@ -28,7 +29,7 @@ class ComponentTests(PlaywrightTestCase):
     def test_component_counter(self):
         for i in range(5):
             self.page.locator(f"#counter-num[data-count={i}]")
-            self.page.locator("#counter-inc").click()
+            self.page.locator("#counter-inc").click(delay=DELAY)
 
     @navigate_to_page("/")
     def test_component_parametrized_component(self):
@@ -100,10 +101,10 @@ class ComponentTests(PlaywrightTestCase):
         item_ids = list(range(5))
 
         for i in item_ids:
-            todo_input.type(f"sample-{i}")
-            todo_input.press("Enter")
+            todo_input.type(f"sample-{i}", delay=DELAY)
+            todo_input.press("Enter", delay=DELAY)
             self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}")
-            self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}-checkbox").click()
+            self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}-checkbox").click(delay=DELAY)
             with pytest.raises(PlaywrightTimeoutError):
                 self.page.wait_for_selector(f"#todo-list #todo-item-sample-{i}", timeout=1)
 
@@ -114,10 +115,10 @@ class ComponentTests(PlaywrightTestCase):
         item_ids = list(range(5))
 
         for i in item_ids:
-            todo_input.type(f"sample-{i}")
-            todo_input.press("Enter")
+            todo_input.type(f"sample-{i}", delay=DELAY)
+            todo_input.press("Enter", delay=DELAY)
             self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}")
-            self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}-checkbox").click()
+            self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}-checkbox").click(delay=DELAY)
             with pytest.raises(PlaywrightTimeoutError):
                 self.page.wait_for_selector(f"#async-todo-list #todo-item-sample-{i}", timeout=1)
 
@@ -144,7 +145,7 @@ class ComponentTests(PlaywrightTestCase):
     @navigate_to_page("/")
     def _click_btn_and_check_success(self, name):
         self.page.locator(f"#{name}:not([data-success=true])").wait_for()
-        self.page.wait_for_selector(f"#{name}_btn").click()
+        self.page.wait_for_selector(f"#{name}_btn").click(delay=DELAY)
         self.page.locator(f"#{name}[data-success=true]").wait_for()
 
     @navigate_to_page("/")
@@ -240,42 +241,42 @@ class ComponentTests(PlaywrightTestCase):
         assert "Data: None" in user_data_div.text_content()
 
         # Test first user's data
-        login_1.click()
+        login_1.click(delay=DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_1]"
         )
         assert "Data: {}" in user_data_div.text_content()
-        text_input.type("test")
-        text_input.press("Enter")
+        text_input.type("test", delay=DELAY)
+        text_input.press("Enter", delay=DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=true][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_1]"
         )
         assert "Data: {'test': 'test'}" in user_data_div.text_content()
 
         # Test second user's data
-        login_2.click()
+        login_2.click(delay=DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_2]"
         )
         assert "Data: {}" in user_data_div.text_content()
-        text_input.press("Control+A")
-        text_input.press("Backspace")
-        text_input.type("test 2")
-        text_input.press("Enter")
+        text_input.press("Control+A", delay=DELAY)
+        text_input.press("Backspace", delay=DELAY)
+        text_input.type("test 2", delay=DELAY)
+        text_input.press("Enter", delay=DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=true][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_2]"
         )
         assert "Data: {'test 2': 'test 2'}" in user_data_div.text_content()
 
         # Attempt to clear data
-        clear.click()
+        clear.click(delay=DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_2]"
         )
         assert "Data: {}" in user_data_div.text_content()
 
         # Attempt to logout
-        logout.click()
+        logout.click(delay=DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data[data-success=false][data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=AnonymousUser]"
         )
@@ -294,13 +295,13 @@ class ComponentTests(PlaywrightTestCase):
         assert "Data: None" in user_data_div.text_content()
 
         # Test first user's data
-        login_3.click()
+        login_3.click(delay=DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_3]"
         )
         assert "Data: {'default1': 'value', 'default2': 'value2', 'default3': 'value3'}" in user_data_div.text_content()
-        text_input.type("test")
-        text_input.press("Enter")
+        text_input.type("test", delay=DELAY)
+        text_input.press("Enter", delay=DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_3]"
         )
@@ -310,7 +311,7 @@ class ComponentTests(PlaywrightTestCase):
         )
 
         # Attempt to clear data
-        clear.click()
+        clear.click(delay=DELAY)
         user_data_div = self.page.wait_for_selector(
             "#use-user-data-with-default[data-fetch-error=false][data-mutation-error=false][data-loading=false][data-username=user_3]"
         )
@@ -323,25 +324,25 @@ class ComponentTests(PlaywrightTestCase):
         uuid = self.page.wait_for_selector("#use-auth").get_attribute("data-uuid")
         assert len(uuid) == 36
 
-        self.page.wait_for_selector("#use-auth .login").click()
+        self.page.wait_for_selector("#use-auth .login").click(delay=DELAY)
 
         # Wait for #use-auth[data-username="user_4"] to appear
         self.page.wait_for_selector("#use-auth[data-username='user_4']")
         self.page.wait_for_selector(f"#use-auth[data-uuid='{uuid}']")
 
         # Press disconnect and wait for #use-auth[data-uuid=...] to disappear
-        self.page.wait_for_selector("#use-auth .disconnect").click()
+        self.page.wait_for_selector("#use-auth .disconnect").click(delay=DELAY)
         expect(self.page.locator(f"#use-auth[data-uuid='{uuid}']")).to_have_count(0)
 
         # Double check that the same user is logged in
         self.page.wait_for_selector("#use-auth[data-username='user_4']")
 
         # Press logout and wait for #use-auth[data-username="AnonymousUser"] to appear
-        self.page.wait_for_selector("#use-auth .logout").click()
+        self.page.wait_for_selector("#use-auth .logout").click(delay=DELAY)
         self.page.wait_for_selector("#use-auth[data-username='AnonymousUser']")
 
         # Press disconnect and wait for #use-auth[data-uuid=...] to disappear
-        self.page.wait_for_selector("#use-auth .disconnect").click()
+        self.page.wait_for_selector("#use-auth .disconnect").click(delay=DELAY)
         expect(self.page.locator(f"#use-auth[data-uuid='{uuid}']")).to_have_count(0)
 
         # Double check that the user stayed logged out
@@ -355,14 +356,14 @@ class ComponentTests(PlaywrightTestCase):
     #     uuid = self.page.wait_for_selector("#use-auth-no-rerender").get_attribute("data-uuid")
     #     assert len(uuid) == 36
 
-    #     self.page.wait_for_selector("#use-auth-no-rerender .login").click()
+    #     self.page.wait_for_selector("#use-auth-no-rerender .login").click(delay=DELAY)
 
     #     # Make sure #use-auth[data-username="user_5"] does not appear
     #     with pytest.raises(PlaywrightTimeoutError):
     #         self.page.wait_for_selector("#use-auth-no-rerender[data-username='user_5']", timeout=1)
 
     #     # Press disconnect and see if #use-auth[data-username="user_5"] appears
-    #     self.page.wait_for_selector("#use-auth-no-rerender .disconnect").click()
+    #     self.page.wait_for_selector("#use-auth-no-rerender .disconnect").click(delay=DELAY)
     #     self.page.wait_for_selector("#use-auth-no-rerender[data-username='user_5']")
 
     #     # Press logout and make sure #use-auth[data-username="AnonymousUser"] does not appear
@@ -370,7 +371,7 @@ class ComponentTests(PlaywrightTestCase):
     #         self.page.wait_for_selector("#use-auth-no-rerender[data-username='AnonymousUser']", timeout=1)
 
     #     # Press disconnect and see if #use-auth[data-username="AnonymousUser"] appears
-    #     self.page.wait_for_selector("#use-auth-no-rerender .disconnect").click()
+    #     self.page.wait_for_selector("#use-auth-no-rerender .disconnect").click(delay=DELAY)
 
     @navigate_to_page("/")
     def test_component_use_rerender(self):
@@ -378,7 +379,7 @@ class ComponentTests(PlaywrightTestCase):
         assert len(initial_uuid) == 36
 
         rerender_button = self.page.wait_for_selector("#use-rerender button")
-        rerender_button.click()
+        rerender_button.click(delay=DELAY)
 
         # Wait for #use-rerender[data-uuid=...] to disappear
         expect(self.page.locator(f"#use-rerender[data-uuid='{initial_uuid}']")).to_have_count(0)
@@ -554,14 +555,14 @@ class ComponentTests(PlaywrightTestCase):
     @navigate_to_page("/channel-layers/")
     def test_channel_layer_components(self):
         sender = self.page.wait_for_selector("#sender")
-        sender.type("test")
-        sender.press("Enter")
+        sender.type("test", delay=DELAY)
+        sender.press("Enter", delay=DELAY)
         receiver = self.page.wait_for_selector("#receiver[data-message='test']")
         assert receiver is not None
 
         sender = self.page.wait_for_selector("#group-sender")
-        sender.type("1234")
-        sender.press("Enter")
+        sender.type("1234", delay=DELAY)
+        sender.press("Enter", delay=DELAY)
         receiver_1 = self.page.wait_for_selector("#group-receiver-1[data-message='1234']")
         receiver_2 = self.page.wait_for_selector("#group-receiver-2[data-message='1234']")
         receiver_3 = self.page.wait_for_selector("#group-receiver-3[data-message='1234']")
@@ -592,11 +593,11 @@ class ComponentTests(PlaywrightTestCase):
     def test_pyscript_1_counter(self):
         self.page.wait_for_selector("#counter")
         self.page.wait_for_selector("#counter pre[data-value='0']")
-        self.page.wait_for_selector("#counter .plus").click()
+        self.page.wait_for_selector("#counter .plus").click(delay=DELAY)
         self.page.wait_for_selector("#counter pre[data-value='1']")
-        self.page.wait_for_selector("#counter .plus").click()
+        self.page.wait_for_selector("#counter .plus").click(delay=DELAY)
         self.page.wait_for_selector("#counter pre[data-value='2']")
-        self.page.wait_for_selector("#counter .minus").click()
+        self.page.wait_for_selector("#counter .minus").click(delay=DELAY)
         self.page.wait_for_selector("#counter pre[data-value='1']")
 
     @navigate_to_page("/pyscript/")
@@ -604,24 +605,24 @@ class ComponentTests(PlaywrightTestCase):
         self.page.wait_for_selector("#parent")
         self.page.wait_for_selector("#child")
         self.page.wait_for_selector("#child pre[data-value='0']")
-        self.page.wait_for_selector("#child .plus").click()
+        self.page.wait_for_selector("#child .plus").click(delay=DELAY)
         self.page.wait_for_selector("#child pre[data-value='1']")
-        self.page.wait_for_selector("#child .plus").click()
+        self.page.wait_for_selector("#child .plus").click(delay=DELAY)
         self.page.wait_for_selector("#child pre[data-value='2']")
-        self.page.wait_for_selector("#child .minus").click()
+        self.page.wait_for_selector("#child .minus").click(delay=DELAY)
         self.page.wait_for_selector("#child pre[data-value='1']")
 
     @navigate_to_page("/pyscript/")
     def test_pyscript_1_server_side_parent_with_toggle(self):
         self.page.wait_for_selector("#parent-toggle")
-        self.page.wait_for_selector("#parent-toggle button").click()
+        self.page.wait_for_selector("#parent-toggle button").click(delay=DELAY)
         self.page.wait_for_selector("#parent-toggle")
         self.page.wait_for_selector("#parent-toggle pre[data-value='0']")
-        self.page.wait_for_selector("#parent-toggle .plus").click()
+        self.page.wait_for_selector("#parent-toggle .plus").click(delay=DELAY)
         self.page.wait_for_selector("#parent-toggle pre[data-value='1']")
-        self.page.wait_for_selector("#parent-toggle .plus").click()
+        self.page.wait_for_selector("#parent-toggle .plus").click(delay=DELAY)
         self.page.wait_for_selector("#parent-toggle pre[data-value='2']")
-        self.page.wait_for_selector("#parent-toggle .minus").click()
+        self.page.wait_for_selector("#parent-toggle .minus").click(delay=DELAY)
         self.page.wait_for_selector("#parent-toggle pre[data-value='1']")
 
     @navigate_to_page("/pyscript/")
@@ -735,7 +736,7 @@ class ComponentTests(PlaywrightTestCase):
         self.page.wait_for_selector("#id_password_field")
         self.page.wait_for_selector("#id_model_choice_field")
         self.page.wait_for_selector("#id_model_multiple_choice_field")
-        self.page.wait_for_selector("input[type=submit]").click()
+        self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
         self.page.wait_for_selector(".errorlist")
 
         # Submitting an empty form should result in 22 error elements.
@@ -743,35 +744,35 @@ class ComponentTests(PlaywrightTestCase):
         assert len(self.page.query_selector_all(".errorlist")) == 22
 
         # Fill out the form
-        self.page.wait_for_selector("#id_boolean_field").click()
+        self.page.wait_for_selector("#id_boolean_field").click(delay=DELAY)
         expect(self.page.locator("#id_boolean_field")).to_be_checked()
 
-        self.page.locator("#id_char_field").type("test")
+        self.page.locator("#id_char_field").type("test", delay=DELAY)
         self.page.locator("#id_choice_field").select_option("2")
-        self.page.locator("#id_date_field").type("2021-01-01")
-        self.page.locator("#id_date_time_field").type("2021-01-01 01:01:00")
-        self.page.locator("#id_decimal_field").type("0.123")
-        self.page.locator("#id_duration_field").type("1")
-        self.page.locator("#id_email_field").type("test@example.com")
+        self.page.locator("#id_date_field").type("2021-01-01", delay=DELAY)
+        self.page.locator("#id_date_time_field").type("2021-01-01 01:01:00", delay=DELAY)
+        self.page.locator("#id_decimal_field").type("0.123", delay=DELAY)
+        self.page.locator("#id_duration_field").type("1", delay=DELAY)
+        self.page.locator("#id_email_field").type("test@example.com", delay=DELAY)
         file_path_field_options = self.page.query_selector_all("#id_file_path_field option")
         file_path_field_values: list[str] = [option.get_attribute("value") for option in file_path_field_options]
         self.page.locator("#id_file_path_field").select_option(file_path_field_values[1])
-        self.page.locator("#id_float_field").type("1.2345")
-        self.page.locator("#id_generic_ip_address_field").type("127.0.0.1")
-        self.page.locator("#id_integer_field").type("123")
+        self.page.locator("#id_float_field").type("1.2345", delay=DELAY)
+        self.page.locator("#id_generic_ip_address_field").type("127.0.0.1", delay=DELAY)
+        self.page.locator("#id_integer_field").type("123", delay=DELAY)
         self.page.locator("#id_json_field").clear()
-        self.page.locator("#id_json_field").type('{"key": "value"}')
+        self.page.locator("#id_json_field").type('{"key": "value"}', delay=DELAY)
         self.page.locator("#id_multiple_choice_field").select_option(["2", "3"])
         self.page.locator("#id_null_boolean_field").select_option("false")
-        self.page.locator("#id_regex_field").type("12")
-        self.page.locator("#id_slug_field").type("my-slug-text")
-        self.page.locator("#id_time_field").type("01:01:00")
+        self.page.locator("#id_regex_field").type("12", delay=DELAY)
+        self.page.locator("#id_slug_field").type("my-slug-text", delay=DELAY)
+        self.page.locator("#id_time_field").type("01:01:00", delay=DELAY)
         self.page.locator("#id_typed_choice_field").select_option("2")
         self.page.locator("#id_typed_multiple_choice_field").select_option(["1", "2"])
-        self.page.locator("#id_url_field").type("http://example.com")
-        self.page.locator("#id_uuid_field").type("550e8400-e29b-41d4-a716-446655440000")
-        self.page.locator("#id_combo_field").type("test@example.com")
-        self.page.locator("#id_password_field").type("password")
+        self.page.locator("#id_url_field").type("http://example.com", delay=DELAY)
+        self.page.locator("#id_uuid_field").type("550e8400-e29b-41d4-a716-446655440000", delay=DELAY)
+        self.page.locator("#id_combo_field").type("test@example.com", delay=DELAY)
+        self.page.locator("#id_password_field").type("password", delay=DELAY)
         model_choice_field_options = self.page.query_selector_all("#id_model_multiple_choice_field option")
         model_choice_field_values: list[str] = [option.get_attribute("value") for option in model_choice_field_options]
         self.page.locator("#id_model_choice_field").select_option(model_choice_field_values[0])
@@ -782,7 +783,7 @@ class ComponentTests(PlaywrightTestCase):
 
         # Submit and wait for one of the error messages to disappear (indicating that the form has been re-rendered)
         invalid_feedback = self.page.locator(".errorlist").all()[0]
-        self.page.wait_for_selector("input[type=submit]").click()
+        self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
         expect(invalid_feedback).not_to_be_attached()
         # Make sure no errors remain
         assert len(self.page.query_selector_all(".errorlist")) == 0
@@ -805,7 +806,7 @@ class ComponentTests(PlaywrightTestCase):
         self.page.wait_for_selector("#id_boolean_field")
         self.page.wait_for_selector("#id_char_field")
         self.page.wait_for_selector("#id_choice_field")
-        self.page.wait_for_selector("button[type=submit]").click()
+        self.page.wait_for_selector("button[type=submit]").click(delay=DELAY)
         self.page.wait_for_selector(".invalid-feedback")
 
         # Submitting an empty form should result in 2 error elements.
@@ -813,14 +814,14 @@ class ComponentTests(PlaywrightTestCase):
         assert len(self.page.query_selector_all(".invalid-feedback")) == 2
 
         # Fill out the form
-        self.page.wait_for_selector("#id_boolean_field").click()
+        self.page.wait_for_selector("#id_boolean_field").click(delay=DELAY)
         expect(self.page.locator("#id_boolean_field")).to_be_checked()
-        self.page.locator("#id_char_field").type("test")
+        self.page.locator("#id_char_field").type("test", delay=DELAY)
         self.page.locator("#id_choice_field").select_option("2")
 
         # Submit and wait for one of the error messages to disappear (indicating that the form has been re-rendered)
         invalid_feedback = self.page.locator(".invalid-feedback").all()[0]
-        self.page.wait_for_selector("button[type=submit]").click()
+        self.page.wait_for_selector("button[type=submit]").click(delay=DELAY)
         expect(invalid_feedback).not_to_be_attached()
         # Make sure no errors remain
         assert len(self.page.query_selector_all(".invalid-feedback")) == 0
@@ -829,7 +830,7 @@ class ComponentTests(PlaywrightTestCase):
     def test_form_orm_model(self):
         uuid = uuid4().hex
         self.page.wait_for_selector("form")
-        self.page.wait_for_selector("input[type=submit]").click()
+        self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
         self.page.wait_for_selector(".errorlist")
 
         # Submitting an empty form should result in 1 error element.
@@ -837,10 +838,10 @@ class ComponentTests(PlaywrightTestCase):
         assert len(error_list) == 1
 
         # Fill out the form
-        self.page.locator("#id_text").type(uuid)
+        self.page.locator("#id_text").type(uuid, delay=DELAY)
 
         # Submit the form
-        self.page.wait_for_selector("input[type=submit]").click()
+        self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
 
         # Wait for the error message to disappear (indicating that the form has been re-rendered)
         expect(error_list[0]).not_to_be_attached()
@@ -872,7 +873,7 @@ class ComponentTests(PlaywrightTestCase):
     #     self.page.wait_for_selector("#change[data-value='false']")
 
     #     # Submit empty the form
-    #     self.page.wait_for_selector("input[type=submit]").click()
+    #     self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
 
     #     # The empty form was submitted, should result in an error
     #     self.page.wait_for_selector("#success[data-value='false']")
@@ -881,8 +882,8 @@ class ComponentTests(PlaywrightTestCase):
     #     self.page.wait_for_selector("#change[data-value='false']")
 
     #     # Fill out the form and re-submit
-    #     self.page.wait_for_selector("#id_char_field").type("test")
-    #     self.page.wait_for_selector("input[type=submit]").click()
+    #     self.page.wait_for_selector("#id_char_field").type("test", delay=DELAY)
+    #     self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
 
     #     # Form should have been successfully submitted
     #     self.page.wait_for_selector("#success[data-value='true']")
@@ -901,7 +902,7 @@ class ComponentTests(PlaywrightTestCase):
     #     self.page.wait_for_selector("#change[data-value='false']")
 
     #     # Submit empty the form
-    #     self.page.wait_for_selector("input[type=submit]").click()
+    #     self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
 
     #     # The empty form was submitted, should result in an error
     #     self.page.wait_for_selector("#success[data-value='false']")
@@ -910,8 +911,8 @@ class ComponentTests(PlaywrightTestCase):
     #     self.page.wait_for_selector("#change[data-value='false']")
 
     #     # Fill out the form and re-submit
-    #     self.page.wait_for_selector("#id_char_field").type("test")
-    #     self.page.wait_for_selector("input[type=submit]").click()
+    #     self.page.wait_for_selector("#id_char_field").type("test", delay=DELAY)
+    #     self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
 
     #     # Form should have been successfully submitted
     #     self.page.wait_for_selector("#success[data-value='true']")
