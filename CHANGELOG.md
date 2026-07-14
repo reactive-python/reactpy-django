@@ -49,6 +49,10 @@ Don't forget to remove deprecated code on each major release!
 - Removed `reactpy_django/html.py` (`pyscript` VDOM constructor). Use `html.py_script` instead.
 - Removed `nest_asyncio` dependency and its initialization on startup.
 
+### Fixed
+
+- Resolved bug where `django_form` events would sometimes not occur.
+
 ### [5.2.1] - 2025-01-10
 
 ### Changed
