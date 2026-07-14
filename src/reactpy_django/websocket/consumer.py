@@ -8,7 +8,7 @@ import logging
 import traceback
 from datetime import timedelta
 from threading import Thread
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 from urllib.parse import parse_qs
 
 import dill
@@ -70,17 +70,17 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         await super().connect()
 
         # Automatically re-login the user, if needed
-        user: AbstractUser | None = self.scope.get("user")
+        user = self.scope.get("user")
         if REACTPY_AUTO_RELOGIN and user and user.is_authenticated and user.is_active:
             try:
-                await login(self.scope, user, backend=REACTPY_AUTH_BACKEND)
+                await login(self.scope, user, backend=REACTPY_AUTH_BACKEND)  # type: ignore[reportArgumentType]
             except Exception:
                 await asyncio.to_thread(
                     _logger.error,
                     f"ReactPy websocket authentication has failed!\n{traceback.format_exc()}",
                 )
             try:
-                await ensure_async(self.scope["session"].save)()
+                await ensure_async(self.scope["session"].save)()  # type: ignore[reportTypedDictNotRequiredAccess]
             except Exception:
                 await asyncio.to_thread(
                     _logger.error,
@@ -151,16 +151,16 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         )
 
         scope = self.scope
-        self.dotted_path = scope["url_route"]["kwargs"]["dotted_path"]
-        uuid = scope["url_route"]["kwargs"].get("uuid")
-        has_args = scope["url_route"]["kwargs"].get("has_args")
-        scope["reactpy"] = {"id": str(uuid)}
+        self.dotted_path = scope["url_route"]["kwargs"]["dotted_path"]  # type: ignore[reportTypedDictNotRequiredAccess]
+        uuid = scope["url_route"]["kwargs"].get("uuid")  # type: ignore[reportTypedDictNotRequiredAccess]
+        has_args = scope["url_route"]["kwargs"].get("has_args")  # type: ignore[reportTypedDictNotRequiredAccess]
+        scope["reactpy"] = {"id": str(uuid)}  # type: ignore[reportGeneralTypeIssues]
         query_string = parse_qs(scope["query_string"].decode(), strict_parsing=True)
         http_path = query_string.get("path", [""])[0]
         http_query_string = query_string.get("qs", [""])[0]
         self.recv_queue = asyncio.Queue()
         connection = Connection(  # For `use_connection`
-            scope=scope,
+            scope=cast(dict[str, Any], scope),
             location=Location(path=http_path, query_string=http_query_string),
             carrier=self,
         )

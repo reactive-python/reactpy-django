@@ -30,7 +30,7 @@ from django.utils.encoding import smart_str
 from reactpy import reactpy_to_string as _reactpy_to_string
 from reactpy.core.hooks import ConnectionContext
 from reactpy.core.layout import Layout
-from reactpy.types import Connection, Location
+from reactpy.types import Connection, Location, VdomDict
 
 from reactpy_django.exceptions import (
     ComponentDoesNotExistError,
@@ -530,7 +530,7 @@ def del_html_head_body_transform(vdom: VdomDict) -> VdomDict:
             The VDOM dictionary to transform.
     """
     if vdom["tagName"] in {"html", "body", "head"}:
-        return {"tagName": "", "children": vdom.setdefault("children", [])}
+        return VdomDict(tagName="", children=vdom.setdefault("children", []))
     return vdom
 
 

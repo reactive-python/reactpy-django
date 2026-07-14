@@ -77,7 +77,7 @@ def use_scope() -> dict[str, Any]:
     scope = _use_scope()
 
     if isinstance(scope, dict):
-        return scope
+        return cast(dict[str, Any], scope)
 
     msg = f"Expected scope to be a dict, got {type(scope)}"
     raise TypeError(msg)
@@ -373,8 +373,9 @@ def use_channel_layer(
     @use_async_effect(dependencies=[])
     async def group_manager():
         if group:
-            await channel_layer.group_add(group, channel_name)
-            return lambda: asyncio.run(channel_layer.group_discard(group, channel_name))
+            group_name: str = group
+            await channel_layer.group_add(group_name, channel_name)
+            return lambda: asyncio.run(channel_layer.group_discard(group_name, channel_name))
         return None
 
     # Listen for messages on the channel using the provided `receiver` function.
@@ -423,7 +424,7 @@ def use_auth() -> UseAuthTuple:
     trigger_rerender = use_rerender()
 
     async def login(user: AbstractUser, rerender: bool = True) -> None:
-        await channels_auth.login(scope, user, backend=config.REACTPY_AUTH_BACKEND)
+        await channels_auth.login(scope, user, backend=config.REACTPY_AUTH_BACKEND)  # type: ignore[reportArgumentType]
         session_save_method = getattr(scope["session"], "asave", scope["session"].save)
         await ensure_async(session_save_method)()
         await scope["reactpy"]["synchronize_auth"]()
@@ -432,7 +433,7 @@ def use_auth() -> UseAuthTuple:
             trigger_rerender()
 
     async def logout(rerender: bool = True) -> None:
-        await channels_auth.logout(scope)
+        await channels_auth.logout(scope)  # type: ignore[reportArgumentType]
 
         if rerender:
             trigger_rerender()
