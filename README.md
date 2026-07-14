@@ -95,8 +95,8 @@ Additionally, you can pass in `args` and `kwargs` into your component function. 
 <!--html-code-start-->
 
 ```jinja
-{% load reactpy %}
 <!DOCTYPE html>
+{% load reactpy %}
 <html>
   <body>
     {% component "example_project.my_app.components.hello_world" recipient="World" %}

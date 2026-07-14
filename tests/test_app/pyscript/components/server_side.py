@@ -1,13 +1,13 @@
-from reactpy import component, html, use_state
-
-from reactpy_django.components import pyscript_component
+from reactpy import component, html, pyscript_component, use_state
 
 
 @component
 def parent():
     return html.div(
         {"id": "parent"},
-        pyscript_component("./test_app/pyscript/components/child.py"),
+        pyscript_component(
+            "./test_app/pyscript/components/child.py",
+        ),
     )
 
 
@@ -30,5 +30,7 @@ def parent_toggle():
             {"onClick": lambda _: set_state(not state)},
             "Click to show/hide",
         ),
-        pyscript_component("./test_app/pyscript/components/child.py"),
+        pyscript_component(
+            "./test_app/pyscript/components/child.py",
+        ),
     )

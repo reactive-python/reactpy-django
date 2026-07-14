@@ -18,10 +18,10 @@
 
 If you plan to make code changes to this repository, you will need to install the following dependencies first:
 
--   [Git](https://git-scm.com/downloads)
--   [Python 3.9+](https://www.python.org/downloads/)
--   [Hatch](https://hatch.pypa.io/latest/)
--   [Bun](https://bun.sh/)
+- [Git](https://git-scm.com/downloads)
+- [Python 3.11+](https://www.python.org/downloads/)
+- [Hatch](https://hatch.pypa.io/latest/)
+- [Bun](https://bun.sh/)
 
 Once you finish installing these dependencies, you can clone this repository:
 

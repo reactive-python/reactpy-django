@@ -591,7 +591,7 @@ Shortcut that returns the browser's current `#!python Location`.
 
     | Type | Description |
     | --- | --- |
-    | `#!python Location` | An object containing the current URL's `#!python pathname` and `#!python search` query. |
+    | `#!python Location` | An object containing the current URL's `#!python path` and `#!python query_string` query. |
 
 ---
 

@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import logging
 from collections import defaultdict
-from collections.abc import Awaitable
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -17,7 +16,7 @@ import orjson
 from channels import DEFAULT_CHANNEL_LAYER
 from channels import auth as channels_auth
 from channels.layers import InMemoryChannelLayer, get_channel_layer
-from reactpy import use_callback, use_effect, use_memo, use_ref, use_state
+from reactpy import use_async_effect, use_callback, use_effect, use_memo, use_ref, use_state
 from reactpy import use_connection as _use_connection
 from reactpy import use_location as _use_location
 from reactpy import use_scope as _use_scope
@@ -39,11 +38,11 @@ from reactpy_django.types import (
 from reactpy_django.utils import django_query_postprocessor, ensure_async, generate_obj_name, get_pk
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Awaitable, Sequence
 
     from channels_redis.core import RedisChannelLayer
     from django.contrib.auth.models import AbstractUser
-    from reactpy.backend.types import Location
+    from reactpy.types import Location
 
 
 _logger = logging.getLogger(__name__)
@@ -78,7 +77,7 @@ def use_scope() -> dict[str, Any]:
     scope = _use_scope()
 
     if isinstance(scope, dict):
-        return scope
+        return cast("dict[str, Any]", scope)
 
     msg = f"Expected scope to be a dict, got {type(scope)}"
     raise TypeError(msg)
@@ -124,11 +123,10 @@ def use_query(
     """
 
     should_execute, set_should_execute = use_state(True)
-    data, set_data = use_state(cast(Inferred, None))
+    data, set_data = use_state(cast("Inferred", None))
     loading, set_loading = use_state(True)
-    error, set_error = use_state(cast(Union[Exception, None], None))
+    error, set_error = use_state(cast("Union[Exception, None]", None))
     query_ref = use_ref(query)
-    async_task_refs = use_ref(set())
     kwargs = kwargs or {}
     postprocessor_kwargs = postprocessor_kwargs or {}
 
@@ -141,23 +139,22 @@ def use_query(
         try:
             # Run the query
             query_async = cast(
-                Callable[..., Awaitable[Inferred]], ensure_async(query, thread_sensitive=thread_sensitive)
+                "Callable[..., Awaitable[Inferred]]", ensure_async(query, thread_sensitive=thread_sensitive)
             )
             new_data = await query_async(**kwargs)
 
             # Run the postprocessor
             if postprocessor:
                 async_postprocessor = cast(
-                    Callable[..., Awaitable[Any]], ensure_async(postprocessor, thread_sensitive=thread_sensitive)
+                    "Callable[..., Awaitable[Any]]", ensure_async(postprocessor, thread_sensitive=thread_sensitive)
                 )
                 new_data = await async_postprocessor(new_data, **postprocessor_kwargs)
 
         # Log any errors and set the error state
         except Exception as e:
-            set_data(cast(Inferred, None))
             set_loading(False)
             set_error(e)
-            _logger.exception("Failed to execute query: %s", generate_obj_name(query))
+            _logger.exception("Failed to execute query '%s'", generate_obj_name(query))
             return
 
         # Query was successful
@@ -166,20 +163,16 @@ def use_query(
             set_loading(False)
             set_error(None)
 
-    @use_effect(dependencies=None)
-    def schedule_query() -> None:
-        """Schedule the query to be run"""
+    @use_async_effect(dependencies=[should_execute])
+    async def schedule_query() -> None:
+        """Execute a query when needed."""
         # Make sure we don't re-execute the query unless we're told to
         if not should_execute:
             return
+
+        # Execute the query
+        await execute_query()
         set_should_execute(False)
-
-        # Execute the query in the background
-        task = asyncio.create_task(execute_query())
-
-        # Add the task to a set to prevent it from being garbage collected
-        async_task_refs.current.add(task)
-        task.add_done_callback(async_task_refs.current.remove)
 
     @use_callback
     def refetch() -> None:
@@ -233,7 +226,7 @@ def use_mutation(
     """
 
     loading, set_loading = use_state(False)
-    error, set_error = use_state(cast(Union[Exception, None], None))
+    error, set_error = use_state(cast("Union[Exception, None]", None))
     async_task_refs = use_ref(set())
 
     # The main "running" function for `use_mutation`
@@ -261,11 +254,10 @@ def use_mutation(
                         callback()
 
     # Schedule the mutation to be run when needed
-    @use_callback
     def schedule_mutation(*exec_args: FuncParams.args, **exec_kwargs: FuncParams.kwargs) -> None:
         # Set the loading state.
-        # It's okay to re-execute the mutation if we're told to. The user
-        # can use the `loading` state to prevent this.
+        # It's okay to re-execute the mutation if we're told to. If desired,
+        # The user could use the `loading` state to prevent double execution.
         set_loading(True)
 
         # Execute the mutation in the background
@@ -296,7 +288,7 @@ def use_user() -> AbstractUser:
 
 
 def use_user_data(
-    default_data: (None | dict[str, Callable[[], Any] | Callable[[], Awaitable[Any]] | Any]) = None,
+    default_data: (dict[str, Callable[[], Any] | Callable[[], Awaitable[Any]] | Any] | None) = None,
     save_default_data: bool = False,
 ) -> UserData:
     """Get or set user data stored within the REACTPY_DATABASE.
@@ -378,15 +370,16 @@ def use_channel_layer(
         raise ValueError(msg)
 
     # Add/remove a group's channel during component mount/dismount respectively.
-    @use_effect(dependencies=[])
+    @use_async_effect(dependencies=[])
     async def group_manager():
         if group:
-            await channel_layer.group_add(group, channel_name)
-            return lambda: asyncio.run(channel_layer.group_discard(group, channel_name))
+            group_name: str = group
+            await channel_layer.group_add(group_name, channel_name)
+            return lambda: asyncio.run(channel_layer.group_discard(group_name, channel_name))
         return None
 
     # Listen for messages on the channel using the provided `receiver` function.
-    @use_effect
+    @use_async_effect
     async def message_receiver():
         if not receiver:
             return
@@ -431,7 +424,7 @@ def use_auth() -> UseAuthTuple:
     trigger_rerender = use_rerender()
 
     async def login(user: AbstractUser, rerender: bool = True) -> None:
-        await channels_auth.login(scope, user, backend=config.REACTPY_AUTH_BACKEND)
+        await channels_auth.login(scope, user, backend=config.REACTPY_AUTH_BACKEND)  # type: ignore[reportArgumentType]
         session_save_method = getattr(scope["session"], "asave", scope["session"].save)
         await ensure_async(session_save_method)()
         await scope["reactpy"]["synchronize_auth"]()
@@ -440,7 +433,7 @@ def use_auth() -> UseAuthTuple:
             trigger_rerender()
 
     async def logout(rerender: bool = True) -> None:
-        await channels_auth.logout(scope)
+        await channels_auth.logout(scope)  # type: ignore[reportArgumentType]
 
         if rerender:
             trigger_rerender()
@@ -448,7 +441,7 @@ def use_auth() -> UseAuthTuple:
     return UseAuthTuple(login=login, logout=logout)
 
 
-async def _get_user_data(user: AbstractUser, default_data: None | dict, save_default_data: bool) -> dict | None:
+async def _get_user_data(user: AbstractUser, default_data: dict | None, save_default_data: bool) -> dict | None:
     """The mutation function for `use_user_data`"""
     from reactpy_django.models import UserDataModel
 

@@ -72,8 +72,8 @@ Each component loaded via this template tag will receive a dedicated WebSocket c
     === "my_template.html"
 
         ```jinja
-        {% load reactpy %}
         <!DOCTYPE html>
+        {% load reactpy %}
         <html>
             <body>
                 <h1>{% component "example_project.my_app.components.my_title" %}</h1>
@@ -191,7 +191,7 @@ Your Python component file will be directly loaded into the browser. It must hav
     | Name | Type | Description | Default |
     | --- | --- | --- | --- |
     | `#!python *file_paths` | `#!python str` | File path to your client-side component. If multiple paths are provided, the contents are automatically merged. | N/A |
-    | `#!python initial` | `#!python str | VdomDict | ComponentType` | The initial HTML that is displayed prior to the PyScript component loads. This can either be a string containing raw HTML, a `#!python reactpy.html` snippet, or a non-interactive component. | `#!python ""` |
+    | `#!python initial` | `#!python str | VdomDict | Component` | The initial HTML that is displayed prior to the PyScript component loads. This can either be a string containing raw HTML, a `#!python reactpy.html` snippet, or a non-interactive component. | `#!python ""` |
     | `#!python root` | `#!python str` | The name of the root component function. | `#!python "root"` |
 
 <!--pyscript-webtypy-start-->

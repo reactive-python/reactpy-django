@@ -44,11 +44,10 @@ classifiers = [
 dependencies = [
   "channels>=4.0.0",
   "django>=4.2.0",
-  "reactpy>=1.1.0, <2.0.0",
-  "reactpy-router>=1.0.3, <2.0.0",
+  "reactpy>=2.0.0b13, <3.0.0",
+  "reactpy-router>=3.0.0b1, <4.0.0",
   "dill>=0.3.5",
   "orjson>=3.6.0",
-  "nest_asyncio>=1.5.0",
   "typing_extensions",
 ]
 dynamic = ["version"]
@@ -68,6 +67,7 @@ artifacts = ["/src/reactpy_django/static/"]
 
 [tool.hatch.metadata]
 license-files = { paths = ["LICENSE.md"] }
+allow-direct-references = true
 
 [tool.hatch.envs.default]
 installer = "uv"
@@ -76,8 +76,8 @@ installer = "uv"
 commands = [
   "bun install --cwd src/js",
   'bun build src/js/src/index.ts --outdir="src/reactpy_django/static/reactpy_django/" --minify --sourcemap=linked',
-  'cd src/build_scripts && python copy_dir.py "src/js/node_modules/@pyscript/core/dist" "src/reactpy_django/static/reactpy_django/pyscript"',
-  'cd src/build_scripts && python copy_dir.py "src/js/node_modules/morphdom/dist" "src/reactpy_django/static/reactpy_django/morphdom"',
+  'cd src/scripts && python copy_dir.py "src/js/node_modules/@pyscript/core/dist" "src/reactpy_django/static/reactpy_django/pyscript"',
+  'cd src/scripts && python copy_dir.py "src/js/node_modules/morphdom/dist" "src/reactpy_django/static/reactpy_django/morphdom"',
 ]
 artifacts = []
 
@@ -96,36 +96,29 @@ extra-dependencies = [
   "servestatic",
   "django-bootstrap5",
   "decorator",
-
+  "uvicorn[standard]",
 ]
 matrix-name-format = "{variable}-{value}"
 
-# Django 4.2
-[[tool.hatch.envs.hatch-test.matrix]]
-python = ["3.9", "3.10", "3.11", "3.12"]
-django = ["4.2"]
 
-# Django 5.0
+# Django 5.2
 [[tool.hatch.envs.hatch-test.matrix]]
-python = ["3.10", "3.11", "3.12"]
-django = ["5.0"]
+python = ["3.11", "3.12", "3.13", "3.14"]
+django = ["5.2"]
 
-# Django 5.1
+# Django 6
 [[tool.hatch.envs.hatch-test.matrix]]
-python = ["3.10", "3.11", "3.12", "3.13"]
-django = ["5.1"]
+python = ["3.12", "3.13", "3.14"]
+django = ["6.0"]
 
 [tool.hatch.envs.hatch-test.overrides]
 matrix.django.dependencies = [
   { if = [
-    "4.2",
-  ], value = "django~=4.2" },
+    "5.2",
+  ], value = "django~=5.2" },
   { if = [
-    "5.0",
-  ], value = "django~=5.0" },
-  { if = [
-    "5.1",
-  ], value = "django~=5.1" },
+    "6.0",
+  ], value = "django~=6.0" },
 ]
 
 [tool.pytest.ini_options]
@@ -177,7 +170,7 @@ template = "docs"
 extra-dependencies = [
   "mkdocs",
   "mkdocs-git-revision-date-localized-plugin",
-  "mkdocs-material==9.4.0",
+  "mkdocs-material",
   "mkdocs-include-markdown-plugin",
   "mkdocs-spellcheck[all]",
   "mkdocs-git-authors-plugin",
@@ -245,6 +238,9 @@ lint.extend-ignore = [
   "S403",    # `dill` module is possibly insecure
   "S301",    # `dill` deserialization is possibly insecure unless using trusted data
   "RUF029",  # Function is declared async but doesn't contain await expression
+  "DOC201",  # `return` is not documented in docstring
+  "DOC501",  # `Exception` is not documented in docstring
+  "S308",    # Django `mark_safe` may expose cross-site scripting vulnerabilities
 ]
 lint.preview = true
 lint.isort.known-first-party = ["reactpy_django", "test_app", "example"]

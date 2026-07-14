@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+import json
 from logging import getLogger
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
+import reactpy
 from django import template
+from django.templatetags.static import static
 from django.urls import NoReverseMatch, reverse
+from django.utils.safestring import mark_safe
+from reactpy.executors.pyscript.utils import PYSCRIPT_LAYOUT_HANDLER, extend_pyscript_config, pyscript_executor_html
 
 from reactpy_django import config as reactpy_config
 from reactpy_django.exceptions import (
@@ -15,8 +20,8 @@ from reactpy_django.exceptions import (
     InvalidHostError,
     OfflineComponentMissingError,
 )
-from reactpy_django.pyscript.utils import PYSCRIPT_LAYOUT_HANDLER, extend_pyscript_config, render_pyscript_template
 from reactpy_django.utils import (
+    fetch_cached_python_file,
     prerender_component,
     reactpy_to_string,
     save_component_params,
@@ -27,7 +32,7 @@ from reactpy_django.utils import (
 
 if TYPE_CHECKING:
     from django.http import HttpRequest
-    from reactpy.core.types import ComponentConstructor, ComponentType, VdomDict
+    from reactpy.types import Component, ComponentConstructor, VdomDict
 
 
 register = template.Library()
@@ -91,8 +96,8 @@ def component(
     class_ = kwargs.pop("class", "")
     has_args = bool(args or kwargs)
     user_component: ComponentConstructor | None = None
-    _prerender_html = ""
-    _offline_html = ""
+    prerender_html = ""
+    offline_html = ""
 
     # Validate the host
     if host and DJANGO_DEBUG:
@@ -148,7 +153,7 @@ def component(
             )
             _logger.error(msg)
             return failure_context(dotted_path, ComponentCarrierError(msg))
-        _prerender_html = prerender_component(user_component, args, kwargs, uuid, request)
+        prerender_html = prerender_component(user_component, args, kwargs, uuid, request)
 
     # Fetch the offline component's HTML, if requested
     if offline:
@@ -164,7 +169,7 @@ def component(
             )
             _logger.error(msg)
             return failure_context(dotted_path, ComponentCarrierError(msg))
-        _offline_html = prerender_component(offline_component, [], {}, uuid, request)
+        offline_html = prerender_component(offline_component, [], {}, uuid, request)
 
     # Return the template rendering context
     return {
@@ -173,13 +178,13 @@ def component(
         "reactpy_host": host or perceived_host,
         "reactpy_url_prefix": reactpy_config.REACTPY_URL_PREFIX,
         "reactpy_component_path": f"{dotted_path}/{uuid}/{int(has_args)}/",
-        "reactpy_resolved_web_modules_path": RESOLVED_WEB_MODULES_PATH,
+        "reactpy_resolved_web_modules_path": f"/{RESOLVED_WEB_MODULES_PATH.strip('/')}/",
         "reactpy_reconnect_interval": reactpy_config.REACTPY_RECONNECT_INTERVAL,
         "reactpy_reconnect_max_interval": reactpy_config.REACTPY_RECONNECT_MAX_INTERVAL,
         "reactpy_reconnect_backoff_multiplier": reactpy_config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER,
         "reactpy_reconnect_max_retries": reactpy_config.REACTPY_RECONNECT_MAX_RETRIES,
-        "reactpy_prerender_html": _prerender_html,
-        "reactpy_offline_html": _offline_html,
+        "reactpy_prerender_html": mark_safe(prerender_html),
+        "reactpy_offline_html": mark_safe(offline_html),
     }
 
 
@@ -187,7 +192,7 @@ def component(
 def pyscript_component(
     context: template.RequestContext,
     *file_paths: str,
-    initial: str | VdomDict | ComponentType = "",
+    initial: str | VdomDict | Component = "",
     root: str = "root",
 ):
     """
@@ -208,12 +213,12 @@ def pyscript_component(
     uuid = uuid4().hex
     request: HttpRequest | None = context.get("request")
     initial = reactpy_to_string(initial, request=request, uuid=uuid)
-    executor = render_pyscript_template(file_paths, uuid, root)
+    executor = pyscript_executor_html(file_paths, uuid, root, fetch_cached_python_file)
 
     return {
-        "pyscript_executor": executor,
+        "pyscript_executor": mark_safe(executor),
         "pyscript_uuid": uuid,
-        "pyscript_initial_html": initial,
+        "pyscript_initial_html": mark_safe(initial),
     }
 
 
@@ -238,9 +243,21 @@ def pyscript_setup(
     """
     from reactpy_django.config import DJANGO_DEBUG
 
+    pyscript_config_str = extend_pyscript_config(
+        list(extra_py),
+        extra_js,
+        config,
+        {static("reactpy_django/morphdom/morphdom-esm.js"): "morphdom"},
+    )
+    pyscript_config = json.loads(pyscript_config_str)
+    local_reactpy_wheel = static(f"reactpy_django/wheels/reactpy-{reactpy.__version__}-py3-none-any.whl")
+    for i, pkg in enumerate(pyscript_config["packages"]):
+        if "reactpy" in pkg.lower():
+            pyscript_config["packages"][i] = local_reactpy_wheel
+            break
     return {
-        "pyscript_config": extend_pyscript_config(extra_py, extra_js, config),
-        "pyscript_layout_handler": PYSCRIPT_LAYOUT_HANDLER,
+        "pyscript_config": mark_safe(json.dumps(pyscript_config)),
+        "pyscript_layout_handler": mark_safe(PYSCRIPT_LAYOUT_HANDLER),
         "django_debug": DJANGO_DEBUG,
     }
 

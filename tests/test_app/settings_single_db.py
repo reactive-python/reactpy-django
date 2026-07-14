@@ -17,7 +17,7 @@ ALLOWED_HOSTS = ["*"]
 
 # Application definition
 INSTALLED_APPS = [
-    "servestatic.runserver_nostatic",
+    "servestatic",
     "daphne",  # Overrides `runserver` command with an ASGI server
     "django.contrib.admin",
     "django.contrib.auth",
@@ -118,12 +118,7 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {
-        "console": {"class": "logging.StreamHandler"},
-    },
-    "loggers": {
-        "reactpy_django": {"handlers": ["console"], "level": LOG_LEVEL},
-        "reactpy": {"handlers": ["console"], "level": LOG_LEVEL},
-        "django.request": {"handlers": ["console"], "level": LOG_LEVEL},
+        "console": {"class": "logging.StreamHandler", "level": LOG_LEVEL},
     },
 }
 

@@ -9,11 +9,9 @@ from urllib.parse import urlencode
 from django.http import HttpRequest
 from django.urls import reverse
 from reactpy import component, hooks, html, utils
-from reactpy.types import ComponentType, Key, VdomDict
 
 from reactpy_django.exceptions import ViewNotRegisteredError
 from reactpy_django.forms.components import _django_form
-from reactpy_django.pyscript.components import _pyscript_component
 from reactpy_django.utils import (
     cached_static_file,
     del_html_head_body_transform,
@@ -27,6 +25,7 @@ if TYPE_CHECKING:
 
     from django.forms import Form, ModelForm
     from django.views import View
+    from reactpy.types import Component, Key, VdomDict
 
     from reactpy_django.types import AsyncFormEvent, SyncFormEvent, ViewToComponentConstructor, ViewToIframeConstructor
 
@@ -54,7 +53,7 @@ def view_to_component(
         *args,
         key: Key | None = None,
         **kwargs,
-    ) -> ComponentType:
+    ) -> Component:
         return _view_to_component(
             view=view,
             transforms=transforms,
@@ -84,13 +83,13 @@ def view_to_iframe(view: Callable | View | str, extra_props: dict[str, Any] | No
         *args,
         key: Key | None = None,
         **kwargs,
-    ) -> ComponentType:
+    ) -> Component:
         return _view_to_iframe(view=view, extra_props=extra_props, args=args, kwargs=kwargs, key=key)
 
     return constructor
 
 
-def django_css(static_path: str, key: Key | None = None) -> ComponentType:
+def django_css(static_path: str, key: Key | None = None) -> Component:
     """Fetches a CSS static file for use within ReactPy. This allows for deferred CSS loading.
 
     Args:
@@ -103,7 +102,7 @@ def django_css(static_path: str, key: Key | None = None) -> ComponentType:
     return _django_css(static_path=static_path, key=key)
 
 
-def django_js(static_path: str, key: Key | None = None) -> ComponentType:
+def django_js(static_path: str, key: Key | None = None) -> Component:
     """Fetches a JS static file for use within ReactPy. This allows for deferred JS loading.
 
     Args:
@@ -131,7 +130,7 @@ def django_form(
     top_children: Sequence[Any] = (),
     bottom_children: Sequence[Any] = (),
     key: Key | None = None,
-) -> ComponentType:
+) -> Component:
     """Converts a Django form to a ReactPy component.
 
     Args:
@@ -174,29 +173,6 @@ def django_form(
     )
 
 
-def pyscript_component(
-    *file_paths: str,
-    initial: str | VdomDict | ComponentType = "",
-    root: str = "root",
-) -> ComponentType:
-    """
-    Args:
-        file_paths: File path to your client-side component. If multiple paths are \
-            provided, the contents are automatically merged.
-
-    Kwargs:
-        initial: The initial HTML that is displayed prior to the PyScript component \
-            loads. This can either be a string containing raw HTML, a \
-            `#!python reactpy.html` snippet, or a non-interactive component.
-        root: The name of the root component function.
-    """
-    return _pyscript_component(
-        *file_paths,
-        initial=initial,
-        root=root,
-    )
-
-
 @component
 def _view_to_component(
     view: Callable | View | str,
@@ -206,29 +182,29 @@ def _view_to_component(
     args: Sequence | None,
     kwargs: dict | None,
 ):
-    converted_view, set_converted_view = hooks.use_state(cast(Union[VdomDict, None], None))
-    _args: Sequence = args or ()
-    _kwargs: dict = kwargs or {}
+    converted_view, set_converted_view = hooks.use_state(cast("Union[VdomDict, None]", None))
+    args_: Sequence = args or ()
+    kwargs_: dict = kwargs or {}
     if request:
-        _request: HttpRequest = request
+        request_: HttpRequest = request
     else:
-        _request = HttpRequest()
-        _request.method = "GET"
+        request_ = HttpRequest()
+        request_.method = "GET"
     resolved_view: Callable = import_module(view) if isinstance(view, str) else view  # type: ignore
 
     # Render the view render within a hook
-    @hooks.use_effect(
+    @hooks.use_async_effect(
         dependencies=[
-            json.dumps(vars(_request), default=generate_obj_name),
-            json.dumps([_args, _kwargs], default=generate_obj_name),
+            json.dumps(vars(request_), default=generate_obj_name),
+            json.dumps([args_, kwargs_], default=generate_obj_name),
         ]
     )
     async def _render_view():
         """Render the view in an async hook to avoid blocking the main thread."""
         # Render the view
-        response = await render_view(resolved_view, _request, _args, _kwargs)
+        response = await render_view(resolved_view, request_, args_, kwargs_)
         set_converted_view(
-            utils.html_to_vdom(
+            utils.string_to_reactpy(
                 response.content.decode("utf-8").strip(),
                 del_html_head_body_transform,
                 *transforms,

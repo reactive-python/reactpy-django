@@ -7,7 +7,7 @@ from channels.auth import login, logout
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from django.http import HttpRequest
-from reactpy import component, hooks, html, web
+from reactpy import component, hooks, html, reactjs
 
 import reactpy_django
 from reactpy_django.components import view_to_component, view_to_iframe
@@ -28,13 +28,13 @@ from .types import TestObject
 
 @component
 def hello_world():
-    return html._(html.div({"id": "hello-world"}, "Hello World!"))
+    return html(html.div({"id": "hello-world"}, "Hello World!"))
 
 
 @component
 def button():
     count, set_count = hooks.use_state(0)
-    return html._(
+    return html(
         html.div(
             "button:",
             html.button(
@@ -49,7 +49,7 @@ def button():
 @component
 def parameterized_component(x, y):
     total = x + y
-    return html._(
+    return html(
         html.div(
             {"id": "parametrized-component", "data-value": total},
             f"parameterized_component: {total}",
@@ -61,21 +61,17 @@ def parameterized_component(x, y):
 def object_in_templatetag(my_object: TestObject):
     success = bool(my_object and my_object.value)
     co_name = inspect.currentframe().f_code.co_name
-    return html._(html.div({"id": co_name, "data-success": success}, f"{co_name}: ", str(my_object)))
+    return html(html.div({"id": co_name, "data-success": success}, f"{co_name}: ", str(my_object)))
 
 
-SimpleButtonModule = web.module_from_file(
-    "SimpleButton",
-    Path(__file__).parent / "tests" / "js" / "button-from-js-module.js",
-    resolve_exports=False,
-    fallback="...",
+SimpleButton = reactjs.component_from_file(
+    Path(__file__).parent / "tests" / "js" / "button-from-js-module.js", import_names="SimpleButton", fallback="..."
 )
-SimpleButton = web.export(SimpleButtonModule, "SimpleButton")
 
 
 @component
 def button_from_js_module():
-    return html._("button_from_js_module:", SimpleButton({"id": "button-from-js-module"}))
+    return html("button_from_js_module:", SimpleButton({"id": "button-from-js-module"}))
 
 
 @component
@@ -125,7 +121,7 @@ def django_css():
 @component
 def django_js():
     success = False
-    return html._(
+    return html(
         html.div(
             {"id": "django-js", "data-success": success},
             f"django_js: {success}",
@@ -319,7 +315,7 @@ def todo_list():
     elif items.data is None:
         rendered_items = html.h2("Loading...")
     else:
-        rendered_items = html._(
+        rendered_items = html(
             html.h3("Not Done"),
             _render_todo_items([i for i in items.data if not i.done], toggle_item),
             html.h3("Done"),
@@ -390,7 +386,7 @@ def async_todo_list():
     elif items.data is None:
         rendered_items = html.h2("Loading...")
     else:
-        rendered_items = html._(
+        rendered_items = html(
             html.h3("Not Done"),
             _render_todo_items([i for i in items.data if not i.done], toggle_item),
             html.h3("Done"),
@@ -503,7 +499,7 @@ def view_to_component_request():
         post_request.method = "POST"
         set_request(post_request)
 
-    return html._(
+    return html(
         html.button(
             {
                 "id": f"{inspect.currentframe().f_code.co_name}_btn",
@@ -522,7 +518,7 @@ def view_to_component_args():
     def on_click(_):
         set_success("")
 
-    return html._(
+    return html(
         html.button(
             {
                 "id": f"{inspect.currentframe().f_code.co_name}_btn",
@@ -541,7 +537,7 @@ def view_to_component_kwargs():
     def on_click(_):
         set_success("")
 
-    return html._(
+    return html(
         html.button(
             {
                 "id": f"{inspect.currentframe().f_code.co_name}_btn",
@@ -696,17 +692,17 @@ def use_user_data_with_default():
 
 @component
 def use_auth():
-    _login, _logout = reactpy_django.hooks.use_auth()
+    login_, logout_ = reactpy_django.hooks.use_auth()
     uuid = hooks.use_ref(str(uuid4())).current
     current_user = reactpy_django.hooks.use_user()
     connection = reactpy_django.hooks.use_connection()
 
     async def login_user(event):
         new_user, _created = await get_user_model().objects.aget_or_create(username="user_4")
-        await _login(new_user)
+        await login_(new_user)
 
     async def logout_user(event):
-        await _logout()
+        await logout_()
 
     async def disconnect(event):
         await connection.carrier.close()
@@ -728,17 +724,17 @@ def use_auth():
 
 @component
 def use_auth_no_rerender():
-    _login, _logout = reactpy_django.hooks.use_auth()
+    login_, logout_ = reactpy_django.hooks.use_auth()
     uuid = hooks.use_ref(str(uuid4())).current
     current_user = reactpy_django.hooks.use_user()
     connection = reactpy_django.hooks.use_connection()
 
     async def login_user(event):
         new_user, _created = await get_user_model().objects.aget_or_create(username="user_5")
-        await _login(new_user, rerender=False)
+        await login_(new_user, rerender=False)
 
     async def logout_user(event):
-        await _logout(rerender=False)
+        await logout_(rerender=False)
 
     async def disconnect(event):
         await connection.carrier.close()

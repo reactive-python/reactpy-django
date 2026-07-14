@@ -8,14 +8,7 @@ static_dir = Path(__file__).parent.parent.parent / "src" / "reactpy_django" / "s
 assert subprocess.run(["bun", "install"], cwd=str(js_dir), check=True).returncode == 0
 assert (
     subprocess.run(
-        [
-            "bun",
-            "build",
-            "./src/index.ts",
-            f"--outdir={static_dir}",
-            "--minify",
-            "--sourcemap=linked",
-        ],
+        ["bun", "build", "./src/index.ts", f"--outdir={static_dir}", "--sourcemap=linked"],
         cwd=str(js_dir),
         check=True,
     ).returncode

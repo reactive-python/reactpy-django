@@ -13,6 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 from fnmatch import fnmatch
 from functools import wraps
 from importlib import import_module
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable
 from uuid import UUID, uuid4
 
@@ -26,10 +27,10 @@ from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.template import engines
 from django.utils.encoding import smart_str
-from reactpy import vdom_to_html
-from reactpy.backend.types import Connection, Location
+from reactpy import reactpy_to_string as _reactpy_to_string
 from reactpy.core.hooks import ConnectionContext
 from reactpy.core.layout import Layout
+from reactpy.types import Connection, Location, VdomDict
 
 from reactpy_django.exceptions import (
     ComponentDoesNotExistError,
@@ -42,7 +43,7 @@ if TYPE_CHECKING:
     from collections.abc import Awaitable, Mapping, Sequence
 
     from django.views import View
-    from reactpy.types import ComponentConstructor, VdomDict
+    from reactpy.types import ComponentConstructor
 
     from reactpy_django.types import FuncParams, Inferred
 
@@ -359,7 +360,7 @@ class SyncLayout(Layout):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        SYNC_LAYOUT_THREAD.submit(self.loop.run_until_complete, self.__aexit__()).result()
+        SYNC_LAYOUT_THREAD.submit(self.loop.run_until_complete, self.__aexit__(exc_type, exc_val, exc_tb)).result()
         self.loop.close()
 
     def sync_render(self):
@@ -405,21 +406,21 @@ def prerender_component(
             user_component(*args, **kwargs),
             value=Connection(
                 scope=scope,
-                location=Location(pathname=request.path, search=f"?{search}" if search else ""),
+                location=Location(path=request.path, query_string=f"?{search}" if search else ""),
                 carrier=request,
             ),
         )
     ) as layout:
         vdom_tree = layout.sync_render()["model"]
 
-    return vdom_to_html(vdom_tree)  # type: ignore
+    return _reactpy_to_string(vdom_tree)  # type: ignore
 
 
 def reactpy_to_string(vdom_or_component: Any, request: HttpRequest | None = None, uuid: str | None = None) -> str:
     """Converts a VdomDict or component to an HTML string. If a string is provided instead, it will be
     automatically returned."""
     if isinstance(vdom_or_component, dict):
-        return vdom_to_html(vdom_or_component)  # type: ignore
+        return _reactpy_to_string(vdom_or_component)  # type: ignore
 
     if hasattr(vdom_or_component, "render"):
         if not request:
@@ -452,7 +453,7 @@ def save_component_params(args, kwargs, uuid) -> None:
 def validate_host(host: str) -> None:
     """Validates the host string to ensure it does not contain a protocol."""
     if "://" in host:
-        protocol = host.split("://")[0]
+        protocol = host.split("://", maxsplit=1)[0]
         msg = f"Invalid host provided to component. Contains a protocol '{protocol}://'."
         _logger.error(msg)
         raise InvalidHostError(msg)
@@ -520,7 +521,7 @@ def cached_static_file(static_path: str) -> str:
 
 
 def del_html_head_body_transform(vdom: VdomDict) -> VdomDict:
-    """Transform intended for use with `html_to_vdom`.
+    """Transform intended for use with `string_to_reactpy `.
 
     Removes `<html>`, `<head>`, and `<body>` while preserving their children.
 
@@ -529,5 +530,24 @@ def del_html_head_body_transform(vdom: VdomDict) -> VdomDict:
             The VDOM dictionary to transform.
     """
     if vdom["tagName"] in {"html", "body", "head"}:
-        return {"tagName": "", "children": vdom.setdefault("children", [])}
+        return VdomDict(tagName="", children=vdom.setdefault("children", []))
     return vdom
+
+
+def fetch_cached_python_file(file_path: str, minify: bool = True) -> str:
+    from reactpy.executors.pyscript.utils import minify_python
+
+    from reactpy_django.config import REACTPY_CACHE
+
+    # Try to get user code from cache
+    cache_key = create_cache_key("pyscript", file_path)
+    last_modified_time = os.stat(file_path).st_mtime
+    file_contents: str = caches[REACTPY_CACHE].get(cache_key, version=int(last_modified_time))
+    if file_contents:
+        return file_contents
+
+    file_contents = Path(file_path).read_text(encoding="utf-8").strip()
+    if minify:
+        file_contents = minify_python(file_contents)
+    caches[REACTPY_CACHE].set(cache_key, file_contents, version=int(last_modified_time))
+    return file_contents

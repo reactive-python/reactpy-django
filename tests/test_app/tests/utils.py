@@ -1,4 +1,4 @@
-# ruff: noqa: N802, RUF012, T201
+# ruff: noqa: RUF012, T201
 import asyncio
 import os
 import sys
@@ -143,10 +143,10 @@ def navigate_to_page(path: str, *, server_num=0):
     def _decorator(func: Callable):
         @decorator.decorator
         def _wrapper(func: Callable, self: PlaywrightTestCase, *args, **kwargs):
-            _port = getattr(self, f"_port_{server_num}")
-            _path = f"http://{self.host}:{_port}/{path.lstrip('/')}"
-            if self.page.url != _path:
-                self.page.goto(_path)
+            port = getattr(self, f"_port_{server_num}")
+            path_ = f"http://{self.host}:{port}/{path.lstrip('/')}"
+            if self.page.url != path_:
+                self.page.goto(path_)
             return func(self, *args, **kwargs)
 
         return _wrapper(func)
