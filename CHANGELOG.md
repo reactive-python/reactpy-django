@@ -21,7 +21,7 @@ Don't forget to remove deprecated code on each major release!
 
 ### Added
 
-- Automatic serve ReactPy wheel from Django's static directory when using PyScript.
+- Automatically serve ReactPy wheel from Django's static directory when using PyScript.
 
 ### Changed
 
@@ -34,10 +34,9 @@ Don't forget to remove deprecated code on each major release!
     - The `group_name` argument has been renamed to `group`.
     - The `group_add` and `group_discard` arguments have been removed for simplicity.
 - To improve performance, `preact` is now used as the default client-side library instead of `react`.
-- Refactored `DjangoResolver` to extend `ReactPyResolver` instead of `StarletteResolver`.
-- Replaced `reactpy_router.resolvers.StarletteResolver` with `ReactPyResolver` for Django URL routing.
-- Moved `{% load reactpy %}` to after `<!DOCTYPE html>` in HTML templates for standards compliance.
 - ReactPy v2 compatibility! This release aligns `reactpy-django` with ReactPy v2's API.
+    - Refactored `DjangoResolver` to extend `ReactPyResolver` instead of `StarletteResolver`.
+    - Replaced `reactpy_router.resolvers.StarletteResolver` with `ReactPyResolver` for Django URL routing.
     - Replaced `web.module_from_file`/`web.export` with `reactjs.component_from_file`.
     - Replaced `reactpy.backend.types` and `reactpy.core.types` imports with `reactpy.types`.
     - Renamed `Location.pathname` to `Location.path` and `Location.search` to `Location.query_string`.
@@ -46,8 +45,8 @@ Don't forget to remove deprecated code on each major release!
 
 - Removed `reactpy_django.components.pyscript_component`. Use `reactpy.executors.pyscript.pyscript_component` instead.
 - Removed the entire `reactpy_django/pyscript/` package (component template, layout handler, and utilities) in favor of ReactPy core's PyScript executor.
-- Removed `reactpy_django/html.py` (`pyscript` VDOM constructor). Use `html.py_script` instead.
-- Removed `nest_asyncio` dependency and its initialization on startup.
+- Removed `reactpy_django.html.pyscript`. Use `reactpy.html.py_script` instead.
+- Removed `nest_asyncio` dependency.
 
 ### Fixed
 
