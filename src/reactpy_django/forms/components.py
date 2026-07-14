@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from asyncio import iscoroutinefunction
 from logging import getLogger
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Union, cast
@@ -65,6 +66,15 @@ def _django_form(
         form=initialized_form, submitted_data=submitted_data or {}, set_submitted_data=set_submitted_data
     )
 
+    async def _call_event_callback(callback, event_data):
+        """Call a form event callback, running sync callbacks directly
+        (not through database_sync_to_async) to avoid issues with ReactPy state
+        setters that require an active event loop."""
+        if iscoroutinefunction(callback):
+            await callback(event_data)
+        else:
+            callback(event_data)
+
     # Validate and render the form
     @hooks.use_async_effect(dependencies=[str(submitted_data)])
     async def render_form():
@@ -76,9 +86,9 @@ def _django_form(
                 await ensure_async(initialized_form.full_clean, thread_sensitive=thread_sensitive)()
                 success = not initialized_form.errors.as_data()
                 if success and on_success:
-                    await ensure_async(on_success, thread_sensitive=thread_sensitive)(form_event)
+                    await _call_event_callback(on_success, form_event)
                 if not success and on_error:
-                    await ensure_async(on_error, thread_sensitive=thread_sensitive)(form_event)
+                    await _call_event_callback(on_error, form_event)
                 if success and auto_save and isinstance(initialized_form, ModelForm):
                     await ensure_async(initialized_form.save)()
                     set_submitted_data(None)
@@ -101,7 +111,7 @@ def _django_form(
             new_form_event = FormEventData(
                 form=initialized_form, submitted_data=new_data, set_submitted_data=set_submitted_data
             )
-            await ensure_async(on_receive_data, thread_sensitive=thread_sensitive)(new_form_event)
+            await _call_event_callback(on_receive_data, new_form_event)
 
         if submitted_data != new_data:
             set_submitted_data(new_data)
@@ -109,7 +119,7 @@ def _django_form(
     async def _on_change(_event):
         """Event that exist solely to allow the user to detect form changes."""
         if on_change:
-            await ensure_async(on_change, thread_sensitive=thread_sensitive)(form_event)
+            await _call_event_callback(on_change, form_event)
 
     if not rendered_form:
         return None
