@@ -23,10 +23,23 @@ export function getPageClient(
   if (!pageClients.has(key)) {
     pageClients.set(
       key,
-      new PageClient(wsUrl, reconnectOptions, jsModulesPath),
+      new PageClient(key, wsUrl, reconnectOptions, jsModulesPath),
     );
   }
   return pageClients.get(key)!;
+}
+
+/**
+ * Dispose a cached PageClient, close its WebSocket, and remove it from the
+ * global map. Useful during SPA page transitions where the old page's WS
+ * should no longer be reused.
+ */
+export function disposePageClient(key: string): void {
+  const client = pageClients.get(key);
+  if (client) {
+    client.close();
+    pageClients.delete(key);
+  }
 }
 
 export class PageClient {
@@ -36,6 +49,7 @@ export class PageClient {
   private readonly jsModulesPath: string;
 
   constructor(
+    private readonly key: string,
     private wsUrl: URL,
     reconnectOptions: {
       interval: number;
@@ -107,6 +121,25 @@ export class PageClient {
       delete componentMessage.rootId;
       this.components.get(rootId)!.handleIncoming(componentMessage);
     }
+  }
+
+  /** Close the underlying WebSocket and clear all registered components. */
+  close(): void {
+    if (this.socket.current) {
+      this.socket.current.close();
+      this.socket.current = undefined;
+    }
+    this.components.clear();
+  }
+
+  /**
+   * Dispose this PageClient — closes the WebSocket, clears components, and
+   * removes the entry from the global cache. Call during SPA page transitions
+   * or when the page is fully torn down.
+   */
+  dispose(): void {
+    this.close();
+    disposePageClient(this.key);
   }
 
   loadModule(moduleName: string): Promise<ReactPyModule> {

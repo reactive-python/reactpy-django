@@ -27,7 +27,6 @@ from reactpy_django.utils import ensure_async
 
 if TYPE_CHECKING:
     from collections.abc import MutableMapping, Sequence
-    from concurrent.futures import Future
 
     from reactpy_django import models
     from reactpy_django.types import ComponentParams
@@ -59,9 +58,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         self.threaded: bool = False
         self.component_queues: dict[str, asyncio.Queue] = {}
         self.component_sessions: dict[str, models.ComponentSession | None] = {}
-        self.component_tasks: dict[str, Future | asyncio.Task] = {}
-        self.page_path: str = ""
-        self.page_query_string: str = ""
+        self.component_tasks: dict[str, asyncio.Task] = {}
 
     async def connect(self) -> None:
         """The browser has connected."""
@@ -72,11 +69,6 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         )
 
         await super().connect()
-
-        # Parse page-level info from query string (shared across all components)
-        query_string = parse_qs(self.scope["query_string"].decode(), strict_parsing=True)
-        self.page_path = query_string.get("path", [""])[0] or "/"
-        self.page_query_string = query_string.get("qs", [""])[0]
 
         # Automatically re-login the user, if needed
         user = self.scope.get("user")
@@ -96,19 +88,31 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                     f"ReactPy has failed to save scope['session']!\n{traceback.format_exc()}",
                 )
 
-        # No longer starting a single dispatcher — each component gets its own
-        # rendering task when a "mount-component" message is received.
+        # Each component gets its own rendering task when a "mount-component" message is received.
         self.threaded = REACTPY_BACKHAUL_THREAD
-        self.scope["reactpy"] = {"id": str(id(self))}  # type: ignore[reportGeneralTypeIssues]
+        self.scope["reactpy"] = {"id": id(self)}
 
     async def disconnect(self, code: int) -> None:
         """The browser has disconnected."""
         from reactpy_django.config import REACTPY_CLEAN_INTERVAL
 
         # Cancel all running component rendering tasks
-        for task in self.component_tasks.values():
-            task.cancel()
-        self.component_tasks.clear()
+        if self.threaded:
+            # Schedule cancellation within the backhaul event loop, where
+            # the real asyncio.Task objects live. Clear the dict there
+            # too to avoid a cross-thread race with component_tasks.
+            async def _cancel_threaded():
+                for task_id in list(self.component_tasks.keys()):
+                    task = self.component_tasks.get(task_id)
+                    if isinstance(task, asyncio.Task):
+                        task.cancel()
+                self.component_tasks.clear()
+
+            asyncio.run_coroutine_threadsafe(_cancel_threaded(), BACKHAUL_LOOP)
+        else:
+            for task in self.component_tasks.values():
+                task.cancel()
+            self.component_tasks.clear()
 
         # Save all component sessions
         for session in self.component_sessions.values():
@@ -149,8 +153,17 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                     await asyncio.to_thread(_logger.debug, "Starting ReactPy backhaul thread.")
                     BACKHAUL_THREAD.start()
 
-                future: Future = asyncio.run_coroutine_threadsafe(self._run_component(content), BACKHAUL_LOOP)
-                self.component_tasks[content["rootId"]] = future
+                # Schedule within the backhaul loop so we store an asyncio.Task,
+                # allowing proper task.cancel() (unlike concurrent.futures.Future).
+                async def _threaded_run():
+                    task = asyncio.create_task(self._run_component(content))
+                    self.component_tasks[content["rootId"]] = task
+                    try:
+                        await task
+                    finally:
+                        self.component_tasks.pop(content["rootId"], None)
+
+                asyncio.run_coroutine_threadsafe(_threaded_run(), BACKHAUL_LOOP)
             else:
                 task = asyncio.create_task(self._run_component(content))
                 self.component_tasks[content["rootId"]] = task
@@ -191,20 +204,30 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         has_args: bool = content.get("hasArgs", False)
 
         # Maintain backward compatibility for user code that checks
-        # ws.carrier.dotted_path
+        # ws.carrier.dotted_path. This is inherently racy when multiple
+        # components are active on the same WebSocket; store it locally
+        # so at least the value is correct for the currently-running component.
         self.dotted_path = dotted_path
 
         # Each component needs its own isolated scope copy to prevent concurrent
         # component tasks from overwriting each other's scope["reactpy"] entries.
         scope = copy.copy(self.scope)
-        scope["reactpy"] = {"id": str(uuid)}  # type: ignore[reportGeneralTypeIssues]
+        scope["reactpy"] = {"id": uuid}
         now = timezone.now()
         component_session_args: Sequence[Any] = ()
         component_session_kwargs: MutableMapping[str, Any] = {}
 
+        # Re-parse the page-level path and query string from the WebSocket URL.
+        # This ensures that even after a reconnect (which creates a new consumer
+        # with an updated query string), components are rendered with the correct
+        # current page location.
+        query_string = parse_qs(self.scope["query_string"].decode(), strict_parsing=True)
+        page_path = query_string.get("path", [""])[0] or "/"
+        page_query_string = query_string.get("qs", [""])[0]
+
         connection = Connection(
             scope=cast("dict[str, Any]", scope),
-            location=Location(path=self.page_path, query_string=self.page_query_string),
+            location=Location(path=page_path, query_string=page_query_string),
             carrier=self,
         )
 
@@ -273,7 +296,10 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
                 recv_queue.get,
             )
 
-        # Cleanup after the component rendering loop finishes
+        # Cleanup after the component rendering loop finishes.
+        # In threaded mode _threaded_run already cleaned up component_tasks;
+        # in direct mode we do it here.
         self.component_queues.pop(root_id, None)
         self.component_sessions.pop(root_id, None)
-        self.component_tasks.pop(root_id, None)
+        if not self.threaded:
+            self.component_tasks.pop(root_id, None)

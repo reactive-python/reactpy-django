@@ -64,6 +64,13 @@ export class ReactPyDjangoClient
         }
       },
     });
+
+    // If the shared socket is already open, send the mount message immediately.
+    // This handles dynamically-added components registered after the initial
+    // page render (e.g. lazy-loaded tabs or conditionally rendered components).
+    if (this.pageClient.socket.current?.readyState === WebSocket.OPEN) {
+      this.sendMountMessage();
+    }
   }
 
   /** Send a mount-component message to the server so it constructs this component. */
