@@ -13,7 +13,10 @@ export class DjangoForm extends React.Component<DjangoFormProps> {
       // Accumulate duplicate keys into arrays to support multi-select fields
       // (e.g. MultipleChoiceField). Object.fromEntries would silently drop
       // duplicate entries, keeping only the last value per key.
-      const formObject: Record<string, FormDataEntryValue | FormDataEntryValue[]> = {};
+      const formObject: Record<
+        string,
+        FormDataEntryValue | FormDataEntryValue[]
+      > = {};
       for (const [key, value] of formData.entries()) {
         if (Object.prototype.hasOwnProperty.call(formObject, key)) {
           const existing = formObject[key];

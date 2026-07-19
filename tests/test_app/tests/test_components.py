@@ -757,9 +757,9 @@ class ComponentTests(PlaywrightTestCase):
         self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
         self.page.wait_for_selector(".errorlist")
 
-        # Submitting an empty form should result in 22 error elements.
+        # Submitting an empty form should result in 24 error elements.
         # The number of errors may change if/when new test form elements are created.
-        assert len(self.page.query_selector_all(".errorlist")) == 22
+        assert len(self.page.query_selector_all(".errorlist")) == 24
 
         # Fill out the form
         self.page.wait_for_selector("#id_boolean_field").click(delay=DELAY)
