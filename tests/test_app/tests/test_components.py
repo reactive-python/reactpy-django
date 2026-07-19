@@ -32,12 +32,10 @@ class ComponentTests(PlaywrightTestCase):
         try:
             self.page.goto(f"http://{self.host}:{self._port_0}/")
             self.page.wait_for_selector("#hello-world")
-            self.page.wait_for_selector("#button")
-            self.page.wait_for_selector("#parametarized-component")
+            self.page.wait_for_selector("#counter-inc")
+            self.page.wait_for_selector("#parametrized-component")
             unique_urls = set(websocket_urls)
-            assert len(unique_urls) == 1, (
-                f"Expected 1 unique WebSocket URL, got {len(unique_urls)}: {unique_urls}"
-            )
+            assert len(unique_urls) == 1, f"Expected 1 unique WebSocket URL, got {len(unique_urls)}: {unique_urls}"
         finally:
             self.page.remove_listener("websocket", track_ws)
 
