@@ -73,13 +73,14 @@ export function mountComponent(
     });
   }
 
-  // The mount-component message will be sent automatically when the shared WebSocket
-  // connects (via the onOpen callback in the ReactPyDjangoClient constructor).
-  // On reconnect the same callback handles re-mounting.
-
   // Start rendering the component
   if (client.mountElement) {
     React.render(<Layout client={client} />, client.mountElement);
+
+    // The mount-component message is sent by the ReactPyDjangoClient constructor:
+    //   - If the shared socket is already OPEN → sent immediately
+    //   - If still CONNECTING → queued and sent when the socket opens
+    // On reconnect the client's onOpen callback handles re-mounting.
   } else {
     console.error(
       "ReactPy mount element is undefined, cannot render the component!",

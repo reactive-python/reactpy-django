@@ -90,7 +90,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
 
         # Each component gets its own rendering task when a "mount-component" message is received.
         self.threaded = REACTPY_BACKHAUL_THREAD
-        self.scope["reactpy"] = {"id": id(self)}
+        self.scope["reactpy"] = {"id": id(self)}  # type: ignore[typeddict-unknown-key]
 
     async def disconnect(self, code: int) -> None:
         """The browser has disconnected."""
@@ -212,7 +212,7 @@ class ReactpyAsyncWebsocketConsumer(AsyncJsonWebsocketConsumer):
         # Each component needs its own isolated scope copy to prevent concurrent
         # component tasks from overwriting each other's scope["reactpy"] entries.
         scope = copy.copy(self.scope)
-        scope["reactpy"] = {"id": uuid}
+        scope["reactpy"] = {"id": uuid}  # type: ignore[typeddict-unknown-key]
         now = timezone.now()
         component_session_args: Sequence[Any] = ()
         component_session_kwargs: MutableMapping[str, Any] = {}
