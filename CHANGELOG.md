@@ -25,6 +25,7 @@ Don't forget to remove deprecated code on each major release!
 
 ### Changed
 
+- Use one WebSocket per client webpage.
 - Updated dependencies: `reactpy>=2.0.0, <3.0.0` and `reactpy-router>=3.0.0, <4.0.0`.
 - Updated Python support to 3.11–3.14.
 - Replaced PyScript `<py-script>` tags with standard `<script type="py">` tags.
