@@ -9,13 +9,12 @@ export function createReconnectingWebSocket(
   let retries = 0;
   let currentInterval = interval;
   let everConnected = false;
-  const closed = false;
   const socket: { current?: WebSocket } = {};
 
   async function connect() {
-    if (closed) {
-      return;
-    }
+    // Refresh the URL's path/query search params on each connection so that
+    // the server always sees the current page location, even after client-side
+    // navigation in an SPA.
     props.url.searchParams.set("path", window.location.pathname);
     props.url.searchParams.set("qs", window.location.search);
     socket.current = new WebSocket(props.url);

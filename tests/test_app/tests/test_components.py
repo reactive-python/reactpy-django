@@ -21,6 +21,24 @@ class ComponentTests(PlaywrightTestCase):
     # Generic Component Tests #
     ###########################
 
+    def test_one_websocket_per_page(self):
+        """Confirm that all components on a page share a single WebSocket."""
+        websocket_urls: list[str] = []
+
+        def track_ws(ws):
+            websocket_urls.append(ws.url)
+
+        self.page.on("websocket", track_ws)
+        try:
+            self.page.goto(f"http://{self.host}:{self._port_0}/")
+            self.page.wait_for_selector("#hello-world")
+            self.page.wait_for_selector("#counter-inc")
+            self.page.wait_for_selector("#parametrized-component")
+            unique_urls = set(websocket_urls)
+            assert len(unique_urls) == 1, f"Expected 1 unique WebSocket URL, got {len(unique_urls)}: {unique_urls}"
+        finally:
+            self.page.remove_listener("websocket", track_ws)
+
     @navigate_to_page("/")
     def test_component_hello_world(self):
         self.page.wait_for_selector("#hello-world")
