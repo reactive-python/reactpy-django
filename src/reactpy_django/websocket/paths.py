@@ -1,23 +1,14 @@
-from channels.routing import URLRouter  # noqa: E402
 from django.urls import path
 
 from reactpy_django.config import REACTPY_URL_PREFIX
-
-from .consumer import ReactpyAsyncWebsocketConsumer
+from reactpy_django.websocket.consumer import ReactpyAsyncWebsocketConsumer
 
 REACTPY_WEBSOCKET_ROUTE = path(
-    f"{REACTPY_URL_PREFIX}/<dotted_path>/",
-    URLRouter(
-        [
-            path("<uuid>/", ReactpyAsyncWebsocketConsumer.as_asgi()),
-            path("", ReactpyAsyncWebsocketConsumer.as_asgi()),
-        ]
-    ),
+    f"{REACTPY_URL_PREFIX}/",
+    ReactpyAsyncWebsocketConsumer.as_asgi(),  # type: ignore
 )
 """A URL path for :class:`ReactpyAsyncWebsocketConsumer`.
 
-Required since the `reverse()` function does not exist for Django Channels, but we need
-to know the websocket path.
+This global exists since there is no way to retrieve (`reverse()`) a Django Channels URL,
+but ReactPy-Django needs to know the current websocket path.
 """
-
-REACTPY_WEBSOCKET_PATH = REACTPY_WEBSOCKET_ROUTE

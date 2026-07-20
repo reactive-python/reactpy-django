@@ -1,6 +1,7 @@
+# ruff: noqa: RUF012
 from django.contrib import admin
-from reactpy_django.models import ComponentSession, Config
 
+from reactpy_django.models import ComponentSession, Config, UserDataModel
 from test_app.models import (
     AsyncForiegnChild,
     AsyncRelationalChild,
@@ -61,3 +62,8 @@ class ComponentSessionAdmin(admin.ModelAdmin):
 @admin.register(Config)
 class ConfigAdmin(admin.ModelAdmin):
     list_display = ["pk", "cleaned_at"]
+
+
+@admin.register(UserDataModel)
+class UserDataModelAdmin(admin.ModelAdmin):
+    list_display = ["user_pk", "data"]

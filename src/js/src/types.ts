@@ -1,17 +1,11 @@
-export type ReconnectOptions = {
-    startInterval: number;
-    maxInterval: number;
-    maxRetries: number;
-    backoffMultiplier: number;
+export interface DjangoFormProps {
+  onSubmitCallback: (data: object) => void;
+  formId: string;
 }
 
-export type ReactPyUrls = {
-    componentUrl: string;
-    query: string;
-    jsModules: string;
-}
-
-export type ReactPyDjangoClientProps = {
-    urls: ReactPyUrls;
-    reconnectOptions: ReconnectOptions;
+export interface HttpRequestProps {
+  method: string;
+  url: string;
+  body: string;
+  callback: (status: number, response: string) => void;
 }

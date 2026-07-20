@@ -1,35 +1,51 @@
 from __future__ import annotations
 
-from distutils.util import strtobool
+import json
 from logging import getLogger
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
-import dill as pickle
+import reactpy
 from django import template
-from django.http import HttpRequest
+from django.templatetags.static import static
 from django.urls import NoReverseMatch, reverse
-from reactpy.backend.hooks import ConnectionContext
-from reactpy.backend.types import Connection, Location
-from reactpy.core.types import ComponentConstructor
-from reactpy.utils import vdom_to_html
+from django.utils.safestring import mark_safe
+from reactpy.executors.pyscript.utils import PYSCRIPT_LAYOUT_HANDLER, extend_pyscript_config, pyscript_executor_html
 
-from reactpy_django import config, models
+from reactpy_django import config as reactpy_config
 from reactpy_django.exceptions import (
     ComponentCarrierError,
     ComponentDoesNotExistError,
     ComponentParamError,
     InvalidHostError,
+    OfflineComponentMissingError,
 )
-from reactpy_django.types import ComponentParams
-from reactpy_django.utils import SyncLayout, validate_component_args
+from reactpy_django.utils import (
+    fetch_cached_python_file,
+    prerender_component,
+    reactpy_to_string,
+    save_component_params,
+    str_to_bool,
+    validate_component_args,
+    validate_host,
+)
+
+if TYPE_CHECKING:
+    from django.http import HttpRequest
+    from reactpy.types import Component, ComponentConstructor, VdomDict
+
+
+register = template.Library()
+_logger = getLogger(__name__)
+
 
 try:
     RESOLVED_WEB_MODULES_PATH = reverse("reactpy:web_modules", args=["/"]).strip("/")
 except NoReverseMatch:
     RESOLVED_WEB_MODULES_PATH = ""
+    _logger.exception("Could not resolve the 'web_modules' URL path!")
+
 COMPONENT_TEMPLATE = "reactpy/component.html"
-register = template.Library()
-_logger = getLogger(__name__)
 
 
 @register.inclusion_tag(COMPONENT_TEMPLATE, takes_context=True)
@@ -38,7 +54,8 @@ def component(
     dotted_path: str,
     *args,
     host: str | None = None,
-    prerender: str = str(config.REACTPY_PRERENDER),
+    prerender: str = str(reactpy_config.REACTPY_PRERENDER),
+    offline: str = "",
     **kwargs,
 ):
     """This tag is used to embed an existing ReactPy component into your HTML template.
@@ -51,11 +68,12 @@ def component(
         class: The HTML class to apply to the top-level component div.
         key: Force the component's root node to use a specific key value. Using \
             key within a template tag is effectively useless.
-        host: The host to use for the ReactPy connections. If set to `None`, \
+        host: The host to use for ReactPy connections. If set to `None`, \
             the host will be automatically configured. \
             Example values include: `localhost:8000`, `example.com`, `example.com/subdir`
         prerender: Configures whether to pre-render this component, which \
             enables SEO compatibility and reduces perceived latency.
+        offline: The dotted path to the component to render when the client is offline.
         **kwargs: The keyword arguments to provide to the component.
 
     Example ::
@@ -68,21 +86,23 @@ def component(
         </body>
         </html>
     """
+    from reactpy_django.config import DJANGO_DEBUG
+
     request: HttpRequest | None = context.get("request")
     perceived_host = (request.get_host() if request else "").strip("/")
-    host = (
-        host
-        or (next(config.REACTPY_DEFAULT_HOSTS) if config.REACTPY_DEFAULT_HOSTS else "")
-    ).strip("/")
+    host = (host or (next(reactpy_config.REACTPY_DEFAULT_HOSTS) if reactpy_config.REACTPY_DEFAULT_HOSTS else "")).strip(
+        "/"
+    )
     is_local = not host or host.startswith(perceived_host)
-    uuid = uuid4().hex
+    uuid = str(uuid4())
     class_ = kwargs.pop("class", "")
-    component_has_args = args or kwargs
+    has_args = bool(args or kwargs)
     user_component: ComponentConstructor | None = None
-    _prerender_html = ""
+    prerender_html = ""
+    offline_html = ""
 
     # Validate the host
-    if host and config.REACTPY_DEBUG_MODE:
+    if host and DJANGO_DEBUG:
         try:
             validate_host(host)
         except InvalidHostError as e:
@@ -90,33 +110,36 @@ def component(
 
     # Fetch the component
     if is_local:
-        user_component = config.REACTPY_REGISTERED_COMPONENTS.get(dotted_path)
+        user_component = reactpy_config.REACTPY_REGISTERED_COMPONENTS.get(dotted_path)
         if not user_component:
             msg = f"Component '{dotted_path}' is not registered as a root component. "
             _logger.error(msg)
             return failure_context(dotted_path, ComponentDoesNotExistError(msg))
 
     # Validate the component args & kwargs
-    if is_local and config.REACTPY_DEBUG_MODE:
+    if is_local and DJANGO_DEBUG:
         try:
             validate_component_args(user_component, *args, **kwargs)
         except ComponentParamError as e:
-            _logger.error(str(e))
+            _logger.exception(
+                "The parameters you provided for component '%s' was incorrect.",
+                dotted_path,
+            )
             return failure_context(dotted_path, e)
 
     # Store args & kwargs in the database (fetched by our websocket later)
-    if component_has_args:
+    if has_args:
         try:
             save_component_params(args, kwargs, uuid)
         except Exception as e:
             _logger.exception(
-                "An unknown error has occurred while saving component params for '%s'.",
+                "An unknown error has occurred while saving component parameters for '%s'.",
                 dotted_path,
             )
             return failure_context(dotted_path, e)
 
     # Pre-render the component, if requested
-    if strtobool(prerender):
+    if str_to_bool(prerender):
         if not is_local:
             msg = "Cannot pre-render non-local components."
             _logger.error(msg)
@@ -132,68 +155,123 @@ def component(
             )
             _logger.error(msg)
             return failure_context(dotted_path, ComponentCarrierError(msg))
-        _prerender_html = prerender_component(user_component, args, kwargs, request)
+        prerender_html = prerender_component(user_component, args, kwargs, uuid, request)
+
+    # Fetch the offline component's HTML, if requested
+    if offline:
+        offline_component = reactpy_config.REACTPY_REGISTERED_COMPONENTS.get(offline)
+        if not offline_component:
+            msg = f"Cannot render offline component '{offline}'. It is not registered as a component."
+            _logger.error(msg)
+            return failure_context(dotted_path, OfflineComponentMissingError(msg))
+        if not request:
+            msg = (
+                "Cannot render an offline component without a HTTP request. Are you missing the "
+                "request context processor in settings.py:TEMPLATES['OPTIONS']['context_processors']?"
+            )
+            _logger.error(msg)
+            return failure_context(dotted_path, ComponentCarrierError(msg))
+        offline_html = prerender_component(offline_component, [], {}, uuid, request)
 
     # Return the template rendering context
     return {
         "reactpy_class": class_,
         "reactpy_uuid": uuid,
         "reactpy_host": host or perceived_host,
-        "reactpy_url_prefix": config.REACTPY_URL_PREFIX,
-        "reactpy_component_path": f"{dotted_path}/{uuid}/"
-        if component_has_args
-        else f"{dotted_path}/",
-        "reactpy_resolved_web_modules_path": RESOLVED_WEB_MODULES_PATH,
-        "reactpy_reconnect_interval": config.REACTPY_RECONNECT_INTERVAL,
-        "reactpy_reconnect_max_interval": config.REACTPY_RECONNECT_MAX_INTERVAL,
-        "reactpy_reconnect_backoff_multiplier": config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER,
-        "reactpy_reconnect_max_retries": config.REACTPY_RECONNECT_MAX_RETRIES,
-        "reactpy_prerender_html": _prerender_html,
+        "reactpy_url_prefix": reactpy_config.REACTPY_URL_PREFIX,
+        "reactpy_dotted_path": dotted_path,
+        "reactpy_component_uuid": uuid,
+        "reactpy_has_args": int(has_args),
+        "reactpy_resolved_web_modules_path": f"/{RESOLVED_WEB_MODULES_PATH.strip('/')}/",
+        "reactpy_reconnect_interval": reactpy_config.REACTPY_RECONNECT_INTERVAL,
+        "reactpy_reconnect_max_interval": reactpy_config.REACTPY_RECONNECT_MAX_INTERVAL,
+        "reactpy_reconnect_backoff_multiplier": reactpy_config.REACTPY_RECONNECT_BACKOFF_MULTIPLIER,
+        "reactpy_reconnect_max_retries": reactpy_config.REACTPY_RECONNECT_MAX_RETRIES,
+        "reactpy_prerender_html": mark_safe(prerender_html),
+        "reactpy_offline_html": mark_safe(offline_html),
+    }
+
+
+@register.inclusion_tag("reactpy/pyscript_component.html", takes_context=True)
+def pyscript_component(
+    context: template.RequestContext,
+    *file_paths: str,
+    initial: str | VdomDict | Component = "",
+    root: str = "root",
+):
+    """
+    Args:
+        file_paths: File path to your client-side component. If multiple paths are \
+            provided, the contents are automatically merged.
+
+    Kwargs:
+        initial: The initial HTML that is displayed prior to the PyScript component \
+            loads. This can either be a string containing raw HTML, a \
+            `#!python reactpy.html` snippet, or a non-interactive component.
+        root: The name of the root component function.
+    """
+    if not file_paths:
+        msg = "At least one file path must be provided to the 'pyscript_component' tag."
+        raise ValueError(msg)
+
+    uuid = uuid4().hex
+    request: HttpRequest | None = context.get("request")
+    initial = reactpy_to_string(initial, request=request, uuid=uuid)
+    executor = pyscript_executor_html(file_paths, uuid, root, fetch_cached_python_file)
+
+    return {
+        "pyscript_executor": mark_safe(executor),
+        "pyscript_uuid": uuid,
+        "pyscript_initial_html": mark_safe(initial),
+    }
+
+
+@register.inclusion_tag("reactpy/pyscript_setup.html")
+def pyscript_setup(
+    *extra_py: str,
+    extra_js: str | dict = "",
+    config: str | dict = "",
+):
+    """
+    Args:
+        extra_py: Dependencies that need to be loaded on the page for \
+            your PyScript components. Each dependency must be contained \
+            within it's own string and written in Python requirements file syntax.
+
+    Kwargs:
+        extra_js: A JSON string or Python dictionary containing a vanilla \
+            JavaScript module URL and the `name: str` to access it within \
+            `pyscript.js_modules.*`.
+        config: A JSON string or Python dictionary containing PyScript \
+            configuration values.
+    """
+    from reactpy_django.config import DJANGO_DEBUG
+
+    pyscript_config_str = extend_pyscript_config(
+        list(extra_py),
+        extra_js,
+        config,
+        {static("reactpy_django/morphdom/morphdom-esm.js"): "morphdom"},
+    )
+    pyscript_config = json.loads(pyscript_config_str)
+    local_reactpy_wheel = static(f"reactpy_django/wheels/reactpy-{reactpy.__version__}-py3-none-any.whl")
+    for i, pkg in enumerate(pyscript_config["packages"]):
+        if "reactpy" in pkg.lower():
+            pyscript_config["packages"][i] = local_reactpy_wheel
+            break
+    return {
+        "pyscript_config": mark_safe(json.dumps(pyscript_config)),
+        "pyscript_layout_handler": mark_safe(PYSCRIPT_LAYOUT_HANDLER),
+        "django_debug": DJANGO_DEBUG,
     }
 
 
 def failure_context(dotted_path: str, error: Exception):
+    from reactpy_django.config import DJANGO_DEBUG
+
     return {
         "reactpy_failure": True,
-        "reactpy_debug_mode": config.REACTPY_DEBUG_MODE,
+        "django_debug": DJANGO_DEBUG,
         "reactpy_dotted_path": dotted_path,
         "reactpy_error": type(error).__name__,
     }
-
-
-def save_component_params(args, kwargs, uuid):
-    params = ComponentParams(args, kwargs)
-    model = models.ComponentSession(uuid=uuid, params=pickle.dumps(params))
-    model.full_clean()
-    model.save()
-
-
-def validate_host(host: str):
-    if "://" in host:
-        protocol = host.split("://")[0]
-        msg = (
-            f"Invalid host provided to component. Contains a protocol '{protocol}://'."
-        )
-        _logger.error(msg)
-        raise InvalidHostError(msg)
-
-
-def prerender_component(
-    user_component: ComponentConstructor, args, kwargs, request: HttpRequest
-):
-    search = request.GET.urlencode()
-    with SyncLayout(
-        ConnectionContext(
-            user_component(*args, **kwargs),
-            value=Connection(
-                scope=getattr(request, "scope", {}),
-                location=Location(
-                    pathname=request.path, search=f"?{search}" if search else ""
-                ),
-                carrier=request,
-            ),
-        )
-    ) as layout:
-        vdom_tree = layout.render()["model"]
-
-    return vdom_to_html(vdom_tree)

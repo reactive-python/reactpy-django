@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+{% load reactpy %}
+<html>
+
+<head>
+    <title>ReactPy</title>
+    {% pyscript_setup extra_js='{"/static/moment.js":"moment"}' %}
+</head>
+
+<body>
+    {% component "example_project.my_app.components.root.py" %}
+</body>
+
+</html>
