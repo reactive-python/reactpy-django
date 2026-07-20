@@ -13,6 +13,7 @@ from django.forms import (
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
     from reactpy import Ref
 
 
