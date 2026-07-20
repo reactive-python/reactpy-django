@@ -5,15 +5,23 @@ from pathlib import Path
 # Make sure the JS is always re-built before running the tests
 js_dir = Path(__file__).parent.parent.parent / "src" / "js"
 static_dir = Path(__file__).parent.parent.parent / "src" / "reactpy_django" / "static" / "reactpy_django"
-assert subprocess.run(["bun", "install"], cwd=str(js_dir), check=True).returncode == 0
-assert (
+
+# Check if bun is available; if so, rebuild the JS. If not, assume artifacts exist.
+_bun_available = shutil.which("bun") is not None
+if _bun_available:
+    subprocess.run(["bun", "install"], cwd=str(js_dir), check=True)
     subprocess.run(
         ["bun", "build", "./src/index.ts", f"--outdir={static_dir}", "--sourcemap=linked"],
         cwd=str(js_dir),
         check=True,
-    ).returncode
-    == 0
-)
+    )
+else:
+    # Verify that JS artifacts already exist so we don't silently skip a needed build
+    if not (static_dir / "index.js").exists():
+        raise RuntimeError(
+            "bun is not installed and JS artifacts are missing. "
+            f"Run 'bun install && bun build' in {js_dir} first."
+        )
 
 
 # Make sure the test environment is always using the latest JS
