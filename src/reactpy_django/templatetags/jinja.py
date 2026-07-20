@@ -35,12 +35,10 @@ Then in ``myproject/jinja_env.py``:
 
 from __future__ import annotations
 
-import json
 from logging import getLogger
 from typing import TYPE_CHECKING
 
 from django.template import RequestContext, loader
-from django.utils.safestring import mark_safe
 from jinja2 import pass_context
 from jinja2.ext import Extension
 from jinja2.runtime import Context
@@ -159,10 +157,7 @@ class ReactPyExtension(Extension):
         """
         request = jinja_context.parent.get("request")
         if request is None:
-            _logger.exception(
-                "Cannot render a PyScript component in a Jinja2 template without a "
-                "request object."
-            )
+            _logger.exception("Cannot render a PyScript component in a Jinja2 template without a request object.")
             return ""
 
         django_context = RequestContext(

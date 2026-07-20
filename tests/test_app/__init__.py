@@ -19,8 +19,7 @@ else:
     # Verify that JS artifacts already exist so we don't silently skip a needed build
     if not (static_dir / "index.js").exists():
         raise RuntimeError(
-            "bun is not installed and JS artifacts are missing. "
-            f"Run 'bun install && bun build' in {js_dir} first."
+            f"bun is not installed and JS artifacts are missing. Run 'bun install && bun build' in {js_dir} first."
         )
 
 

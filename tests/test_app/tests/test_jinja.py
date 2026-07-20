@@ -78,9 +78,7 @@ class Jinja2ComponentTests(TestCase):
         from django.template import engines
 
         jinja2_engine = engines["jinja2"]
-        template = jinja2_engine.from_string(
-            "{{ component('test_app.components.hello_world') }}"
-        )
+        template = jinja2_engine.from_string("{{ component('test_app.components.hello_world') }}")
         rendered = template.render({})
         # The rendered output should be a string of some sort
         assert isinstance(rendered, str)
