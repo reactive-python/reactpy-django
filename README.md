@@ -1,15 +1,13 @@
-# <img src="https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg" align="left" height="45"/> ReactPy Django
-
-<!--badge-start-->
+# <img src="https://raw.githubusercontent.com/reactive-python/reactpy/main/branding/svg/reactpy-logo-square.svg" align="left" height="45"/> ReactPy-Django
 
 <p>
-    <a href="https://github.com/reactive-python/reactpy-django/actions?query=workflow%3ATest">
-        <img src="https://github.com/reactive-python/reactpy-django/workflows/Test/badge.svg?event=push">
+    <a href="https://github.com/reactive-python/reactpy-django/actions/workflows/test-python.yml">
+        <img src="https://github.com/reactive-python/reactpy-django/actions/workflows/test-python.yml/badge.svg">
     </a>
     <a href="https://pypi.python.org/pypi/reactpy-django">
         <img src="https://img.shields.io/pypi/v/reactpy-django.svg?label=PyPI">
     </a>
-    <a href="https://github.com/reactive-python/reactpy/blob/main/LICENSE">
+    <a href="https://github.com/reactive-python/reactpy-django/blob/main/LICENSE.md">
         <img src="https://img.shields.io/badge/License-MIT-purple.svg">
     </a>
     <a href="https://reactive-python.github.io/reactpy-django/">
@@ -20,10 +18,23 @@
     </a>
 </p>
 
-<!--badge-end-->
-<!--intro-start-->
+[ReactPy-Django](https://github.com/reactive-python/reactpy-django) is used to add [ReactPy](https://reactpy.dev/) support to an existing **Django project**. This package also turbocharges ReactPy with features such as...
 
-[ReactPy-Django](https://github.com/reactive-python/reactpy-django) is used to add used to add [ReactPy](https://reactpy.dev/) support to an existing **Django project**.
+-   [SEO compatible rendering](https://reactive-python.github.io/reactpy-django/latest/reference/settings/#reactpy_prerender)
+-   [Client-Side Python components](https://reactive-python.github.io/reactpy-django/latest/reference/template-tag/#pyscript-component)
+-   [Single page application (SPA) capabilities](https://reactive-python.github.io/reactpy-django/latest/reference/router/#django-router)
+-   [Distributed computing](https://reactive-python.github.io/reactpy-django/latest/reference/settings/#reactpy_default_hosts)
+-   [Performance enhancements](https://reactive-python.github.io/reactpy-django/latest/reference/settings/#performance-settings)
+-   [Customizable reconnection behavior](https://reactive-python.github.io/reactpy-django/latest/reference/settings/#stability-settings)
+-   [Customizable disconnection behavior](https://reactive-python.github.io/reactpy-django/latest/reference/template-tag)
+-   [Multiple root components](https://reactive-python.github.io/reactpy-django/latest/reference/template-tag/)
+-   [Cross-process communication/signaling](https://reactive-python.github.io/reactpy-django/latest/reference/hooks/#use-channel-layer)
+-   [Django view to ReactPy component conversion](https://reactive-python.github.io/reactpy-django/latest/reference/components/#view-to-component)
+-   [Django form to ReactPy component conversion](https://reactive-python.github.io/reactpy-django/latest/reference/components/#django-form)
+-   [Django static file access](https://reactive-python.github.io/reactpy-django/latest/reference/components/#django-css)
+-   [Django database access](https://reactive-python.github.io/reactpy-django/latest/reference/hooks/#use-query)
+
+## What is ReactPy?
 
 [ReactPy](https://reactpy.dev/) is a library for building user interfaces in Python without Javascript. ReactPy interfaces are made from components that look and behave similar to those found in [ReactJS](https://reactjs.org/). Designed with simplicity in mind, ReactPy can be used by those without web development experience while also being powerful enough to grow with your ambitions.
 
@@ -52,8 +63,6 @@
     </tbody>
 </table>
 
-<!--intro-end-->
-
 # At a Glance
 
 ## `my_app/components.py`
@@ -75,7 +84,7 @@ def hello_world(recipient: str):
 
 <!--py-code-end-->
 
-## [`my_app/templates/my-template.html`](https://docs.djangoproject.com/en/dev/topics/templates/)
+## [`my_app/templates/my_template.html`](https://docs.djangoproject.com/en/stable/topics/templates/)
 
 <!--html-header-start-->
 
@@ -86,8 +95,8 @@ Additionally, you can pass in `args` and `kwargs` into your component function. 
 <!--html-code-start-->
 
 ```jinja
-{% load reactpy %}
 <!DOCTYPE html>
+{% load reactpy %}
 <html>
   <body>
     {% component "example_project.my_app.components.hello_world" recipient="World" %}
@@ -99,8 +108,6 @@ Additionally, you can pass in `args` and `kwargs` into your component function. 
 
 # Resources
 
-<!--resources-start-->
-
 Follow the links below to find out more about this project.
 
 -   [Try ReactPy (Jupyter Notebook)](https://mybinder.org/v2/gh/reactive-python/reactpy-jupyter/main?urlpath=lab/tree/notebooks/introduction.ipynb)
@@ -109,5 +116,3 @@ Follow the links below to find out more about this project.
 -   [Discord](https://discord.gg/uNb5P4hA9X)
 -   [Contributor Guide](https://reactive-python.github.io/reactpy-django/latest/about/code/)
 -   [Code of Conduct](https://github.com/reactive-python/reactpy-django/blob/main/CODE_OF_CONDUCT.md)
-
-<!--resources-end-->

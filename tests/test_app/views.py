@@ -22,19 +22,15 @@ def host_port_template(request: HttpRequest, port: int):
     return render(request, "host_port.html", {"new_host": host})
 
 
-def host_port_roundrobin_template(
-    request: HttpRequest, port1: int, port2: int, count: int = 1
-):
+def host_port_roundrobin_template(request: HttpRequest, port1: int, port2: int, count: int = 1):
     from reactpy_django import config
 
     # Override ReactPy config to use round-robin hosts
     original = config.REACTPY_DEFAULT_HOSTS
-    config.REACTPY_DEFAULT_HOSTS = cycle(
-        [
-            f"{request.get_host().split(':')[0]}:{port1}",
-            f"{request.get_host().split(':')[0]}:{port2}",
-        ]
-    )
+    config.REACTPY_DEFAULT_HOSTS = cycle([
+        f"{request.get_host().split(':')[0]}:{port1}",
+        f"{request.get_host().split(':')[0]}:{port2}",
+    ])
     html = render(
         request,
         "host_port_roundrobin.html",
@@ -87,7 +83,7 @@ class ViewToComponentTemplateViewClass(TemplateView):
         return {"test_name": self.__class__.__name__}
 
 
-def view_to_component_sync_func_compatibility(request):
+def view_to_iframe_sync_func(request):
     return render(
         request,
         "view_to_component.html",
@@ -95,7 +91,7 @@ def view_to_component_sync_func_compatibility(request):
     )
 
 
-async def view_to_component_async_func_compatibility(request):
+async def view_to_iframe_async_func(request):
     return await database_sync_to_async(render)(
         request,
         "view_to_component.html",
@@ -103,7 +99,7 @@ async def view_to_component_async_func_compatibility(request):
     )
 
 
-class ViewToComponentSyncClassCompatibility(View):
+class ViewToIframeSyncClass(View):
     def get(self, request, *args, **kwargs):
         return render(
             request,
@@ -112,7 +108,7 @@ class ViewToComponentSyncClassCompatibility(View):
         )
 
 
-class ViewToComponentAsyncClassCompatibility(View):
+class ViewToIframeAsyncClass(View):
     async def get(self, request, *args, **kwargs):
         return await database_sync_to_async(render)(
             request,
@@ -121,7 +117,7 @@ class ViewToComponentAsyncClassCompatibility(View):
         )
 
 
-class ViewToComponentTemplateViewClassCompatibility(TemplateView):
+class ViewToIframeTemplateViewClass(TemplateView):
     template_name = "view_to_component.html"
 
     def get_context_data(self, **kwargs):
@@ -129,9 +125,7 @@ class ViewToComponentTemplateViewClassCompatibility(TemplateView):
 
 
 def view_to_iframe_args(request, arg1, arg2, kwarg1=None, kwarg2=None):
-    success = (
-        arg1 == "Arg1" and arg2 == "Arg2" and kwarg1 == "Kwarg1" and kwarg2 == "Kwarg2"
-    )
+    success = arg1 == "Arg1" and arg2 == "Arg2" and kwarg1 == "Kwarg1" and kwarg2 == "Kwarg2"
 
     return render(
         request,

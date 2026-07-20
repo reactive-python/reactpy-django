@@ -1,0 +1,6 @@
+{% extends "admin/login.html" %}
+
+{% block content %}
+{{ block.super }}
+<script>document.getElementById("id_username").value = "admin"; document.getElementById("id_password").value = "password";</script>
+{% endblock %}

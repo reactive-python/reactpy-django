@@ -1,0 +1,27 @@
+name: Publish Python
+
+on:
+    release:
+        types: [published]
+
+jobs:
+    publish-python:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: latest
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.x"
+            - name: Install dependencies
+              run: pip install hatch
+            - name: Build Package
+              run: hatch build --clean
+            - name: Publish to PyPI
+              env:
+                  HATCH_INDEX_USER: ${{ secrets.PYPI_USERNAME }}
+                  HATCH_INDEX_AUTH: ${{ secrets.PYPI_PASSWORD }}
+              run: hatch publish --yes

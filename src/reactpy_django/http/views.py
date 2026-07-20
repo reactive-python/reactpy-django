@@ -1,43 +1,25 @@
 import os
 from urllib.parse import parse_qs
 
-from aiofile import async_open
-from django.core.cache import caches
 from django.core.exceptions import SuspiciousOperation
-from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
+from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponseNotFound
 from reactpy.config import REACTPY_WEB_MODULES_DIR
 
-from reactpy_django.utils import create_cache_key, render_view
+from reactpy_django.utils import FileAsyncIterator, ensure_async, render_view
 
 
-async def web_modules_file(request: HttpRequest, file: str) -> HttpResponse:
-    """Gets JavaScript required for ReactPy modules at runtime. These modules are
-    returned from cache if available."""
-    from reactpy_django.config import REACTPY_CACHE
+def web_modules_file(request: HttpRequest, file: str) -> FileResponse:
+    """Gets JavaScript required for ReactPy modules at runtime."""
 
     web_modules_dir = REACTPY_WEB_MODULES_DIR.current
     path = os.path.abspath(web_modules_dir.joinpath(file))
 
     # Prevent attempts to walk outside of the web modules dir
     if str(web_modules_dir) != os.path.commonpath((path, web_modules_dir)):
-        raise SuspiciousOperation(
-            "Attempt to access a directory outside of REACTPY_WEB_MODULES_DIR."
-        )
+        msg = "Attempt to access a directory outside of REACTPY_WEB_MODULES_DIR."
+        raise SuspiciousOperation(msg)
 
-    # Fetch the file from cache, if available
-    last_modified_time = os.stat(path).st_mtime
-    cache_key = create_cache_key("web_modules", path)
-    file_contents = await caches[REACTPY_CACHE].aget(
-        cache_key, version=int(last_modified_time)
-    )
-    if file_contents is None:
-        async with async_open(path, "r") as fp:
-            file_contents = await fp.read()
-        await caches[REACTPY_CACHE].adelete(cache_key)
-        await caches[REACTPY_CACHE].aset(
-            cache_key, file_contents, timeout=604800, version=int(last_modified_time)
-        )
-    return HttpResponse(file_contents, content_type="text/javascript")
+    return FileResponse(FileAsyncIterator(path), content_type="text/javascript")
 
 
 async def view_to_iframe(request: HttpRequest, dotted_path: str) -> HttpResponse:
@@ -60,3 +42,43 @@ async def view_to_iframe(request: HttpRequest, dotted_path: str) -> HttpResponse
     # Ensure page can be rendered as an iframe
     response["X-Frame-Options"] = "SAMEORIGIN"
     return response
+
+
+async def auth_manager(request: HttpRequest, uuid: str) -> HttpResponse:
+    """Switches the client's active auth session to match ReactPy's session.
+
+    This view exists because ReactPy is rendered via WebSockets, and browsers do not
+    allow active WebSocket connections to modify cookies. Django's authentication
+    design requires HTTP cookies to persist state changes.
+    """
+    from reactpy_django.models import AuthToken
+
+    # Find out what session the client wants to switch to
+    token = await AuthToken.objects.aget(value=uuid)
+
+    # CHECK: Token has expired?
+    if token.expired:
+        msg = "Session expired."
+        await token.adelete()
+        raise SuspiciousOperation(msg)
+
+    # CHECK: Token does not exist?
+    exists_method = getattr(request.session, "aexists", request.session.exists)
+    if not await ensure_async(exists_method)(token.session_key):
+        msg = "Attempting to switch to a session that does not exist."
+        raise SuspiciousOperation(msg)
+
+    # CHECK: Client already using the correct session key?
+    if request.session.session_key == token.session_key:
+        await token.adelete()
+        return HttpResponse(status=204)
+
+    # Switch the client's session
+    request.session = type(request.session)(session_key=token.session_key)
+    load_method = getattr(request.session, "aload", request.session.load)
+    await ensure_async(load_method)()
+    request.session.modified = True
+    save_method = getattr(request.session, "asave", request.session.save)
+    await ensure_async(save_method)()
+    await token.adelete()
+    return HttpResponse(status=204)

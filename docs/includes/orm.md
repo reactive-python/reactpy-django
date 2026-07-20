@@ -8,6 +8,6 @@ These `#!python SynchronousOnlyOperation` exceptions may be removed in a future 
 
 <!--orm-fetch-start-->
 
-By default, automatic recursive fetching of `#!python ManyToMany` or `#!python ForeignKey` fields is enabled within the `django_query_postprocessor`. This is needed to prevent `#!python SynchronousOnlyOperation` exceptions when accessing these fields within your ReactPy components.
+By default, automatic recursive fetching of `#!python ManyToMany` or `#!python ForeignKey` fields is enabled within the `#!python django_query_postprocessor`. This is needed to prevent `#!python SynchronousOnlyOperation` exceptions when accessing these fields within your ReactPy components.
 
 <!--orm-fetch-end-->

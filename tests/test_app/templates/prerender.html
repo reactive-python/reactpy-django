@@ -1,5 +1,5 @@
-{% load static %} {% load reactpy %}
 <!DOCTYPE html>
+{% load static %} {% load reactpy %}
 <html lang="en">
 
 <head>
@@ -24,6 +24,10 @@
     <div id="prerender_component">
         {% component "test_app.prerender.components.prerender_component" class="prerender-component" prerender="true" %}
     </div>
+    <hr>
+    {% component "test_app.prerender.components.use_user" prerender="true" %}
+    <hr>
+    {% component "test_app.prerender.components.use_root_id" prerender="true" %}
     <hr>
 </body>
 

@@ -1,0 +1,63 @@
+name: Test
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+    schedule:
+        - cron: "0 0 * * *"
+
+jobs:
+    python-source:
+        runs-on: ${{ matrix.operating-system }}
+        strategy:
+            matrix:
+                python-version: ["3.11", "3.12", "3.13", "3.14"]
+                settings-module: ["single_db", "multi_db"]
+                operating-system: ["ubuntu-latest", "windows-latest"]
+        steps:
+            - uses: actions/checkout@v4
+            - uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: latest
+            - name: Use Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ matrix.python-version }}
+            - name: Install Python Dependencies
+              run: pip install hatch
+            - name: Run Single DB Tests
+              run: hatch test --python ${{ matrix.python-version }} --ds=test_app.settings_${{matrix.settings-module}} -v
+
+    python-formatting:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: latest
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: 3.x
+            - name: Install Python Dependencies
+              run: pip install hatch
+            - name: Check Python formatting
+              run: hatch fmt src tests --check
+
+    python-types:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: latest
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: 3.x
+            - name: Install Python Dependencies
+              run: pip install hatch
+            - name: Run Python type checker
+              run: hatch run python:type_check

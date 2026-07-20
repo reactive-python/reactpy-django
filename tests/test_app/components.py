@@ -1,15 +1,16 @@
 import asyncio
 import inspect
 from pathlib import Path
+from uuid import uuid4
+
+from channels.auth import login, logout
+from channels.db import database_sync_to_async
+from django.contrib.auth import get_user_model
+from django.http import HttpRequest
+from reactpy import component, hooks, html, reactjs
 
 import reactpy_django
-from channels.db import database_sync_to_async
-from django.http import HttpRequest
-from django.shortcuts import render
-from reactpy import component, hooks, html, web
 from reactpy_django.components import view_to_component, view_to_iframe
-from reactpy_django.types import QueryOptions
-
 from test_app.models import (
     AsyncForiegnChild,
     AsyncRelationalChild,
@@ -27,22 +28,20 @@ from .types import TestObject
 
 @component
 def hello_world():
-    return html._(html.div({"id": "hello-world"}, "Hello World!"))
+    return html(html.div({"id": "hello-world"}, "Hello World!"))
 
 
 @component
 def button():
     count, set_count = hooks.use_state(0)
-    return html._(
+    return html(
         html.div(
             "button:",
             html.button(
-                {"id": "counter-inc", "on_click": lambda event: set_count(count + 1)},
+                {"id": "counter-inc", "onClick": lambda _: set_count(count + 1)},
                 "Click me!",
             ),
-            html.p(
-                {"id": "counter-num", "data-count": count}, f"Current count is: {count}"
-            ),
+            html.p({"id": "counter-num", "data-count": count}, f"Current count is: {count}"),
         )
     )
 
@@ -50,7 +49,7 @@ def button():
 @component
 def parameterized_component(x, y):
     total = x + y
-    return html._(
+    return html(
         html.div(
             {"id": "parametrized-component", "data-value": total},
             f"parameterized_component: {total}",
@@ -61,26 +60,18 @@ def parameterized_component(x, y):
 @component
 def object_in_templatetag(my_object: TestObject):
     success = bool(my_object and my_object.value)
-    co_name = inspect.currentframe().f_code.co_name  # type: ignore
-    return html._(
-        html.div(
-            {"id": co_name, "data-success": success}, f"{co_name}: ", str(my_object)
-        )
-    )
+    co_name = inspect.currentframe().f_code.co_name
+    return html(html.div({"id": co_name, "data-success": success}, f"{co_name}: ", str(my_object)))
 
 
-SimpleButtonModule = web.module_from_file(
-    "SimpleButton",
-    Path(__file__).parent / "tests" / "js" / "simple-button.js",
-    resolve_exports=False,
-    fallback="...",
+SimpleButton = reactjs.component_from_file(
+    Path(__file__).parent / "tests" / "js" / "button-from-js-module.js", import_names="SimpleButton", fallback="..."
 )
-SimpleButton = web.export(SimpleButtonModule, "SimpleButton")
 
 
 @component
-def simple_button():
-    return html._("simple_button:", SimpleButton({"id": "simple-button"}))
+def button_from_js_module():
+    return html("button_from_js_module:", SimpleButton({"id": "button-from-js-module"}))
 
 
 @component
@@ -93,9 +84,7 @@ def use_connection():
         and getattr(ws.carrier, "disconnect", None)
         and getattr(ws.carrier, "dotted_path", None)
     )
-    return html.div(
-        {"id": "use-connection", "data-success": success}, f"use_connection: {ws}"
-    )
+    return html.div({"id": "use-connection", "data-success": success}, f"use_connection: {ws}")
 
 
 @component
@@ -109,18 +98,14 @@ def use_scope():
 def use_location():
     location = reactpy_django.hooks.use_location()
     success = bool(location)
-    return html.div(
-        {"id": "use-location", "data-success": success}, f"use_location: {location}"
-    )
+    return html.div({"id": "use-location", "data-success": success}, f"use_location: {location}")
 
 
 @component
 def use_origin():
     origin = reactpy_django.hooks.use_origin()
     success = bool(origin)
-    return html.div(
-        {"id": "use-origin", "data-success": success}, f"use_origin: {origin}"
-    )
+    return html.div({"id": "use-origin", "data-success": success}, f"use_origin: {origin}")
 
 
 @component
@@ -136,7 +121,7 @@ def django_css():
 @component
 def django_js():
     success = False
-    return html._(
+    return html(
         html.div(
             {"id": "django-js", "data-success": success},
             f"django_js: {success}",
@@ -145,23 +130,27 @@ def django_js():
     )
 
 
-@component
-@reactpy_django.decorators.auth_required(
-    fallback=html.div(
-        {"id": "unauthorized-user-fallback"}, "unauthorized_user: Success"
-    )
+@reactpy_django.decorators.user_passes_test(
+    lambda user: user.is_anonymous,
+    fallback=html.div({"id": "authorized-user-fallback"}, "authorized_user: Fail"),
 )
+@component
+def authorized_user():
+    return html.div({"id": "authorized-user"}, "authorized_user: Success")
+
+
+@reactpy_django.decorators.user_passes_test(
+    lambda user: user.is_active,
+    fallback=html.div({"id": "unauthorized-user-fallback"}, "unauthorized_user: Success"),
+)
+@component
 def unauthorized_user():
     return html.div({"id": "unauthorized-user"}, "unauthorized_user: Fail")
 
 
-@component
-@reactpy_django.decorators.auth_required(
-    auth_attribute="is_anonymous",
-    fallback=html.div({"id": "authorized-user-fallback"}, "authorized_user: Fail"),
-)
-def authorized_user():
-    return html.div({"id": "authorized-user"}, "authorized_user: Success")
+@reactpy_django.decorators.user_passes_test(lambda _: True)
+def incorrect_user_passes_test_decorator():
+    return html.div("incorrect_decorator_test: Fail")
 
 
 def create_relational_parent() -> RelationalParent:
@@ -182,9 +171,7 @@ def get_relational_parent_query():
 def get_foriegn_child_query():
     child = ForiegnChild.objects.first()
     if not child:
-        child = ForiegnChild.objects.create(
-            parent=get_relational_parent_query(), text="Foriegn Child"
-        )
+        child = ForiegnChild.objects.create(parent=get_relational_parent_query(), text="Foriegn Child")
         child.save()
     return child
 
@@ -231,9 +218,8 @@ async def async_get_or_create_relational_parent():
 
 
 async def async_get_relational_parent_query():
-    # Sleep to avoid race conditions in the test
-    # Also serves as a good way of testing whether things are truly async
-    await asyncio.sleep(2)
+    # This sleep helps test whether queries are run asynchronously.
+    await asyncio.sleep(3)
     return await async_get_or_create_relational_parent()
 
 
@@ -241,9 +227,7 @@ async def async_get_foriegn_child_query():
     child = await AsyncForiegnChild.objects.afirst()
     if not child:
         parent = await async_get_or_create_relational_parent()
-        child = await AsyncForiegnChild.objects.acreate(
-            parent=parent, text="Foriegn Child"
-        )
+        child = await AsyncForiegnChild.objects.acreate(parent=parent, text="Foriegn Child")
         await child.asave()
     return child
 
@@ -251,9 +235,7 @@ async def async_get_foriegn_child_query():
 @component
 def async_relational_query():
     foriegn_child = reactpy_django.hooks.use_query(async_get_foriegn_child_query)
-    relational_parent = reactpy_django.hooks.use_query(
-        async_get_relational_parent_query
-    )
+    relational_parent = reactpy_django.hooks.use_query(async_get_relational_parent_query)
 
     if not relational_parent.data or not foriegn_child.data:
         return
@@ -286,10 +268,10 @@ def add_todo_mutation(text: str):
         if existing.done:
             existing.done = False
             existing.save()
-        else:
-            return False
-    else:
-        TodoItem(text=text, done=False).save()
+            return None
+        return False
+    TodoItem(text=text, done=False).save()
+    return None
 
 
 def toggle_todo_mutation(item: TodoItem):
@@ -298,23 +280,19 @@ def toggle_todo_mutation(item: TodoItem):
 
 
 def _render_todo_items(items, toggle_item):
-    return html.ul(
-        [
-            html.li(
-                {"id": f"todo-item-{item.text}", "key": item.text},
-                item.text,
-                html.input(
-                    {
-                        "id": f"todo-item-{item.text}-checkbox",
-                        "type": "checkbox",
-                        "checked": item.done,
-                        "on_change": lambda event, i=item: toggle_item.execute(i),
-                    }
-                ),
-            )
-            for item in items
-        ]
-    )
+    return html.ul([
+        html.li(
+            {"id": f"todo-item-{item.text}", "key": item.text},
+            item.text,
+            html.input({
+                "id": f"todo-item-{item.text}-checkbox",
+                "type": "checkbox",
+                "checked": item.done,
+                "onChange": lambda _, i=item: toggle_item(i),
+            }),
+        )
+        for item in items
+    ])
 
 
 @component
@@ -322,13 +300,11 @@ def todo_list():
     input_value, set_input_value = hooks.use_state("")
     items = reactpy_django.hooks.use_query(get_todo_query)
     toggle_item = reactpy_django.hooks.use_mutation(toggle_todo_mutation)
-    add_item = reactpy_django.hooks.use_mutation(
-        add_todo_mutation, refetch=get_todo_query
-    )
+    add_item = reactpy_django.hooks.use_mutation(add_todo_mutation, refetch=get_todo_query)
 
     def on_submit(event):
         if event["key"] == "Enter":
-            add_item.execute(text=event["target"]["value"])
+            add_item(text=event["target"]["value"])
             set_input_value("")
 
     def on_change(event):
@@ -339,7 +315,7 @@ def todo_list():
     elif items.data is None:
         rendered_items = html.h2("Loading...")
     else:
-        rendered_items = html._(
+        rendered_items = html(
             html.h3("Not Done"),
             _render_todo_items([i for i in items.data if not i.done], toggle_item),
             html.h3("Done"),
@@ -351,21 +327,19 @@ def todo_list():
     elif add_item.error:
         mutation_status = html.h2(f"Error when adding - {add_item.error}")
     else:
-        mutation_status = ""  # type: ignore
+        mutation_status = ""
 
     return html.div(
         {"id": "todo-list"},
-        html.p(inspect.currentframe().f_code.co_name),  # type: ignore
+        html.p(inspect.currentframe().f_code.co_name),
         html.label("Add an item:"),
-        html.input(
-            {
-                "type": "text",
-                "id": "todo-input",
-                "value": input_value,
-                "on_key_press": on_submit,
-                "on_change": on_change,
-            }
-        ),
+        html.input({
+            "type": "text",
+            "id": "todo-input",
+            "value": input_value,
+            "onKeyPress": on_submit,
+            "onChange": on_change,
+        }),
         mutation_status,
         rendered_items,
     )
@@ -381,10 +355,10 @@ async def async_add_todo_mutation(text: str):
         if existing.done:
             existing.done = False
             await existing.asave()
-        else:
-            return False
-    else:
-        await AsyncTodoItem(text=text, done=False).asave()
+            return None
+        return False
+    await AsyncTodoItem(text=text, done=False).asave()
+    return None
 
 
 async def async_toggle_todo_mutation(item: AsyncTodoItem):
@@ -397,13 +371,11 @@ def async_todo_list():
     input_value, set_input_value = hooks.use_state("")
     items = reactpy_django.hooks.use_query(async_get_todo_query)
     toggle_item = reactpy_django.hooks.use_mutation(async_toggle_todo_mutation)
-    add_item = reactpy_django.hooks.use_mutation(
-        async_add_todo_mutation, refetch=async_get_todo_query
-    )
+    add_item = reactpy_django.hooks.use_mutation(async_add_todo_mutation, refetch=async_get_todo_query)
 
     async def on_submit(event):
         if event["key"] == "Enter":
-            add_item.execute(text=event["target"]["value"])
+            add_item(text=event["target"]["value"])
             set_input_value("")
 
     async def on_change(event):
@@ -414,7 +386,7 @@ def async_todo_list():
     elif items.data is None:
         rendered_items = html.h2("Loading...")
     else:
-        rendered_items = html._(
+        rendered_items = html(
             html.h3("Not Done"),
             _render_todo_items([i for i in items.data if not i.done], toggle_item),
             html.h3("Done"),
@@ -426,21 +398,19 @@ def async_todo_list():
     elif add_item.error:
         mutation_status = html.h2(f"Error when adding - {add_item.error}")
     else:
-        mutation_status = ""  # type: ignore
+        mutation_status = ""
 
     return html.div(
         {"id": "async-todo-list"},
-        html.p(inspect.currentframe().f_code.co_name),  # type: ignore
+        html.p(inspect.currentframe().f_code.co_name),
         html.label("Add an item:"),
-        html.input(
-            {
-                "type": "text",
-                "id": "async-todo-input",
-                "value": input_value,
-                "on_key_press": on_submit,
-                "on_change": on_change,
-            }
-        ),
+        html.input({
+            "type": "text",
+            "id": "async-todo-input",
+            "value": input_value,
+            "onKeyPress": on_submit,
+            "onChange": on_change,
+        }),
         mutation_status,
         rendered_items,
     )
@@ -448,30 +418,14 @@ def async_todo_list():
 
 view_to_component_sync_func = view_to_component(views.view_to_component_sync_func)
 view_to_component_async_func = view_to_component(views.view_to_component_async_func)
-view_to_component_sync_class = view_to_component(
-    views.ViewToComponentSyncClass.as_view()
-)
-view_to_component_async_class = view_to_component(
-    views.ViewToComponentAsyncClass.as_view()
-)
-view_to_component_template_view_class = view_to_component(
-    views.ViewToComponentTemplateViewClass.as_view()
-)
-_view_to_component_sync_func_compatibility = view_to_component(
-    views.view_to_component_sync_func_compatibility, compatibility=True
-)
-_view_to_component_async_func_compatibility = view_to_component(
-    views.view_to_component_async_func_compatibility, compatibility=True
-)
-_view_to_component_sync_class_compatibility = view_to_component(
-    views.ViewToComponentSyncClassCompatibility.as_view(), compatibility=True
-)
-_view_to_component_async_class_compatibility = view_to_component(
-    views.ViewToComponentAsyncClassCompatibility.as_view(), compatibility=True
-)
-_view_to_component_template_view_class_compatibility = view_to_component(
-    views.ViewToComponentTemplateViewClassCompatibility.as_view(), compatibility=True
-)
+view_to_component_sync_class = view_to_component(views.ViewToComponentSyncClass.as_view())
+view_to_component_async_class = view_to_component(views.ViewToComponentAsyncClass.as_view())
+view_to_component_template_view_class = view_to_component(views.ViewToComponentTemplateViewClass.as_view())
+_view_to_iframe_sync_func = view_to_iframe(views.view_to_iframe_sync_func)
+_view_to_iframe_async_func = view_to_iframe(views.view_to_iframe_async_func)
+_view_to_iframe_sync_class = view_to_iframe(views.ViewToIframeSyncClass.as_view())
+_view_to_iframe_async_class = view_to_iframe(views.ViewToIframeAsyncClass.as_view())
+_view_to_iframe_template_view_class = view_to_iframe(views.ViewToIframeTemplateViewClass.as_view())
 _view_to_iframe_args = view_to_iframe(views.view_to_iframe_args)
 _view_to_iframe_not_registered = view_to_iframe("view_does_not_exist")
 view_to_component_script = view_to_component(views.view_to_component_script)
@@ -481,49 +435,49 @@ _view_to_component_kwargs = view_to_component(views.view_to_component_kwargs)
 
 
 @component
-def view_to_component_sync_func_compatibility():
+def view_to_iframe_sync_func():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
-        _view_to_component_sync_func_compatibility(key="test"),
+        {"id": inspect.currentframe().f_code.co_name},
+        _view_to_iframe_sync_func(key="test"),
     )
 
 
 @component
-def view_to_component_async_func_compatibility():
+def view_to_iframe_async_func():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
-        _view_to_component_async_func_compatibility(),
+        {"id": inspect.currentframe().f_code.co_name},
+        _view_to_iframe_async_func(),
     )
 
 
 @component
-def view_to_component_sync_class_compatibility():
+def view_to_iframe_sync_class():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
-        _view_to_component_sync_class_compatibility(),
+        {"id": inspect.currentframe().f_code.co_name},
+        _view_to_iframe_sync_class(),
     )
 
 
 @component
-def view_to_component_async_class_compatibility():
+def view_to_iframe_async_class():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
-        _view_to_component_async_class_compatibility(),
+        {"id": inspect.currentframe().f_code.co_name},
+        _view_to_iframe_async_class(),
     )
 
 
 @component
-def view_to_component_template_view_class_compatibility():
+def view_to_iframe_template_view_class():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
-        _view_to_component_template_view_class_compatibility(),
+        {"id": inspect.currentframe().f_code.co_name},
+        _view_to_iframe_template_view_class(),
     )
 
 
 @component
 def view_to_iframe_args():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
+        {"id": inspect.currentframe().f_code.co_name},
         _view_to_iframe_args("Arg1", "Arg2", kwarg1="Kwarg1", kwarg2="Kwarg2"),
     )
 
@@ -531,7 +485,7 @@ def view_to_iframe_args():
 @component
 def view_to_iframe_not_registered():
     return html.div(
-        {"id": inspect.currentframe().f_code.co_name},  # type: ignore
+        {"id": inspect.currentframe().f_code.co_name},
         _view_to_iframe_not_registered(),
     )
 
@@ -543,13 +497,13 @@ def view_to_component_request():
     def on_click(_):
         post_request = HttpRequest()
         post_request.method = "POST"
-        set_request(post_request)  # type: ignore
+        set_request(post_request)
 
-    return html._(
+    return html(
         html.button(
             {
-                "id": f"{inspect.currentframe().f_code.co_name}_btn",  # type: ignore
-                "on_click": on_click,
+                "id": f"{inspect.currentframe().f_code.co_name}_btn",
+                "onClick": on_click,
             },
             "Click me",
         ),
@@ -564,11 +518,11 @@ def view_to_component_args():
     def on_click(_):
         set_success("")
 
-    return html._(
+    return html(
         html.button(
             {
-                "id": f"{inspect.currentframe().f_code.co_name}_btn",  # type: ignore
-                "on_click": on_click,
+                "id": f"{inspect.currentframe().f_code.co_name}_btn",
+                "onClick": on_click,
             },
             "Click me",
         ),
@@ -583,33 +537,15 @@ def view_to_component_kwargs():
     def on_click(_):
         set_success("")
 
-    return html._(
+    return html(
         html.button(
             {
-                "id": f"{inspect.currentframe().f_code.co_name}_btn",  # type: ignore
-                "on_click": on_click,
+                "id": f"{inspect.currentframe().f_code.co_name}_btn",
+                "onClick": on_click,
             },
             "Click me",
         ),
         _view_to_component_kwargs(success=success),
-    )
-
-
-@view_to_component
-def view_to_component_decorator(request):
-    return render(
-        request,
-        "view_to_component.html",
-        {"test_name": inspect.currentframe().f_code.co_name},  # type: ignore
-    )
-
-
-@view_to_component(strict_parsing=False)
-def view_to_component_decorator_args(request):
-    return render(
-        request,
-        "view_to_component.html",
-        {"test_name": inspect.currentframe().f_code.co_name},  # type: ignore
     )
 
 
@@ -620,7 +556,7 @@ def custom_host(number=0):
 
     return html.div(
         {
-            "class_name": f"{inspect.currentframe().f_code.co_name}-{number}",  # type: ignore
+            "className": f"{inspect.currentframe().f_code.co_name}-{number}",
             "data-port": port,
         },
         f"Server Port: {port}",
@@ -629,9 +565,7 @@ def custom_host(number=0):
 
 @component
 def broken_postprocessor_query():
-    relational_parent = reactpy_django.hooks.use_query(
-        QueryOptions(postprocessor=None), get_relational_parent_query
-    )
+    relational_parent = reactpy_django.hooks.use_query(get_relational_parent_query, postprocessor=None)
 
     if not relational_parent.data:
         return
@@ -639,3 +573,201 @@ def broken_postprocessor_query():
     mtm = relational_parent.data.many_to_many.all()
 
     return html.div(f"This should have failed! Something went wrong: {mtm}")
+
+
+def get_or_create_user1():
+    return get_user_model().objects.get_or_create(username="user_1")[0]
+
+
+def get_or_create_user2():
+    return get_user_model().objects.get_or_create(username="user_2")[0]
+
+
+@component
+def use_user_data():
+    user_data_query, user_data_mutation = reactpy_django.hooks.use_user_data()
+    user1 = reactpy_django.hooks.use_query(get_or_create_user1)
+    user2 = reactpy_django.hooks.use_query(get_or_create_user2)
+    current_user = reactpy_django.hooks.use_user()
+    scope = reactpy_django.hooks.use_scope()
+
+    async def login_user1(event):
+        await login(scope, user1.data)
+        user_data_query.refetch()
+        user_data_mutation.reset()
+
+    async def login_user2(event):
+        await login(scope, user2.data)
+        user_data_query.refetch()
+        user_data_mutation.reset()
+
+    async def logout_user(event):
+        await logout(scope)
+        user_data_query.refetch()
+        user_data_mutation.reset()
+
+    async def clear_data(event):
+        user_data_mutation({})
+        user_data_query.refetch()
+        user_data_mutation.reset()
+
+    async def on_submit(event):
+        if event["key"] == "Enter":
+            user_data_mutation((user_data_query.data or {}) | {event["target"]["value"]: event["target"]["value"]})
+
+    return html.div(
+        {
+            "id": "use-user-data",
+            "data-success": bool(user_data_query.data),
+            "data-fetch-error": bool(user_data_query.error),
+            "data-mutation-error": bool(user_data_mutation.error),
+            "data-loading": user_data_query.loading or user_data_mutation.loading,
+            "data-username": ("AnonymousUser" if current_user.is_anonymous else current_user.username),
+        },
+        html.div("use_user_data"),
+        html.button({"className": "login-1", "onClick": login_user1}, "Login 1"),
+        html.button({"className": "login-2", "onClick": login_user2}, "Login 2"),
+        html.button({"className": "logout", "onClick": logout_user}, "Logout"),
+        html.button({"className": "clear", "onClick": clear_data}, "Clear Data"),
+        html.div(f"User: {current_user}"),
+        html.div(f"Data: {user_data_query.data}"),
+        html.div(f"Data State: (loading={user_data_query.loading}, error={user_data_query.error})"),
+        html.div(f"Mutation State: (loading={user_data_mutation.loading}, error={user_data_mutation.error})"),
+        html.div(html.input({"onKeyPress": on_submit, "placeholder": "Type here to add data"})),
+    )
+
+
+def get_or_create_user3():
+    return get_user_model().objects.get_or_create(username="user_3")[0]
+
+
+@component
+def use_user_data_with_default():
+    async def value3():
+        return "value3"
+
+    def value2():
+        return "value2"
+
+    user_data_query, user_data_mutation = reactpy_django.hooks.use_user_data(
+        {"default1": "value", "default2": value2, "default3": value3},
+        save_default_data=True,
+    )
+    user3 = reactpy_django.hooks.use_query(get_or_create_user3)
+    current_user = reactpy_django.hooks.use_user()
+    scope = reactpy_django.hooks.use_scope()
+
+    async def login_user3(event):
+        await login(scope, user3.data)
+        user_data_query.refetch()
+        user_data_mutation.reset()
+
+    async def clear_data(event):
+        user_data_mutation({})
+        user_data_query.refetch()
+        user_data_mutation.reset()
+
+    async def on_submit(event):
+        if event["key"] == "Enter":
+            user_data_mutation((user_data_query.data or {}) | {event["target"]["value"]: event["target"]["value"]})
+
+    return html.div(
+        {
+            "id": "use-user-data-with-default",
+            "data-fetch-error": bool(user_data_query.error),
+            "data-mutation-error": bool(user_data_mutation.error),
+            "data-loading": user_data_query.loading or user_data_mutation.loading,
+            "data-username": ("AnonymousUser" if current_user.is_anonymous else current_user.username),
+        },
+        html.div("use_user_data_with_default"),
+        html.button({"className": "login-3", "onClick": login_user3}, "Login 3"),
+        html.button({"className": "clear", "onClick": clear_data}, "Clear Data"),
+        html.div(f"User: {current_user}"),
+        html.div(f"Data: {user_data_query.data}"),
+        html.div(f"Data State: (loading={user_data_query.loading}, error={user_data_query.error})"),
+        html.div(f"Mutation State: (loading={user_data_mutation.loading}, error={user_data_mutation.error})"),
+        html.div(html.input({"onKeyPress": on_submit, "placeholder": "Type here to add data"})),
+    )
+
+
+@component
+def use_auth():
+    login_, logout_ = reactpy_django.hooks.use_auth()
+    uuid = hooks.use_ref(str(uuid4())).current
+    current_user = reactpy_django.hooks.use_user()
+    connection = reactpy_django.hooks.use_connection()
+
+    async def login_user(event):
+        new_user, _created = await get_user_model().objects.aget_or_create(username="user_4")
+        await login_(new_user)
+
+    async def logout_user(event):
+        await logout_()
+
+    async def disconnect(event):
+        await connection.carrier.close()
+
+    return html.div(
+        {
+            "id": "use-auth",
+            "data-username": ("AnonymousUser" if current_user.is_anonymous else current_user.username),
+            "data-uuid": uuid,
+        },
+        html.div("use_auth"),
+        html.div(f"UUID: {uuid}"),
+        html.button({"className": "login", "onClick": login_user}, "Login"),
+        html.button({"className": "logout", "onClick": logout_user}, "Logout"),
+        html.button({"className": "disconnect", "onClick": disconnect}, "disconnect"),
+        html.div(f"User: {current_user}"),
+    )
+
+
+@component
+def use_auth_no_rerender():
+    login_, logout_ = reactpy_django.hooks.use_auth()
+    uuid = hooks.use_ref(str(uuid4())).current
+    current_user = reactpy_django.hooks.use_user()
+    connection = reactpy_django.hooks.use_connection()
+
+    async def login_user(event):
+        new_user, _created = await get_user_model().objects.aget_or_create(username="user_5")
+        await login_(new_user, rerender=False)
+
+    async def logout_user(event):
+        await logout_(rerender=False)
+
+    async def disconnect(event):
+        await connection.carrier.close()
+
+    return html.div(
+        {
+            "id": "use-auth-no-rerender",
+            "data-username": ("AnonymousUser" if current_user.is_anonymous else current_user.username),
+            "data-uuid": uuid,
+        },
+        html.div("use_auth_no_rerender"),
+        html.div(f"UUID: {uuid}"),
+        html.button({"className": "login", "onClick": login_user}, "Login"),
+        html.button({"className": "logout", "onClick": logout_user}, "Logout"),
+        html.button({"className": "disconnect", "onClick": disconnect}, "disconnect"),
+        html.div(f"User: {current_user}"),
+    )
+
+
+@component
+def use_rerender():
+    uuid = str(uuid4())
+    rerender = reactpy_django.hooks.use_rerender()
+
+    def on_click(event):
+        rerender()
+
+    return html.div(
+        {
+            "id": "use-rerender",
+            "data-uuid": uuid,
+        },
+        html.div("use_rerender"),
+        html.div(f"UUID: {uuid}"),
+        html.button({"onClick": on_click}, "Rerender"),
+    )

@@ -1,20 +1,23 @@
-#!/usr/bin/env python
+# ruff: noqa: INP001
 """Django's command-line utility for administrative tasks."""
+
 import os
 import sys
 
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings")
+    # The default settings file, which can be overridden by `--settings <module_path>`
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_app.settings_single_db")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
-        raise ImportError(
+        msg = (
             "Couldn't import Django. Are you sure it's installed and "
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
-        ) from exc
+        )
+        raise ImportError(msg) from exc
     execute_from_command_line(sys.argv)
 
 
