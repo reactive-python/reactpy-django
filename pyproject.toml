@@ -97,6 +97,7 @@ extra-dependencies = [
   "django-bootstrap5",
   "decorator",
   "uvicorn[standard]",
+  "jinja2",
 ]
 matrix-name-format = "{variable}-{value}"
 
