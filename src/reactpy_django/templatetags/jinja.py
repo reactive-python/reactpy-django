@@ -27,6 +27,7 @@ Then in ``myproject/jinja_env.py``:
     from jinja2 import Environment
     from reactpy_django.templatetags.jinja import ReactPyExtension
 
+
     def environment(**options):
         env = Environment(**options)
         env.add_extension(ReactPyExtension)
@@ -35,26 +36,30 @@ Then in ``myproject/jinja_env.py``:
 
 from __future__ import annotations
 
-import json
 from logging import getLogger
 from typing import TYPE_CHECKING
 
 from django.template import RequestContext, loader
-from django.utils.safestring import mark_safe
 from jinja2 import pass_context
 from jinja2.ext import Extension
-from jinja2.runtime import Context
 
 from reactpy_django.templatetags.reactpy import (
     COMPONENT_TEMPLATE,
     PYSCRIPT_COMPONENT_TEMPLATE,
     PYSCRIPT_SETUP_TEMPLATE,
+)
+from reactpy_django.templatetags.reactpy import (
     component as django_component_tag,
+)
+from reactpy_django.templatetags.reactpy import (
     pyscript_component as django_pyscript_component_tag,
+)
+from reactpy_django.templatetags.reactpy import (
     pyscript_setup as django_pyscript_setup_tag,
 )
 
 if TYPE_CHECKING:
+    from jinja2.runtime import Context
     from reactpy.types import Component, VdomDict
 
 _logger = getLogger(__name__)
@@ -74,8 +79,6 @@ class ReactPyExtension(Extension):
     This is because Jinja2 has more expressive power and can directly handle
     function expansions.
     """
-
-    tags = {}
 
     def __init__(self, environment):
         super().__init__(environment)
@@ -111,7 +114,7 @@ class ReactPyExtension(Extension):
         """
         request = jinja_context.parent.get("request")
         if request is None:
-            _logger.exception(
+            _logger.error(
                 "Cannot render a ReactPy component in a Jinja2 template without a "
                 "request object. Ensure the 'django.template.context_processors.request' "
                 "context processor is enabled for your Jinja2 backend."
@@ -159,10 +162,7 @@ class ReactPyExtension(Extension):
         """
         request = jinja_context.parent.get("request")
         if request is None:
-            _logger.exception(
-                "Cannot render a PyScript component in a Jinja2 template without a "
-                "request object."
-            )
+            _logger.error("Cannot render a PyScript component in a Jinja2 template without a request object.")
             return ""
 
         django_context = RequestContext(

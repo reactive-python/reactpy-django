@@ -15,13 +15,10 @@ if _bun_available:
         cwd=str(js_dir),
         check=True,
     )
-else:
-    # Verify that JS artifacts already exist so we don't silently skip a needed build
-    if not (static_dir / "index.js").exists():
-        raise RuntimeError(
-            "bun is not installed and JS artifacts are missing. "
-            f"Run 'bun install && bun build' in {js_dir} first."
-        )
+# Verify that JS artifacts already exist so we don't silently skip a needed build
+elif not (static_dir / "index.js").exists():
+    msg = f"bun is not installed and JS artifacts are missing. Run 'bun install && bun build' in {js_dir} first."
+    raise RuntimeError(msg)
 
 
 # Make sure the test environment is always using the latest JS

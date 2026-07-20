@@ -40,6 +40,7 @@ class Jinja2ComponentTests(TestCase):
     def test_component_function_available(self):
         """The component function should be available in Jinja2 templates."""
         from jinja2 import Environment
+
         from reactpy_django.templatetags.jinja import ReactPyExtension
 
         env = Environment()
@@ -52,6 +53,7 @@ class Jinja2ComponentTests(TestCase):
     def test_pyscript_component_function_available(self):
         """The pyscript_component function should be available in Jinja2 templates."""
         from jinja2 import Environment
+
         from reactpy_django.templatetags.jinja import ReactPyExtension
 
         env = Environment()
@@ -64,6 +66,7 @@ class Jinja2ComponentTests(TestCase):
     def test_pyscript_setup_function_available(self):
         """The pyscript_setup function should be available in Jinja2 templates."""
         from jinja2 import Environment
+
         from reactpy_django.templatetags.jinja import ReactPyExtension
 
         env = Environment()
@@ -78,9 +81,7 @@ class Jinja2ComponentTests(TestCase):
         from django.template import engines
 
         jinja2_engine = engines["jinja2"]
-        template = jinja2_engine.from_string(
-            "{{ component('test_app.components.hello_world') }}"
-        )
+        template = jinja2_engine.from_string("{{ component('test_app.components.hello_world') }}")
         rendered = template.render({})
         # The rendered output should be a string of some sort
         assert isinstance(rendered, str)
@@ -105,8 +106,6 @@ class Jinja2ViewTests(TestCase):
     def test_jinja_base_template_view_status(self):
         """The Jinja2 base template view should return HTTP 200."""
         # Note: These tests require the Jinja2 settings module
-        pass
 
     def test_jinja_errors_template_view_status(self):
         """The Jinja2 errors template view should return HTTP 200."""
-        pass
