@@ -34,12 +34,6 @@ class BasicForm(forms.Form):
     uuid_field = forms.UUIDField(label="UUID")
     combo_field = forms.ComboField(label="combo", fields=[forms.CharField(), forms.EmailField()])
     password_field = forms.CharField(label="password", widget=forms.PasswordInput)
-    split_datetime_field = forms.SplitDateTimeField(label="split date time")
-    multi_value_field = forms.MultiValueField(
-        label="multi value",
-        fields=[forms.CharField(), forms.EmailField()],
-        require_all_fields=False,
-    )
     model_choice_field = forms.ModelChoiceField(label="model choice field", queryset=models.TodoItem.objects.all())
     model_multiple_choice_field = forms.ModelMultipleChoiceField(
         label="model multiple choice field", queryset=models.TodoItem.objects.all()
