@@ -806,6 +806,19 @@ class ComponentTests(PlaywrightTestCase):
         # Make sure no errors remain
         assert len(self.page.query_selector_all(".errorlist")) == 0
 
+        # Verify multi-select field values survived the round-trip
+        # After successful submission, the re-rendered form should have
+        # the same options selected, proving the FormData duplicate-key fix worked.
+        assert self.page.locator("#id_multiple_choice_field").input_value() == ["2", "3"]
+        assert self.page.locator("#id_typed_multiple_choice_field").input_value() == ["1", "2"]
+
+        # Verify model multi-select field values survived the round-trip
+        model_choice_selected = self.page.locator("#id_model_multiple_choice_field").input_value()
+        assert sorted(model_choice_selected) == sorted([
+            model_choice_field_values[1],
+            model_choice_field_values[2],
+        ])
+
     @navigate_to_page("/form/bootstrap/")
     def test_form_bootstrap(self):
         try:

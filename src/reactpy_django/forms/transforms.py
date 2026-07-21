@@ -89,7 +89,15 @@ def infer_key_from_attributes(vdom_tree: VdomDict) -> VdomDict:
 
 def _find_selected_options(vdom_node: Any) -> list[str]:
     """Recursively iterate through the tree to find all <option> tags with the 'selected' prop.
-    Removes the 'selected' prop and returns a list of the 'value' prop of each selected <option>."""
+    Returns a list of the 'value' prop of each selected <option>.
+
+    .. note::
+        We intentionally do **not** remove the ``selected`` prop from the ``<option>`` elements.
+        The ``defaultValue`` attribute is already set on the ``<select>`` element for initial
+        mount in React/Preact, but it is only applied once (on mount).  Keeping ``selected``
+        on the ``<option>`` elements ensures that selection state is correctly restored after
+        the form is re-rendered (e.g. after a form submission that does not trigger a full
+        Preact remount)."""
     if not isinstance(vdom_node, dict):
         return []
 
@@ -98,7 +106,6 @@ def _find_selected_options(vdom_node: Any) -> list[str]:
         value = vdom_node["attributes"].setdefault("value", vdom_node["children"][0])
 
         if "selected" in vdom_node["attributes"]:
-            vdom_node["attributes"].pop("selected")
             selected_options.append(value)
 
     for child in vdom_node.get("children", []):

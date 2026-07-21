@@ -40,6 +40,7 @@ Don't forget to remove deprecated code on each major release!
     - Replaced `web.module_from_file`/`web.export` with `reactjs.component_from_file`.
     - Replaced `reactpy.backend.types` and `reactpy.core.types` imports with `reactpy.types`.
     - Renamed `Location.pathname` to `Location.path` and `Location.search` to `Location.query_string`.
+    - Improved `django_form` submission handling to support multi-value form fields (e.g., `MultipleChoiceField`, `MultiValueField`) by fixing a client-side data serialization issue.
 
 ### Removed
 

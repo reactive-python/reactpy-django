@@ -58,6 +58,7 @@ def _django_form(
     bottom_children_count = hooks.use_ref(len(bottom_children))
     submitted_data, set_submitted_data = hooks.use_state({} or None)
     rendered_form, set_rendered_form = hooks.use_state(cast("Union[str, None]", None))
+    render_count, set_render_count = hooks.use_state(0)
 
     # Initialize the form with the provided data
     validate_form_args(top_children, top_children_count, bottom_children, bottom_children_count, form)
@@ -93,6 +94,7 @@ def _django_form(
                     await ensure_async(initialized_form.save)()
                     set_submitted_data(None)
 
+            set_render_count(render_count + 1)
             set_rendered_form(
                 await ensure_async(initialized_form.render)(form_template or config.REACTPY_DEFAULT_FORM_TEMPLATE)
             )
@@ -126,6 +128,7 @@ def _django_form(
 
     form_props = {
         "id": f"reactpy-{uuid}",
+        "key": f"reactpy-{uuid}-{render_count}",
         # Intercept the form submission to prevent the browser from navigating
         "onSubmit": event(lambda _: None, prevent_default=True),
     }
