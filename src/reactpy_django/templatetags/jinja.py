@@ -47,14 +47,8 @@ from reactpy_django.templatetags.reactpy import (
     COMPONENT_TEMPLATE,
     PYSCRIPT_COMPONENT_TEMPLATE,
     PYSCRIPT_SETUP_TEMPLATE,
-)
-from reactpy_django.templatetags.reactpy import (
     component as django_component_tag,
-)
-from reactpy_django.templatetags.reactpy import (
     pyscript_component as django_pyscript_component_tag,
-)
-from reactpy_django.templatetags.reactpy import (
     pyscript_setup as django_pyscript_setup_tag,
 )
 

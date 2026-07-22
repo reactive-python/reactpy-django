@@ -28,7 +28,6 @@ INSTALLED_APPS = [
     "reactpy_django",  # Django compatiblity layer for ReactPy
     "test_app",  # This test application
     "django_bootstrap5",
-    "jinja2",  # Jinja2 template engine
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

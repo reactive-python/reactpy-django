@@ -1,5 +1,6 @@
 """Tests for Jinja2 template rendering with ReactPy components."""
 
+from django.http import HttpRequest
 from django.test import TestCase, override_settings
 
 # Jinja2 template backend configuration to add alongside the default Django templates
@@ -80,11 +81,16 @@ class Jinja2ComponentTests(TestCase):
         """A Jinja2 template containing a component tag should render without error."""
         from django.template import engines
 
+        request = HttpRequest()
+        request.method = "GET"
+
         jinja2_engine = engines["jinja2"]
-        template = jinja2_engine.from_string("{{ component('test_app.components.hello_world') }}")
-        rendered = template.render({})
-        # The rendered output should be a string of some sort
+        template = jinja2_engine.from_string(
+            "{{ component('test_app.components.hello_world') }}"
+        )
+        rendered = template.render({"request": request})
         assert isinstance(rendered, str)
+        assert "data-reactpy" in rendered
 
     @override_settings(TEMPLATES=JINJA2_TEMPLATES)
     def test_jinja_extension_configuration(self):
@@ -98,14 +104,3 @@ class Jinja2ComponentTests(TestCase):
         assert callable(env.globals["pyscript_component"])
         assert "pyscript_setup" in env.globals
         assert callable(env.globals["pyscript_setup"])
-
-
-class Jinja2ViewTests(TestCase):
-    """Verify that Jinja2 views render with the correct engine and status."""
-
-    def test_jinja_base_template_view_status(self):
-        """The Jinja2 base template view should return HTTP 200."""
-        # Note: These tests require the Jinja2 settings module
-
-    def test_jinja_errors_template_view_status(self):
-        """The Jinja2 errors template view should return HTTP 200."""
