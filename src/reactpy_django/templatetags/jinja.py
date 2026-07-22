@@ -112,6 +112,10 @@ class ReactPyExtension(Extension):
         Returns:
             Rendered HTML string.
         """
+        from reactpy_django.config import REACTPY_PRERENDER as _REACTPY_PRERENDER
+
+        if not prerender:
+            prerender = str(_REACTPY_PRERENDER)
         request = jinja_context.parent.get("request")
         if request is None:
             _logger.error(
