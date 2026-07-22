@@ -85,9 +85,7 @@ class Jinja2ComponentTests(TestCase):
         request.method = "GET"
 
         jinja2_engine = engines["jinja2"]
-        template = jinja2_engine.from_string(
-            "{{ component('test_app.components.hello_world') }}"
-        )
+        template = jinja2_engine.from_string("{{ component('test_app.components.hello_world') }}")
         rendered = template.render({"request": request})
         assert isinstance(rendered, str)
         assert "data-reactpy" in rendered
