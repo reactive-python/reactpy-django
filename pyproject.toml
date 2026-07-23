@@ -55,9 +55,6 @@ urls.Changelog = "https://reactive-python.github.io/reactpy-django/latest/about/
 urls.Documentation = "https://reactive-python.github.io/reactpy-django/"
 urls.Source = "https://github.com/reactive-python/reactpy-django"
 
-[project.optional-dependencies]
-jinja = ["jinja2"]
-
 [tool.hatch.version]
 path = "src/reactpy_django/__init__.py"
 

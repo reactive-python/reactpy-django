@@ -36,6 +36,14 @@ Then in ``myproject/jinja_env.py``:
 
 from __future__ import annotations
 
+try:
+    import jinja2  # noqa: F401
+except ModuleNotFoundError as e:
+    raise ModuleNotFoundError(
+        "The `jinja2` package is required to use ReactPy-Django's Jinja2 template support. "
+        "Install it with: pip install jinja2"
+    ) from e
+
 from logging import getLogger
 from typing import TYPE_CHECKING
 
