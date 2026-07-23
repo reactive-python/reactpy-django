@@ -88,7 +88,8 @@ class Jinja2ComponentTests(TestCase):
         template = jinja2_engine.from_string("{{ component('test_app.components.hello_world') }}")
         rendered = template.render({"request": request})
         assert isinstance(rendered, str)
-        assert "data-reactpy" in rendered
+        assert "mountComponent" in rendered
+        assert "test_app.components.hello_world" in rendered
 
     @override_settings(TEMPLATES=JINJA2_TEMPLATES)
     def test_jinja_extension_configuration(self):
