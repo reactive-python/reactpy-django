@@ -188,11 +188,19 @@ class RootComponentFinder:
                 if get_template_sources is None:
                     get_template_sources = loader.get_template_sources
                 paths.update(smart_str(origin) for origin in get_template_sources(""))
+        # Collect directories from template engines that don't expose
+        # Django-style loaders (e.g., Jinja2), by reading template_dirs directly.
+        from django.template.backends.base import BaseEngine
+
+        for e in engines.all():
+            if not hasattr(e, "engine") and isinstance(e, BaseEngine):
+                for directory in e.template_dirs:
+                    paths.add(smart_str(directory))
         return paths
 
     def get_templates(self, paths: set[str]) -> set[str]:
-        """Obtains a set of all HTML template paths."""
-        extensions = [".html"]
+        """Obtains a set of all HTML and Jinja2 template paths."""
+        extensions = [".html", ".jinja"]
         templates: set[str] = set()
         for path in paths:
             for root, _, files in os.walk(path, followlinks=False):
