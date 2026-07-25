@@ -83,9 +83,19 @@ def reactpy_warnings(app_configs, **kwargs):
         )
 
     # Check if the reactpy/component.html template exists
-    try:
+    template_found = False
+    with contextlib.suppress(Exception):
         loader.get_template("reactpy/component.html")
-    except Exception:
+        template_found = True
+    if not template_found:
+        from django.template import engines as _engines
+
+        for _engine in _engines.all():
+            with contextlib.suppress(Exception):
+                _engine.get_template("reactpy/component.html")
+                template_found = True
+                break
+    if not template_found:
         warnings.append(
             checks.Warning(
                 "ReactPy HTML templates could not be found!",
@@ -250,6 +260,21 @@ def reactpy_warnings(app_configs, **kwargs):
                 id="reactpy_django.W021",
             )
         )
+
+    # Check if Jinja2 template backends are missing the request context processor
+    for _tmpl in getattr(settings, "TEMPLATES", []):
+        if "jinja2" in _tmpl.get("BACKEND", "").lower():
+            _options = _tmpl.get("OPTIONS", {})
+            _context_processors = _options.get("context_processors", [])
+            if "django.template.context_processors.request" not in _context_processors:
+                warnings.append(
+                    checks.Warning(
+                        "A Jinja2 template backend is missing the request context processor.",
+                        hint="Add 'django.template.context_processors.request' to the context_processors "
+                        "list within the OPTIONS of your Jinja2 template backend in settings.py:TEMPLATES.",
+                        id="reactpy_django.W022",
+                    )
+                )
 
     return warnings
 

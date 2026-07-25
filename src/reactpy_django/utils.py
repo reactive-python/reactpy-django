@@ -62,6 +62,15 @@ COMPONENT_REGEX = re.compile(
     + rf"({_OFFLINE_KWARG_PATTERN}|{_GENERIC_KWARG_PATTERN})*?"
     + r"\s*%}"
 )
+JINJA_COMPONENT_REGEX = re.compile(
+    r"\{\{\s*"
+    + _TAG_PATTERN
+    + r"\s*\("
+    + r"\s*"
+    + _PATH_PATTERN
+    + rf"({_OFFLINE_KWARG_PATTERN}|{_GENERIC_KWARG_PATTERN})*?"
+    + r"\s*\)\s*\}\}"
+)
 FILE_ASYNC_ITERATOR_THREAD = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ReactPy-Django-FileAsyncIterator")
 SYNC_LAYOUT_THREAD = ThreadPoolExecutor(max_workers=1, thread_name_prefix="ReactPy-Django-SyncLayout")
 
@@ -179,11 +188,19 @@ class RootComponentFinder:
                 if get_template_sources is None:
                     get_template_sources = loader.get_template_sources
                 paths.update(smart_str(origin) for origin in get_template_sources(""))
+        # Collect directories from template engines that don't expose
+        # Django-style loaders (e.g., Jinja2), by reading template_dirs directly.
+        from django.template.backends.base import BaseEngine
+
+        for e in engines.all():
+            if not hasattr(e, "engine") and isinstance(e, BaseEngine):
+                for directory in e.template_dirs:
+                    paths.add(smart_str(directory))
         return paths
 
     def get_templates(self, paths: set[str]) -> set[str]:
-        """Obtains a set of all HTML template paths."""
-        extensions = [".html"]
+        """Obtains a set of all HTML and Jinja2 template paths."""
+        extensions = [".html", ".jinja"]
         templates: set[str] = set()
         for path in paths:
             for root, _, files in os.walk(path, followlinks=False):
@@ -201,7 +218,8 @@ class RootComponentFinder:
         for template in templates:
             with contextlib.suppress(Exception), open(template, encoding="utf-8") as template_file:
                 clean_template = COMMENT_REGEX.sub("", template_file.read())
-                regex_iterable = COMPONENT_REGEX.finditer(clean_template)
+                regex_iterable = list(COMPONENT_REGEX.finditer(clean_template))
+                regex_iterable.extend(JINJA_COMPONENT_REGEX.finditer(clean_template))
                 new_components: list[str] = []
                 for match in regex_iterable:
                     new_components.append(match.group("path").replace('"', "").replace("'", ""))

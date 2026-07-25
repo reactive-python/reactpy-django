@@ -22,6 +22,7 @@ Don't forget to remove deprecated code on each major release!
 ### Added
 
 - Automatically serve ReactPy wheel from Django's static directory when using PyScript.
+- Jinja2 template support via `reactpy_django.templatetags.jinja.ReactPyExtension`.
 
 ### Changed
 

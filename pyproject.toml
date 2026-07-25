@@ -97,6 +97,7 @@ extra-dependencies = [
   "django-bootstrap5",
   "decorator",
   "uvicorn[standard]",
+  "jinja2",
 ]
 matrix-name-format = "{variable}-{value}"
 
@@ -197,7 +198,7 @@ deploy_develop = ["cd docs && mike deploy --push develop"]
 ################################
 
 [tool.hatch.envs.python]
-extra-dependencies = ["django-stubs", "channels-redis", "pyright"]
+extra-dependencies = ["django-stubs", "channels-redis", "pyright", "jinja2"]
 
 [tool.hatch.envs.python.scripts]
 type_check = ["pyright src"]

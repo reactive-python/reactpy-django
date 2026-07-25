@@ -45,8 +45,12 @@ except NoReverseMatch:
     RESOLVED_WEB_MODULES_PATH = ""
     _logger.exception("Could not resolve the 'web_modules' URL path!")
 
+COMPONENT_TEMPLATE = "reactpy/component.html"
+PYSCRIPT_COMPONENT_TEMPLATE = "reactpy/pyscript_component.html"
+PYSCRIPT_SETUP_TEMPLATE = "reactpy/pyscript_setup.html"
 
-@register.inclusion_tag("reactpy/component.html", takes_context=True)
+
+@register.inclusion_tag(COMPONENT_TEMPLATE, takes_context=True)
 def component(
     context: template.RequestContext,
     dotted_path: str,
@@ -190,7 +194,7 @@ def component(
     }
 
 
-@register.inclusion_tag("reactpy/pyscript_component.html", takes_context=True)
+@register.inclusion_tag(PYSCRIPT_COMPONENT_TEMPLATE, takes_context=True)
 def pyscript_component(
     context: template.RequestContext,
     *file_paths: str,
@@ -224,7 +228,7 @@ def pyscript_component(
     }
 
 
-@register.inclusion_tag("reactpy/pyscript_setup.html")
+@register.inclusion_tag(PYSCRIPT_SETUP_TEMPLATE)
 def pyscript_setup(
     *extra_py: str,
     extra_js: str | dict = "",
