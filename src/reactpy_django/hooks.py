@@ -12,6 +12,7 @@ from typing import (
 )
 from uuid import uuid4
 
+import dill
 import orjson
 from channels import DEFAULT_CHANNEL_LAYER
 from channels import auth as channels_auth
@@ -331,6 +332,111 @@ def use_user_data(
     return UserData(query, mutation)
 
 
+def use_session_state(
+    default: Any,
+    key: str,
+    *,
+    save_default: bool = False,
+) -> tuple[Any, Callable[[Any], None]]:
+    """Persist state across WebSocket reconnects (and, optionally, page reloads).
+
+    This hook stores its value in the ReactPy database so that it can be restored after a
+    WebSocket reconnect, which would otherwise reset all in-memory component state. It is
+    more robust than in-memory state because it survives multi-process deployments and
+    round-robin load balancing across multiple hosts.
+
+    The state's scope is controlled by the ``REACTPY_SESSION_STATE_MODE`` setting:
+
+    - ``"tab"`` (default): state is scoped to the rendered component (a per-tab, per-component
+      token that is stable across reconnects). Works for anonymous users without requiring
+      ``django.contrib.sessions``.
+    - ``"user"``: state is scoped to the authenticated user, falling back to a per-tab token
+      for anonymous users.
+
+    Args:
+        default: The value to use when no persisted state exists.
+        key: A unique identifier for this state slot within the computed scope. Multiple
+            ``use_session_state`` hooks in the same component must use distinct keys.
+
+    Kwargs:
+        save_default: If ``True``, the ``default`` value will be persisted when no state
+            already exists in the database.
+
+    Returns:
+        A tuple of ``(state, set_state)``. ``state`` is the current value (loaded from the
+        database, or ``default`` if none exists). ``set_state`` updates the in-memory value
+        immediately and schedules a debounced database write so that frequently-changing
+        values do not hammer the database.
+
+    Note:
+        Only serializable data may be stored. Values are serialized with ``dill``, so most
+        common Python objects are supported, but objects holding un-picklable resources
+        (e.g. open file handles or network connections) will fail.
+    """
+    from reactpy_django import config
+
+    scope_id = _resolve_session_state_scope_id()
+
+    # In-memory reactive state. This keeps the UI responsive while database writes are
+    # debounced in the background.
+    state, set_state = use_state(cast("Any", default))
+    loaded = use_ref(False)
+    latest = use_ref(default)
+    timer = use_ref(None)
+
+    @use_async_effect(dependencies=[key, scope_id])
+    async def load_state() -> None:
+        """Load the persisted value from the database once on mount."""
+        data = await _get_session_state(scope_id, key, default)
+        latest.current = data
+        set_state(data)
+        loaded.current = True
+        if save_default and data == default:
+            await _set_session_state(scope_id, key, data)
+
+    async def flush() -> None:
+        """Persist the latest value to the database."""
+        await _set_session_state(scope_id, key, latest.current)
+
+    async def debounced_flush() -> None:
+        """Wait for the sync interval and then persist the latest value."""
+        try:
+            await asyncio.sleep(config.REACTPY_SESSION_STATE_SYNC_INTERVAL)
+            await flush()
+        finally:
+            timer.current = None
+
+    def schedule_flush() -> None:
+        """Debounce database writes so rapid state changes coalesce into one write."""
+        if timer.current is not None and not timer.current.done():
+            timer.current.cancel()
+        timer.current = asyncio.create_task(debounced_flush())
+
+    @use_callback
+    def set_state_and_persist(value: Any) -> None:
+        """Update the in-memory state and schedule a debounced database write."""
+        latest.current = value
+        set_state(value)
+        schedule_flush()
+
+    @use_async_effect(dependencies=[])
+    async def flush_on_unmount() -> Callable[[], None]:
+        """Ensure the latest state is persisted when the component unmounts.
+
+        This is what makes state survive a WebSocket reconnect: the component's layout is
+        torn down on disconnect, so we flush any pending write before it is lost.
+        """
+
+        def _cleanup() -> None:
+            if timer.current is not None and not timer.current.done():
+                timer.current.cancel()
+            asyncio.create_task(flush())
+
+        return _cleanup
+
+    return state, set_state_and_persist
+
+
 def use_channel_layer(
     *,
     channel: str | None = None,
@@ -439,6 +545,45 @@ def use_auth() -> UseAuthTuple:
             trigger_rerender()
 
     return UseAuthTuple(login=login, logout=logout)
+
+
+def _resolve_session_state_scope_id() -> str:
+    """Resolve the stable identity used to scope persistent session state.
+
+    In ``"tab"`` mode this is the rendered component's UUID (stable across reconnects).
+    In ``"user"`` mode this is the authenticated user's primary key, falling back to a
+    per-tab token for anonymous users so that unauthenticated visitors still get isolated,
+    persistent state.
+    """
+    from reactpy_django import config
+
+    root_id = use_root_id()
+
+    if config.REACTPY_SESSION_STATE_MODE == "user":
+        user = use_user()
+        if not user.is_anonymous:
+            return f"user:{get_pk(user)}"
+
+    return f"tab:{root_id}"
+
+
+async def _get_session_state(scope_id: str, key: str, default: Any) -> Any:
+    """Load a persisted session state value from the database, or return `default`."""
+    from reactpy_django.models import SessionStateModel
+
+    model = await SessionStateModel.objects.filter(scope_id=scope_id, key=key).afirst()
+    if model is None or model.data is None:
+        return default
+    return dill.loads(model.data)
+
+
+async def _set_session_state(scope_id: str, key: str, data: Any) -> None:
+    """Persist a session state value to the database."""
+    from reactpy_django.models import SessionStateModel
+
+    model, _ = await SessionStateModel.objects.aget_or_create(scope_id=scope_id, key=key)
+    model.data = dill.dumps(data)
+    await model.asave()
 
 
 async def _get_user_data(user: AbstractUser, default_data: dict | None, save_default_data: bool) -> dict | None:
