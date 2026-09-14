@@ -1,4 +1,5 @@
 # ruff: noqa: RUF012
+import asyncio
 from time import sleep
 from typing import Any
 from uuid import uuid4
@@ -72,27 +73,29 @@ class RoutedDatabaseTests(TransactionTestCase):
             key = "my_state"
 
             # No state exists yet, so the default is returned
-            assert _get_session_state(scope_id, key, default="default") == "default"
+            assert asyncio.run(_get_session_state(scope_id, key, default="default")) == "default"
 
             # Persist some state and read it back
             state = {"count": 1, "items": [1, 2, 3]}
-            _set_session_state(scope_id, key, state)
+            asyncio.run(_set_session_state(scope_id, key, state))
             assert SessionStateModel.objects.filter(scope_id=scope_id, key=key).count() == 1
-            assert _get_session_state(scope_id, key, default="default") == state
+            assert asyncio.run(_get_session_state(scope_id, key, default="default")) == state
 
             # Persisting the same scope+key updates the existing row (no duplicate)
-            _set_session_state(scope_id, key, {"count": 2})
+            asyncio.run(_set_session_state(scope_id, key, {"count": 2}))
             assert SessionStateModel.objects.filter(scope_id=scope_id, key=key).count() == 1
-            assert _get_session_state(scope_id, key, default="default") == {"count": 2}
+            assert asyncio.run(_get_session_state(scope_id, key, default="default")) == {"count": 2}
 
-            # Untouched state is considered stale and gets cleaned up
-            fresh_scope = f"tab:{uuid4()}"
-            _set_session_state(fresh_scope, "other", "keep-me")
-            assert SessionStateModel.objects.count() == 2
+            # Let the first state row age past the expiry threshold
             sleep(config.REACTPY_SESSION_STATE_MAX_AGE)
+
+            # A freshly-written (non-expired) entry should survive cleaning
+            fresh_scope = f"tab:{uuid4()}"
+            asyncio.run(_set_session_state(fresh_scope, "other", "keep-me"))
+            assert SessionStateModel.objects.count() == 2
             tasks.clean_session_state()
             assert SessionStateModel.objects.count() == 1
-            assert _get_session_state(fresh_scope, "other", default="default") == "keep-me"
+            assert asyncio.run(_get_session_state(fresh_scope, "other", default="default")) == "keep-me"
         finally:
             config.REACTPY_CLEAN_SESSION_STATE = initial_clean_session_state
             config.REACTPY_SESSION_STATE_MAX_AGE = initial_session_state_max_age
