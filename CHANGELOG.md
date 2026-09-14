@@ -50,6 +50,7 @@ Don't forget to remove deprecated code on each major release!
 
 ### Fixed
 
+- Resolved flaky `test_pyscript_0_hello_world` CI test by giving the PyScript cold-start component render an adequate timeout.
 - Resolved bug where `django_form` events would sometimes not occur.
 
 ### [5.2.1] - 2025-01-10
