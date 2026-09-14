@@ -1,3 +1,4 @@
+# ruff: noqa: RUF012
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
