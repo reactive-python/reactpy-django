@@ -378,8 +378,8 @@ Don't forget to remove deprecated code on each major release!
     To upgrade from previous version you will need to...
 
     1. Install `django-idom >= 3.0.0`
-    2. Run `python manage.py migrate` to create the new Django-IDOM database entries
-    3. Run `python manage.py collectstatic --noinput` to collect the new Django-IDOM static files
+    2. Run `idom rewrite-keys <DIR>` and `idom rewrite-camel-case-props <DIR>` to update your `idom.html.*` calls to the new syntax
+    3. Run `python manage.py migrate` to create the new Django-IDOM database entries
 
 ### Added
 
@@ -466,7 +466,6 @@ Don't forget to remove deprecated code on each major release!
 
 - `view_to_component` now returns a `Callable`, instead of directly returning a `Component`. Check the docs for new usage info.
 - `use_mutation` and `use_query` will now log any query failures.
-- `view_to_component` will now allow `view_to_component` to be used as a decorator.
 
 ### Fixed
 
