@@ -15,7 +15,7 @@
 
 
 <span class=k>class</span><span class=w> </span><span class=nc>ExampleAppConfig</span><span class=p>(</span><span class=n>AppConfig</span><span class=p>):</span>
-    <span class=n>name</span> <span class=o>=</span> <span class=s2>&quot;example&quot;</span>
+    <span class=n>name</span> <span class=o>=</span> <span class=s2>"example"</span>
 
     <span class=k>def</span><span class=w> </span><span class=nf>ready</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
         <span class=n>register_iframe</span><span class=p>(</span><span class=n>views</span><span class=o>.</span><span class=n>hello_world</span><span class=p>)</span>
@@ -34,10 +34,10 @@
 
 
 <span class=k>class</span><span class=w> </span><span class=nc>ExampleAppConfig</span><span class=p>(</span><span class=n>AppConfig</span><span class=p>):</span>
-    <span class=n>name</span> <span class=o>=</span> <span class=s2>&quot;example&quot;</span>
+    <span class=n>name</span> <span class=o>=</span> <span class=s2>"example"</span>
 
     <span class=k>def</span><span class=w> </span><span class=nf>ready</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
-        <span class=n>register_component</span><span class=p>(</span><span class=s2>&quot;example_project.my_app.components.hello_world&quot;</span><span class=p>)</span>
+        <span class=n>register_component</span><span class=p>(</span><span class=s2>"example_project.my_app.components.hello_world"</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </div> </div> </div> <details class=example> <summary>See Interface</summary> <p><font size=4><strong>Parameters</strong></font></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr> <td><code class=highlight><span class=n>component</span></code></td> <td><code class=highlight><span class=n>ComponentConstructor</span> <span class=o>|</span> <span class=nb>str</span></code></td> <td>The component to register. Can be a component function or dotted path to a component.</td> <td>N/A</td> </tr> </tbody> </table> <p><font size=4><strong>Returns</strong></font></p> <p><code class=highlight><span class=kc>None</span></code></p> </details> <details class=warning> <summary>Only use this within <code class=highlight><span class=n>MyAppConfig</span><span class=o>.</span><span class=n>ready</span><span class=p>()</span></code></summary> <p>You should always call <code class=highlight><span class=n>register_component</span></code> within a Django <a href=https://docs.djangoproject.com/en/stable/ref/applications/#django.apps.AppConfig.ready><code>MyAppConfig.ready()</code> method</a>. This ensures you will retain multiprocessing compatibility, such as with ASGI web server workers.</p> </details> <details class=question> <summary>Do I need to use this?</summary> <p>You typically will not need to use this function.</p> <p>For security reasons, ReactPy requires all root components to be registered. However, all components contained within Django templates are automatically registered.</p> <p>This function is commonly needed when you have configured your <a href=../template-tag/#component><code>host</code></a> to a dedicated Django rendering application that doesn't have templates.</p> </details> <hr> <h2 id=django-query-postprocessor>Django Query Postprocessor<a class=headerlink href=#django-query-postprocessor title="Permanent link">&para;</a></h2> <p>This is the default postprocessor for the <code class=highlight><span class=n>use_query</span></code> hook.</p> <p>Since ReactPy is rendered within an <code class=highlight><span class=n>asyncio</span></code> loop, this postprocessor is exists to prevent Django's <code class=highlight><span class=n>SynchronousOnlyException</span></code> by recursively prefetching fields within Django's ORM. Note that this effectively eliminates Django's <a href=https://docs.djangoproject.com/en/stable/topics/db/queries/#querysets-are-lazy>lazy execution</a> behavior.</p> <div class="tabbed-set tabbed-alternate" data-tabs=3:2><input checked=checked id=__tabbed_3_1 name=__tabbed_3 type=radio><input id=__tabbed_3_2 name=__tabbed_3 type=radio><div class=tabbed-labels><label for=__tabbed_3_1>components.py</label><label for=__tabbed_3_2>models.py</label></div> <div class=tabbed-content> <div class=tabbed-block> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 1</span>
 <span class=normal> 2</span>
 <span class=normal> 3</span>
@@ -71,11 +71,11 @@
 
 <span class=nd>@component</span>
 <span class=k>def</span><span class=w> </span><span class=nf>todo_list</span><span class=p>():</span>
-    <span class=c1># These postprocessor options are functionally equivalent to ReactPy-Django&#39;s default values</span>
+    <span class=c1># These postprocessor options are functionally equivalent to ReactPy-Django's default values</span>
     <span class=n>item_query</span> <span class=o>=</span> <span class=n>use_query</span><span class=p>(</span>
         <span class=n>get_items</span><span class=p>,</span>
         <span class=n>postprocessor</span><span class=o>=</span><span class=n>django_query_postprocessor</span><span class=p>,</span>
-        <span class=n>postprocessor_kwargs</span><span class=o>=</span><span class=p>{</span><span class=s2>&quot;many_to_many&quot;</span><span class=p>:</span> <span class=kc>True</span><span class=p>,</span> <span class=s2>&quot;many_to_one&quot;</span><span class=p>:</span> <span class=kc>True</span><span class=p>},</span>
+        <span class=n>postprocessor_kwargs</span><span class=o>=</span><span class=p>{</span><span class=s2>"many_to_many"</span><span class=p>:</span> <span class=kc>True</span><span class=p>,</span> <span class=s2>"many_to_one"</span><span class=p>:</span> <span class=kc>True</span><span class=p>},</span>
     <span class=p>)</span>
 
     <span class=k>return</span> <span class=n>item_query</span><span class=o>.</span><span class=n>data</span>
