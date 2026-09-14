@@ -93,11 +93,6 @@ class UserData(NamedTuple):
     mutation: Mutation[dict]
 
 
-class SessionState(NamedTuple):
-    query: Query[Any]
-    mutation: Mutation[Any]
-
-
 class AsyncMessageReceiver(Protocol):
     async def __call__(self, message: dict) -> None: ...
 
