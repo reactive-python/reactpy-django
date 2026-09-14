@@ -20,11 +20,8 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True)),
             ],
             options={
-                'indexes': [models.Index(fields=['scope_id', 'updated_at'], name='reactpy_dj_scope_i_1cf868_idx')],
+                'indexes': [models.Index(fields=['scope_id', 'updated_at'], name='reactpy_session_state_idx')],
+                'constraints': [models.UniqueConstraint(fields=('scope_id', 'key'), name='reactpy_session_state_unique')],
             },
-        ),
-        migrations.AddConstraint(
-            model_name='sessionstatemodel',
-            constraint=models.UniqueConstraint(fields=('scope_id', 'key'), name='reactpy_django_sess_scope_id_key'),
         ),
     ]
