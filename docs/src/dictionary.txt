@@ -5,6 +5,7 @@ backends
 backhaul
 broadcasted
 changelog
+debounced
 django
 frontend
 frontends
@@ -18,6 +19,7 @@ misconfiguration
 misconfigurations
 my_template
 nox
+picklable
 plotly
 postfixed
 postprocessing

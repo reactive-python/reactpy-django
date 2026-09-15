@@ -422,7 +422,7 @@ This hook stores its value in the `#!python REACTPY_DATABASE`, so it is more rob
 
 ??? warning "Only serializable data may be stored"
 
-    Values are serialized with `#!python dill`, so most common Python objects are supported, but objects holding un-picklable resources (e.g. open file handles or network connections) will fail.
+    Values are serialized with `#!python dill`, so most common Python objects are supported, but objects holding resources that are not picklable (e.g. open file handles or network connections) will fail.
 
 ---
 
