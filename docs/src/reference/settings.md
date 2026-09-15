@@ -194,6 +194,45 @@ You can use the `#!python prerender` argument in your [template tag](./template-
 
 ---
 
+## Session State Settings
+
+---
+
+### `#!python REACTPY_SESSION_STATE_MODE`
+
+**Default:** `#!python "tab"`
+
+**Example Value(s):** `#!python "tab"`, `#!python "user"`
+
+Controls the scope of state persisted by the [`use_session_state`](./hooks.md#use-session-state) hook.
+
+- `#!python "tab"` (default): state is scoped to the rendered component (a per-tab, per-component token that is stable across WebSocket reconnects). This works for anonymous users without requiring `#!python django.contrib.sessions`, and isolates state between browser tabs.
+- `#!python "user"`: state is scoped to the authenticated user, falling back to a per-tab token for anonymous users.
+
+---
+
+### `#!python REACTPY_SESSION_STATE_SYNC_INTERVAL`
+
+**Default:** `#!python 5`
+
+**Example Value(s):** `#!python 1`, `#!python 30`, `#!python 60`
+
+Seconds between debounced database flush writes for `#!python use_session_state`. Rapid state changes (e.g. typing) are coalesced into a single database write after this interval elapses.
+
+---
+
+### `#!python REACTPY_SESSION_STATE_MAX_AGE`
+
+**Default:** `#!python 259200`
+
+**Example Value(s):** `#!python 0`, `#!python 3600`, `#!python 604800`
+
+Maximum seconds stale session state is retained before it is removed during [ReactPy clean up](#auto-clean-settings).
+
+Use `#!python 0` to immediately expire stale session state.
+
+---
+
 ## Stability Settings
 
 ---
@@ -303,3 +342,15 @@ Configures whether ReactPy should clean up expired authentication tokens during 
 Configures whether ReactPy should clean up orphaned user data during automatic clean up operations.
 
 Typically, user data does not become orphaned unless the server crashes during a `#!python User` delete operation.
+
+---
+
+### `#!python REACTPY_CLEAN_SESSION_STATE`
+
+**Default:** `#!python True`
+
+**Example Value(s):** `#!python False`
+
+Configures whether ReactPy should clean up stale session state during automatic clean up operations.
+
+Stale session state is state that has not been updated within `#!python REACTPY_SESSION_STATE_MAX_AGE` seconds.
