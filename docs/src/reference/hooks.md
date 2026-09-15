@@ -411,7 +411,7 @@ This hook stores its value in the `#!python REACTPY_DATABASE`, so it is more rob
 
     | Type | Description |
     | --- | --- |
-    | `#!python tuple[Any, Callable[[Any], None]]` | A tuple of `#!python (state, set_state)`. `#!python state` is the current value (loaded from the database, or `#!python default` if none exists). `#!python set_state` updates the in-memory value immediately and schedules a debounced database write so that frequently-changing values do not hammer the database. |
+    | `#!python tuple[Any, Callable[[Any], None]]` | A tuple of `#!python (state, set_state)`. `#!python state` is the current value (loaded from the database, or `#!python default` if none exists). `#!python set_state` updates the in-memory value immediately and schedules a debounced database write so that frequently-changing values do not hammer the database. The update interval is controlled by `#!python REACTPY_SESSION_STATE_SYNC_INTERVAL`; setting it to `#!python 0` disables periodic syncing so writes only occur on unmount. |
 
 ??? question "How is state scoped?"
 

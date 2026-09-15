@@ -213,11 +213,13 @@ Controls the scope of state persisted by the [`use_session_state`](./hooks.md#us
 
 ### `#!python REACTPY_SESSION_STATE_SYNC_INTERVAL`
 
-**Default:** `#!python 5`
+**Default:** `#!python 10`
 
-**Example Value(s):** `#!python 1`, `#!python 30`, `#!python 60`
+**Example Value(s):** `#!python 0`, `#!python 1`, `#!python 30`, `#!python 60`
 
 Seconds between debounced database flush writes for `#!python use_session_state`. Rapid state changes (e.g. typing) are coalesced into a single database write after this interval elapses.
+
+Set this value to `#!python 0` to disable periodic syncing. In that case, state is only persisted to the database when the component is unmounted (such as when a WebSocket reconnects).
 
 ---
 

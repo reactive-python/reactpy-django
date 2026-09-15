@@ -419,6 +419,10 @@ def use_session_state(
 
     def schedule_flush() -> None:
         """Debounce database writes so rapid state changes coalesce into one write."""
+        # A sync interval of `0` disables periodic syncing. In that case, only the
+        # unmount cleanup will persist the latest value to the database.
+        if config.REACTPY_SESSION_STATE_SYNC_INTERVAL == 0:
+            return
         if flush_task.current is not None and not flush_task.current.done():
             flush_task.current.cancel()
         flush_task.current = asyncio.create_task(debounced_flush())

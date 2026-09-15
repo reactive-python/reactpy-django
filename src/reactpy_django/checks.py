@@ -595,12 +595,12 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
-    # Check if REACTPY_SESSION_STATE_SYNC_INTERVAL is a positive integer
+    # Check if REACTPY_SESSION_STATE_SYNC_INTERVAL is a non-negative integer
     if isinstance(config.REACTPY_SESSION_STATE_SYNC_INTERVAL, int) and config.REACTPY_SESSION_STATE_SYNC_INTERVAL < 0:
         errors.append(
             checks.Error(
                 "Invalid value for REACTPY_SESSION_STATE_SYNC_INTERVAL.",
-                hint="REACTPY_SESSION_STATE_SYNC_INTERVAL should be a positive integer.",
+                hint="REACTPY_SESSION_STATE_SYNC_INTERVAL should be a non-negative integer. Use 0 to disable periodic syncing.",
                 id="reactpy_django.E033",
             )
         )

@@ -150,7 +150,7 @@ REACTPY_SESSION_STATE_MODE: SessionStateMode = getattr(
 REACTPY_SESSION_STATE_SYNC_INTERVAL: int = getattr(
     settings,
     "REACTPY_SESSION_STATE_SYNC_INTERVAL",
-    5,  # Default to 5 seconds
+    10,  # Default to 10 seconds; set to 0 to disable periodic syncing
 )
 REACTPY_SESSION_STATE_MAX_AGE: int = getattr(
     settings,
