@@ -12,7 +12,7 @@ class Command(BaseCommand):
         from reactpy_django.tasks import CleaningArgs, clean
 
         verbosity = options.pop("verbosity", 1)
-        valid_args: set[CleaningArgs] = {"all", "sessions", "auth_tokens", "user_data"}
+        valid_args: set[CleaningArgs] = {"all", "sessions", "auth_tokens", "user_data", "session_state"}
         cleaning_args: set[CleaningArgs] = {arg for arg in options if arg in valid_args and options[arg]} or {"all"}
 
         clean(*cleaning_args, immediate=True, verbosity=verbosity)
@@ -35,4 +35,9 @@ class Command(BaseCommand):
             "--auth-tokens",
             action="store_true",
             help="Clean authentication tokens. This value can be combined with other cleaning options.",
+        )
+        parser.add_argument(
+            "--session-state",
+            action="store_true",
+            help="Clean persistent session state. This value can be combined with other cleaning options.",
         )

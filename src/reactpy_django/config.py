@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from itertools import cycle
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, Literal
 
 from django.conf import settings
 from django.core.cache import DEFAULT_CACHE_ALIAS
@@ -135,6 +135,27 @@ REACTPY_CLEAN_USER_DATA: bool = getattr(
     settings,
     "REACTPY_CLEAN_USER_DATA",
     True,
+)
+REACTPY_CLEAN_SESSION_STATE: bool = getattr(
+    settings,
+    "REACTPY_CLEAN_SESSION_STATE",
+    True,
+)
+SessionStateMode = Literal["tab", "user"]
+REACTPY_SESSION_STATE_MODE: SessionStateMode = getattr(
+    settings,
+    "REACTPY_SESSION_STATE_MODE",
+    "tab",  # Default to per-tab (per-component token) scope
+)
+REACTPY_SESSION_STATE_SYNC_INTERVAL: int = getattr(
+    settings,
+    "REACTPY_SESSION_STATE_SYNC_INTERVAL",
+    10,  # Default to 10 seconds; set to 0 to disable periodic syncing
+)
+REACTPY_SESSION_STATE_MAX_AGE: int = getattr(
+    settings,
+    "REACTPY_SESSION_STATE_MAX_AGE",
+    259200,  # Default to 3 days
 )
 REACTPY_DEFAULT_FORM_TEMPLATE: str | None = getattr(
     settings,

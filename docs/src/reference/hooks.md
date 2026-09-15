@@ -385,6 +385,47 @@ User data saved with this hook is stored within the `#!python REACTPY_DATABASE`.
 
 ---
 
+### Use Session State
+
+Persist state across WebSocket reconnects (and, optionally, page reloads) so that it survives a fresh `#!python Layout` being created on reconnect.
+
+This hook stores its value in the `#!python REACTPY_DATABASE`, so it is more robust than in-memory state because it survives multi-process deployments and round-robin load balancing across multiple hosts.
+
+=== "components.py"
+
+    ```python
+    {% include "../../examples/python/use_session_state.py" %}
+    ```
+
+??? example "See Interface"
+
+    <font size="4">**Parameters**</font>
+
+    | Name | Type | Description | Default |
+    | --- | --- | --- | --- |
+    | `#!python default` | `#!python Any` | The value to use when no persisted state exists. | N/A |
+    | `#!python key` | `#!python str` | A unique identifier for this state slot within the computed scope. Multiple `#!python use_session_state` hooks in the same component must use distinct keys. | N/A |
+    | `#!python save_default` | `#!python bool` | If `#!python True`, the `#!python default` value will be persisted when no state already exists in the database. | `#!python False` |
+
+    <font size="4">**Returns**</font>
+
+    | Type | Description |
+    | --- | --- |
+    | `#!python tuple[Any, Callable[[Any], None]]` | A tuple of `#!python (state, set_state)`. `#!python state` is the current value (loaded from the database, or `#!python default` if none exists). `#!python set_state` updates the in-memory value immediately and schedules a debounced database write so that frequently-changing values do not hammer the database. The update interval is controlled by `#!python REACTPY_SESSION_STATE_SYNC_INTERVAL`; setting it to `#!python 0` disables periodic syncing so writes only occur on unmount. |
+
+??? question "How is state scoped?"
+
+    The state's scope is controlled by the `#!python REACTPY_SESSION_STATE_MODE` [setting](./settings.md#reactpy_session_state_mode).
+
+    - `#!python "tab"` (default): state is scoped to the rendered component (a per-tab, per-component token that is stable across reconnects). This works for anonymous users without requiring `#!python django.contrib.sessions`, and isolates state between browser tabs.
+    - `#!python "user"`: state is scoped to the authenticated user, falling back to a per-tab token for anonymous users.
+
+??? warning "Only serializable data may be stored"
+
+    Values are serialized with `#!python dill`, so most common Python objects are supported, but objects holding resources that are not picklable (e.g. open file handles or network connections) will fail.
+
+---
+
 ## Communication Hooks
 
 ---

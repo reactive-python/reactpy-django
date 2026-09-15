@@ -564,4 +564,75 @@ def reactpy_errors(app_configs, **kwargs):
             )
         )
 
+    # Check if REACTPY_SESSION_STATE_MODE is a valid data type
+    if not isinstance(config.REACTPY_SESSION_STATE_MODE, str):
+        errors.append(
+            checks.Error(
+                "Invalid type for REACTPY_SESSION_STATE_MODE.",
+                hint="REACTPY_SESSION_STATE_MODE should be a string.",
+                id="reactpy_django.E030",
+            )
+        )
+
+    # Check if REACTPY_SESSION_STATE_MODE is a valid value
+    if config.REACTPY_SESSION_STATE_MODE not in ("tab", "user"):
+        errors.append(
+            checks.Error(
+                "Invalid value for REACTPY_SESSION_STATE_MODE.",
+                hint="REACTPY_SESSION_STATE_MODE should be either 'tab' or 'user'.",
+                obj=config.REACTPY_SESSION_STATE_MODE,
+                id="reactpy_django.E031",
+            )
+        )
+
+    # Check if REACTPY_SESSION_STATE_SYNC_INTERVAL is a valid data type
+    if not isinstance(config.REACTPY_SESSION_STATE_SYNC_INTERVAL, int):
+        errors.append(
+            checks.Error(
+                "Invalid type for REACTPY_SESSION_STATE_SYNC_INTERVAL.",
+                hint="REACTPY_SESSION_STATE_SYNC_INTERVAL should be an integer.",
+                id="reactpy_django.E032",
+            )
+        )
+
+    # Check if REACTPY_SESSION_STATE_SYNC_INTERVAL is a non-negative integer
+    if isinstance(config.REACTPY_SESSION_STATE_SYNC_INTERVAL, int) and config.REACTPY_SESSION_STATE_SYNC_INTERVAL < 0:
+        errors.append(
+            checks.Error(
+                "Invalid value for REACTPY_SESSION_STATE_SYNC_INTERVAL.",
+                hint="REACTPY_SESSION_STATE_SYNC_INTERVAL should be a non-negative integer. Use 0 to disable periodic syncing.",
+                id="reactpy_django.E033",
+            )
+        )
+
+    # Check if REACTPY_SESSION_STATE_MAX_AGE is a valid data type
+    if not isinstance(config.REACTPY_SESSION_STATE_MAX_AGE, int):
+        errors.append(
+            checks.Error(
+                "Invalid type for REACTPY_SESSION_STATE_MAX_AGE.",
+                hint="REACTPY_SESSION_STATE_MAX_AGE should be an integer.",
+                id="reactpy_django.E034",
+            )
+        )
+
+    # Check if REACTPY_SESSION_STATE_MAX_AGE is a positive integer
+    if isinstance(config.REACTPY_SESSION_STATE_MAX_AGE, int) and config.REACTPY_SESSION_STATE_MAX_AGE < 0:
+        errors.append(
+            checks.Error(
+                "Invalid value for REACTPY_SESSION_STATE_MAX_AGE.",
+                hint="REACTPY_SESSION_STATE_MAX_AGE should be a positive integer.",
+                id="reactpy_django.E035",
+            )
+        )
+
+    # Check if REACTPY_CLEAN_SESSION_STATE is a valid data type
+    if not isinstance(config.REACTPY_CLEAN_SESSION_STATE, bool):
+        errors.append(
+            checks.Error(
+                "Invalid type for REACTPY_CLEAN_SESSION_STATE.",
+                hint="REACTPY_CLEAN_SESSION_STATE should be a boolean.",
+                id="reactpy_django.E036",
+            )
+        )
+
     return errors

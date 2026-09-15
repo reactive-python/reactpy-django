@@ -594,9 +594,12 @@ class ComponentTests(PlaywrightTestCase):
 
     @navigate_to_page("/pyscript/")
     def test_pyscript_0_hello_world(self):
-        # Use this test to wait for PyScript to fully load on the page
+        # This is the FIRST test to load the PyScript page, so it bears the cold-start
+        # cost of booting Pyodide and installing PyScript packages (micropip fetch).
+        # Give the rendered component an equally generous timeout, otherwise slow CI
+        # runners intermittently exceed the default 10s timeout and flake.
         self.page.wait_for_selector("#hello-world-loading", timeout=30000)
-        self.page.wait_for_selector("#hello-world")
+        self.page.wait_for_selector("#hello-world", timeout=30000)
 
     @navigate_to_page("/pyscript/")
     def test_pyscript_1_custom_root(self):
