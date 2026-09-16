@@ -812,11 +812,16 @@ class ComponentTests(PlaywrightTestCase):
         # Verify multi-select field values survived the round-trip
         # After successful submission, the re-rendered form should have
         # the same options selected, proving the FormData duplicate-key fix worked.
-        assert self.page.locator("#id_multiple_choice_field").input_value() == ["2", "3"]
-        assert self.page.locator("#id_typed_multiple_choice_field").input_value() == ["1", "2"]
+        # NOTE: `input_value()` on a multi-select returns only the first selected
+        # value as a string, so we read the selected <option> values directly.
+        def _selected_values(selector: str) -> list[str]:
+            return self.page.locator(f"{selector} option:checked").evaluate_all("els => els.map(e => e.value)")
+
+        assert sorted(_selected_values("#id_multiple_choice_field")) == ["2", "3"]
+        assert sorted(_selected_values("#id_typed_multiple_choice_field")) == ["1", "2"]
 
         # Verify model multi-select field values survived the round-trip
-        model_choice_selected = self.page.locator("#id_model_multiple_choice_field").input_value()
+        model_choice_selected = _selected_values("#id_model_multiple_choice_field")
         assert sorted(model_choice_selected) == sorted([
             model_choice_field_values[1],
             model_choice_field_values[2],
