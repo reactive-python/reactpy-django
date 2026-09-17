@@ -125,16 +125,15 @@ def _django_form(
     if not rendered_form:
         return None
 
-    # Note: we intentionally do NOT attach an `onSubmit` ReactPy handler here. The
-    # client-side `DjangoForm` component already registers a native `submit` listener
-    # that calls `event.preventDefault()` and forwards the submitted FormData via
-    # `onSubmitCallback`. A redundant ReactPy `onSubmit` handler used to be attached
-    # here, but on a second submission (after the form re-renders validation errors) it
-    # caused the WebSocket to close and the component to remount, dropping the
-    # submission before it reached the server.
+    # Note: `key` is intentionally left stable (does not include `render_count`) so the
+    # client-side `DjangoForm` component is not torn down and re-mounted on every render.
+    # The `DjangoForm` registers a native `submit` listener that calls `preventDefault()`
+    # and forwards the submitted FormData via `onSubmitCallback`; keeping that component
+    # (and its listener) alive across re-renders guarantees the browser never navigates
+    # away natively, while still letting each submission reach the server.
     form_props: dict[str, Any] = {
         "id": f"reactpy-{uuid}",
-        "key": f"reactpy-{uuid}-{render_count}",
+        "key": f"reactpy-{uuid}",
     }
     if on_change:
         form_props["onChange"] = _on_change
