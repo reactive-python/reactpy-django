@@ -28,6 +28,7 @@ Don't forget to remove deprecated code on each major release!
     - `settings.py:REACTPY_SESSION_STATE_MAX_AGE` to control how long stale session state is retained.
     - `settings.py:REACTPY_CLEAN_SESSION_STATE` to control whether stale session state is cleaned up during automatic cleanups.
 - Automatically serve ReactPy wheel from Django's static directory when using PyScript.
+- Jinja2 template support via `reactpy_django.templatetags.jinja.ReactPyExtension`.
 
 ### Changed
 
