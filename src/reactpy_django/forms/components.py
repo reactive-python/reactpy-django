@@ -3,7 +3,7 @@ from __future__ import annotations
 from asyncio import iscoroutinefunction
 from logging import getLogger
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, cast
 from uuid import uuid4
 
 from django.forms import Form, ModelForm
@@ -56,7 +56,7 @@ def _django_form(
     top_children_count = hooks.use_ref(len(top_children))
     bottom_children_count = hooks.use_ref(len(bottom_children))
     submitted_data, set_submitted_data = hooks.use_state({} or None)
-    rendered_form, set_rendered_form = hooks.use_state(cast("Union[str, None]", None))
+    rendered_form, set_rendered_form = hooks.use_state(cast("str | None", None))
     render_count, set_render_count = hooks.use_state(0)
 
     # Initialize the form with the provided data
@@ -125,6 +125,13 @@ def _django_form(
     if not rendered_form:
         return None
 
+    # Note: we intentionally do NOT attach an `onSubmit` ReactPy handler here. The
+    # client-side `DjangoForm` component already registers a native `submit` listener
+    # that calls `event.preventDefault()` and forwards the submitted FormData via
+    # `onSubmitCallback`. A redundant ReactPy `onSubmit` handler used to be attached
+    # here, but on a second submission (after the form re-renders validation errors) it
+    # caused the WebSocket to close and the component to remount, dropping the
+    # submission before it reached the server.
     form_props: dict[str, Any] = {
         "id": f"reactpy-{uuid}",
         "key": f"reactpy-{uuid}-{render_count}",
