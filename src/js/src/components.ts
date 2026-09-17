@@ -10,15 +10,31 @@ export class DjangoForm extends React.Component<DjangoFormProps> {
       event.preventDefault();
       const formData = new FormData(form);
 
-      // Convert the FormData object to a plain object
-      const formObject = Object.fromEntries(formData.entries());
+      // Accumulate duplicate keys into arrays to support multi-select fields
+      // (e.g. MultipleChoiceField). Object.fromEntries would silently drop
+      // duplicate entries, keeping only the last value per key.
+      const formObject: Record<
+        string,
+        FormDataEntryValue | FormDataEntryValue[]
+      > = {};
+      for (const [key, value] of formData.entries()) {
+        if (Object.prototype.hasOwnProperty.call(formObject, key)) {
+          const existing = formObject[key];
+          if (Array.isArray(existing)) {
+            existing.push(value);
+          } else {
+            formObject[key] = [existing, value];
+          }
+        } else {
+          formObject[key] = value;
+        }
+      }
 
       onSubmitCallback(formObject);
     };
 
     if (form) {
       form.addEventListener("submit", onSubmitEvent);
-      // Store cleanup function in instance
       (this as any)._cleanup = () => {
         form.removeEventListener("submit", onSubmitEvent);
       };

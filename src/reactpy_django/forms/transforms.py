@@ -33,17 +33,32 @@ def convert_textarea_children_to_prop(vdom_tree: VdomDict) -> VdomDict:
 
 
 def set_value_prop_on_select_element(vdom_tree: VdomDict) -> VdomDict:
-    """Use the `value` prop on <select> instead of setting `selected` on <option>."""
-    # If the current tag is <select>, remove 'selected' prop from any <option> children and
-    # instead set the 'value' prop on the <select> tag.
+    """Set the correct selection props on a <select> and its <option> children.
+
+    ReactPy's built-in ``RequiredTransforms.select_element_to_reactjs`` (which runs during
+    ``string_to_reactpy``, before this transform) removes the ``selected`` attribute from
+    each ``<option>`` and records the selected value(s) as ``defaultValue`` on the parent
+    ``<select>`` element.  That works with React, but Preact does **not** apply a ``<select>``
+    element's ``defaultValue`` prop to its ``<option>`` children.  As a result the selection is
+    lost when a form remounts/``<option>`` nodes are re-created (e.g. after a submission).
+
+    To preserve selection for Preact, this transform reads the ``defaultValue`` already set on
+    the ``<select>`` and sets the ``selected`` prop directly on each matching ``<option>``
+    element, which Preact applies as the option's DOM ``selected`` property.
+    """
     if vdom_tree["tagName"] == "select" and "children" in vdom_tree:
         vdom_tree.setdefault("attributes", {})
-        selected_options = _find_selected_options(vdom_tree)
-        multiple_choice = vdom_tree["attributes"]["multiple"] = bool(vdom_tree["attributes"].get("multiple"))
-        if selected_options and not multiple_choice:
-            vdom_tree["attributes"]["defaultValue"] = selected_options[0]
-        if selected_options and multiple_choice:
-            vdom_tree["attributes"]["defaultValue"] = selected_options
+        attributes = vdom_tree["attributes"]
+        attributes["multiple"] = bool(attributes.get("multiple"))
+
+        # Preact ignores a <select>'s `defaultValue`, so propagate the selected value(s)
+        # (already stored on the <select> by reactpy's builtin transform) onto the
+        # matching <option> elements as `selected`.
+        selected_values = attributes.get("defaultValue")
+        if isinstance(selected_values, str):
+            selected_values = [selected_values]
+        if selected_values:
+            _set_selected_on_options(vdom_tree, set(selected_values))
 
     return vdom_tree
 
@@ -87,24 +102,25 @@ def infer_key_from_attributes(vdom_tree: VdomDict) -> VdomDict:
     return vdom_tree
 
 
-def _find_selected_options(vdom_node: Any) -> list[str]:
-    """Recursively iterate through the tree to find all <option> tags with the 'selected' prop.
-    Removes the 'selected' prop and returns a list of the 'value' prop of each selected <option>."""
+def _set_selected_on_options(vdom_node: Any, selected_values: set[str]) -> None:
+    """Recursively mark the matching <option> elements as selected.
+
+    We set the ``selected`` prop on the <option> element.  Preact applies ``selected``
+    as a DOM property on ``HTMLOptionElement``, which updates the option's ``selected``
+    state on every re-render.  This is required because Preact does not apply a
+    <select>'s ``defaultValue`` prop to its <option> children, so selection is otherwise
+    lost when a form remounts (e.g. on submit).
+    """
     if not isinstance(vdom_node, dict):
-        return []
+        return
 
-    selected_options = []
     if vdom_node["tagName"] == "option" and "attributes" in vdom_node:
-        value = vdom_node["attributes"].setdefault("value", vdom_node["children"][0])
-
-        if "selected" in vdom_node["attributes"]:
-            vdom_node["attributes"].pop("selected")
-            selected_options.append(value)
+        value = vdom_node["attributes"].get("value")
+        if value in selected_values:
+            vdom_node["attributes"]["selected"] = True
 
     for child in vdom_node.get("children", []):
-        selected_options.extend(_find_selected_options(child))
-
-    return selected_options
+        _set_selected_on_options(child, selected_values)
 
 
 def _normalize_prop_name(prop_name: str) -> str:

@@ -809,6 +809,24 @@ class ComponentTests(PlaywrightTestCase):
         # Make sure no errors remain
         assert len(self.page.query_selector_all(".errorlist")) == 0
 
+        # Verify multi-select field values survived the round-trip
+        # After successful submission, the re-rendered form should have
+        # the same options selected, proving the FormData duplicate-key fix worked.
+        # NOTE: `input_value()` on a multi-select returns only the first selected
+        # value as a string, so we read the selected <option> values directly.
+        def _selected_values(selector: str) -> list[str]:
+            return self.page.locator(f"{selector} option:checked").evaluate_all("els => els.map(e => e.value)")
+
+        assert sorted(_selected_values("#id_multiple_choice_field")) == ["2", "3"]
+        assert sorted(_selected_values("#id_typed_multiple_choice_field")) == ["1", "2"]
+
+        # Verify model multi-select field values survived the round-trip
+        model_choice_selected = _selected_values("#id_model_multiple_choice_field")
+        assert sorted(model_choice_selected) == sorted([
+            model_choice_field_values[1],
+            model_choice_field_values[2],
+        ])
+
     @navigate_to_page("/form/bootstrap/")
     def test_form_bootstrap(self):
         try:
@@ -880,6 +898,28 @@ class ComponentTests(PlaywrightTestCase):
         finally:
             os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
 
+    def _retry_until_true(self, selector: str) -> None:
+        """Poll for `#success[data-value='true']` after submitting the filled form.
+
+        Filling the `char_field` triggers the form's `onChange` handler, which causes an
+        async server re-render that reconciles (and can transiently remount) the submit
+        button. A single Playwright click on `input[type=submit]` may therefore land on
+        the form element instead of the button, swallowing the `submit` event and losing
+        the valid submission. This helper re-fills the field and re-clicks submit until
+        the `on_success` callback actually takes effect, making the interaction
+        deterministic instead of racing the reconciliation.
+        """
+        for _ in range(3):
+            self.page.wait_for_selector("#id_char_field").type("test", delay=DELAY)
+            self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
+            try:
+                self.page.wait_for_selector(selector, timeout=5000)
+                return
+            except PlaywrightTimeoutError:
+                continue
+        # Let the final wait raise the real failure if it still never succeeds.
+        self.page.wait_for_selector(selector)
+
     @navigate_to_page("/form/sync_event/")
     def test_form_sync_events(self):
         self.page.wait_for_selector("form")
@@ -899,12 +939,12 @@ class ComponentTests(PlaywrightTestCase):
         self.page.wait_for_selector("#receive_data[data-value='true']")
         self.page.wait_for_selector("#change[data-value='false']")
 
-        # Fill out the form and re-submit
-        self.page.wait_for_selector("#id_char_field").type("test", delay=DELAY)
-        self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
+        # Fill out the form and re-submit. The `onChange`-triggered async re-render can
+        # transiently remount the submit button, so retry (re-filling + re-clicking) until
+        # the `on_success` callback visibly takes effect rather than racing the reconcile.
+        self._retry_until_true("#success[data-value='true']")
 
         # Form should have been successfully submitted
-        self.page.wait_for_selector("#success[data-value='true']")
         self.page.wait_for_selector("#error[data-value='true']")
         self.page.wait_for_selector("#receive_data[data-value='true']")
         self.page.wait_for_selector("#change[data-value='true']")
@@ -928,12 +968,12 @@ class ComponentTests(PlaywrightTestCase):
         self.page.wait_for_selector("#receive_data[data-value='true']")
         self.page.wait_for_selector("#change[data-value='false']")
 
-        # Fill out the form and re-submit
-        self.page.wait_for_selector("#id_char_field").type("test", delay=DELAY)
-        self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
+        # Fill out the form and re-submit. The `onChange`-triggered async re-render can
+        # transiently remount the submit button, so retry (re-filling + re-clicking) until
+        # the `on_success` callback visibly takes effect rather than racing the reconcile.
+        self._retry_until_true("#success[data-value='true']")
 
         # Form should have been successfully submitted
-        self.page.wait_for_selector("#success[data-value='true']")
         self.page.wait_for_selector("#error[data-value='true']")
         self.page.wait_for_selector("#receive_data[data-value='true']")
         self.page.wait_for_selector("#change[data-value='true']")

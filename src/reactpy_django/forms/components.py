@@ -3,12 +3,11 @@ from __future__ import annotations
 from asyncio import iscoroutinefunction
 from logging import getLogger
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, cast
 from uuid import uuid4
 
 from django.forms import Form, ModelForm
 from reactpy import component, hooks, html, utils
-from reactpy.core.events import event
 from reactpy.reactjs import component_from_file
 
 from reactpy_django.forms.transforms import (
@@ -57,7 +56,8 @@ def _django_form(
     top_children_count = hooks.use_ref(len(top_children))
     bottom_children_count = hooks.use_ref(len(bottom_children))
     submitted_data, set_submitted_data = hooks.use_state({} or None)
-    rendered_form, set_rendered_form = hooks.use_state(cast("Union[str, None]", None))
+    rendered_form, set_rendered_form = hooks.use_state(cast("str | None", None))
+    render_count, set_render_count = hooks.use_state(0)
 
     # Initialize the form with the provided data
     validate_form_args(top_children, top_children_count, bottom_children, bottom_children_count, form)
@@ -93,6 +93,7 @@ def _django_form(
                     await ensure_async(initialized_form.save)()
                     set_submitted_data(None)
 
+            set_render_count(render_count + 1)
             set_rendered_form(
                 await ensure_async(initialized_form.render)(form_template or config.REACTPY_DEFAULT_FORM_TEMPLATE)
             )
@@ -124,10 +125,15 @@ def _django_form(
     if not rendered_form:
         return None
 
-    form_props = {
+    # Note: `key` is intentionally left stable (does not include `render_count`) so the
+    # client-side `DjangoForm` component is not torn down and re-mounted on every render.
+    # The `DjangoForm` registers a native `submit` listener that calls `preventDefault()`
+    # and forwards the submitted FormData via `onSubmitCallback`; keeping that component
+    # (and its listener) alive across re-renders guarantees the browser never navigates
+    # away natively, while still letting each submission reach the server.
+    form_props: dict[str, Any] = {
         "id": f"reactpy-{uuid}",
-        # Intercept the form submission to prevent the browser from navigating
-        "onSubmit": event(lambda _: None, prevent_default=True),
+        "key": f"reactpy-{uuid}",
     }
     if on_change:
         form_props["onChange"] = _on_change
