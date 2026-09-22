@@ -250,13 +250,6 @@ def _view_to_iframe(
     extra_props = extra_props or {}
     extra_props.pop("src", None)
 
-    # The iframe loads eagerly by default (the HTML default). An eager iframe is
-    # a sub-resource that the browser fetches as part of the parent page's
-    # initial load, so its document is reliably present as soon as the page
-    # loads. The previous default of `loading="lazy"` deferred the fetch until
-    # the iframe was scrolled close to the viewport, which made availability
-    # non-deterministic. If you want that deferred behavior, opt in via
-    # `extra_props={"loading": "lazy"}`.
     return html.iframe(
         {
             "src": reverse("reactpy:view_to_iframe", args=[dotted_path]) + query_string,
