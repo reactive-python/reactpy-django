@@ -301,6 +301,10 @@ Compatible with sync or async [Function Based Views](https://docs.djangoproject.
     - The `#!python iframe` will always load **after** the parent component.
     - CSS styling for `#!python iframe` elements tends to be awkward.
 
+??? info "Loading behavior"
+
+    The `#!python iframe` loads **eagerly** by default: its document is fetched as part of the parent page's initial load, so it is available as soon as the page loads. If you want the browser to defer fetching the `#!python iframe`'s document until it is scrolled close to the viewport, pass `#!python extra_props={"loading": "lazy"}`.
+
 ??? question "How do I use this for Class Based Views?"
 
     Class Based Views are accepted by `#!python view_to_iframe` as an argument.
