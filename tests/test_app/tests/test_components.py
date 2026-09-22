@@ -711,6 +711,18 @@ class ComponentTests(PlaywrightTestCase):
         self.page.wait_for_selector("div:not([hidden]) > #offline")
         assert self.page.query_selector("div[hidden] > #online") is not None
 
+        # Tearing down the server above severs the offline page's WebSocket, but its
+        # client (createReconnectingWebSocket) keeps retrying the now-dead port on a
+        # backoff timer for the rest of the session. All tests share one browser page,
+        # so that zombie loop keeps firing `new WebSocket()` against the dead port
+        # during subsequent tests. Any attempt that lands inside another test's
+        # navigation window leaks a second WebSocket URL and flakes tests such as
+        # `test_one_websocket_per_page` (observed intermittently on CI as
+        # "Expected 1 unique WebSocket URL, got 2 ... /offline/"). Navigating away
+        # destroys this document and cancels its pending reconnect timers, so later
+        # tests start from a clean state with no lingering client.
+        self.page.goto("about:blank")
+
     ##############
     # Form Tests #
     ##############
