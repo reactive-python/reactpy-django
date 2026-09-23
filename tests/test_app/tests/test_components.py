@@ -771,8 +771,7 @@ class ComponentTests(PlaywrightTestCase):
         self.page.wait_for_selector("#id_password_field")
         self.page.wait_for_selector("#id_model_choice_field")
         self.page.wait_for_selector("#id_model_multiple_choice_field")
-        self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
-        self.page.wait_for_selector(".errorlist")
+        self._retry_submit_until(".errorlist", fill=None)
 
         # Submitting an empty form should result in 22 error elements.
         # The number of errors may change if/when new test form elements are created.
@@ -859,8 +858,7 @@ class ComponentTests(PlaywrightTestCase):
         self.page.wait_for_selector("#id_boolean_field")
         self.page.wait_for_selector("#id_char_field")
         self.page.wait_for_selector("#id_choice_field")
-        self.page.wait_for_selector("button[type=submit]").click(delay=DELAY)
-        self.page.wait_for_selector(".invalid-feedback")
+        self._retry_submit_until(".invalid-feedback", fill=None, submit_selector="button[type=submit]")
 
         # Submitting an empty form should result in 2 error elements.
         # The number of errors may change if/when new test form elements are created.
@@ -883,8 +881,7 @@ class ComponentTests(PlaywrightTestCase):
     def test_form_orm_model(self):
         uuid = uuid4().hex
         self.page.wait_for_selector("form")
-        self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
-        self.page.wait_for_selector(".errorlist")
+        self._retry_submit_until(".errorlist", fill=None)
 
         # Submitting an empty form should result in 1 error element.
         error_list = self.page.locator(".errorlist").all()
@@ -912,7 +909,9 @@ class ComponentTests(PlaywrightTestCase):
         finally:
             os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
 
-    def _retry_submit_until(self, selector: str, *, fill: str | None) -> None:
+    def _retry_submit_until(
+        self, selector: str, *, fill: str | None, submit_selector: str = "input[type=submit]"
+    ) -> None:
         """Re-submit the form until an awaited state ``selector`` becomes visible.
 
         The ``DjangoForm`` client component registers a native ``submit`` listener that
@@ -923,12 +922,14 @@ class ComponentTests(PlaywrightTestCase):
         performs a *native* form submission: the browser reloads the page, which resets
         all ReactPy state, so the awaited callback never appears. Retry the submit
         (re-typing ``char_field`` when ``fill`` is set) until ``selector`` is satisfied
-        instead of racing the mount/reconcile. Pass ``fill=None`` to submit unchanged.
+        instead of racing the mount/reconcile. Pass ``fill=None`` to submit unchanged,
+        and ``submit_selector`` when the submit control is not ``input[type=submit]``
+        (e.g. the bootstrap form uses ``button[type=submit]``).
         """
         for _ in range(3):
             if fill is not None:
                 self.page.wait_for_selector("#id_char_field").type(fill, delay=DELAY)
-            self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
+            self.page.wait_for_selector(submit_selector).click(delay=DELAY)
             try:
                 self.page.wait_for_selector(selector, timeout=5000)
                 return
