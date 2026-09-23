@@ -69,6 +69,12 @@ def view_to_component(
 
 def view_to_iframe(view: Callable | View | str, extra_props: dict[str, Any] | None = None) -> ViewToIframeConstructor:
     """
+    Converts a Django view into a ReactPy component that is rendered within an `iframe` element.
+
+    The `iframe` loads eagerly by default, so its document is fetched as part of the parent page's
+    initial load and is available as soon as the page loads. If you want the browser to defer the
+    iframe's fetch until it is scrolled close to the viewport, pass `extra_props={"loading": "lazy"}`.
+
     Args:
         view: The view function or class to convert, or the dotted path to the view.
 
@@ -248,7 +254,6 @@ def _view_to_iframe(
         {
             "src": reverse("reactpy:view_to_iframe", args=[dotted_path]) + query_string,
             "style": {"border": "none"},
-            "loading": "lazy",
         }
         | extra_props
     )

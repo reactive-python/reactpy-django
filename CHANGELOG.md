@@ -31,6 +31,7 @@ Don't forget to remove deprecated code on each major release!
 
 ### Changed
 
+- `view_to_iframe` now renders its `iframe` without a `loading` attribute, so it loads **eagerly** (the HTML default) instead of lazily. The `iframe`'s document is now fetched as part of the parent page's initial load and is guaranteed to be available as soon as the page loads, rather than being deferred until it is scrolled close to the viewport. To restore the previous lazy-loading behavior, pass `extra_props={"loading": "lazy"}`.
 - Use one WebSocket per client webpage.
 - Updated dependencies: `reactpy>=2.0.0, <3.0.0` and `reactpy-router>=3.0.0, <4.0.0`.
 - Updated Python support to 3.11–3.14.
