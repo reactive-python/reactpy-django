@@ -1,5 +1,7 @@
 # type: ignore
 # ruff: noqa: RUF012
+from __future__ import annotations
+
 import os
 import socket
 from uuid import uuid4
@@ -910,19 +912,22 @@ class ComponentTests(PlaywrightTestCase):
         finally:
             os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE")
 
-    def _retry_until_true(self, selector: str) -> None:
-        """Poll for `#success[data-value='true']` after submitting the filled form.
+    def _retry_submit_until(self, selector: str, *, fill: str | None) -> None:
+        """Re-submit the form until an awaited state ``selector`` becomes visible.
 
-        Filling the `char_field` triggers the form's `onChange` handler, which causes an
-        async server re-render that reconciles (and can transiently remount) the submit
-        button. A single Playwright click on `input[type=submit]` may therefore land on
-        the form element instead of the button, swallowing the `submit` event and losing
-        the valid submission. This helper re-fills the field and re-clicks submit until
-        the `on_success` callback actually takes effect, making the interaction
-        deterministic instead of racing the reconciliation.
+        The ``DjangoForm`` client component registers a native ``submit`` listener that
+        calls ``preventDefault()`` and forwards the form data over the WebSocket. That
+        listener is attached in ``componentDidMount`` and can momentarily lag the
+        rendered ``<form>`` (and the button can transiently re-mount after an
+        ``onChange``-triggered async re-render). A click landing during either window
+        performs a *native* form submission: the browser reloads the page, which resets
+        all ReactPy state, so the awaited callback never appears. Retry the submit
+        (re-typing ``char_field`` when ``fill`` is set) until ``selector`` is satisfied
+        instead of racing the mount/reconcile. Pass ``fill=None`` to submit unchanged.
         """
         for _ in range(3):
-            self.page.wait_for_selector("#id_char_field").type("test", delay=DELAY)
+            if fill is not None:
+                self.page.wait_for_selector("#id_char_field").type(fill, delay=DELAY)
             self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
             try:
                 self.page.wait_for_selector(selector, timeout=5000)
@@ -942,19 +947,23 @@ class ComponentTests(PlaywrightTestCase):
         self.page.wait_for_selector("#receive_data[data-value='false']")
         self.page.wait_for_selector("#change[data-value='false']")
 
-        # Submit empty the form
-        self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
+        # Submit the empty form and wait for the `on_error` callback to take effect. The
+        # client-side `preventDefault` submit interceptor can momentarily lag the rendered
+        # <form> under load, so a click that lands first performs a native submit that
+        # reloads the page and resets state. Re-click the (still-empty) submit until the
+        # error surfaces rather than racing the mount.
+        self._retry_submit_until("#error[data-value='true']", fill=None)
 
-        # The empty form was submitted, should result in an error
+        # Empty submit is invalid: `on_error` and `on_receive_data` fired, but nothing was
+        # typed so `on_change` never fired and nothing succeeded.
         self.page.wait_for_selector("#success[data-value='false']")
-        self.page.wait_for_selector("#error[data-value='true']")
         self.page.wait_for_selector("#receive_data[data-value='true']")
         self.page.wait_for_selector("#change[data-value='false']")
 
         # Fill out the form and re-submit. The `onChange`-triggered async re-render can
         # transiently remount the submit button, so retry (re-filling + re-clicking) until
         # the `on_success` callback visibly takes effect rather than racing the reconcile.
-        self._retry_until_true("#success[data-value='true']")
+        self._retry_submit_until("#success[data-value='true']", fill="test")
 
         # Form should have been successfully submitted
         self.page.wait_for_selector("#error[data-value='true']")
@@ -971,19 +980,23 @@ class ComponentTests(PlaywrightTestCase):
         self.page.wait_for_selector("#receive_data[data-value='false']")
         self.page.wait_for_selector("#change[data-value='false']")
 
-        # Submit empty the form
-        self.page.wait_for_selector("input[type=submit]").click(delay=DELAY)
+        # Submit the empty form and wait for the `on_error` callback to take effect. The
+        # client-side `preventDefault` submit interceptor can momentarily lag the rendered
+        # <form> under load, so a click that lands first performs a native submit that
+        # reloads the page and resets state. Re-click the (still-empty) submit until the
+        # error surfaces rather than racing the mount.
+        self._retry_submit_until("#error[data-value='true']", fill=None)
 
-        # The empty form was submitted, should result in an error
+        # Empty submit is invalid: `on_error` and `on_receive_data` fired, but nothing was
+        # typed so `on_change` never fired and nothing succeeded.
         self.page.wait_for_selector("#success[data-value='false']")
-        self.page.wait_for_selector("#error[data-value='true']")
         self.page.wait_for_selector("#receive_data[data-value='true']")
         self.page.wait_for_selector("#change[data-value='false']")
 
         # Fill out the form and re-submit. The `onChange`-triggered async re-render can
         # transiently remount the submit button, so retry (re-filling + re-clicking) until
         # the `on_success` callback visibly takes effect rather than racing the reconcile.
-        self._retry_until_true("#success[data-value='true']")
+        self._retry_submit_until("#success[data-value='true']", fill="test")
 
         # Form should have been successfully submitted
         self.page.wait_for_selector("#error[data-value='true']")
