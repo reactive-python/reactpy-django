@@ -575,7 +575,7 @@ def reactpy_errors(app_configs, **kwargs):
         )
 
     # Check if REACTPY_SESSION_STATE_MODE is a valid value
-    if config.REACTPY_SESSION_STATE_MODE not in ("tab", "user"):
+    if config.REACTPY_SESSION_STATE_MODE not in {"tab", "user"}:
         errors.append(
             checks.Error(
                 "Invalid value for REACTPY_SESSION_STATE_MODE.",

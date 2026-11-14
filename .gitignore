@@ -4,6 +4,9 @@ src/reactpy_django/static/reactpy_django/index.js.map
 src/reactpy_django/static/reactpy_django/pyscript
 src/reactpy_django/static/reactpy_django/morphdom
 
+# LLM artifacts
+memories/*
+
 # Django #
 logs
 *.log

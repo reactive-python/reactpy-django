@@ -23,10 +23,10 @@ def convert_form_fields(data: dict[str, Any], initialized_form: Form | ModelForm
     This handles the mismatch between browser FormData serialisation and
     Django's field-level expectations:
 
-    * ``MultipleChoiceField`` / ``ModelMultipleChoiceField`` – always stored as a
+    * ``MultipleChoiceField`` / ``ModelMultipleChoiceField`` - always stored as a
       list.  When no option is selected the key may be absent or ``None``; we
       normalise to an empty list.
-    * ``BooleanField`` (non-null) – represented by the browser as "key present
+    * ``BooleanField`` (non-null) - represented by the browser as "key present
       = checked".  We convert to ``True``/``False``.
     * All other fields (including ``MultiValueField``, ``SplitDateTimeField``)
       are passed through unchanged.  Their sub-widgets already produce unique

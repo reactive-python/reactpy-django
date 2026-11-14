@@ -61,7 +61,7 @@ class RoutedDatabaseTests(TransactionTestCase):
 
     def test_session_state_roundtrip_and_cleanup(self):
         from reactpy_django import config
-        from reactpy_django.hooks import _get_session_state, _set_session_state
+        from reactpy_django.hooks import _get_session_state, _set_session_state  # noqa: PLC2701
 
         initial_clean_session_state = config.REACTPY_CLEAN_SESSION_STATE
         initial_session_state_max_age = config.REACTPY_SESSION_STATE_MAX_AGE
