@@ -932,9 +932,10 @@ class ComponentTests(PlaywrightTestCase):
             self.page.wait_for_selector(submit_selector).click(delay=DELAY)
             try:
                 self.page.wait_for_selector(selector, timeout=5000)
-                return
             except PlaywrightTimeoutError:
                 continue
+            else:
+                return
         # Let the final wait raise the real failure if it still never succeeds.
         self.page.wait_for_selector(selector)
 

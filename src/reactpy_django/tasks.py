@@ -19,8 +19,8 @@ CleaningArgs = Literal["all", "sessions", "auth_tokens", "user_data", "session_s
 def clean(*args: CleaningArgs, immediate: bool = False, verbosity: int = 1):
     from reactpy_django.config import (
         REACTPY_CLEAN_AUTH_TOKENS,
-        REACTPY_CLEAN_SESSIONS,
         REACTPY_CLEAN_SESSION_STATE,
+        REACTPY_CLEAN_SESSIONS,
         REACTPY_CLEAN_USER_DATA,
     )
     from reactpy_django.models import Config
